@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="UI.Views.CameraHostView.CameraHostView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:UI.Views.CameraHostView"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300" Background="Aqua">
+    <Grid>
+        <!-- Camera view -->
+        <ContentControl Grid.Column="0"></ContentControl>
+        
+        <!-- Page switch -->
+        <materialDesign:PopupBox PlacementMode="TopAndAlignLeftEdges"   Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}"
+                                 Margin="10" HorizontalAlignment="Right" VerticalAlignment="Bottom" Panel.ZIndex="5"> 
+            <StackPanel>
+                <Button Command="{Binding SwitchLeftSocket}">Left</Button>
+                <Button Command="{Binding SwitchRightSocket}">Right</Button>
+            </StackPanel>
+        </materialDesign:PopupBox>   
+    </Grid>
+</UserControl>

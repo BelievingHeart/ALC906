@@ -1,0 +1,53 @@
+﻿<Window x:Class="UI.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UI"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:mainWindowViewModel="clr-namespace:Core.ViewModels.MainWindowViewModel;assembly=Core"
+        xmlns:applicationViewModel="clr-namespace:Core.ViewModels.ApplicationViewModel;assembly=Core"
+        xmlns:converters="clr-namespace:UI.Converters"
+        mc:Ignorable="d"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        Title="MainWindow" Height="350" Width="525">
+    <Window.DataContext>
+        <mainWindowViewModel:MainWindowViewModel/>
+    </Window.DataContext>
+    <Border Margin="5">
+        <DockPanel>
+            <!-- ToolBar -->
+            <ToolBarTray Orientation="Vertical" DockPanel.Dock="Left">
+                <ToolBar>
+                    <Button Command="{Binding SwitchHomePageCommand}">
+                        <materialDesign:PackIcon Kind="Home" ToolTip="Home Page" />
+                    </Button>
+                    <Separator />
+                    <Button Command="{Binding SwitchCameraHostPageCommand}">
+                        <materialDesign:PackIcon Kind="PhotoCamera" ToolTip="2D Measurements" />
+                    </Button>
+                    <Button Command="{Binding SwitchLineScanHostPageCommand}">
+                        <materialDesign:PackIcon Kind="Printer3d" ToolTip="3D Measurements" />
+                    </Button>
+                    <Separator />
+                    <Button Command="{Binding SwitchServerPageCommand}">
+                        <materialDesign:PackIcon Kind="Server" ToolTip="PLC Communications" />
+                    </Button>
+                </ToolBar>
+            </ToolBarTray>
+            
+            <Grid>
+                <!-- Pages here -->
+                <ContentControl Content="{Binding CurrentApplicationPage, Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Converter={converters:EnumToApplicationPageConverter}}"/>
+            </Grid>
+
+
+        </DockPanel>
+    </Border>
+</Window>
