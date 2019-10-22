@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\afterbunny\.Rider2019.2\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\afterbunny\.Rider2019.2\system\resharper-host\local\Transient\ReSharperHost\v192\SolutionCaches\_ALC-906.504627915.00" t="ExcludeRecursive" />
+    <e p="C:\Users\afterbunny\RiderProjects\ALC-906" t="IncludeFlat">
+      <e p="ALC-906.sln" t="IncludeFlat" />
+      <e p="Core" t="IncludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="Commands" t="Include">
+          <e p="ParameterizedCommand.cs" t="Include" />
+          <e p="RelayCommand.cs" t="Include" />
+          <e p="SimpleCommand.cs" t="Include" />
+        </e>
+        <e p="Core.csproj" t="IncludeRecursive" />
+        <e p="Enums" t="Include">
+          <e p="ApplicationPageType.cs" t="Include" />
+        </e>
+        <e p="Helpers" t="Include">
+          <e p="ExpressionHelper.cs" t="Include" />
+        </e>
+        <e p="IoC" t="Include">
+          <e p="Interface" t="Include">
+            <e p="ILoggingServiceProvider.cs" t="Include" />
+          </e>
+          <e p="IoC.cs" t="Include" />
+        </e>
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="ViewModels" t="Include">
+          <e p="ApplicationViewModel" t="Include">
+            <e p="ApplicationViewModel.cs" t="Include" />
+          </e>
+          <e p="MainWindowViewModel" t="Include">
+            <e p="MainWindowViewModel.cs" t="Include" />
+          </e>
+          <e p="ViewModelBase.cs" t="Include" />
+        </e>
+      </e>
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="UI" t="IncludeRecursive">
+        <e p="App.config" t="Include" />
+        <e p="App.xaml" t="Include" />
+        <e p="App.xaml.cs" t="Include" />
+        <e p="AttachedProperties" t="Include">
+          <e p="AttachedPropertyOwnerBase.cs" t="Include" />
+        </e>
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="Converters" t="Include">
+          <e p="EnumToApplicationPageConverter.cs" t="Include" />
+          <e p="EventToCommandBehaviour.cs" t="Include" />
+          <e p="ValueConverterBase.cs" t="Include" />
+        </e>
+        <e p="DataAccess" t="Include">
+          <e p="LoggingServiceProvider.cs" t="Include" />
+        </e>
+        <e p="FodyWeavers.xml" t="Include" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="packages.config" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+          <e p="Resources.Designer.cs" t="Include" />
+          <e p="Resources.resx" t="Include" />
+        </e>
+        <e p="UI.csproj" t="IncludeRecursive" />
+        <e p="Views" t="Include">
+          <e p="CameraHostView" t="Include">
+            <e p="CameraHostView.xaml" t="Include" />
+            <e p="CameraHostView.xaml.cs" t="Include" />
+          </e>
+          <e p="CameraView" t="Include">
+            <e p="CameraView.xaml" t="Include" />
+            <e p="CameraView.xaml.cs" t="Include" />
+          </e>
+          <e p="HomeView" t="Include">
+            <e p="HomeView.xaml" t="Include" />
+            <e p="HomeView.xaml.cs" t="Include" />
+          </e>
+          <e p="LineScanHostView" t="Include">
+            <e p="LineScanHostView.xaml" t="Include" />
+            <e p="LineScanHostView.xaml.cs" t="Include" />
+          </e>
+          <e p="MainWindow.xaml" t="Include" />
+          <e p="MainWindow.xaml.cs" t="Include" />
+          <e p="ServerView" t="Include">
+            <e p="ServerView.xaml" t="Include" />
+            <e p="ServerView.xaml.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+    </e>
+  </component>
+</project>

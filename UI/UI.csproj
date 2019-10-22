@@ -43,6 +43,10 @@
     <Reference Include="MaterialDesignThemes.Wpf, Version=2.6.0.325, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MaterialDesignThemes.2.6.0\lib\net45\MaterialDesignThemes.Wpf.dll</HintPath>
     </Reference>
+    <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7">
+      <HintPath>..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -72,6 +76,7 @@
     <Compile Include="Converters\EnumToApplicationPageConverter.cs" />
     <Compile Include="Converters\EventToCommandBehaviour.cs" />
     <Compile Include="Converters\ValueConverterBase.cs" />
+    <Compile Include="DataAccess\LoggingServiceProvider.cs" />
     <Compile Include="Views\CameraHostView\CameraHostView.xaml.cs">
       <DependentUpon>CameraHostView.xaml</DependentUpon>
     </Compile>

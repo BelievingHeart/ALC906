@@ -1,4 +1,5 @@
-﻿﻿using Ninject;
+﻿﻿using Core.IoC.Interface;
+ using Ninject;
 
  namespace Core.IoC
 {
@@ -50,6 +51,12 @@
         {
             return Kernel.Get<T>();
         }
-        
+
+        #region Property Shortcuts
+
+        public static ILoggingServiceProvider Logger => Get<ILoggingServiceProvider>();
+
+        #endregion
+
     }
 }

@@ -20,21 +20,28 @@ namespace Core.ViewModels.MainWindowViewModel
         private void SwitchHomePage()
         {
             ApplicationViewModel.ApplicationViewModel.Instance.CurrentApplicationPage = ApplicationPageType.Home;
+            IoC.IoC.Logger.Log("Switched to home page");
         }
         
         private void SwitchCameraHostPage()
         {
             ApplicationViewModel.ApplicationViewModel.Instance.CurrentApplicationPage = ApplicationPageType.CameraHostPage;
+            IoC.IoC.Logger.Log("Switched to camera host page");
+
         }
         
         private void SwitchLineScanHostPage()
         {
             ApplicationViewModel.ApplicationViewModel.Instance.CurrentApplicationPage = ApplicationPageType.LineScanHostPage;
+            IoC.IoC.Logger.Log("Switched to line scan host page");
+
         }
         
         private void SwitchServerPage()
         {
             ApplicationViewModel.ApplicationViewModel.Instance.CurrentApplicationPage = ApplicationPageType.ServerPage;
+            IoC.IoC.Logger.Log("Switched to server page");
+
         }
 
         #endregion

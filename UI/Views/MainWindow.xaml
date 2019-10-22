@@ -20,6 +20,14 @@
     <Window.DataContext>
         <mainWindowViewModel:MainWindowViewModel/>
     </Window.DataContext>
+    <!-- Key bindings -->
+    <Window.InputBindings>
+        <KeyBinding Key="F1" Command="{Binding SwitchHomePageCommand}"/>
+        <KeyBinding Key="F2" Command="{Binding SwitchCameraHostPageCommand}"/>
+        <KeyBinding Key="F3" Command="{Binding SwitchLineScanHostPageCommand}"/>
+        <KeyBinding Key="F4" Command="{Binding SwitchServerPageCommand}"/>
+    </Window.InputBindings>
+    
     <Border Margin="5">
         <DockPanel>
             <!-- ToolBar -->
@@ -42,7 +50,12 @@
                 </ToolBar>
             </ToolBarTray>
             
+            
+            
             <Grid>
+                <!-- Snack bar -->
+                <materialDesign:Snackbar VerticalAlignment="Top" HorizontalAlignment="Center" MessageQueue="{Binding MessageQueue, Source={x:Static applicationViewModel:ApplicationViewModel.Instance}}"/>
+                
                 <!-- Pages here -->
                 <ContentControl Content="{Binding CurrentApplicationPage, Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Converter={converters:EnumToApplicationPageConverter}}"/>
             </Grid>

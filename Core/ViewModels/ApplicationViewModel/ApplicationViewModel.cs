@@ -1,4 +1,6 @@
-﻿using Core.Enums;
+﻿using System;
+using Core.Enums;
+using MaterialDesignThemes.Wpf;
 
 namespace Core.ViewModels.ApplicationViewModel
 {
@@ -14,7 +16,8 @@ namespace Core.ViewModels.ApplicationViewModel
         public static ApplicationViewModel Instance => _instance;
         private static ApplicationViewModel _instance = new ApplicationViewModel()
         {
-            CurrentApplicationPage = ApplicationPageType.Home
+            CurrentApplicationPage = ApplicationPageType.Home,
+            MessageQueue = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(3000))
         };
 
 
@@ -22,7 +25,10 @@ namespace Core.ViewModels.ApplicationViewModel
         /// Current application page
         /// </summary>
         public ApplicationPageType CurrentApplicationPage { get; set; }
-        
-        
+
+        /// <summary>
+        /// Message queue for global UI logging
+        /// </summary>
+        public ISnackbarMessageQueue MessageQueue { get; set; }
     }
 }
