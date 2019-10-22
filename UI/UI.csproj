@@ -96,6 +96,7 @@
     <Compile Include="Views\ServerView\ServerView.xaml.cs">
       <DependentUpon>ServerView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\UserControlBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

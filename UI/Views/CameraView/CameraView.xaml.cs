@@ -5,7 +5,7 @@ namespace UI.Views.CameraView
     /// <summary>
     /// View for individual camera
     /// </summary>
-    public partial class CameraView : UserControl
+    public partial class CameraView : UserControlBase
     {
         public CameraView()
         {

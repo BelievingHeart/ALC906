@@ -2,7 +2,7 @@
 
 namespace UI.Views.ServerView
 {
-    public partial class ServerView : UserControl
+    public partial class ServerView : UserControlBase
     {
         public ServerView()
         {
