@@ -39,6 +39,7 @@
             </ScrollViewer>
         </Expander>
         
+        <!-- Fai items -->
         <DataGrid Grid.Column="1"></DataGrid>
     </Grid>
 </views:UserControlBase>

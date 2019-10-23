@@ -17,7 +17,7 @@ namespace Core.ViewModels.ApplicationViewModel
         private static ApplicationViewModel _instance = new ApplicationViewModel()
         {
             CurrentApplicationPage = ApplicationPageType.Home,
-            MessageQueue = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(3000))
+            MessageQueue = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(3000)),
         };
 
 
@@ -30,5 +30,6 @@ namespace Core.ViewModels.ApplicationViewModel
         /// Message queue for global UI logging
         /// </summary>
         public ISnackbarMessageQueue MessageQueue { get; set; }
+        
     }
 }

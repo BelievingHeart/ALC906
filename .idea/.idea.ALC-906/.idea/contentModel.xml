@@ -15,9 +15,13 @@
         <e p="Core.csproj" t="IncludeRecursive" />
         <e p="Enums" t="Include">
           <e p="ApplicationPageType.cs" t="Include" />
+          <e p="CameraPageType.cs" t="Include" />
         </e>
         <e p="Helpers" t="Include">
           <e p="ExpressionHelper.cs" t="Include" />
+        </e>
+        <e p="ImageProcessing" t="Include">
+          <e p="IMeasurementProcedure.cs" t="Include" />
         </e>
         <e p="IoC" t="Include">
           <e p="Interface" t="Include">
@@ -33,6 +37,9 @@
         <e p="ViewModels" t="Include">
           <e p="ApplicationViewModel" t="Include">
             <e p="ApplicationViewModel.cs" t="Include" />
+          </e>
+          <e p="CameraViewModel" t="Include">
+            <e p="CameraViewModel.cs" t="Include" />
           </e>
           <e p="MainWindowViewModel" t="Include">
             <e p="MainWindowViewModel.cs" t="Include" />
@@ -51,6 +58,7 @@
         <e p="bin" t="ExcludeRecursive" />
         <e p="Converters" t="Include">
           <e p="EnumToApplicationPageConverter.cs" t="Include" />
+          <e p="EnumToCameraPageConverter .cs" t="Include" />
           <e p="EventToCommandBehaviour.cs" t="Include" />
           <e p="ValueConverterBase.cs" t="Include" />
         </e>

@@ -74,6 +74,7 @@
     </Compile>
     <Compile Include="AttachedProperties\AttachedPropertyOwnerBase.cs" />
     <Compile Include="Converters\EnumToApplicationPageConverter.cs" />
+    <Compile Include="Converters\EnumToCameraPageConverter .cs" />
     <Compile Include="Converters\EventToCommandBehaviour.cs" />
     <Compile Include="Converters\ValueConverterBase.cs" />
     <Compile Include="DataAccess\LoggingServiceProvider.cs" />

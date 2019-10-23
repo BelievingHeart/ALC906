@@ -10,7 +10,7 @@
              d:DesignHeight="300" d:DesignWidth="300" Background="Aqua">
     <Grid>
         <!-- Camera view -->
-        <ContentControl Grid.Column="0"></ContentControl>
+        <ContentControl Grid.Column="0" Content="{Binding }"></ContentControl>
         
         <!-- Page switch -->
         <materialDesign:PopupBox PlacementMode="TopAndAlignLeftEdges"   Style="{StaticResource MaterialDesignMultiFloatingActionPopupBox}"

@@ -21,6 +21,7 @@ namespace UI.Views
         {
             if (HasLoaded) return;
             HasLoaded = true;
+            Loaded -= OnLoaded;
             OnFirstLoaded();
         }
 

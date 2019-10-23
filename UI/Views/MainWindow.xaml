@@ -32,6 +32,7 @@
         <DockPanel>
             <!-- ToolBar -->
             <ToolBarTray Orientation="Vertical" DockPanel.Dock="Left">
+           
                 <ToolBar>
                     <Button Command="{Binding SwitchHomePageCommand}">
                         <materialDesign:PackIcon Kind="Home" ToolTip="Home Page" />
