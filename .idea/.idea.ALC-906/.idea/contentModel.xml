@@ -47,6 +47,21 @@
           <e p="ViewModelBase.cs" t="Include" />
         </e>
       </e>
+      <e p="HKVisions" t="IncludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="Enums" t="Include">
+          <e p="CameraTriggerModeType.cs" t="Include" />
+          <e p="CameraTriggerSourceType.cs" t="Include" />
+          <e p="CameraType.cs" t="Include" />
+        </e>
+        <e p="HKCamera.cs" t="Include" />
+        <e p="HKCameraManager.cs" t="Include" />
+        <e p="HKVisions.csproj" t="IncludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+      </e>
       <e p="packages" t="ExcludeRecursive" />
       <e p="UI" t="IncludeRecursive">
         <e p="App.config" t="Include" />
