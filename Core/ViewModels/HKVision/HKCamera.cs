@@ -5,8 +5,10 @@ using System.Runtime.InteropServices;
 using HalconDotNet;
 using HKVisions.Enums;
 using MvCamCtrl.NET;
+using Color = System.Drawing.Color;
+using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
-namespace HKVisions
+namespace Core.ViewModels.HKVision
 {
     //TODO: trigger mode and trigger source
     public class HKCamera

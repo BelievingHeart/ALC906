@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using HKVisions.Enums;
 using MvCamCtrl.NET;
 
-namespace HKVisions
+namespace Core.ViewModels.HKVision
 {
     /// <summary>
     /// Manages HK cameras attached
