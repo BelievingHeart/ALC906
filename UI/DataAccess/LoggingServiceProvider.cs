@@ -1,5 +1,5 @@
 ﻿using Core.IoC.Interface;
-using Core.ViewModels.ApplicationViewModel;
+using Core.ViewModels.Application;
 
 namespace UI.DataAccess
 {

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Management.Instrumentation;
 using System.Windows.Controls;
 using Core.Enums;
-using Core.ViewModels.ApplicationViewModel;
 using UI.Views.CameraHostView;
 using UI.Views.HomeView;
 using UI.Views.LineScanHostView;
@@ -38,10 +37,8 @@ namespace UI.Converters
                     : pageEnum == ApplicationPageType.Home
                         ? ApplicationPages.First(ele => ele is HomeView)
                         : pageEnum == ApplicationPageType.LineScanHostPage
-                            ? ApplicationPages.First(ele => ele is LineScanHostView)
-                            : pageEnum == ApplicationPageType.ServerPage
-                                ? ApplicationPages.First(ele => ele is ServerView)
-                                : throw new InstanceNotFoundException("No such home page type");
+                            ? ApplicationPages.First(ele => ele is LineScanHostView) :
+                            ApplicationPages.First(ele => ele is ServerView);
             }
             // If the list not contain an instance of such type
             // Add one and return it

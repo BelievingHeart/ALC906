@@ -1,4 +1,4 @@
-﻿namespace HKVisions.Enums
+﻿namespace Core.Enums
 {
     public enum CameraTriggerSourceType
     {

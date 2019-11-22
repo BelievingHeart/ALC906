@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ContentModelStore">
     <e p="C:\Users\afterbunny\.Rider2019.2\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\afterbunny\.Rider2019.2\system\resharper-host\local\Transient\ReSharperHost\v192\SolutionCaches\_ALC-906.504627915.00" t="ExcludeRecursive" />
-    <e p="C:\Users\afterbunny\RiderProjects\ALC-906" t="IncludeFlat">
+    <e p="C:\Users\afterbunny\.Rider2019.2\system\resharper-host\local\Transient\ReSharperHost\v192\SolutionCaches\_ALC-906.-148365339.00" t="ExcludeRecursive" />
+    <e p="C:\Users\afterbunny\Desktop\Projects\ALC\ALC-906" t="IncludeFlat">
       <e p="ALC-906.sln" t="IncludeFlat" />
       <e p="Core" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
@@ -13,6 +13,10 @@
           <e p="SimpleCommand.cs" t="Include" />
         </e>
         <e p="Core.csproj" t="IncludeRecursive" />
+        <e p="CsvSerializer" t="Include">
+          <e p="CsvSerializer.cs" t="Include" />
+          <e p="ICsvColumnElement.cs" t="Include" />
+        </e>
         <e p="Enums" t="Include">
           <e p="ApplicationPageType.cs" t="Include" />
           <e p="CameraPageType.cs" t="Include" />
@@ -20,11 +24,12 @@
           <e p="CameraTriggerSourceType.cs" t="Include" />
           <e p="CameraType.cs" t="Include" />
         </e>
-        <e p="Helpers" t="Include">
-          <e p="ExpressionHelper.cs" t="Include" />
-        </e>
+        <e p="Helpers" t="Include" />
         <e p="ImageProcessing" t="Include">
-          <e p="IMeasurementProcedure.cs" t="Include" />
+          <e p="FindLineParam.cs" t="Include" />
+          <e p="IMeasurementProcedure2D.cs" t="Include" />
+          <e p="MeasurementResult2d.cs" t="Include" />
+          <e p="MeasurementResult3D.cs" t="Include" />
         </e>
         <e p="IoC" t="Include">
           <e p="Interface" t="Include">
@@ -32,26 +37,30 @@
           </e>
           <e p="IoC.cs" t="Include" />
         </e>
+        <e p="Models" t="Include">
+          <e p="ThreadSafeFixedSizeQueue.cs" t="Include" />
+        </e>
         <e p="obj" t="ExcludeRecursive" />
         <e p="packages.config" t="Include" />
         <e p="Properties" t="Include">
           <e p="AssemblyInfo.cs" t="Include" />
         </e>
         <e p="ViewModels" t="Include">
-          <e p="ApplicationViewModel" t="Include">
+          <e p="Application" t="Include">
             <e p="ApplicationViewModel.cs" t="Include" />
           </e>
-          <e p="CameraViewModel" t="Include">
-            <e p="CameraViewModel.cs" t="Include" />
+          <e p="CameraHost" t="Include">
+            <e p="CameraHostViewModel.cs" t="Include" />
           </e>
-          <e p="HKVision" t="Include">
-            <e p="HKCamera.cs" t="Include" />
-            <e p="HKCameraManager.cs" t="Include" />
+          <e p="Fai" t="Include">
+            <e p="FaiItem.cs" t="Include" />
           </e>
-          <e p="MainWindowViewModel" t="Include">
+          <e p="MainWindow" t="Include">
             <e p="MainWindowViewModel.cs" t="Include" />
           </e>
-          <e p="ViewModelBase.cs" t="Include" />
+          <e p="Vision2D" t="Include">
+            <e p="Vision2DViewModel.cs" t="Include" />
+          </e>
         </e>
       </e>
       <e p="packages" t="ExcludeRecursive" />
@@ -65,7 +74,6 @@
         <e p="bin" t="ExcludeRecursive" />
         <e p="Converters" t="Include">
           <e p="EnumToApplicationPageConverter.cs" t="Include" />
-          <e p="EnumToCameraPageConverter .cs" t="Include" />
           <e p="EventToCommandBehaviour.cs" t="Include" />
           <e p="ValueConverterBase.cs" t="Include" />
         </e>
@@ -86,10 +94,6 @@
             <e p="CameraHostView.xaml" t="Include" />
             <e p="CameraHostView.xaml.cs" t="Include" />
           </e>
-          <e p="CameraView" t="Include">
-            <e p="CameraView.xaml" t="Include" />
-            <e p="CameraView.xaml.cs" t="Include" />
-          </e>
           <e p="HomeView" t="Include">
             <e p="HomeView.xaml" t="Include" />
             <e p="HomeView.xaml.cs" t="Include" />
@@ -105,8 +109,155 @@
             <e p="ServerView.xaml.cs" t="Include" />
           </e>
           <e p="UserControlBase.cs" t="Include" />
+          <e p="Vision2D" t="Include">
+            <e p="CameraView.xaml.cs" t="Include" />
+            <e p="Vision2DView.xaml" t="Include" />
+          </e>
         </e>
       </e>
+    </e>
+    <e p="C:\Users\afterbunny\Desktop\Projects\ALC\HKCameraDev\HKCameraDev.Core" t="IncludeRecursive">
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="Commands" t="Include">
+        <e p="ParameterizedCommand.cs" t="Include" />
+        <e p="RelayCommand.cs" t="Include" />
+        <e p="SimpleCommand.cs" t="Include" />
+      </e>
+      <e p="Enums" t="Include">
+        <e p="CameraTriggerModeType.cs" t="Include" />
+        <e p="CameraTriggerSourceType.cs" t="Include" />
+        <e p="CameraType.cs" t="Include" />
+      </e>
+      <e p="Helpers" t="Include" />
+      <e p="HKCameraDev.Core.csproj" t="IncludeRecursive" />
+      <e p="IoC" t="Include">
+        <e p="Interface" t="Include">
+          <e p="IImageProvider.cs" t="Include" />
+          <e p="ISerializationManager.cs" t="Include" />
+          <e p="IUILogger.cs" t="Include" />
+        </e>
+        <e p="IoC.cs" t="Include" />
+      </e>
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="packages.config" t="Include" />
+      <e p="Properties" t="Include">
+        <e p="AssemblyInfo.cs" t="Include" />
+      </e>
+      <e p="ViewModels" t="Include">
+        <e p="ApplicationViewModel" t="Include">
+          <e p="ApplicationViewModel.cs" t="Include" />
+        </e>
+        <e p="Camera" t="Include">
+          <e p="CameraViewModel.cs" t="Include" />
+          <e p="HKCameraManager.cs" t="Include" />
+          <e p="SaveImageLogic.cs" t="Include" />
+        </e>
+        <e p="CameraHost" t="Include">
+          <e p="CameraHostViewModel.cs" t="Include" />
+        </e>
+      </e>
+    </e>
+    <e p="C:\Users\afterbunny\Desktop\Projects\ALC\HKCameraDev\UI\FodyWeavers.xml" t="Include" />
+    <e p="C:\Users\afterbunny\Desktop\Projects\ALC\LJX8000Dev\LJX8000.Core" t="IncludeRecursive">
+      <e p="Attributes" t="Include">
+        <e p="AutoSerializeAttribute.cs" t="Include" />
+      </e>
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="Commands" t="Include">
+        <e p="ParameterizedCommand.cs" t="Include" />
+        <e p="RelayCommand.cs" t="Include" />
+        <e p="SimpleCommand.cs" t="Include" />
+      </e>
+      <e p="Enums" t="Include">
+        <e p="ApplicationPage.cs" t="Include" />
+        <e p="CameraTriggerModeType.cs" t="Include" />
+        <e p="CameraTriggerSourceType.cs" t="Include" />
+        <e p="CameraType.cs" t="Include" />
+        <e p="DeviceStatus.cs" t="Include" />
+      </e>
+      <e p="Hdevs" t="Include">
+        <e p="Colorization.cs" t="Include" />
+      </e>
+      <e p="Helpers" t="Include">
+        <e p="HalconHelpers.cs" t="Include" />
+        <e p="IpHelper.cs" t="Include" />
+      </e>
+      <e p="IoC" t="Include">
+        <e p="Interface" t="Include">
+          <e p="IUILogger.cs" t="Include" />
+        </e>
+        <e p="IoC.cs" t="Include" />
+      </e>
+      <e p="LJX8000.Core.csproj" t="IncludeRecursive" />
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="packages.config" t="Include" />
+      <e p="Properties" t="Include">
+        <e p="AssemblyInfo.cs" t="Include" />
+      </e>
+      <e p="ViewModels" t="Include">
+        <e p="Controller" t="Include">
+          <e p="ControllerManager.cs" t="Include" />
+          <e p="ControllerViewModel.cs" t="Include" />
+        </e>
+        <e p="ControllerConfiguration" t="Include">
+          <e p="ControllerConfigurationViewModel.cs" t="Include" />
+        </e>
+        <e p="ControllerHostViewModel.cs" t="Include" />
+        <e p="ImageInfo" t="Include">
+          <e p="ImageInfoViewModel.cs" t="Include" />
+        </e>
+        <e p="IpConfig" t="Include">
+          <e p="IpConfigViewModel.cs" t="Include" />
+        </e>
+        <e p="Library" t="Include">
+          <e p="LibraryViewModel.cs" t="Include" />
+        </e>
+        <e p="SideBarMessageItemViewModel" t="Include">
+          <e p="SideBarMessageItemViewModel.cs" t="Include" />
+        </e>
+      </e>
+    </e>
+    <e p="C:\Users\afterbunny\Desktop\Projects\ALC\LJX8000Dev\UI\FodyWeavers.xml" t="Include" />
+    <e p="C:\Users\afterbunny\Desktop\Projects\ALC\PLCCommunication\PLCCommunication.Core" t="IncludeRecursive">
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="Commands" t="Include">
+        <e p="ParameterizedCommand.cs" t="Include" />
+        <e p="RelayCommand.cs" t="Include" />
+        <e p="SimpleCommand.cs" t="Include" />
+      </e>
+      <e p="Helpers" t="Include" />
+      <e p="Models" t="Include" />
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="packages.config" t="Include" />
+      <e p="PLCCommunication.Core.csproj" t="IncludeRecursive" />
+      <e p="PlcMessagePack.cs" t="Include" />
+      <e p="Properties" t="Include">
+        <e p="AssemblyInfo.cs" t="Include" />
+      </e>
+      <e p="ViewModels" t="Include">
+        <e p="AlcServerViewModel.cs" t="Include" />
+        <e p="LibraryViewModel.cs" t="Include" />
+      </e>
+    </e>
+    <e p="C:\Users\afterbunny\Desktop\Projects\ALC\WPFCommon" t="IncludeRecursive">
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="Helpers" t="Include">
+        <e p="AutoSerializableHelper.cs" t="Include" />
+        <e p="DirectoryHelper.cs" t="Include" />
+        <e p="ExpressionHelper.cs" t="Include" />
+      </e>
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="packages.config" t="Include" />
+      <e p="Properties" t="Include">
+        <e p="AssemblyInfo.cs" t="Include" />
+      </e>
+      <e p="ViewModels" t="Include">
+        <e p="Base" t="Include">
+          <e p="AutoSerializableBase.cs" t="Include" />
+          <e p="ViewModelBase.cs" t="Include" />
+        </e>
+      </e>
+      <e p="WPFCommon.csproj" t="IncludeRecursive" />
     </e>
   </component>
 </project>

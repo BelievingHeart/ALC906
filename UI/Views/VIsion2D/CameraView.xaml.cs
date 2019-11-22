@@ -1,13 +1,13 @@
 ﻿using System.Windows.Controls;
 
-namespace UI.Views.CameraView
+namespace UI.Views.VIsion2D
 {
     /// <summary>
     /// View for individual camera
     /// </summary>
-    public partial class CameraView : UserControlBase
+    public partial class Vision2DView : UserControl
     {
-        public CameraView()
+        public Vision2DView()
         {
             InitializeComponent();
         }
