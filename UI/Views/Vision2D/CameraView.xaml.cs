@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace UI.Views.VIsion2D
+namespace UI.Views.Vision2D
 {
     /// <summary>
     /// View for individual camera

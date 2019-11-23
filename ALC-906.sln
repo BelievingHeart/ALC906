@@ -1,19 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29411.108
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UI", "UI\UI.csproj", "{A8DA06CC-7C8B-43AB-B6FA-8D0EC8B4114A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{58D4EAF0-6487-4548-B5AF-CF2F4095549A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFCommon", "..\WPFCommon\WPFCommon\WPFCommon.csproj", "{7D6BE37F-D81B-4A5E-A1A0-A8D4381F0536}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HKCameraDev.Core", "..\HKCameraDev\HKCameraDev.Core\HKCameraDev.Core.csproj", "{43275736-8146-432F-9BA0-FDCD1EDCDA8A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PLCCommunication.Core", "..\PLCCommunication\PLCCommunication.Core\PLCCommunication.Core.csproj", "{7D6BE37F-D81B-4A5E-A1A0-A8D4381F0536}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LJX8000.Core", "..\LJX8000Dev\LJX8000.Core\LJX8000.Core.csproj", "{F11CDC69-DA81-4E84-950F-33A1C345EDEB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LJX8000.Core", "..\LJX8000Dev\LJX8000.Core\LJX8000.Core.csproj", "{43275736-8146-432F-9BA0-FDCD1EDCDA8A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFCommon", "..\WPFCommon\WPFCommon.csproj", "{5C8941CF-F5FE-491C-94A7-9A4203908913}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PLCCommunication.Core", "..\PLCCommunication\PLCCommunication.Core\PLCCommunication.Core.csproj", "{FE922DF9-E533-4310-AEE4-6BDAF738AEE1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,10 +37,14 @@ Global
 		{43275736-8146-432F-9BA0-FDCD1EDCDA8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43275736-8146-432F-9BA0-FDCD1EDCDA8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{43275736-8146-432F-9BA0-FDCD1EDCDA8A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5C8941CF-F5FE-491C-94A7-9A4203908913}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5C8941CF-F5FE-491C-94A7-9A4203908913}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5C8941CF-F5FE-491C-94A7-9A4203908913}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5C8941CF-F5FE-491C-94A7-9A4203908913}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F11CDC69-DA81-4E84-950F-33A1C345EDEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F11CDC69-DA81-4E84-950F-33A1C345EDEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F11CDC69-DA81-4E84-950F-33A1C345EDEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F11CDC69-DA81-4E84-950F-33A1C345EDEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE922DF9-E533-4310-AEE4-6BDAF738AEE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE922DF9-E533-4310-AEE4-6BDAF738AEE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE922DF9-E533-4310-AEE4-6BDAF738AEE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE922DF9-E533-4310-AEE4-6BDAF738AEE1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

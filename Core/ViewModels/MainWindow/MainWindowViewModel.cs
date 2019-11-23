@@ -1,7 +1,7 @@
 ﻿using System.Windows.Input;
-using Core.Commands;
 using Core.Enums;
 using Core.ViewModels.Application;
+using WPFCommon.Commands;
 using WPFCommon.ViewModels.Base;
 
 namespace Core.ViewModels.MainWindow
