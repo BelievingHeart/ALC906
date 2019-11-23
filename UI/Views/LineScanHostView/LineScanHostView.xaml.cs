@@ -2,7 +2,7 @@
 
 namespace UI.Views.LineScanHostView
 {
-    public partial class LineScanHostView : UserControlBase
+    public partial class LineScanHostView : UserControl
     {
         public LineScanHostView()
         {

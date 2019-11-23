@@ -18,9 +18,9 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
         Title="MainWindow" Height="350" Width="525">
-    <Window.DataContext>
-        <mainWindow:MainWindowViewModel/>
-    </Window.DataContext>
+    <!-- <Window.DataContext> -->
+    <!--     <mainWindow:MainWindowViewModel/> -->
+    <!-- </Window.DataContext> -->
     <!-- Key bindings -->
     <Window.InputBindings>
         <KeyBinding Key="F1" Command="{Binding SwitchHomePageCommand}"/>
@@ -52,7 +52,25 @@
                 </ToolBar>
             </ToolBarTray>
             
-            
+            <!-- Plc controller -->
+            <ToolBarTray DockPanel.Dock="Top">
+                <ToolBar>
+                    <!-- Plc init button -->
+                    <Button
+                        Style="{StaticResource MaterialDesignRaisedButton}"
+                        materialDesign:ButtonProgressAssist.Value="-1"
+                        materialDesign:ButtonProgressAssist.IsIndicatorVisible="True"
+                        materialDesign:ButtonProgressAssist.IsIndeterminate="True"
+                        Content="Reset" Command="{Binding  Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Path=Server.InitCommand}"
+                        Margin="2,0" />
+                    <!-- auto-run start/stop toggle -->
+                    <ToggleButton
+                        Style="{StaticResource MaterialDesignSwitchAccentToggleButton}"
+                        IsChecked="{Binding Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Path=Server.IsAutoRunning}"
+                        IsEnabled="{Binding Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Path=Server.PlcReady}" />
+                    
+                </ToolBar>
+            </ToolBarTray>
             
             <Grid>
                 <!-- Snack bar -->

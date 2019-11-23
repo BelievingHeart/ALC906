@@ -1,4 +1,6 @@
-﻿namespace UI.Views
+﻿using Core.ViewModels.MainWindow;
+
+namespace UI.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -8,6 +10,7 @@
         public MainWindow()
         {
             InitializeComponent();
+            DataContext = new MainWindowViewModel();
         }
     }
 }

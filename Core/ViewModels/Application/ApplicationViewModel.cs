@@ -5,8 +5,11 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Threading;
+using Core.Constants;
 using Core.Enums;
+using Core.Helpers;
 using Core.ImageProcessing;
 using Core.Models;
 using Core.ViewModels.Fai;
@@ -15,6 +18,8 @@ using HKCameraDev.Core.ViewModels.Camera;
 using LJX8000.Core.ViewModels.Controller;
 using MaterialDesignThemes.Wpf;
 using PLCCommunication.Core.ViewModels;
+using PropertyChanged;
+using WPFCommon.Commands;
 using WPFCommon.Helpers;
 using WPFCommon.ViewModels.Base;
 
@@ -36,25 +41,17 @@ namespace Core.ViewModels.Application
 
         private HTuple _shapeModel2D, _shapeModel3D;
 
-        private List<string> _faiItemNames = new List<string>()
-        {
-            "16.1", "16.2", 
-            "17.1", "17.2", "17.3", "17.4",
-            "18.E", "18.M",
-            "19.1", "19.2", "19.3", "19.4", "19.5", "19.6", "19.7", "19.8", 
-            "20.1", "20.2", "20.3", "20.4",  
-            "21", "22"
-        };
-
-        /// <summary>
-        /// Names of all LJX-8000A controllers
-        /// </summary>
-        private List<string> _controllerNames = new List<string>()
-        {
-            "192.168.0.1@24691", "192.168.0.2@24691", "192.168.0.3@24691"
-        };
+    
 
         private IMeasurementProcedure2D _procedure2D;
+
+        private IMeasurementProcedure3D _procedure3D;
+        
+        private object _lockerOfRoutineMessageList = new object();
+        private SocketType _socketToDisplay2D;
+        private SocketType _socketToDisplay3D;
+        private List<string> _findLineParam2DNames;
+
 
         public Dictionary<string, ThreadSafeFixedSizeQueue<MeasurementResult2D>> ResultQueues2D { get; set; } =
             new Dictionary<string, ThreadSafeFixedSizeQueue<MeasurementResult2D>>()
@@ -78,8 +75,39 @@ namespace Core.ViewModels.Application
             LoadShapeModels();
 
             LoadFaiItems();
+
+            LoadFindLineParams2D();
+
+            InitCommands();
         }
-        
+
+        private void LoadFindLineParams2D()
+        {
+            FindLineParams2D = AutoSerializableHelper.LoadAutoSerializables<FindLineParam>(_findLineParam2DNames, DirectoryConstants.FindLineParamsConfigDir).ToList();
+        }
+
+        private void InitCommands()
+        {
+            SwitchSocketView2DCommand = new RelayCommand(SwitchSocketView2D);
+            ManualTest2DCommand = new SimpleCommand(o=> RunOnlySingleFireIsAllowedEachTimeCommand(()=>IsBusyRunningManualTest2D, async ()=> await RunManualTest2D()), o=>!Server.IsAutoRunning);
+        }
+
+        private async Task RunManualTest2D()
+        {
+            // Preserve images for next manual run
+            var images = ResultToDisplay2D.Images;
+            var result2D =
+                await Task.Run(() => _procedure2D.Execute(images, FindLineParams2D.ToDict()));
+            result2D.Images = images;
+            
+            ResultToDisplay2D = result2D;
+        }
+
+        private void SwitchSocketView2D()
+        {
+            SocketToDisplay2D = _socketToDisplay2D == SocketType.Left ? SocketType.Right : SocketType.Left;
+        }
+
         private void SetupServer()
         {
             Server = new AlcServerViewModel();
@@ -87,8 +115,22 @@ namespace Core.ViewModels.Application
             Server.AutoRunStopRequested += () => LogRoutine("Auto-mode-stop requested from plc");
             Server.InitRequested += () => LogRoutine("Init requested from plc");
             Server.ClientHooked += socket => LogRoutine(socket.RemoteEndPoint + " is hooked");
+            Server.CustomCommandReceived += PlcCustomCommandHandler;
         }
-        
+
+        private void PlcCustomCommandHandler(int commandId)
+        {
+            switch (commandId)
+            {
+                case PlcMessagePackConstants.CommandIdLeftSocketArrived:
+                    CurrentArrivedSocket = SocketType.Left;
+                    break;
+                case PlcMessagePackConstants.CommandIdRightSocketArrived:
+                    CurrentArrivedSocket = SocketType.Right;
+                    break;
+            }
+      }
+
         private void SetupCameras()
         {
             HKCameraManager.ScannedForAttachedCameras();
@@ -99,7 +141,7 @@ namespace Core.ViewModels.Application
         
         private void SetupLaserControllers()
         {
-            ControllerManager.AttachedControllers = new List<ControllerViewModel>(_controllerNames.Select(name =>
+            ControllerManager.AttachedControllers = new List<ControllerViewModel>(NameConstants.ControllerNames.Select(name =>
                 new ControllerViewModel()
                 {
                     Name = name,
@@ -109,7 +151,7 @@ namespace Core.ViewModels.Application
                 }).OrderBy(c => c.Name));
             ControllerManager.Init();
 
-            for (int i = 0; i < _controllerNames.Count; i++)
+            for (int i = 0; i < NameConstants.ControllerNames.Count; i++)
             {
                 var index = i;
                 ControllerManager.AttachedControllers[i].RunFinished +=
@@ -120,22 +162,37 @@ namespace Core.ViewModels.Application
                     };
             }
 
-            ControllerManager.AttachedControllers[_controllerNames.Count - 1].RunFinished +=
-                (heightImages, intensityImages) => Summarize();
+            ControllerManager.AttachedControllers[NameConstants.ControllerNames.Count - 1].RunFinished +=
+                (heightImages, intensityImages) => OnLastLaserFinished();
+        }
+
+        private void OnLastLaserFinished()
+        {
+            Summarize();
+            UpdateResultsToDisplay();
+        }
+
+        private void UpdateResultsToDisplay()
+        {
+            // 2D
+            ResultToDisplay2D = SocketToDisplay2D == SocketType.Left ? Result2DLeft : Result2DRight;
+            
+            // 3D
+            ResultToDisplay3D = SocketToDisplay3D == SocketType.Left ? Result3DLeft : Result3DRight;
         }
 
         private void LoadFaiItems()
         {
-            FaiItemsLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(_controllerNames, LeftFaiConfigDir)
+            FaiItemsLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames, DirectoryConstants.LeftFaiConfigDir)
                 .ToList();
-            FaiItemsRight = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(_controllerNames, RightFaiConfigDir)
+            FaiItemsRight = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames, DirectoryConstants.RightFaiConfigDir)
                 .ToList();
         }
 
         private void LoadShapeModels()
         {
-            HOperatorSet.ReadShapeModel(_shapeModelPath2D, out _shapeModel2D);
-            HOperatorSet.ReadShapeModel(_shapeModelPath3D, out _shapeModel3D);
+            HOperatorSet.ReadShapeModel(PathConstants.ShapeModelPath2D, out _shapeModel2D);
+            HOperatorSet.ReadShapeModel(PathConstants.ShapeModelPath3D, out _shapeModel3D);
         }
 
        
@@ -145,20 +202,22 @@ namespace Core.ViewModels.Application
         /// </summary>
         private void Summarize()
         {
-            var result3DLeft = MeasureImages3D(ImageInputs3DLeft, _shapeModel3D);
-            var result3DRight = MeasureImages3D(ImageInputs3DRight, _shapeModel3D);
-            var result2DLeft = ResultQueues2D["Left"].DequeueThreadSafe();
-            var result2DRight = ResultQueues2D["Right"].DequeueThreadSafe();
+            Result3DLeft = MeasureImages3D(ImageInputs3DLeft, _shapeModel3D);
+            Result3DRight = MeasureImages3D(ImageInputs3DRight, _shapeModel3D);
+            Result2DLeft = ResultQueues2D["Left"].DequeueThreadSafe();
+            Result2DRight = ResultQueues2D["Right"].DequeueThreadSafe();
 
-            var faiResultDictLeft = MergeResultDicts(result3DLeft.FaiResults, result2DLeft.FaiResults);
-            var faiResultDictRight = MergeResultDicts(result3DRight.FaiResults, result2DRight.FaiResults);
+            var faiResultDictLeft = MergeResultDicts(Result3DLeft.FaiResults, Result2DLeft.FaiResults);
+            var faiResultDictRight = MergeResultDicts(Result3DRight.FaiResults, Result2DRight.FaiResults);
 
             UpdateFaiItems(FaiItemsLeft, faiResultDictLeft);
             UpdateFaiItems(FaiItemsRight, faiResultDictRight);
 
-            LeftDecision = GetDecision(result3DLeft.ItemExists, FaiItemsLeft);
-            RightDecision = GetDecision(result3DRight.ItemExists, FaiItemsRight);
+            LeftDecision = GetDecision(Result3DLeft.ItemExists, FaiItemsLeft);
+            RightDecision = GetDecision(Result3DRight.ItemExists, FaiItemsRight);
         }
+
+
 
         /// <summary>
         /// Decide whether the item is missing, passed or rejected
@@ -217,20 +276,101 @@ namespace Core.ViewModels.Application
             //TODO: replace dummy find-line-params
             Task.Run(() =>
             {
-                var result = _procedure2D.Execute(images, new Dictionary<string, FindLineParam>());
-                if (result.IsLeft)
+                if (CurrentArrivedSocket == SocketType.Left)
                 {
+                    var result = _procedure2D.Execute(images, FindLineParams2D.ToDict());
+                    result.Images = images;
                     ResultQueues2D["Left"].EnqueueThreadSafe(result);
                 }
                 else
                 {
+                    var result = _procedure2D.Execute(images, FindLineParams2D.ToDict());
+                    result.Images = images;
                     ResultQueues2D["Right"].EnqueueThreadSafe(result);
                 }
             });
         }
+        
+        public void LogRoutine(string message)
+        {
+            Dispatcher.CurrentDispatcher.Invoke(() =>
+            {
+                lock (_lockerOfRoutineMessageList)
+                {
+                    RoutineMessageList.Add(DateTime.Now.ToString("T") + " > " + message);
+                    // Remove some messages if overflows
+                    if (RoutineMessageList.Count > _maxRoutineLogs)
+                    {
+                        RoutineMessageList =
+                            new ObservableCollection<string>(RoutineMessageList.Skip(_maxRoutineLogs / 3));
+                    }
+                }
+            });
+        }
 
+        /// <summary>
+        /// Current image to display in Vision2DView
+        /// </summary>
+
+        #region Properties
+
+        public List<FindLineParam> FindLineParams2D { get; set; }
+
+        public bool IsBusyRunningManualTest2D { get; set; }
+
+        public HImage ImageToDisplay2D => ResultToDisplay2D.Images?[ImageIndexToDisplay2D];
+
+        /// <summary>
+        /// Index of current displayed image in Vision2DView
+        /// </summary>
+       
+        [AlsoNotifyFor(nameof(ImageToDisplay2D))]
+        public int ImageIndexToDisplay2D { get; set; } = 0;
+
+        /// <summary>
+        /// 2D image result from left or right socket
+        /// </summary>
+        [AlsoNotifyFor(nameof(ImageToDisplay2D))]
+        public MeasurementResult2D ResultToDisplay2D { get; set; }
+
+        /// <summary>
+        /// Current 
+        /// </summary>
+        public SocketType SocketToDisplay2D
+        {
+            get { return _socketToDisplay2D; }
+            set
+            {
+                _socketToDisplay2D = value;
+                ResultToDisplay2D = value == SocketType.Left ? Result2DLeft : Result2DRight;
+            }
+        }
+
+
+        public MeasurementResult2D Result2DRight { get; set; }
+
+        public MeasurementResult2D Result2DLeft { get; set; }
+
+
+        public SocketType SocketToDisplay3D
+        {
+            get { return _socketToDisplay3D; }
+            set
+            {
+                _socketToDisplay3D = value;
+                ResultToDisplay3D = value == SocketType.Left ? Result3DLeft : Result3DRight;
+            }
+        }
+
+        public MeasurementResult3D ResultToDisplay3D { get; set; }
+
+        public MeasurementResult3D Result3DRight { get; set; }
+
+        public MeasurementResult3D Result3DLeft { get; set; }
+        
         public List<FaiItem> FaiItemsLeft { get; set; }
 
+        public SocketType CurrentArrivedSocket { get; set; }
         public MeasurementDecision LeftDecision { get; set; }
         public MeasurementDecision RightDecision { get; set; }
 
@@ -238,6 +378,16 @@ namespace Core.ViewModels.Application
 
         public List<HImage> ImageInputs3DLeft { get; set; } = new List<HImage>() {null, null, null};
         public List<HImage> ImageInputs3DRight { get; set; } = new List<HImage>() {null, null, null};
+
+        /// <summary>
+        /// Switch 2D view between left and right socket
+        /// </summary>
+        public ICommand SwitchSocketView2DCommand { get; set; }
+
+        /// <summary>
+        /// Manually run test on the last 2D images
+        /// </summary>
+        public ICommand ManualTest2DCommand { get; set; }
 
         /// <summary>
         /// Current application page
@@ -260,32 +410,16 @@ namespace Core.ViewModels.Application
         /// Message list for routine logging
         /// </summary>
         public ObservableCollection<string> RoutineMessageList { get; set; } = new ObservableCollection<string>();
-
-        private object _lockerOfRoutineMessageList = new object();
-        private readonly string _shapeModelPath2D, _shapeModelPath3D;
-
-        private static string FaiConfigDir => Path.Combine(DirectoryHelper.ConfigDirectory, "Fai");
-        private static string LeftFaiConfigDir => Path.Combine(FaiConfigDir, "Left");
-        private static string RightFaiConfigDir => Path.Combine(FaiConfigDir, "Right");
-
+        
         public AlcServerViewModel Server { get; set; }
 
 
-        public void LogRoutine(string message)
-        {
-            Dispatcher.CurrentDispatcher.Invoke(() =>
-            {
-                lock (_lockerOfRoutineMessageList)
-                {
-                    RoutineMessageList.Add(DateTime.Now.ToString("T") + " > " + message);
-                    // Remove some messages if overflows
-                    if (RoutineMessageList.Count > _maxRoutineLogs)
-                    {
-                        RoutineMessageList =
-                            new ObservableCollection<string>(RoutineMessageList.Skip(_maxRoutineLogs / 3));
-                    }
-                }
-            });
-        }
+        #endregion
+
+    
+
+
+
+     
     }
 }

@@ -2,8 +2,7 @@
 
 namespace Core.ImageProcessing
 {
-    public class FindLineParam : ViewModelBase
+    public class FindLineParam : AutoSerializableBase<FindLineParam>
     {
-        public string Name { get; set; }
     }
 }
