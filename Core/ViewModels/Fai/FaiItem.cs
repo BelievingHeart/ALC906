@@ -1,10 +1,11 @@
 ﻿using System.Xml.Serialization;
 using Core.CsvSerializer;
+using PropertyChanged;
 using WPFCommon.ViewModels.Base;
 
 namespace Core.ViewModels.Fai
 {
-    public sealed class FaiItem : AutoSerializableBase<FaiItem>, ICsvColumnElement
+    public sealed partial class FaiItem : AutoSerializableBase<FaiItem>, ICsvColumnElement
     {
 
         public string CsvName
@@ -25,29 +26,33 @@ namespace Core.ViewModels.Fai
         /// <summary>
         /// Measured value
         /// </summary>
-        public double ValueUnbiased;
+        [XmlIgnore] [AlsoNotifyFor(nameof(Value))]
+        public double ValueUnbiased { get; set; }
 
         /// <summary>
         /// Measured value plus bias
         /// </summary>
+        [XmlIgnore]
          public double Value
         {
-            get { return ValueUnbiased + Bias; }
+            get { return ValueUnbiased * Weight + Bias; }
             set { throw new System.NotImplementedException(); }
         }
+
+        [XmlAttribute][AlsoNotifyFor(nameof(Value))] public double Weight { get; set; } = 1;
 
         /// <summary>
         /// Bias 
         /// </summary>
-        [XmlAttribute]public double Bias { get; set; }
+        [XmlAttribute][AlsoNotifyFor(nameof(Value))]public double Bias { get; set; }
 
 
         /// <summary>
         /// Measure result
         /// </summary>
-        public bool Passed
+        public bool Rejected
         {
-            get { return Value > MinBoundary && Value < MaxBoundary; }
+            get { return Value < MinBoundary || Value > MaxBoundary; }
         }
         
 

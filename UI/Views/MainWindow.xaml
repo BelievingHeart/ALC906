@@ -17,7 +17,8 @@
         TextOptions.TextRenderingMode="Auto"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
-        Title="MainWindow" Height="350" Width="525">
+        MinHeight="800" MinWidth="1000"
+        Title="MainWindow" >
     <!-- <Window.DataContext> -->
     <!--     <mainWindow:MainWindowViewModel/> -->
     <!-- </Window.DataContext> -->

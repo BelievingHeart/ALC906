@@ -74,6 +74,7 @@
     <Compile Include="Constants\PlcMessagePackConstants.cs" />
     <Compile Include="CsvSerializer\CsvSerializer.cs" />
     <Compile Include="CsvSerializer\ICsvColumnElement.cs" />
+    <Compile Include="DesignTime\FaiItemsListViewDesignModel.cs" />
     <Compile Include="Enums\ApplicationPageType.cs" />
     <Compile Include="Enums\CameraPageType.cs" />
     <Compile Include="Enums\CameraTriggerModeType.cs" />
@@ -97,6 +98,7 @@
     <Compile Include="ViewModels\Application\ApplicationViewModel.cs" />
     <Compile Include="ViewModels\CameraHost\CameraHostViewModel.cs" />
     <Compile Include="ViewModels\Fai\FaiItem.cs" />
+    <Compile Include="ViewModels\Fai\FaiItemUILogic.cs" />
     <Compile Include="ViewModels\Vision2D\Vision2DViewModel.cs" />
     <Compile Include="ViewModels\MainWindow\MainWindowViewModel.cs" />
   </ItemGroup>

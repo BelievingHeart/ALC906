@@ -22,18 +22,18 @@
         </halconDotNet:HSmartWindowControlWPF>
         
         <!-- Switch socket view -->
-        <Button Grid.Column="0" Command="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=SwitchSocketView2DCommand}" Margin="20" MinHeight="80" HorizontalAlignment="Left" VerticalAlignment="Top">
+        <Button Grid.Column="0" Command="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=SwitchSocketView3DCommand}" Margin="20" MinHeight="80" HorizontalAlignment="Left" VerticalAlignment="Top">
             <StackPanel>
                 <TextBlock Text="Switch socket" HorizontalAlignment="Left" FontSize="10"/>
                 <Separator/>
-                <TextBlock Text="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=SocketToDisplay2D}" FontSize="24" VerticalAlignment="Center" Margin="3"/>
+                <TextBlock Text="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=SocketToDisplay3D}" FontSize="24" VerticalAlignment="Center" Margin="3"/>
             </StackPanel>
         </Button>
 
         <GroupBox Header="Fai items" Grid.Column="1">
             <!-- Fai items view -->
             <DataGrid HorizontalAlignment="Right"
-                          ItemsSource="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=FindLineParams2D}"
+                          ItemsSource="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=FaiItems3D}"
                           CanUserSortColumns="True"
                           CanUserAddRows="False" />
         </GroupBox>

@@ -5,9 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:UI.Views.ServerView"
              xmlns:views="clr-namespace:UI.Views"
+             xmlns:faiItem="clr-namespace:UI.Views.FaiItem"
+             xmlns:designTime="clr-namespace:Core.DesignTime;assembly=Core"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
-        <TextBlock>This is a server view</TextBlock>
-    </Grid>
+    <UserControl.DataContext>
+        <designTime:FaiItemsListViewDesignModel/>
+    </UserControl.DataContext>
+    <faiItem:FaiItemListView FaiItems="{Binding FaiItems}">
+    </faiItem:FaiItemListView>
+ 
 </UserControl>

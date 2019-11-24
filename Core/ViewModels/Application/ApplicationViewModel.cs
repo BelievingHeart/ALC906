@@ -66,14 +66,14 @@ namespace Core.ViewModels.Application
         private List<FaiItem> _faiItems3DRight;
 
 
-        public Dictionary<SocketType, ThreadSafeFixedSizeQueue<MeasurementResult2D>> ResultQueues2D { get; set; } =
+        private readonly Dictionary<SocketType, ThreadSafeFixedSizeQueue<MeasurementResult2D>> _resultQueues2D  =
             new Dictionary<SocketType, ThreadSafeFixedSizeQueue<MeasurementResult2D>>()
             {
                 [SocketType.Left] = new ThreadSafeFixedSizeQueue<MeasurementResult2D>(2),
                 [SocketType.Right] = new ThreadSafeFixedSizeQueue<MeasurementResult2D>(2)
             };
 
-        private ApplicationViewModel()
+        protected ApplicationViewModel()
         {
             CurrentApplicationPage = ApplicationPageType.Home;
             MessageQueue = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(3000));
@@ -104,7 +104,13 @@ namespace Core.ViewModels.Application
         private void InitCommands()
         {
             SwitchSocketView2DCommand = new RelayCommand(SwitchSocketView2D);
+            SwitchSocketView3DCommand = new RelayCommand(SwitchSocketView3D);
             ManualTest2DCommand = new SimpleCommand(o=> RunOnlySingleFireIsAllowedEachTimeCommand(()=>IsBusyRunningManualTest2D, async ()=> await RunManualTest2D()), o=>!Server.IsAutoRunning);
+        }
+
+        private void SwitchSocketView3D()
+        {
+            SocketToDisplay3D = _socketToDisplay3D == SocketType.Left ? SocketType.Right : SocketType.Left;
         }
 
         private async Task RunManualTest2D()
@@ -257,8 +263,8 @@ namespace Core.ViewModels.Application
             LeftDecision = GetDecision(Result3DLeft.ItemExists, FaiItemsLeft);
             RightDecision = GetDecision(Result3DRight.ItemExists, FaiItemsRight);
             
-            Result2DLeft = ResultQueues2D[SocketType.Left].DequeueThreadSafe();
-            Result2DRight = ResultQueues2D[SocketType.Right].DequeueThreadSafe();
+            Result2DLeft = _resultQueues2D[SocketType.Left].DequeueThreadSafe();
+            Result2DRight = _resultQueues2D[SocketType.Right].DequeueThreadSafe();
         }
 
 
@@ -272,7 +278,7 @@ namespace Core.ViewModels.Application
         private MeasurementDecision GetDecision(bool itemExists, List<FaiItem> faiItems)
         {
             if (!itemExists) return MeasurementDecision.Empty;
-            return faiItems.All(item => item.Passed) ? MeasurementDecision.Passed : MeasurementDecision.Rejected;
+            return faiItems.Any(item => item.Rejected) ? MeasurementDecision.Rejected : MeasurementDecision.Passed;
         }
 
         /// <summary>
@@ -326,13 +332,13 @@ namespace Core.ViewModels.Application
                 {
                     var result = _procedure2D.Execute(images, FindLineParams2D.ToDict());
                     result.Images = images;
-                    ResultQueues2D[SocketType.Left].EnqueueThreadSafe(result);
+                    _resultQueues2D[SocketType.Left].EnqueueThreadSafe(result);
                 }
                 else
                 {
                     var result = _procedure2D.Execute(images, FindLineParams2D.ToDict());
                     result.Images = images;
-                    ResultQueues2D[SocketType.Right].EnqueueThreadSafe(result);
+                    _resultQueues2D[SocketType.Right].EnqueueThreadSafe(result);
                 }
             });
         }
@@ -444,6 +450,7 @@ namespace Core.ViewModels.Application
         /// Switch 2D view between left and right socket
         /// </summary>
         public ICommand SwitchSocketView2DCommand { get; set; }
+        public ICommand SwitchSocketView3DCommand { get; set; }
 
         /// <summary>
         /// Manually run test on the last 2D images
