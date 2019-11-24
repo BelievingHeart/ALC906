@@ -12,6 +12,7 @@ using Core.Enums;
 using Core.Helpers;
 using Core.ImageProcessing;
 using Core.Models;
+using Core.Stubs;
 using Core.ViewModels.Fai;
 using HalconDotNet;
 using HKCameraDev.Core.ViewModels.Camera;
@@ -33,19 +34,25 @@ namespace Core.ViewModels.Application
         /// <summary>
         /// Static instance for xaml to bind to 
         /// </summary>
-        public static ApplicationViewModel Instance => _instance;
+        public static ApplicationViewModel Instance
+        {
+            get { return _instance; }
+        }
 
-        private static ApplicationViewModel _instance = new ApplicationViewModel();
+        private static ApplicationViewModel _instance;
+        
+  
 
         private int _maxRoutineLogs = 100;
 
         private HTuple _shapeModel2D, _shapeModel3D;
 
-    
+        private CsvSerializer.CsvSerializer _serializerLeft = new CsvSerializer.CsvSerializer(Path.Combine(DirectoryConstants.CsvOutputDir, "Left"));
+        private CsvSerializer.CsvSerializer _serializerRight = new CsvSerializer.CsvSerializer(Path.Combine(DirectoryConstants.CsvOutputDir, "Right"));
 
-        private IMeasurementProcedure2D _procedure2D;
+        private IMeasurementProcedure2D _procedure2D = new MeasurementProcedure2DStub();
 
-        private IMeasurementProcedure3D _procedure3D;
+        private IMeasurementProcedure3D _procedure3D = new MeasurementProcedure3DStub();
         
         private object _lockerOfRoutineMessageList = new object();
         private SocketType _socketToDisplay2D;
@@ -53,11 +60,17 @@ namespace Core.ViewModels.Application
         private List<string> _findLineParam2DNames;
 
 
-        public Dictionary<string, ThreadSafeFixedSizeQueue<MeasurementResult2D>> ResultQueues2D { get; set; } =
-            new Dictionary<string, ThreadSafeFixedSizeQueue<MeasurementResult2D>>()
+        private List<FaiItem> _faiItems2DLeft;
+        private List<FaiItem> _faiItems2DRight;
+        private List<FaiItem> _faiItems3DLeft;
+        private List<FaiItem> _faiItems3DRight;
+
+
+        public Dictionary<SocketType, ThreadSafeFixedSizeQueue<MeasurementResult2D>> ResultQueues2D { get; set; } =
+            new Dictionary<SocketType, ThreadSafeFixedSizeQueue<MeasurementResult2D>>()
             {
-                ["Left"] = new ThreadSafeFixedSizeQueue<MeasurementResult2D>(2),
-                ["Right"] = new ThreadSafeFixedSizeQueue<MeasurementResult2D>(2)
+                [SocketType.Left] = new ThreadSafeFixedSizeQueue<MeasurementResult2D>(2),
+                [SocketType.Right] = new ThreadSafeFixedSizeQueue<MeasurementResult2D>(2)
             };
 
         private ApplicationViewModel()
@@ -68,7 +81,8 @@ namespace Core.ViewModels.Application
 
             SetupServer();
             
-            SetupCameras();
+            //TODO: uncomment this line
+           // SetupCameras();
             
             SetupLaserControllers();
 
@@ -76,7 +90,8 @@ namespace Core.ViewModels.Application
 
             LoadFaiItems();
 
-            LoadFindLineParams2D();
+            //TODO: uncomment this line
+//            LoadFindLineParams2D();
 
             InitCommands();
         }
@@ -163,30 +178,65 @@ namespace Core.ViewModels.Application
             }
 
             ControllerManager.AttachedControllers[NameConstants.ControllerNames.Count - 1].RunFinished +=
-                (heightImages, intensityImages) => OnLastLaserFinished();
+                (heightImages, intensityImages) => OnLastLaserFinishedScanning();
         }
 
-        private void OnLastLaserFinished()
+        private void OnLastLaserFinishedScanning()
         {
             Summarize();
             UpdateResultsToDisplay();
+            SerializeCsv();
+        }
+
+        private void SerializeCsv()
+        {
+            _serializerLeft.Serialize(FaiItemsLeft, DateTime.Now.ToString("T"));
+            _serializerRight.Serialize(FaiItemsRight, DateTime.Now.ToString("T"));
         }
 
         private void UpdateResultsToDisplay()
         {
-            // 2D
-            ResultToDisplay2D = SocketToDisplay2D == SocketType.Left ? Result2DLeft : Result2DRight;
+            var faiResultDictLeft = ConcatDictionaryNew( Result2DLeft.FaiResults, Result3DLeft.FaiResults);
+            var faiResultDictRight = ConcatDictionaryNew(Result2DRight.FaiResults, Result3DRight.FaiResults);
+
+            // To avoid frequent context switching
+            // Wrap all the UI-updating code in single Invoke block
+            Dispatcher.CurrentDispatcher.Invoke(() =>
+            {
+                //Update fai item lists using dictionaries from image processing modules
+                UpdateFaiItems(_faiItems2DLeft, Result2DLeft.FaiResults);
+                UpdateFaiItems(_faiItems2DRight, Result2DRight.FaiResults);
+                UpdateFaiItems(_faiItems3DLeft, Result3DLeft.FaiResults);
+                UpdateFaiItems(_faiItems3DRight, Result3DRight.FaiResults);
+                UpdateFaiItems(FaiItemsLeft, faiResultDictLeft);
+                UpdateFaiItems(FaiItemsRight, faiResultDictRight);
             
-            // 3D
-            ResultToDisplay3D = SocketToDisplay3D == SocketType.Left ? Result3DLeft : Result3DRight;
+                // Optionally display results and fai items based on current displaying page
+                // 2D
+                ResultToDisplay2D = SocketToDisplay2D == SocketType.Left ? Result2DLeft : Result2DRight;
+                FaiItems2D = SocketToDisplay2D == SocketType.Left ? _faiItems2DLeft : _faiItems2DRight;
+
+                // 3D
+                ResultToDisplay3D = SocketToDisplay3D == SocketType.Left ? Result3DLeft : Result3DRight;
+                FaiItems3D = SocketToDisplay3D == SocketType.Left ? _faiItems3DLeft : _faiItems3DRight;
+
+            });
         }
 
         private void LoadFaiItems()
         {
-            FaiItemsLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames, DirectoryConstants.LeftFaiConfigDir)
+            _faiItems2DLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames2D, DirectoryConstants.FaiConfigDir2DLeft)
                 .ToList();
-            FaiItemsRight = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames, DirectoryConstants.RightFaiConfigDir)
+            _faiItems2DRight = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames2D, DirectoryConstants.FaiConfigDir2DRight)
                 .ToList();
+            _faiItems3DLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames3D, DirectoryConstants.FaiConfigDir3DLeft)
+                .ToList();
+            _faiItems3DRight = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames3D, DirectoryConstants.FaiConfigDir3DRight)
+                .ToList();
+
+            FaiItemsLeft = _faiItems2DLeft.ConcatNew(_faiItems3DLeft);
+            FaiItemsRight = _faiItems2DRight.ConcatNew(_faiItems3DRight);
+            
         }
 
         private void LoadShapeModels()
@@ -204,17 +254,11 @@ namespace Core.ViewModels.Application
         {
             Result3DLeft = MeasureImages3D(ImageInputs3DLeft, _shapeModel3D);
             Result3DRight = MeasureImages3D(ImageInputs3DRight, _shapeModel3D);
-            Result2DLeft = ResultQueues2D["Left"].DequeueThreadSafe();
-            Result2DRight = ResultQueues2D["Right"].DequeueThreadSafe();
-
-            var faiResultDictLeft = MergeResultDicts(Result3DLeft.FaiResults, Result2DLeft.FaiResults);
-            var faiResultDictRight = MergeResultDicts(Result3DRight.FaiResults, Result2DRight.FaiResults);
-
-            UpdateFaiItems(FaiItemsLeft, faiResultDictLeft);
-            UpdateFaiItems(FaiItemsRight, faiResultDictRight);
-
             LeftDecision = GetDecision(Result3DLeft.ItemExists, FaiItemsLeft);
             RightDecision = GetDecision(Result3DRight.ItemExists, FaiItemsRight);
+            
+            Result2DLeft = ResultQueues2D[SocketType.Left].DequeueThreadSafe();
+            Result2DRight = ResultQueues2D[SocketType.Right].DequeueThreadSafe();
         }
 
 
@@ -248,21 +292,23 @@ namespace Core.ViewModels.Application
         }
 
         /// <summary>
-        /// Concat 2 dictionaries to the first one
+        /// Create a new dictionary from the give dictionaries
         /// </summary>
-        /// <param name="resultsA"></param>
-        /// <param name="resultsB"></param>
+        /// <param name="resultDicts"></param>
         /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        private Dictionary<string, double> MergeResultDicts(Dictionary<string, double> resultsA,
-            Dictionary<string, double> resultsB)
+        private Dictionary<string, double> ConcatDictionaryNew(params Dictionary<string, double>[] resultDicts)
         {
-            foreach (var result in resultsB)
-            {
-                resultsA[result.Key] = result.Value;
-            }
+            var output = new Dictionary<string, double>();
 
-            return resultsA;
+            foreach (var resultDict in resultDicts)
+            {
+                foreach (var result in resultDict)
+                {
+                    output[result.Key] = result.Value;
+                }
+                
+            }
+            return output;
         }
 
         private MeasurementResult3D MeasureImages3D(List<HImage> imageInputs, HTuple shapeModel3D)
@@ -280,13 +326,13 @@ namespace Core.ViewModels.Application
                 {
                     var result = _procedure2D.Execute(images, FindLineParams2D.ToDict());
                     result.Images = images;
-                    ResultQueues2D["Left"].EnqueueThreadSafe(result);
+                    ResultQueues2D[SocketType.Left].EnqueueThreadSafe(result);
                 }
                 else
                 {
                     var result = _procedure2D.Execute(images, FindLineParams2D.ToDict());
                     result.Images = images;
-                    ResultQueues2D["Right"].EnqueueThreadSafe(result);
+                    ResultQueues2D[SocketType.Right].EnqueueThreadSafe(result);
                 }
             });
         }
@@ -308,17 +354,31 @@ namespace Core.ViewModels.Application
             });
         }
 
-        /// <summary>
-        /// Current image to display in Vision2DView
-        /// </summary>
+
 
         #region Properties
+
+        /// <summary>
+        /// 2D fai items from left or right socket
+        /// </summary>
+        public List<FaiItem> FaiItems2D { get; set; }
+        
+        /// <summary>
+        /// 3D fai items from left or right socket
+        /// </summary>
+        public List<FaiItem> FaiItems3D { get; set; }
 
         public List<FindLineParam> FindLineParams2D { get; set; }
 
         public bool IsBusyRunningManualTest2D { get; set; }
-
-        public HImage ImageToDisplay2D => ResultToDisplay2D.Images?[ImageIndexToDisplay2D];
+        
+        /// <summary>
+        /// Current image to display in Vision2DView
+        /// </summary>
+        public HImage ImageToDisplay2D
+        {
+            get { return ResultToDisplay2D.Images?[ImageIndexToDisplay2D]; }
+        }
 
         /// <summary>
         /// Index of current displayed image in Vision2DView
@@ -343,6 +403,7 @@ namespace Core.ViewModels.Application
             {
                 _socketToDisplay2D = value;
                 ResultToDisplay2D = value == SocketType.Left ? Result2DLeft : Result2DRight;
+                FaiItems2D = value == SocketType.Left ? _faiItems2DLeft : _faiItems2DRight;
             }
         }
 
@@ -359,6 +420,7 @@ namespace Core.ViewModels.Application
             {
                 _socketToDisplay3D = value;
                 ResultToDisplay3D = value == SocketType.Left ? Result3DLeft : Result3DRight;
+                FaiItems3D = value == SocketType.Left ? _faiItems3DLeft : _faiItems3DRight;
             }
         }
 
@@ -367,14 +429,13 @@ namespace Core.ViewModels.Application
         public MeasurementResult3D Result3DRight { get; set; }
 
         public MeasurementResult3D Result3DLeft { get; set; }
-        
-        public List<FaiItem> FaiItemsLeft { get; set; }
+
+      
 
         public SocketType CurrentArrivedSocket { get; set; }
         public MeasurementDecision LeftDecision { get; set; }
         public MeasurementDecision RightDecision { get; set; }
 
-        public List<FaiItem> FaiItemsRight { get; set; }
 
         public List<HImage> ImageInputs3DLeft { get; set; } = new List<HImage>() {null, null, null};
         public List<HImage> ImageInputs3DRight { get; set; } = new List<HImage>() {null, null, null};
@@ -413,13 +474,18 @@ namespace Core.ViewModels.Application
         
         public AlcServerViewModel Server { get; set; }
 
+        public List<FaiItem> FaiItemsLeft { get; set; }
+        public List<FaiItem> FaiItemsRight { get; set; }
 
         #endregion
 
-    
 
-
-
-     
+        /// <summary>
+        /// Init before binding can avoid bazaar exceptions
+        /// </summary>
+        public static void Init()
+        {
+            _instance = new ApplicationViewModel();
+        }
     }
 }

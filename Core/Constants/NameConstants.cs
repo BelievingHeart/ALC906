@@ -4,7 +4,7 @@ namespace Core.Constants
 {
     public static class NameConstants
     {
-        public static List<string> FaiItemNames = new List<string>()
+        public static List<string> FaiItemNames3D = new List<string>()
         {
             "16.1", "16.2", 
             "17.1", "17.2", "17.3", "17.4",
@@ -12,6 +12,11 @@ namespace Core.Constants
             "19.1", "19.2", "19.3", "19.4", "19.5", "19.6", "19.7", "19.8", 
             "20.1", "20.2", "20.3", "20.4",  
             "21", "22"
+        };
+        
+        public static List<string> FaiItemNames2D = new List<string>()
+        {
+          
         };
 
         /// <summary>

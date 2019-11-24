@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:halconDotNet="clr-namespace:HalconDotNet;assembly=halcondotnet"
              xmlns:application="clr-namespace:Core.ViewModels.Application;assembly=Core"
+             xmlns:converters="clr-namespace:UI.Converters"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
@@ -21,30 +22,31 @@
             <halconDotNet:HIconicDisplayObjectWPF IconicObject="{Binding Path=PointsIgnore}" HColor="red" LineWidth="1"/>
             <halconDotNet:HIconicDisplayObjectWPF IconicObject="{Binding Path=RoiRectangles}" HDraw="margin" HColor="yellow"/>
         </halconDotNet:HSmartWindowControlWPF>
+        
+        <!-- Switch socket view -->
+        <Button Grid.Column="0" Command="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=SwitchSocketView2DCommand}" Margin="20" MinHeight="80" HorizontalAlignment="Left" VerticalAlignment="Top">
+            <StackPanel>
+                <TextBlock Text="Switch socket" HorizontalAlignment="Left" FontSize="10"/>
+                <Separator/>
+                <TextBlock Text="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=SocketToDisplay2D}" FontSize="24" VerticalAlignment="Center" Margin="3"/>
+            </StackPanel>
+        </Button>
 
         <GroupBox Header="Find line configs" Grid.Column="1">
             <Grid>
                 <!-- Find line config list view -->
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <DataGrid Grid.Row="0" HorizontalAlignment="Right"
                           ItemsSource="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=FindLineParams2D}"
                           CanUserSortColumns="True"
                           CanUserAddRows="False" />
-                <StackPanel Grid.Row="1">
-                    <!-- Switch socket view -->
-                    <Button Command="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=SwitchSocketView2DCommand}">
-                        <StackPanel>
-                            <TextBlock Text="Switch socket" HorizontalAlignment="Left" FontSize="10"/>
-                            <TextBlock Text="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=SocketToDisplay2D}" FontSize="24" VerticalAlignment="Center" Margin="3"/>
-                        </StackPanel>
-                    </Button>
+                  
                     <!-- Run manual tests -->
-                    <Button Content="Run"
+                    <Button Grid.Row="1" Content="Run" Margin="5" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="60"
                             Command="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=ManualTest2DCommand}"/>
-                </StackPanel>
             </Grid>
         </GroupBox>
         
