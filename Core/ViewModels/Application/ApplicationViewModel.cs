@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -11,10 +14,13 @@ using Core.Constants;
 using Core.Enums;
 using Core.Helpers;
 using Core.ImageProcessing;
+using Core.IoC.Loggers;
 using Core.Models;
 using Core.Stubs;
 using Core.ViewModels.Fai;
+using Core.ViewModels.Plc;
 using HalconDotNet;
+using HKCameraDev.Core.IoC.Interface;
 using HKCameraDev.Core.ViewModels.Camera;
 using LJX8000.Core.ViewModels.Controller;
 using MaterialDesignThemes.Wpf;
@@ -23,6 +29,7 @@ using PropertyChanged;
 using WPFCommon.Commands;
 using WPFCommon.Helpers;
 using WPFCommon.ViewModels.Base;
+using CameraTriggerSourceType = HKCameraDev.Core.Enums.CameraTriggerSourceType;
 
 namespace Core.ViewModels.Application
 {
@@ -41,7 +48,6 @@ namespace Core.ViewModels.Application
 
         private static ApplicationViewModel _instance;
         
-  
 
         private int _maxRoutineLogs = 100;
 
@@ -55,6 +61,7 @@ namespace Core.ViewModels.Application
         private IMeasurementProcedure3D _procedure3D = new MeasurementProcedure3DStub();
         
         private object _lockerOfRoutineMessageList = new object();
+        private object _lockerOfPlcMessageList = new object();
         private SocketType _socketToDisplay2D;
         private SocketType _socketToDisplay3D;
         private List<string> _findLineParam2DNames;
@@ -75,16 +82,14 @@ namespace Core.ViewModels.Application
 
         protected ApplicationViewModel()
         {
+            InitContainer();
+            
             CurrentApplicationPage = ApplicationPageType.Home;
             MessageQueue = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(3000));
+            PlcMessageList = new ObservableCollection<LoggingMessageItem>();
             BindingOperations.EnableCollectionSynchronization(RoutineMessageList, _lockerOfRoutineMessageList);
+            BindingOperations.EnableCollectionSynchronization(PlcMessageList, _lockerOfPlcMessageList);
 
-            SetupServer();
-            
-            //TODO: uncomment this line
-           // SetupCameras();
-            
-            SetupLaserControllers();
 
             LoadShapeModels();
 
@@ -94,6 +99,11 @@ namespace Core.ViewModels.Application
 //            LoadFindLineParams2D();
 
             InitCommands();
+        }
+
+        private void InitContainer()
+        {
+            HKCameraDev.Core.IoC.IoC.Kernel.Bind<IUILogger>().ToConstant(new CameraMessageLogger());
         }
 
         private void LoadFindLineParams2D()
@@ -131,23 +141,31 @@ namespace Core.ViewModels.Application
 
         private void SetupServer()
         {
-            Server = new AlcServerViewModel();
-            Server.AutoRunStartRequested += () => LogRoutine("Auto-mode-start requested from plc");
-            Server.AutoRunStopRequested += () => LogRoutine("Auto-mode-stop requested from plc");
-            Server.InitRequested += () => LogRoutine("Init requested from plc");
-            Server.ClientHooked += socket => LogRoutine(socket.RemoteEndPoint + " is hooked");
+            Server = new AlcServerViewModel()
+            {
+                IpAddress = IPAddress.Parse("192.168.100.100"),
+                Port = 4000
+            };
+            Server.AutoRunStartRequested += () => LogPlcMessage("Auto-mode-start requested from plc");
+            Server.AutoRunStopRequested += () => LogPlcMessage("Auto-mode-stop requested from plc");
+            Server.InitRequested += () => LogPlcMessage("Init requested from plc");
+            Server.ClientHooked += socket => LogPlcMessage(socket.RemoteEndPoint + " is hooked");
             Server.CustomCommandReceived += PlcCustomCommandHandler;
+            Server.PlcInitFinished +=() => LogPlcMessage("Plc init done");
+            Server.NewLoopStarted += () => LogPlcMessage("Received start permission from ALC");
         }
-
+ 
         private void PlcCustomCommandHandler(int commandId)
         {
             switch (commandId)
             {
                 case PlcMessagePackConstants.CommandIdLeftSocketArrived:
                     CurrentArrivedSocket = SocketType.Left;
+                    LogPlcMessage("2D left socket arrived");
                     break;
                 case PlcMessagePackConstants.CommandIdRightSocketArrived:
                     CurrentArrivedSocket = SocketType.Right;
+                    LogPlcMessage("2D right socket arrived");
                     break;
             }
       }
@@ -155,9 +173,16 @@ namespace Core.ViewModels.Application
         private void SetupCameras()
         {
             HKCameraManager.ScannedForAttachedCameras();
-            Camera = HKCameraManager.AttachedCameras[0];
-            Camera.ImageBatchSize = 5;
-            Camera.BatchImageReceived += ProcessImages2DFireForget;
+            TopCamera = HKCameraManager.AttachedCameras.First(cam => cam.Name == NameConstants.TopCameraName);
+            TopCamera.ImageBatchSize = 5;
+            TopCamera.BatchImageReceived += ProcessImages2DFireForget;
+
+            
+            // TODO: remove the following lines
+            TopCamera.IsOpened = true;
+            TopCamera.IsGrabbing = true;
+            TopCamera.TriggerSourceType = CameraTriggerSourceType.Line0;
+            
         }
         
         private void SetupLaserControllers()
@@ -189,9 +214,19 @@ namespace Core.ViewModels.Application
 
         private void OnLastLaserFinishedScanning()
         {
+            if (CorrespondingResultsFromCamerasNotAvailable) return;
             Summarize();
             UpdateResultsToDisplay();
             SerializeCsv();
+        }
+
+        private bool CorrespondingResultsFromCamerasNotAvailable
+        {
+            get
+            {
+                Trace.Assert(_resultQueues2D[SocketType.Left].Count == _resultQueues2D[SocketType.Right].Count);
+                return _resultQueues2D[SocketType.Left].Count < 2;
+            }
         }
 
         private void SerializeCsv()
@@ -325,7 +360,7 @@ namespace Core.ViewModels.Application
 
         private void ProcessImages2DFireForget(List<HImage> images)
         {
-            //TODO: replace dummy find-line-params
+            LogRoutine(images.Count + " 2D images collected");
             Task.Run(() =>
             {
                 if (CurrentArrivedSocket == SocketType.Left)
@@ -342,6 +377,21 @@ namespace Core.ViewModels.Application
                 }
             });
         }
+
+        private void LogPlcMessage(string message)
+        {
+            Dispatcher.CurrentDispatcher.Invoke(() =>
+            {
+                lock (_lockerOfPlcMessageList)
+                {
+                    PlcMessageList.Add(new LoggingMessageItem()
+                    {
+                        Time = DateTime.Now.ToString("T"),
+                        Message = message
+                    });
+                }
+            });
+        }
         
         public void LogRoutine(string message)
         {
@@ -349,15 +399,33 @@ namespace Core.ViewModels.Application
             {
                 lock (_lockerOfRoutineMessageList)
                 {
-                    RoutineMessageList.Add(DateTime.Now.ToString("T") + " > " + message);
+                    RoutineMessageList.Add(new LoggingMessageItem()
+                    {
+                        Time = DateTime.Now.ToString("T"),
+                        Message = message
+                    });
                     // Remove some messages if overflows
                     if (RoutineMessageList.Count > _maxRoutineLogs)
                     {
                         RoutineMessageList =
-                            new ObservableCollection<string>(RoutineMessageList.Skip(_maxRoutineLogs / 3));
+                            new ObservableCollection<LoggingMessageItem>(RoutineMessageList.Skip(_maxRoutineLogs / 3));
                     }
                 }
             });
+        }
+
+        /// <summary>
+        /// This should be executed only after the construction of the instance,
+        /// so the logging system can be used to debug
+        /// </summary>
+        public void InitHardWares()
+        {
+            SetupServer();
+            
+            //TODO: uncomment this line
+            SetupCameras();
+            
+            SetupLaserControllers();
         }
 
 
@@ -383,7 +451,7 @@ namespace Core.ViewModels.Application
         /// </summary>
         public HImage ImageToDisplay2D
         {
-            get { return ResultToDisplay2D.Images?[ImageIndexToDisplay2D]; }
+            get { return ResultToDisplay2D?.Images?[ImageIndexToDisplay2D]; }
         }
 
         /// <summary>
@@ -471,13 +539,18 @@ namespace Core.ViewModels.Application
         /// <summary>
         /// 2D camera object
         /// </summary>
-        public CameraViewModel Camera { get; set; }
+        public CameraViewModel TopCamera { get; set; }
 
 
         /// <summary>
         /// Message list for routine logging
         /// </summary>
-        public ObservableCollection<string> RoutineMessageList { get; set; } = new ObservableCollection<string>();
+        public ObservableCollection<LoggingMessageItem> RoutineMessageList { get; set; } = new ObservableCollection<LoggingMessageItem>();
+        
+        /// <summary>
+        /// Message list for plc message logging
+        /// </summary>
+        public ObservableCollection<LoggingMessageItem> PlcMessageList { get; set; }
         
         public AlcServerViewModel Server { get; set; }
 
@@ -493,6 +566,24 @@ namespace Core.ViewModels.Application
         public static void Init()
         {
             _instance = new ApplicationViewModel();
+        }
+        
+        /// <summary>
+        /// Disconnect cameras, lasers and plc
+        /// </summary>
+        public static void Cleanup()
+        {
+            foreach (var camera in HKCameraManager.AttachedCameras)
+            {
+                camera.IsOpened = false;
+            }
+
+            foreach (var controller in ControllerManager.AttachedControllers)
+            {
+                controller.IsConnectedHighSpeed = false;
+            }
+
+            Instance.Server.Disconnect();
         }
     }
 }

@@ -1,0 +1,88 @@
+﻿<UserControl x:Class="UI.Views.FaiItem.FaiItemListWarpView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:designTime="clr-namespace:Core.DesignTime;assembly=Core"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:faiItem="clr-namespace:UI.Views.FaiItem"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+    
+    <ListView ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=faiItem:FaiItemListWarpView}, Path=FaiItems}">
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+        
+        <ListView.ItemTemplate>
+            <DataTemplate>
+                <Border>
+                    <materialDesign:DialogHost>
+                        <Button Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}" Height="80" Width="120">
+                            <StackPanel>
+                             
+                                <TextBlock Text="{Binding Name}" HorizontalAlignment="Left" FontSize="10" />
+                                <TextBlock Text="{Binding Value}" FontSize="24" />
+                            </StackPanel>
+                           <Button.Style>
+                               <Style TargetType="{x:Type Button}" BasedOn="{StaticResource MaterialDesignRaisedAccentButton}">
+                                   <Style.Triggers>
+                                       <!-- Value too large -->
+                                       <DataTrigger Binding="{Binding TooLarge}" Value="True">
+                                           <DataTrigger.Setters>
+                                               <Setter Property="BorderBrush" Value="Red"/>
+                                               <Setter Property="Foreground" Value="Red"/>
+                                           </DataTrigger.Setters>
+                                       </DataTrigger>
+                                       <!-- Value too small -->
+                                       <DataTrigger Binding="{Binding TooSmall}" Value="True">
+                                           <DataTrigger.Setters>
+                                               <Setter Property="BorderBrush" Value="Blue"/>
+                                               <Setter Property="Foreground" Value="Blue"/>
+                                           </DataTrigger.Setters>
+                                       </DataTrigger>
+                                   </Style.Triggers>
+                               </Style>
+                           </Button.Style>
+                        </Button>
+
+
+                        <!-- Dialog -->
+                        <materialDesign:DialogHost.DialogContent>
+                            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="50" />
+                                        <RowDefinition Height="50"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="50"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition Width="80" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Grid.Row="0" Grid.Column="0" Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                             materialDesign:HintAssist.Hint="Min" Text="{Binding MinBoundary}" />
+                                    <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                             materialDesign:HintAssist.Hint="Max" Text="{Binding MaxBoundary}" />
+                                    <TextBox Grid.Row="1" Grid.Column="0" Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                             materialDesign:HintAssist.Hint="Weight" Text="{Binding Weight}" />
+                                    <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                             materialDesign:HintAssist.Hint="Bias" Text="{Binding Bias}" />
+                                    <Separator Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"/>
+                                    <Button Grid.Row="3" Grid.Column="1" Content="OK" Width="50" Margin="3" HorizontalAlignment="Right"
+                                            Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                                            IsDefault="True" IsCancel="True" />
+                                </Grid>
+                            </ScrollViewer>
+                        </materialDesign:DialogHost.DialogContent>
+
+                    </materialDesign:DialogHost>
+
+                </Border>
+            </DataTemplate>
+        </ListView.ItemTemplate>
+    </ListView>
+</UserControl>

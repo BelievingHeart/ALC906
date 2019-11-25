@@ -17,11 +17,9 @@
         TextOptions.TextRenderingMode="Auto"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
-        MinHeight="800" MinWidth="1000"
-        Title="MainWindow" >
-    <!-- <Window.DataContext> -->
-    <!--     <mainWindow:MainWindowViewModel/> -->
-    <!-- </Window.DataContext> -->
+        MinHeight="800" MinWidth="1000" Closed="CleanupApplication" Loaded="OnMainWindowLoaded"
+        Title="CYGIA ALC-906" >
+
     <!-- Key bindings -->
     <Window.InputBindings>
         <KeyBinding Key="F1" Command="{Binding SwitchHomePageCommand}"/>
@@ -61,7 +59,7 @@
                         Style="{StaticResource MaterialDesignRaisedButton}"
                         materialDesign:ButtonProgressAssist.Value="-1"
                         materialDesign:ButtonProgressAssist.IsIndicatorVisible="True"
-                        materialDesign:ButtonProgressAssist.IsIndeterminate="True"
+                        materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Path=Server.IsBusyResetting}"
                         Content="Reset" Command="{Binding  Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Path=Server.InitCommand}"
                         Margin="2,0" />
                     <!-- auto-run start/stop toggle -->

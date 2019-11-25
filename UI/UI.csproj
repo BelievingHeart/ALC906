@@ -74,6 +74,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AttachedProperties\AttachedPropertyOwnerBase.cs" />
+    <Compile Include="Behaviours\ListBoxBehavior.cs" />
     <Compile Include="Converters\EnumToApplicationPageConverter.cs" />
     <Compile Include="Converters\EventToCommandBehaviour.cs" />
     <Compile Include="Converters\ValueConverterBase.cs" />
@@ -81,8 +82,14 @@
     <Compile Include="Views\CameraHostView\CameraHostView.xaml.cs">
       <DependentUpon>CameraHostView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\FaiItem\FaiItemListStackView.xaml.cs">
+      <DependentUpon>FaiItemListStackView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\FaiItem\FaiItemListView.xaml.cs">
-      <DependentUpon>FaiItemListView.xaml</DependentUpon>
+      <DependentUpon>FaiItemListWarpView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ServerView\ServerHostView.xaml.cs">
+      <DependentUpon>ServerHostView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Vision2D\CameraView.xaml.cs">
       <DependentUpon>Vision2DView.xaml</DependentUpon>
@@ -125,7 +132,9 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\CameraHostView\CameraHostView.xaml" />
-    <Page Include="Views\FaiItem\FaiItemListView.xaml" />
+    <Page Include="Views\FaiItem\FaiItemListStackView.xaml" />
+    <Page Include="Views\FaiItem\FaiItemListWarpView.xaml" />
+    <Page Include="Views\ServerView\ServerHostView.xaml" />
     <Page Include="Views\Vision2D\Vision2DView.xaml" />
     <Page Include="Views\HomeView\HomeView.xaml" />
     <Page Include="Views\LineScanHostView\LineScanHostView.xaml" />

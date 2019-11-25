@@ -1,19 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace UI.Views.FaiItem
 {
-    public partial class FaiItemListWarpView : UserControl
+    public partial class FaiItemListStackView : UserControl
     {
-        public FaiItemListWarpView()
+        public FaiItemListStackView()
         {
             InitializeComponent();
         }
- 
-       public static readonly DependencyProperty FaiItemsProperty = DependencyProperty.Register(
-            "FaiItems", typeof(IEnumerable<Core.ViewModels.Fai.FaiItem>), typeof(FaiItemListWarpView),
+        
+        public static readonly DependencyProperty FaiItemsProperty = DependencyProperty.Register(
+            "FaiItems", typeof(IEnumerable<Core.ViewModels.Fai.FaiItem>), typeof(FaiItemListStackView),
             new PropertyMetadata(default(IEnumerable<Core.ViewModels.Fai.FaiItem>)));
 
         public IEnumerable<Core.ViewModels.Fai.FaiItem> FaiItems
@@ -21,6 +20,5 @@ namespace UI.Views.FaiItem
             get { return (IEnumerable<Core.ViewModels.Fai.FaiItem>) GetValue(FaiItemsProperty); }
             set { SetValue(FaiItemsProperty, value); }
         }
-        
     }
 }

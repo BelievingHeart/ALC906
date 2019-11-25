@@ -91,6 +91,7 @@
     <Compile Include="ImageProcessing\MeasurementResult3D.cs" />
     <Compile Include="IoC\Interface\ILoggingServiceProvider.cs" />
     <Compile Include="IoC\IoC.cs" />
+    <Compile Include="IoC\Loggers\CameraMessageLogger.cs" />
     <Compile Include="Models\ThreadSafeFixedSizeQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Stubs\MeasurementProcedure2DStub.cs" />
@@ -99,6 +100,7 @@
     <Compile Include="ViewModels\CameraHost\CameraHostViewModel.cs" />
     <Compile Include="ViewModels\Fai\FaiItem.cs" />
     <Compile Include="ViewModels\Fai\FaiItemUILogic.cs" />
+    <Compile Include="ViewModels\Plc\LoggingMessageItem.cs" />
     <Compile Include="ViewModels\Vision2D\Vision2DViewModel.cs" />
     <Compile Include="ViewModels\MainWindow\MainWindowViewModel.cs" />
   </ItemGroup>

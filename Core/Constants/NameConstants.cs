@@ -26,5 +26,7 @@ namespace Core.Constants
         {
             "192.168.0.1@24691", "192.168.0.2@24691", "192.168.0.3@24691"
         };
+
+        public static string TopCameraName = "Hikvision MV-CH250-20TM-F-NF (00D46076741)";
     }
 }

@@ -5,9 +5,41 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:UI.Views.HomeView"
              xmlns:views="clr-namespace:UI.Views"
+             xmlns:application="clr-namespace:Core.ViewModels.Application;assembly=Core"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <TextBlock>This is a home view</TextBlock>
+        <!-- Side bar logging system -->
+        <Expander  Background="Transparent"
+                  ExpandDirection="Right"
+                  Panel.ZIndex="10"
+                  HorizontalAlignment="Left"
+                  IsExpanded="{Binding AutoResetFlag,
+                  Source={x:Static application:ApplicationViewModel.Instance}, Path=AutoResetFlag}">
+            <Expander.Header>
+                <TextBlock
+                    Text="Logs"
+                    RenderTransformOrigin=".5,.5">
+                    <TextBlock.LayoutTransform>
+                        <RotateTransform
+                            Angle="90" />
+                    </TextBlock.LayoutTransform>
+                </TextBlock>
+            </Expander.Header>
+
+            <ItemsControl
+                ItemsSource="{Binding Path=RoutineMessageList, Source={x:Static application:ApplicationViewModel.Instance}}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <GroupBox Header="{Binding Time}">
+                            <WrapPanel>
+                                <TextBlock Text="{Binding Message}" FontSize="24"
+                                           HorizontalAlignment="Left" />
+                            </WrapPanel>
+                        </GroupBox>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Expander>
     </Grid>
 </UserControl>
