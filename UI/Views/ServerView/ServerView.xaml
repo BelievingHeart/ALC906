@@ -3,14 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:serverView="clr-namespace:UI.Views.ServerView"
-             xmlns:behaviours="clr-namespace:UI.Behaviours"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:UI.Views.ServerView"
              xmlns:application="clr-namespace:Core.ViewModels.Application;assembly=Core"
-
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-   <Grid>
+       <Grid>
        <Grid.RowDefinitions>
            <RowDefinition Height="Auto" />
            <RowDefinition Height="*" />
@@ -22,27 +20,6 @@
            <Button Command="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Server.NotifyPlcReadyToGoNextLoopCommand}" Content="Ready to go next loop" Style="{StaticResource MaterialDesignRaisedLightButton}" Height="50" materialDesign:ButtonAssist.CornerRadius="5"/>
        </StackPanel>
        <!-- Plc message box -->
-       <GroupBox Header="Plc messages" Grid.Row="1">
-           <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-               <ListBox
-                        ItemsSource="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=PlcMessageList}"
-                   >
-                   <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="100"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="{Binding Time}" HorizontalAlignment="Left"/>
-                                <TextBlock Grid.Column="1" Text=" > " HorizontalAlignment="Left"/>
-                                <TextBlock Grid.Column="2" Text="{Binding Message}" TextTrimming="WordEllipsis" HorizontalAlignment="Left"/>
-                            </Grid>
-                        </DataTemplate>
-                   </ListBox.ItemTemplate>
-               </ListBox></ScrollViewer>
-       </GroupBox>
+       <local:AutoScrollMessageBox Grid.Row="1" MessageList="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=PlcMessageList}"/>
    </Grid>
- 
 </UserControl>

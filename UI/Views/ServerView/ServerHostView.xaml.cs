@@ -2,9 +2,9 @@
 
 namespace UI.Views.ServerView
 {
-    public partial class ServerHostView : UserControl
+    public partial class ServerView : UserControl
     {
-        public ServerHostView()
+        public ServerView()
         {
             InitializeComponent();
         }

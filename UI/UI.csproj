@@ -89,7 +89,7 @@
       <DependentUpon>FaiItemListWarpView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ServerView\ServerHostView.xaml.cs">
-      <DependentUpon>ServerHostView.xaml</DependentUpon>
+      <DependentUpon>ServerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Vision2D\CameraView.xaml.cs">
       <DependentUpon>Vision2DView.xaml</DependentUpon>
@@ -105,7 +105,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Views\ServerView\ServerView.xaml.cs">
-      <DependentUpon>ServerView.xaml</DependentUpon>
+      <DependentUpon>AutoScrollMessageBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UserControlBase.cs" />
   </ItemGroup>
@@ -134,7 +134,7 @@
     <Page Include="Views\CameraHostView\CameraHostView.xaml" />
     <Page Include="Views\FaiItem\FaiItemListStackView.xaml" />
     <Page Include="Views\FaiItem\FaiItemListWarpView.xaml" />
-    <Page Include="Views\ServerView\ServerHostView.xaml" />
+    <Page Include="Views\ServerView\ServerView.xaml" />
     <Page Include="Views\Vision2D\Vision2DView.xaml" />
     <Page Include="Views\HomeView\HomeView.xaml" />
     <Page Include="Views\LineScanHostView\LineScanHostView.xaml" />
@@ -142,7 +142,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\ServerView\ServerView.xaml" />
+    <Page Include="Views\ServerView\AutoScrollMessageBox.xaml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\WPFCommon\WPFCommon\WPFCommon.csproj">

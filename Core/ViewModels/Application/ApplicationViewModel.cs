@@ -64,7 +64,11 @@ namespace Core.ViewModels.Application
         private object _lockerOfPlcMessageList = new object();
         private SocketType _socketToDisplay2D;
         private SocketType _socketToDisplay3D;
-        private List<string> _findLineParam2DNames;
+        private List<string> _findLineParam2DNames = new List<string>()
+        {
+            //TODO: make this meaningful
+            "test1", "test2"
+        };
 
 
         private List<FaiItem> _faiItems2DLeft;
@@ -95,8 +99,7 @@ namespace Core.ViewModels.Application
 
             LoadFaiItems();
 
-            //TODO: uncomment this line
-//            LoadFindLineParams2D();
+            LoadFindLineParams2D();
 
             InitCommands();
         }
@@ -354,7 +357,7 @@ namespace Core.ViewModels.Application
 
         private MeasurementResult3D MeasureImages3D(List<HImage> imageInputs, HTuple shapeModel3D)
         {
-            throw new NotImplementedException();
+           return _procedure3D.Execute(imageInputs, shapeModel3D);
         }
 
 
