@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
@@ -30,6 +31,7 @@ using WPFCommon.Commands;
 using WPFCommon.Helpers;
 using WPFCommon.ViewModels.Base;
 using CameraTriggerSourceType = HKCameraDev.Core.Enums.CameraTriggerSourceType;
+using SocketType = Core.Enums.SocketType;
 
 namespace Core.ViewModels.Application
 {
@@ -109,19 +111,20 @@ namespace Core.ViewModels.Application
         private List<FaiItem> _faiItems3DRight;
 
 
-        private readonly Dictionary<SocketType, Queue<MeasurementResult2D>> _resultQueues2D =
-            new Dictionary<SocketType, Queue<MeasurementResult2D>>()
+        private readonly Dictionary<SocketType, FixedSizeQueue<MeasurementResult2D>> _resultQueues2D =
+            new Dictionary<SocketType, FixedSizeQueue<MeasurementResult2D>>()
             {
-                [SocketType.Left] = new Queue<MeasurementResult2D>(2),
-                [SocketType.Right] = new Queue<MeasurementResult2D>(2)
+                [SocketType.Left] = new FixedSizeQueue<MeasurementResult2D>(2),
+                [SocketType.Right] = new FixedSizeQueue<MeasurementResult2D>(2)
             };
 
         private readonly Object _lockerOfResultQueues2D = new Object();
+        private bool _isAllControllersHighSpeedConnected;
 
         protected ApplicationViewModel()
         {
             InitContainer();
-
+            AutoResetInterval = 10000;
             CurrentApplicationPage = ApplicationPageType.Home;
             MessageQueue = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(3000));
             PlcMessageList = new ObservableCollection<LoggingMessageItem>();
@@ -158,12 +161,19 @@ namespace Core.ViewModels.Application
                         null, null
                     };
                 }
+
+                // Clear profile buffers
+                // 机台RESET回程时会迷之扫描
+                foreach (var controller in ControllerManager.AttachedControllers)
+                {
+                    controller.ClearBuffer();
+                }
             }
         }
 
         private void InitContainer()
         {
-            HKCameraDev.Core.IoC.IoC.Kernel.Bind<IUILogger>().ToConstant(new CameraMessageLogger());
+            HKCameraDev.Core.IoC.IoC.Kernel.Bind<IHKCameraLibLogger>().ToConstant(new CameraMessageLogger());
         }
 
         private void LoadFindLineParams2D()
@@ -214,10 +224,15 @@ namespace Core.ViewModels.Application
             Server.AutoRunStartRequested += () => LogPlcMessage("Auto-mode-start requested from plc");
             Server.AutoRunStopRequested += () => LogPlcMessage("Auto-mode-stop requested from plc");
             Server.InitRequested += () => LogPlcMessage("Init requested from plc");
-            Server.ClientHooked += socket => LogPlcMessage(socket.RemoteEndPoint + " is hooked");
+            Server.ClientHooked += OnPlcHooked;
             Server.CustomCommandReceived += PlcCustomCommandHandler;
             Server.PlcInitFinished += OnPlcInitFinished;
             Server.NewLoopStarted += OnNewLoopStarted;
+        }
+
+        private void OnPlcHooked(Socket socket)
+        {
+            LogPlcMessage(socket.RemoteEndPoint + " is hooked");
         }
 
         private void OnNewLoopStarted()
@@ -238,9 +253,7 @@ namespace Core.ViewModels.Application
             {
                 _resultQueues2D[SocketType.Left].Clear();
                 _resultQueues2D[SocketType.Right].Clear();
-
             }
-
         }
 
         private void PlcCustomCommandHandler(int commandId)
@@ -285,44 +298,68 @@ namespace Core.ViewModels.Application
                         ProfileCountEachFetch = 100,
                     }).OrderBy(c => c.Name));
             ControllerManager.Init();
+            IsAllControllersHighSpeedConnected = true;
 
-            // OnControllerRunFinished
             foreach (var controller in ControllerManager.AttachedControllers)
             {
                 controller.RunFinished += (heightImages, luminanceImages) =>
+                    OnControllerRunFinished(heightImages, luminanceImages, controller);
+            }
+        }
+
+        /// <summary>
+        /// When a controller finished scanning one socket ...
+        /// </summary>
+        /// <param name="heightImages"></param>
+        /// <param name="luminanceImages"></param>
+        /// <param name="controller"></param>
+        private void OnControllerRunFinished(List<HImage> heightImages, List<HImage> luminanceImages,
+            ControllerViewModel controller)
+        {
+            Trace.Assert(heightImages.Count == 1);
+            // 绕开机台RESET时的蜜汁采图触发
+            if (Server.IsBusyResetting) return;
+
+            lock (_lockerOfLaserImageBuffers)
+            {
+                var socketIndex = _laserRunIndex[controller.Name];
+                // Assign new image to corresponding image list
+                var imageList = _laserImageBuffers[controller.Name];
+                imageList[socketIndex] = heightImages[0];
+
+                // If all controllers finish scanning the socket indexed _laserRunIndex[controller.Name]
+                // begin processing one set of images
+                if (_laserImageBuffers.Values.All(list => list[socketIndex] != null))
                 {
-                    Trace.Assert(heightImages.Count == 1);
+                    On3DImagesOfOneSocketFinishedCollecting(socketIndex);
+                }
 
-                    lock (_lockerOfLaserImageBuffers)
-                    {
-                        var socketIndex = _laserRunIndex[controller.Name];
-                        // Assign new image to corresponding image list
-                        var imageList = _laserImageBuffers[controller.Name];
-                        imageList[socketIndex] = heightImages[0];
+                _laserRunIndex[controller.Name]++;
+            }
+        }
 
-                        // If all controllers finish scanning the socket indexed _laserRunIndex[controller.Name]
-                        // begin processing one set of images
-                        if (_laserImageBuffers.Values.All(list => list[socketIndex] != null))
-                        {
-                            // Do processing for one socket and get its result
-                            var imagesForOneSocket =
-                                _laserImageBuffers.Values.Select(list => list[socketIndex]).ToList();
-                            _results3D[socketIndex] = _procedure3D.Execute(imagesForOneSocket, _shapeModel3D);
+        /// <summary>
+        /// When 3D images of one socket is finished collecting ...
+        /// </summary>
+        /// <param name="socketIndex"></param>
+        private void On3DImagesOfOneSocketFinishedCollecting(int socketIndex)
+        {
+            var enumValue = (SocketType) socketIndex;
+            LogRoutine($"{enumValue} socket finished 3D image collected");
+            
+            // Do processing for one socket and get its result
+            var imagesForOneSocket =
+                _laserImageBuffers.Values.Select(list => list[socketIndex]).ToList();
+            _results3D[socketIndex] = _procedure3D.Execute(imagesForOneSocket, _shapeModel3D);
 
-                            // If all reserved places for 3D image buffers are filled,
-                            // 3D image collection of one loop is done
-                            // and product level can be submit to plc
-                            var all3DImagesCollected =
-                                _laserImageBuffers.Values.All(list => list.All(image => image != null));
-                            if (all3DImagesCollected)
-                            {
-                                OnLeftSocketFinished3DImageCollection();
-                            }
-                        }
-
-                        _laserRunIndex[controller.Name]++;
-                    }
-                };
+            // If all reserved places for 3D image buffers are filled,
+            // 3D image collection of one loop is done
+            // and product level can be submit to plc
+            var all3DImagesCollected =
+                _laserImageBuffers.Values.All(list => list.All(image => image != null));
+            if (all3DImagesCollected)
+            {
+                OnLeftSocketFinished3DImageCollection();
             }
         }
 
@@ -339,7 +376,7 @@ namespace Core.ViewModels.Application
                 Server.SendProductLevels(ProductLevel.Ng5, ProductLevel.Ng5);
                 return;
             }
-            
+
             Combine2D3DResults();
             SubmitProductLevels();
             SerializeCsv();
@@ -440,7 +477,7 @@ namespace Core.ViewModels.Application
             });
         }
 
-        
+
         private void LoadFaiItems()
         {
             _faiItems2DLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames2D,
@@ -519,7 +556,7 @@ namespace Core.ViewModels.Application
         /// <param name="images"></param>
         private void ProcessImages2DFireForget(List<HImage> images)
         {
-            LogRoutine(images.Count + " 2D images collected");
+            LogRoutine($"{CurrentArrivedSocket} socket start processing {images.Count} 2D images");
             Task.Run(() =>
             {
                 if (CurrentArrivedSocket == SocketType.Left)
@@ -543,7 +580,7 @@ namespace Core.ViewModels.Application
             });
         }
 
-        private void LogPlcMessage(string message)
+        public void LogPlcMessage(string message)
         {
             Dispatcher.CurrentDispatcher.Invoke(() =>
             {
@@ -582,6 +619,9 @@ namespace Core.ViewModels.Application
                         RoutineMessageList =
                             new ObservableCollection<LoggingMessageItem>(RoutineMessageList.Skip(_maxRoutineLogs / 3));
                     }
+
+                    // Expand logging box
+                    AutoResetFlag = true;
                 }
             });
         }
@@ -594,14 +634,52 @@ namespace Core.ViewModels.Application
         {
             SetupServer();
 
-            //TODO: uncomment this line
             SetupCameras();
 
             SetupLaserControllers();
         }
 
+        /// <summary>
+        /// Init before any binding taking place can avoid bazaar <see cref="TypeInitializationException"/> exceptions
+        /// </summary>
+        public static void Init()
+        {
+            _instance = new ApplicationViewModel();
+        }
+
+        /// <summary>
+        /// Disconnect cameras, lasers and plc
+        /// </summary>
+        public static void Cleanup()
+        {
+            foreach (var camera in HKCameraManager.AttachedCameras)
+            {
+                camera.IsOpened = false;
+            }
+
+            foreach (var controller in ControllerManager.AttachedControllers)
+            {
+                controller.IsConnectedHighSpeed = false;
+            }
+
+            Instance.Server.Disconnect();
+        }
+
 
         #region Properties
+
+        public bool IsAllControllersHighSpeedConnected
+        {
+            get { return _isAllControllersHighSpeedConnected; }
+            set
+            {
+                _isAllControllersHighSpeedConnected = value;
+                foreach (var controller in ControllerManager.AttachedControllers)
+                {
+                    controller.IsConnectedHighSpeed = value;
+                }
+            }
+        }
 
         public bool IsBusyWaitingFor2DToFinished { get; set; }
 
@@ -649,7 +727,7 @@ namespace Core.ViewModels.Application
             set
             {
                 _socketToDisplay2D = value;
-                ResultToDisplay2D = _results2D[(int)value];
+                ResultToDisplay2D = _results2D[(int) value];
                 FaiItems2D = value == SocketType.Left ? _faiItems2DLeft : _faiItems2DRight;
             }
         }
@@ -661,7 +739,7 @@ namespace Core.ViewModels.Application
             set
             {
                 _socketToDisplay3D = value;
-                ResultToDisplay3D = _results3D[(int)value];
+                ResultToDisplay3D = _results3D[(int) value];
                 FaiItems3D = value == SocketType.Left ? _faiItems3DLeft : _faiItems3DRight;
             }
         }
@@ -719,32 +797,5 @@ namespace Core.ViewModels.Application
         public List<FaiItem> FaiItemsRight { get; set; }
 
         #endregion
-
-
-        /// <summary>
-        /// Init before any binding taking place can avoid bazaar <see cref="TypeInitializationException"/> exceptions
-        /// </summary>
-        public static void Init()
-        {
-            _instance = new ApplicationViewModel();
-        }
-
-        /// <summary>
-        /// Disconnect cameras, lasers and plc
-        /// </summary>
-        public static void Cleanup()
-        {
-            foreach (var camera in HKCameraManager.AttachedCameras)
-            {
-                camera.IsOpened = false;
-            }
-
-            foreach (var controller in ControllerManager.AttachedControllers)
-            {
-                controller.IsConnectedHighSpeed = false;
-            }
-
-            Instance.Server.Disconnect();
-        }
     }
 }

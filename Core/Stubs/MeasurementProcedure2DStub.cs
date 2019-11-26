@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Core.ImageProcessing;
+using Core.ViewModels.Application;
 using HalconDotNet;
 
 namespace Core.Stubs
@@ -9,20 +10,14 @@ namespace Core.Stubs
     {
         public MeasurementResult2D Execute(List<HImage> images, Dictionary<string, FindLineParam> findLineParams)
         {
-            //TODO: remove the following lines
-            foreach (var image in images)
-            {
-                var filePath = "D:\\share\\3DImages\\Tests/" + DateTime.Now.ToString("hhmmssff") + ".bmp";
-                image.WriteImage("bmp", 0, filePath);
-            }
-            
+            ApplicationViewModel.Instance.LogRoutine("Processed one 2D socket");
             
             return new MeasurementResult2D()
             { 
                 FaiResults = new Dictionary<string, double>()
                 {
-                    ["2.1"] = 999,
-                    ["2.2"] = 999
+                    ["1-1A"] = 999,
+                    ["1-1B"] = 999
                 }
             };
         }

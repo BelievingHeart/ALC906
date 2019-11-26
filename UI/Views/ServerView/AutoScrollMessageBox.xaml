@@ -7,7 +7,7 @@
              xmlns:application="clr-namespace:Core.ViewModels.Application;assembly=Core"
 
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300" Loaded="OnMessageBoxLoaded">
 
        <!-- Plc message box -->
        <GroupBox Header="Plc messages" >

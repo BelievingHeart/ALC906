@@ -67,11 +67,58 @@
                         Style="{StaticResource MaterialDesignSwitchAccentToggleButton}"
                         IsChecked="{Binding Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Path=Server.IsAutoRunning}"
                         IsEnabled="{Binding Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Path=Server.PlcReady}" />
+                    <Separator/>
+                    <!-- High-speed connect all laser controllers -->
+                    <ToggleButton
+                        Style="{StaticResource MaterialDesignSwitchAccentToggleButton}" ToolTip="Connect all laser controllers"
+                        IsChecked="{Binding Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Path=IsAllControllersHighSpeedConnected}"/>
+
                     
                 </ToolBar>
             </ToolBarTray>
             
             <Grid>
+                <!-- Side bar logging system -->
+                <Expander  Background="Transparent"
+                           ExpandDirection="Left"
+                           Panel.ZIndex="10"
+                           HorizontalAlignment="Right"
+                           IsExpanded="{Binding AutoResetFlag,
+                  Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Path=AutoResetFlag}">
+                    <Expander.Header>
+                        <TextBlock
+                            Text="Logs"
+                            RenderTransformOrigin=".5,.5">
+                            <TextBlock.LayoutTransform>
+                                <RotateTransform
+                                    Angle="90" />
+                            </TextBlock.LayoutTransform>
+                        </TextBlock>
+                    </Expander.Header>
+
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <ListBox Name="SideBarLoggingBox"
+                            ItemsSource="{Binding Path=RoutineMessageList, Source={x:Static applicationViewModel:ApplicationViewModel.Instance}}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <materialDesign:Card Margin="3 5"
+                                                         Background="{DynamicResource PrimaryHueDarkBrush}"
+                                                         Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}">
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Time}" FontSize="12" />
+                                            <Separator />
+                                            <WrapPanel>
+                                                <TextBlock Text="{Binding Message}" FontSize="16"
+                                                           HorizontalAlignment="Left" />
+                                            </WrapPanel>
+                                        </StackPanel>
+                                    </materialDesign:Card>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                       </ScrollViewer>
+                </Expander>
+
                 <!-- Snack bar -->
                 <materialDesign:Snackbar VerticalAlignment="Top" HorizontalAlignment="Center" MessageQueue="{Binding MessageQueue, Source={x:Static applicationViewModel:ApplicationViewModel.Instance}}"/>
                 

@@ -94,7 +94,8 @@
     <Compile Include="IoC\Interface\ILoggingServiceProvider.cs" />
     <Compile Include="IoC\IoC.cs" />
     <Compile Include="IoC\Loggers\CameraMessageLogger.cs" />
-    <Compile Include="Models\ThreadSafeFixedSizeQueue.cs" />
+    <Compile Include="IoC\Loggers\LaserControllerLibLogger.cs" />
+    <Compile Include="Models\FixedSizeQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Stubs\MeasurementProcedure2DStub.cs" />
     <Compile Include="Stubs\MeasurementProcedure3DStub.cs" />

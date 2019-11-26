@@ -13,12 +13,43 @@
            <RowDefinition Height="Auto" />
            <RowDefinition Height="*" />
        </Grid.RowDefinitions>
-       <!-- Buttons -->
-       <StackPanel Orientation="Horizontal">
-           <Button Command="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Server.ConnectCommand}" Content="Connect" Style="{StaticResource MaterialDesignRaisedLightButton}" Height="50" materialDesign:ButtonAssist.CornerRadius="5"/>
-           <Button Command="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Server.DisconnectCommand}" Content="Disconnect" Style="{StaticResource MaterialDesignRaisedLightButton}" Height="50" materialDesign:ButtonAssist.CornerRadius="5"/>
-           <Button Command="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Server.NotifyPlcReadyToGoNextLoopCommand}" Content="Ready to go next loop" Style="{StaticResource MaterialDesignRaisedLightButton}" Height="50" materialDesign:ButtonAssist.CornerRadius="5"/>
-       </StackPanel>
+       <Grid Grid.Row="0">
+
+           <Grid.ColumnDefinitions>
+               <ColumnDefinition Width="Auto" />
+               <ColumnDefinition Width="Auto"/>
+           </Grid.ColumnDefinitions>
+           <!-- Buttons -->
+           <StackPanel Orientation="Horizontal" Grid.Column="0">
+               <!-- Connect button -->
+               <Button
+                   Command="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Server.ConnectCommand}"
+                   Content="Connect" Style="{StaticResource MaterialDesignRaisedLightButton}" Height="50"
+                   materialDesign:ButtonAssist.CornerRadius="5" />
+               <!-- Disconnect button -->
+               <Button
+                   Command="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Server.DisconnectCommand}"
+                   Content="Disconnect" Style="{StaticResource MaterialDesignRaisedLightButton}" Height="50"
+                   materialDesign:ButtonAssist.CornerRadius="5" />
+               <!-- Ready to go button -->
+               <Button
+                   Command="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Server.NotifyPlcReadyToGoNextLoopCommand}"
+                   Content="Ready to go next loop" Style="{StaticResource MaterialDesignRaisedLightButton}" Height="50"
+                   materialDesign:ButtonAssist.CornerRadius="5" />
+           </StackPanel>
+           
+           <StackPanel Grid.Column="1" Orientation="Horizontal" FlowDirection="RightToLeft">
+               <!-- Busy waiting for 2D processing done indicator-->
+               <materialDesign:Card ToolTip="Busy waiting for 2D processing done"
+                   UniformCornerRadius="14"
+                   Padding="4">
+                   <ProgressBar
+                       Style="{StaticResource MaterialDesignCircularProgressBar}"
+                       Value="50"
+                       IsIndeterminate="{Binding  Source={x:Static application:ApplicationViewModel.Instance}, Path=IsBusyWaitingFor2DToFinished}" />
+               </materialDesign:Card>
+           </StackPanel>
+       </Grid>
        <!-- Plc message box -->
        <local:AutoScrollMessageBox Grid.Row="1"/>
    </Grid>

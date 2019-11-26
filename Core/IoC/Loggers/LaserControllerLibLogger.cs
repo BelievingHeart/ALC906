@@ -1,14 +1,14 @@
 ﻿using Core.ViewModels.Application;
-using HKCameraDev.Core.IoC.Interface;
+using LJX8000.Core.IoC.Interface;
 
 namespace Core.IoC.Loggers
 {
     /// <summary>
-    /// Log messages that bubble up from HKCameraDev.Core
+    /// Log messages that bubble up from LJX8000.Core
     /// </summary>
-    public class CameraMessageLogger : IHKCameraLibLogger
+    public class LaserControllerLibLogger : ILJX8000LibLogger
     {
-        public void Log(string message)
+        public void LogThreadSafe(string message)
         {
             ApplicationViewModel.Instance?.LogRoutine(message);
         }

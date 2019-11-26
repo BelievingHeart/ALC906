@@ -7,11 +7,11 @@ namespace Core.Constants
         /// <summary>
         /// 2D拍照左槽到位
         /// </summary>
-        public const int CommandIdLeftSocketArrived = 21;
+        public const int CommandIdLeftSocketArrived = 22;
         /// <summary>
         /// 2D拍照右槽到位
         /// </summary>
-        public const int CommandIdRightSocketArrived = 22;
+        public const int CommandIdRightSocketArrived = 21;
         
     }
 }

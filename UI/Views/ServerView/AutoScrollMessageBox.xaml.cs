@@ -64,6 +64,22 @@ namespace UI.Views.ServerView
             get { return (int) GetValue(MaxMessageCountProperty); }
             set { SetValue(MaxMessageCountProperty, value); }
         }
-        
+
+        private void OnMessageBoxLoaded(object sender, RoutedEventArgs e)
+        {
+            var messages = MessageListBox.ItemsSource as ObservableCollection<LoggingMessageItem>;
+            messages.CollectionChanged += ScrollToBottom;
+        }
+
+        private void ScrollToBottom(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            var me = sender as ObservableCollection<LoggingMessageItem>;
+            if (me.Count == 0) return;
+            Dispatcher.Invoke(() =>
+            {
+                MessageListBox.SelectedIndex = me.Count - 1;
+                MessageListBox.ScrollIntoView(MessageListBox.SelectedItem);
+            });
+        }
     }
 }
