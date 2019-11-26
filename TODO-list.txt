@@ -1,3 +1,0 @@
-1. Obsolete serialzation and display event handler in ControllerViewModel's ctor
-2. Add ImagesReady event to ControllerViewModel
-3. Add product-result-replying to plc module

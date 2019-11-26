@@ -81,9 +81,11 @@
     <Compile Include="Enums\CameraTriggerSourceType.cs" />
     <Compile Include="Enums\CameraType.cs" />
     <Compile Include="Enums\MeasurementDecision.cs" />
+    <Compile Include="Enums\ProductLevel.cs" />
     <Compile Include="Enums\SocketType.cs" />
     <Compile Include="Helpers\FaiItemsHelper.cs" />
     <Compile Include="Helpers\FindLineParamHelper.cs" />
+    <Compile Include="Helpers\PlcMessagePackHelper.cs" />
     <Compile Include="ImageProcessing\FindLineParam.cs" />
     <Compile Include="ImageProcessing\IMeasurementProcedure2D.cs" />
     <Compile Include="ImageProcessing\IMeasurementProcedure3D.cs" />

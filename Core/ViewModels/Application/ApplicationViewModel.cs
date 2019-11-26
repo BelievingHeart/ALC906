@@ -47,24 +47,56 @@ namespace Core.ViewModels.Application
         }
 
         private static ApplicationViewModel _instance;
-        
+
+        private readonly Object _lockerOfLaserImageBuffers = new Object();
+
+        /// <summary>
+        /// Key=ControllerName, Value=CurrentIndexOfSocket
+        /// CurrentIndexOfSocket: 0 for right, 1 for left
+        /// </summary>
+        private readonly Dictionary<string, int> _laserRunIndex = new Dictionary<string, int>();
+
+        /// <summary>
+        /// Key=ControllerName, Value=ImagesInOneLoop
+        /// FirstImage=HeightImageFromRightSocket, SecondImage=HeightImageFromLeftSocket
+        /// </summary>
+        private readonly Dictionary<string, List<HImage>> _laserImageBuffers = new Dictionary<string, List<HImage>>();
+
+        /// <summary>
+        /// Keep results of left and right socket in memory
+        /// for displaying purpose when switching between socket views
+        /// </summary>
+        private readonly List<MeasurementResult2D> _results2D = new List<MeasurementResult2D>()
+        {
+            null, null
+        };
+
+        /// <summary>
+        /// Keep results of left and right socket in memory
+        /// for displaying purpose when switching between socket views
+        /// </summary>
+        private readonly List<MeasurementResult3D> _results3D = new List<MeasurementResult3D>() {null, null};
 
         private int _maxRoutineLogs = 100;
 
         private HTuple _shapeModel2D, _shapeModel3D;
 
-        private CsvSerializer.CsvSerializer _serializerLeft = new CsvSerializer.CsvSerializer(Path.Combine(DirectoryConstants.CsvOutputDir, "Left"));
-        private CsvSerializer.CsvSerializer _serializerRight = new CsvSerializer.CsvSerializer(Path.Combine(DirectoryConstants.CsvOutputDir, "Right"));
+        private readonly CsvSerializer.CsvSerializer _serializerLeft =
+            new CsvSerializer.CsvSerializer(Path.Combine(DirectoryConstants.CsvOutputDir, "Left"));
 
-        private IMeasurementProcedure2D _procedure2D = new MeasurementProcedure2DStub();
+        private readonly CsvSerializer.CsvSerializer _serializerRight =
+            new CsvSerializer.CsvSerializer(Path.Combine(DirectoryConstants.CsvOutputDir, "Right"));
 
-        private IMeasurementProcedure3D _procedure3D = new MeasurementProcedure3DStub();
-        
-        private object _lockerOfRoutineMessageList = new object();
-        private object _lockerOfPlcMessageList = new object();
+        private readonly IMeasurementProcedure2D _procedure2D = new MeasurementProcedure2DStub();
+
+        private readonly IMeasurementProcedure3D _procedure3D = new MeasurementProcedure3DStub();
+
+        private readonly object _lockerOfRoutineMessageList = new object();
+        private readonly object _lockerOfPlcMessageList = new object();
         private SocketType _socketToDisplay2D;
         private SocketType _socketToDisplay3D;
-        private List<string> _findLineParam2DNames = new List<string>()
+
+        private readonly List<string> _findLineParam2DNames = new List<string>()
         {
             //TODO: make this meaningful
             "test1", "test2"
@@ -77,17 +109,19 @@ namespace Core.ViewModels.Application
         private List<FaiItem> _faiItems3DRight;
 
 
-        private readonly Dictionary<SocketType, ThreadSafeFixedSizeQueue<MeasurementResult2D>> _resultQueues2D  =
-            new Dictionary<SocketType, ThreadSafeFixedSizeQueue<MeasurementResult2D>>()
+        private readonly Dictionary<SocketType, Queue<MeasurementResult2D>> _resultQueues2D =
+            new Dictionary<SocketType, Queue<MeasurementResult2D>>()
             {
-                [SocketType.Left] = new ThreadSafeFixedSizeQueue<MeasurementResult2D>(2),
-                [SocketType.Right] = new ThreadSafeFixedSizeQueue<MeasurementResult2D>(2)
+                [SocketType.Left] = new Queue<MeasurementResult2D>(2),
+                [SocketType.Right] = new Queue<MeasurementResult2D>(2)
             };
+
+        private readonly Object _lockerOfResultQueues2D = new Object();
 
         protected ApplicationViewModel()
         {
             InitContainer();
-            
+
             CurrentApplicationPage = ApplicationPageType.Home;
             MessageQueue = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(3000));
             PlcMessageList = new ObservableCollection<LoggingMessageItem>();
@@ -101,7 +135,30 @@ namespace Core.ViewModels.Application
 
             LoadFindLineParams2D();
 
+            ClearLaserImagesForNewLoop();
+
             InitCommands();
+        }
+
+        private void ClearLaserImagesForNewLoop()
+        {
+            lock (_lockerOfLaserImageBuffers)
+            {
+                // Reset run index
+                foreach (var name in NameConstants.ControllerNames)
+                {
+                    _laserRunIndex[name] = 0;
+                }
+
+                // Reset image buffers
+                foreach (var name in NameConstants.ControllerNames)
+                {
+                    _laserImageBuffers[name] = new List<HImage>()
+                    {
+                        null, null
+                    };
+                }
+            }
         }
 
         private void InitContainer()
@@ -111,14 +168,19 @@ namespace Core.ViewModels.Application
 
         private void LoadFindLineParams2D()
         {
-            FindLineParams2D = AutoSerializableHelper.LoadAutoSerializables<FindLineParam>(_findLineParam2DNames, DirectoryConstants.FindLineParamsConfigDir).ToList();
+            FindLineParams2D = AutoSerializableHelper
+                .LoadAutoSerializables<FindLineParam>(_findLineParam2DNames, DirectoryConstants.FindLineParamsConfigDir)
+                .ToList();
         }
 
         private void InitCommands()
         {
             SwitchSocketView2DCommand = new RelayCommand(SwitchSocketView2D);
             SwitchSocketView3DCommand = new RelayCommand(SwitchSocketView3D);
-            ManualTest2DCommand = new SimpleCommand(o=> RunOnlySingleFireIsAllowedEachTimeCommand(()=>IsBusyRunningManualTest2D, async ()=> await RunManualTest2D()), o=>!Server.IsAutoRunning);
+            ManualTest2DCommand =
+                new SimpleCommand(
+                    o => RunOnlySingleFireIsAllowedEachTimeCommand(() => IsBusyRunningManualTest2D,
+                        async () => await RunManualTest2D()), o => !Server.IsAutoRunning);
         }
 
         private void SwitchSocketView3D()
@@ -133,7 +195,7 @@ namespace Core.ViewModels.Application
             var result2D =
                 await Task.Run(() => _procedure2D.Execute(images, FindLineParams2D.ToDict()));
             result2D.Images = images;
-            
+
             ResultToDisplay2D = result2D;
         }
 
@@ -154,10 +216,33 @@ namespace Core.ViewModels.Application
             Server.InitRequested += () => LogPlcMessage("Init requested from plc");
             Server.ClientHooked += socket => LogPlcMessage(socket.RemoteEndPoint + " is hooked");
             Server.CustomCommandReceived += PlcCustomCommandHandler;
-            Server.PlcInitFinished +=() => LogPlcMessage("Plc init done");
-            Server.NewLoopStarted += () => LogPlcMessage("Received start permission from ALC");
+            Server.PlcInitFinished += OnPlcInitFinished;
+            Server.NewLoopStarted += OnNewLoopStarted;
         }
- 
+
+        private void OnNewLoopStarted()
+        {
+            LogPlcMessage("Received start permission from ALC");
+            ClearLaserImagesForNewLoop();
+        }
+
+        private void OnPlcInitFinished()
+        {
+            LogPlcMessage("Plc init done");
+            ResetStates();
+        }
+
+        private void ResetStates()
+        {
+            lock (_lockerOfResultQueues2D)
+            {
+                _resultQueues2D[SocketType.Left].Clear();
+                _resultQueues2D[SocketType.Right].Clear();
+
+            }
+
+        }
+
         private void PlcCustomCommandHandler(int commandId)
         {
             switch (commandId)
@@ -171,7 +256,7 @@ namespace Core.ViewModels.Application
                     LogPlcMessage("2D right socket arrived");
                     break;
             }
-      }
+        }
 
         private void SetupCameras()
         {
@@ -180,55 +265,128 @@ namespace Core.ViewModels.Application
             TopCamera.ImageBatchSize = 5;
             TopCamera.BatchImageReceived += ProcessImages2DFireForget;
 
-            
+
             // TODO: remove the following lines
             TopCamera.IsOpened = true;
             TopCamera.IsGrabbing = true;
             TopCamera.TriggerSourceType = CameraTriggerSourceType.Line0;
-            
         }
-        
+
         private void SetupLaserControllers()
         {
-            ControllerManager.AttachedControllers = new List<ControllerViewModel>(NameConstants.ControllerNames.Select(name =>
-                new ControllerViewModel()
-                {
-                    Name = name,
-                    RowsPerRun = 1600,
-                    ProfileCountEachFetch = 100,
-                    NumImagesPerRun = 2
-                }).OrderBy(c => c.Name));
+            ControllerManager.AttachedControllers = new List<ControllerViewModel>(NameConstants.ControllerNames
+                .Select(name =>
+                    new ControllerViewModel()
+                    {
+                        Name = name,
+                        // 每800行发一张图回来
+                        RowsPerRun = 800,
+                        NumImagesPerRun = 1,
+                        ProfileCountEachFetch = 100,
+                    }).OrderBy(c => c.Name));
             ControllerManager.Init();
 
-            for (int i = 0; i < NameConstants.ControllerNames.Count; i++)
+            // OnControllerRunFinished
+            foreach (var controller in ControllerManager.AttachedControllers)
             {
-                var index = i;
-                ControllerManager.AttachedControllers[i].RunFinished +=
-                    (heightImages, intensityImages) =>
-                    {
-                        ImageInputs3DLeft[index] = heightImages[0];
-                        ImageInputs3DRight[index] = heightImages[1];
-                    };
-            }
+                controller.RunFinished += (heightImages, luminanceImages) =>
+                {
+                    Trace.Assert(heightImages.Count == 1);
 
-            ControllerManager.AttachedControllers[NameConstants.ControllerNames.Count - 1].RunFinished +=
-                (heightImages, intensityImages) => OnLastLaserFinishedScanning();
+                    lock (_lockerOfLaserImageBuffers)
+                    {
+                        var socketIndex = _laserRunIndex[controller.Name];
+                        // Assign new image to corresponding image list
+                        var imageList = _laserImageBuffers[controller.Name];
+                        imageList[socketIndex] = heightImages[0];
+
+                        // If all controllers finish scanning the socket indexed _laserRunIndex[controller.Name]
+                        // begin processing one set of images
+                        if (_laserImageBuffers.Values.All(list => list[socketIndex] != null))
+                        {
+                            // Do processing for one socket and get its result
+                            var imagesForOneSocket =
+                                _laserImageBuffers.Values.Select(list => list[socketIndex]).ToList();
+                            _results3D[socketIndex] = _procedure3D.Execute(imagesForOneSocket, _shapeModel3D);
+
+                            // If all reserved places for 3D image buffers are filled,
+                            // 3D image collection of one loop is done
+                            // and product level can be submit to plc
+                            var all3DImagesCollected =
+                                _laserImageBuffers.Values.All(list => list.All(image => image != null));
+                            if (all3DImagesCollected)
+                            {
+                                OnLeftSocketFinished3DImageCollection();
+                            }
+                        }
+
+                        _laserRunIndex[controller.Name]++;
+                    }
+                };
+            }
         }
 
-        private void OnLastLaserFinishedScanning()
+        /// <summary>
+        /// Left socket finishing scanning indicates
+        /// collection of images for one loop is finished
+        /// </summary>
+        private void OnLeftSocketFinished3DImageCollection()
         {
-            if (CorrespondingResultsFromCamerasNotAvailable) return;
-            Summarize();
-            UpdateResultsToDisplay();
+            WaitFor2DProcessingToFinish();
+            if (CorrespondingResultsFromCamerasNotAvailable)
+            {
+                // Send dummy product level, Ng5 for now
+                Server.SendProductLevels(ProductLevel.Ng5, ProductLevel.Ng5);
+                return;
+            }
+            
+            Combine2D3DResults();
+            SubmitProductLevels();
             SerializeCsv();
         }
 
+        /// <summary>
+        /// Send product level information to plc
+        /// </summary>
+        private void SubmitProductLevels()
+        {
+            LeftProductLevel = GetProductLevel(_results3D[(int) SocketType.Left].ItemExists, FaiItemsLeft);
+            RightProductLevel = GetProductLevel(_results3D[(int) SocketType.Right].ItemExists, FaiItemsRight);
+            Server.SendProductLevels(LeftProductLevel, RightProductLevel);
+        }
+
+        /// <summary>
+        /// Wait for 2D processing to finish upon concluding one loop
+        /// </summary>
+        private void WaitFor2DProcessingToFinish()
+        {
+            while (true)
+            {
+                lock (_lockerOfResultQueues2D)
+                {
+                    // Check if two queues are of the same size
+                    var leftCount = _resultQueues2D[SocketType.Left].Count;
+                    var rightCount = _resultQueues2D[SocketType.Right].Count;
+                    if (leftCount == rightCount) break;
+                    IsBusyWaitingFor2DToFinished = true;
+                }
+            }
+
+            IsBusyWaitingFor2DToFinished = false;
+        }
+
+
+        /// <summary>
+        /// 第一次上料， 綫掃還沒有相應的2D結果產生
+        /// </summary>
         private bool CorrespondingResultsFromCamerasNotAvailable
         {
             get
             {
-                Trace.Assert(_resultQueues2D[SocketType.Left].Count == _resultQueues2D[SocketType.Right].Count);
-                return _resultQueues2D[SocketType.Left].Count < 2;
+                lock (_lockerOfResultQueues2D)
+                {
+                    return _resultQueues2D[SocketType.Left].Count < 2;
+                }
             }
         }
 
@@ -238,49 +396,68 @@ namespace Core.ViewModels.Application
             _serializerRight.Serialize(FaiItemsRight, DateTime.Now.ToString("T"));
         }
 
-        private void UpdateResultsToDisplay()
+        /// <summary>
+        /// Convert dictionaries from image processing units to list of fai items
+        /// and display them
+        /// </summary>
+        private void Combine2D3DResults()
         {
-            var faiResultDictLeft = ConcatDictionaryNew( Result2DLeft.FaiResults, Result3DLeft.FaiResults);
-            var faiResultDictRight = ConcatDictionaryNew(Result2DRight.FaiResults, Result3DRight.FaiResults);
+            var leftSocketIndex = (int) SocketType.Left;
+            var rightSocketIndex = (int) SocketType.Right;
+
+            // Update _results2D
+            lock (_lockerOfResultQueues2D)
+            {
+                _results2D[leftSocketIndex] = _resultQueues2D[SocketType.Left].Dequeue();
+                _results2D[rightSocketIndex] = _resultQueues2D[SocketType.Right].Dequeue();
+            }
+
+            var faiResultDictLeft = ConcatDictionaryNew(_results2D[leftSocketIndex].FaiResults,
+                _results3D[leftSocketIndex].FaiResults);
+            var faiResultDictRight = ConcatDictionaryNew(_results2D[rightSocketIndex].FaiResults,
+                _results3D[rightSocketIndex].FaiResults);
 
             // To avoid frequent context switching
             // Wrap all the UI-updating code in single Invoke block
             Dispatcher.CurrentDispatcher.Invoke(() =>
             {
-                //Update fai item lists using dictionaries from image processing modules
-                UpdateFaiItems(_faiItems2DLeft, Result2DLeft.FaiResults);
-                UpdateFaiItems(_faiItems2DRight, Result2DRight.FaiResults);
-                UpdateFaiItems(_faiItems3DLeft, Result3DLeft.FaiResults);
-                UpdateFaiItems(_faiItems3DRight, Result3DRight.FaiResults);
+                // Update fai item lists using dictionaries from image processing modules
+                UpdateFaiItems(_faiItems2DLeft, _results2D[leftSocketIndex].FaiResults);
+                UpdateFaiItems(_faiItems2DRight, _results2D[rightSocketIndex].FaiResults);
+                UpdateFaiItems(_faiItems3DLeft, _results3D[leftSocketIndex].FaiResults);
+                UpdateFaiItems(_faiItems3DRight, _results3D[rightSocketIndex].FaiResults);
                 UpdateFaiItems(FaiItemsLeft, faiResultDictLeft);
                 UpdateFaiItems(FaiItemsRight, faiResultDictRight);
-            
+
                 // Optionally display results and fai items based on current displaying page
                 // 2D
-                ResultToDisplay2D = SocketToDisplay2D == SocketType.Left ? Result2DLeft : Result2DRight;
+                ResultToDisplay2D = _results2D[(int) SocketToDisplay2D];
                 FaiItems2D = SocketToDisplay2D == SocketType.Left ? _faiItems2DLeft : _faiItems2DRight;
 
                 // 3D
-                ResultToDisplay3D = SocketToDisplay3D == SocketType.Left ? Result3DLeft : Result3DRight;
+                ResultToDisplay3D = _results3D[(int) SocketToDisplay3D];
                 FaiItems3D = SocketToDisplay3D == SocketType.Left ? _faiItems3DLeft : _faiItems3DRight;
-
             });
         }
 
+        
         private void LoadFaiItems()
         {
-            _faiItems2DLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames2D, DirectoryConstants.FaiConfigDir2DLeft)
+            _faiItems2DLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames2D,
+                    DirectoryConstants.FaiConfigDir2DLeft)
                 .ToList();
-            _faiItems2DRight = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames2D, DirectoryConstants.FaiConfigDir2DRight)
+            _faiItems2DRight = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames2D,
+                    DirectoryConstants.FaiConfigDir2DRight)
                 .ToList();
-            _faiItems3DLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames3D, DirectoryConstants.FaiConfigDir3DLeft)
+            _faiItems3DLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames3D,
+                    DirectoryConstants.FaiConfigDir3DLeft)
                 .ToList();
-            _faiItems3DRight = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames3D, DirectoryConstants.FaiConfigDir3DRight)
+            _faiItems3DRight = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames3D,
+                    DirectoryConstants.FaiConfigDir3DRight)
                 .ToList();
 
             FaiItemsLeft = _faiItems2DLeft.ConcatNew(_faiItems3DLeft);
             FaiItemsRight = _faiItems2DRight.ConcatNew(_faiItems3DRight);
-            
         }
 
         private void LoadShapeModels()
@@ -289,23 +466,6 @@ namespace Core.ViewModels.Application
             HOperatorSet.ReadShapeModel(PathConstants.ShapeModelPath3D, out _shapeModel3D);
         }
 
-       
-
-        /// <summary>
-        /// 统计一次测量结果
-        /// </summary>
-        private void Summarize()
-        {
-            Result3DLeft = MeasureImages3D(ImageInputs3DLeft, _shapeModel3D);
-            Result3DRight = MeasureImages3D(ImageInputs3DRight, _shapeModel3D);
-            LeftDecision = GetDecision(Result3DLeft.ItemExists, FaiItemsLeft);
-            RightDecision = GetDecision(Result3DRight.ItemExists, FaiItemsRight);
-            
-            Result2DLeft = _resultQueues2D[SocketType.Left].DequeueThreadSafe();
-            Result2DRight = _resultQueues2D[SocketType.Right].DequeueThreadSafe();
-        }
-
-
 
         /// <summary>
         /// Decide whether the item is missing, passed or rejected
@@ -313,10 +473,10 @@ namespace Core.ViewModels.Application
         /// <param name="itemExists"></param>
         /// <param name="faiItems"></param>
         /// <returns></returns>
-        private MeasurementDecision GetDecision(bool itemExists, List<FaiItem> faiItems)
+        private ProductLevel GetProductLevel(bool itemExists, List<FaiItem> faiItems)
         {
-            if (!itemExists) return MeasurementDecision.Empty;
-            return faiItems.Any(item => item.Rejected) ? MeasurementDecision.Rejected : MeasurementDecision.Passed;
+            if (!itemExists) return ProductLevel.Ng5;
+            return faiItems.Any(item => item.Rejected) ? ProductLevel.Ng2 : ProductLevel.Ok;
         }
 
         /// <summary>
@@ -324,11 +484,8 @@ namespace Core.ViewModels.Application
         /// </summary>
         /// <param name="faiItems"></param>
         /// <param name="faiResultDict"></param>
-        /// <exception cref="ArgumentException"></exception>
         private void UpdateFaiItems(List<FaiItem> faiItems, Dictionary<string, double> faiResultDict)
         {
-            if (faiItems.Count != faiResultDict.Count)
-                throw new ArgumentException("faiItems.Count!=faiResultDict.Count");
             foreach (var faiResult in faiResultDict)
             {
                 faiItems.ByName(faiResult.Key).ValueUnbiased = faiResult.Value;
@@ -350,17 +507,16 @@ namespace Core.ViewModels.Application
                 {
                     output[result.Key] = result.Value;
                 }
-                
             }
+
             return output;
         }
 
-        private MeasurementResult3D MeasureImages3D(List<HImage> imageInputs, HTuple shapeModel3D)
-        {
-           return _procedure3D.Execute(imageInputs, shapeModel3D);
-        }
 
-
+        /// <summary>
+        /// Process 2d images from one socket and queue up the results
+        /// </summary>
+        /// <param name="images"></param>
         private void ProcessImages2DFireForget(List<HImage> images)
         {
             LogRoutine(images.Count + " 2D images collected");
@@ -370,13 +526,19 @@ namespace Core.ViewModels.Application
                 {
                     var result = _procedure2D.Execute(images, FindLineParams2D.ToDict());
                     result.Images = images;
-                    _resultQueues2D[SocketType.Left].EnqueueThreadSafe(result);
+                    lock (_lockerOfResultQueues2D)
+                    {
+                        _resultQueues2D[SocketType.Left].Enqueue(result);
+                    }
                 }
                 else
                 {
                     var result = _procedure2D.Execute(images, FindLineParams2D.ToDict());
                     result.Images = images;
-                    _resultQueues2D[SocketType.Right].EnqueueThreadSafe(result);
+                    lock (_lockerOfResultQueues2D)
+                    {
+                        _resultQueues2D[SocketType.Right].Enqueue(result);
+                    }
                 }
             });
         }
@@ -392,10 +554,17 @@ namespace Core.ViewModels.Application
                         Time = DateTime.Now.ToString("T"),
                         Message = message
                     });
+
+                    // Remove some messages if overflows
+                    if (PlcMessageList.Count > _maxRoutineLogs)
+                    {
+                        PlcMessageList =
+                            new ObservableCollection<LoggingMessageItem>(PlcMessageList.Skip(_maxRoutineLogs / 3));
+                    }
                 }
             });
         }
-        
+
         public void LogRoutine(string message)
         {
             Dispatcher.CurrentDispatcher.Invoke(() =>
@@ -424,22 +593,23 @@ namespace Core.ViewModels.Application
         public void InitHardWares()
         {
             SetupServer();
-            
+
             //TODO: uncomment this line
             SetupCameras();
-            
+
             SetupLaserControllers();
         }
 
 
-
         #region Properties
+
+        public bool IsBusyWaitingFor2DToFinished { get; set; }
 
         /// <summary>
         /// 2D fai items from left or right socket
         /// </summary>
         public List<FaiItem> FaiItems2D { get; set; }
-        
+
         /// <summary>
         /// 3D fai items from left or right socket
         /// </summary>
@@ -448,7 +618,7 @@ namespace Core.ViewModels.Application
         public List<FindLineParam> FindLineParams2D { get; set; }
 
         public bool IsBusyRunningManualTest2D { get; set; }
-        
+
         /// <summary>
         /// Current image to display in Vision2DView
         /// </summary>
@@ -460,7 +630,7 @@ namespace Core.ViewModels.Application
         /// <summary>
         /// Index of current displayed image in Vision2DView
         /// </summary>
-       
+
         [AlsoNotifyFor(nameof(ImageToDisplay2D))]
         public int ImageIndexToDisplay2D { get; set; } = 0;
 
@@ -479,15 +649,10 @@ namespace Core.ViewModels.Application
             set
             {
                 _socketToDisplay2D = value;
-                ResultToDisplay2D = value == SocketType.Left ? Result2DLeft : Result2DRight;
+                ResultToDisplay2D = _results2D[(int)value];
                 FaiItems2D = value == SocketType.Left ? _faiItems2DLeft : _faiItems2DRight;
             }
         }
-
-
-        public MeasurementResult2D Result2DRight { get; set; }
-
-        public MeasurementResult2D Result2DLeft { get; set; }
 
 
         public SocketType SocketToDisplay3D
@@ -496,31 +661,23 @@ namespace Core.ViewModels.Application
             set
             {
                 _socketToDisplay3D = value;
-                ResultToDisplay3D = value == SocketType.Left ? Result3DLeft : Result3DRight;
+                ResultToDisplay3D = _results3D[(int)value];
                 FaiItems3D = value == SocketType.Left ? _faiItems3DLeft : _faiItems3DRight;
             }
         }
 
         public MeasurementResult3D ResultToDisplay3D { get; set; }
 
-        public MeasurementResult3D Result3DRight { get; set; }
-
-        public MeasurementResult3D Result3DLeft { get; set; }
-
-      
-
         public SocketType CurrentArrivedSocket { get; set; }
-        public MeasurementDecision LeftDecision { get; set; }
-        public MeasurementDecision RightDecision { get; set; }
+        public ProductLevel LeftProductLevel { get; set; }
+        public ProductLevel RightProductLevel { get; set; }
 
-
-        public List<HImage> ImageInputs3DLeft { get; set; } = new List<HImage>() {null, null, null};
-        public List<HImage> ImageInputs3DRight { get; set; } = new List<HImage>() {null, null, null};
 
         /// <summary>
         /// Switch 2D view between left and right socket
         /// </summary>
         public ICommand SwitchSocketView2DCommand { get; set; }
+
         public ICommand SwitchSocketView3DCommand { get; set; }
 
         /// <summary>
@@ -548,13 +705,14 @@ namespace Core.ViewModels.Application
         /// <summary>
         /// Message list for routine logging
         /// </summary>
-        public ObservableCollection<LoggingMessageItem> RoutineMessageList { get; set; } = new ObservableCollection<LoggingMessageItem>();
-        
+        public ObservableCollection<LoggingMessageItem> RoutineMessageList { get; set; } =
+            new ObservableCollection<LoggingMessageItem>();
+
         /// <summary>
         /// Message list for plc message logging
         /// </summary>
         public ObservableCollection<LoggingMessageItem> PlcMessageList { get; set; }
-        
+
         public AlcServerViewModel Server { get; set; }
 
         public List<FaiItem> FaiItemsLeft { get; set; }
@@ -564,13 +722,13 @@ namespace Core.ViewModels.Application
 
 
         /// <summary>
-        /// Init before binding can avoid bazaar exceptions
+        /// Init before any binding taking place can avoid bazaar <see cref="TypeInitializationException"/> exceptions
         /// </summary>
         public static void Init()
         {
             _instance = new ApplicationViewModel();
         }
-        
+
         /// <summary>
         /// Disconnect cameras, lasers and plc
         /// </summary>
