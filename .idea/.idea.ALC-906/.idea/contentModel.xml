@@ -117,6 +117,10 @@
         </e>
         <e p="UI.csproj" t="IncludeRecursive" />
         <e p="Views" t="Include">
+          <e p="bin" t="Include">
+            <e p="BinListView.xaml" t="Include" />
+            <e p="BinListView.xaml.cs" t="Include" />
+          </e>
           <e p="CameraHostView" t="Include">
             <e p="CameraHostView.xaml" t="Include" />
             <e p="CameraHostView.xaml.cs" t="Include" />

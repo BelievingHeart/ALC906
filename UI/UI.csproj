@@ -79,6 +79,9 @@
     <Compile Include="Converters\EventToCommandBehaviour.cs" />
     <Compile Include="Converters\ValueConverterBase.cs" />
     <Compile Include="DataAccess\LoggingServiceProvider.cs" />
+    <Compile Include="Views\Bin\BinListView.xaml.cs">
+      <DependentUpon>BinListView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\CameraHostView\CameraHostView.xaml.cs">
       <DependentUpon>CameraHostView.xaml</DependentUpon>
     </Compile>
@@ -131,6 +134,7 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Views\Bin\BinListView.xaml" />
     <Page Include="Views\CameraHostView\CameraHostView.xaml" />
     <Page Include="Views\FaiItem\FaiItemListStackView.xaml" />
     <Page Include="Views\FaiItem\FaiItemListWarpView.xaml" />

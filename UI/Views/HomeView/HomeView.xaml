@@ -7,8 +7,21 @@
              xmlns:views="clr-namespace:UI.Views"
              xmlns:application="clr-namespace:Core.ViewModels.Application;assembly=Core"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:faiItem="clr-namespace:UI.Views.FaiItem"
+             xmlns:bin="clr-namespace:UI.Views.Bin"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-         </Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <!-- Left socket fai items -->
+        <faiItem:FaiItemListStackView Grid.Column="0" FaiItems="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=FaiItemsLeft}"/>
+        <!-- Bin views -->
+        <bin:BinListView Grid.Column="1"/>
+        <!-- Right socket fai items -->
+        <faiItem:FaiItemListStackView Grid.Column="2"  FaiItems="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=FaiItemsRight}"/>
+    </Grid>
 </UserControl>

@@ -11,7 +11,17 @@ namespace Core.Constants
         
  
 
-        public static string CsvOutputDir => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ALC/CSV");
+        /// <summary>
+        /// Base dir to output various records
+        /// </summary>
+        public static string OutputDir => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "ALC");
+        public static string CsvOutputDir => Path.Combine(OutputDir, "CSV");
+
+        /// <summary>
+        /// Directory that stores general records
+        /// </summary>
+        public static string ProductionLineRecordDir => Path.Combine(OutputDir, "General");
+
         
         private static string FaiConfigDir2D => Path.Combine(FaiConfigDir, "2D");
         private static string FaiConfigDir3D => Path.Combine(FaiConfigDir, "3D");

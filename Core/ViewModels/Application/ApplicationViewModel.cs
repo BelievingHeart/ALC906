@@ -18,6 +18,7 @@ using Core.ImageProcessing;
 using Core.IoC.Loggers;
 using Core.Models;
 using Core.Stubs;
+using Core.ViewModels.Bin;
 using Core.ViewModels.Fai;
 using Core.ViewModels.Plc;
 using HalconDotNet;
@@ -59,7 +60,7 @@ namespace Core.ViewModels.Application
         private readonly Dictionary<string, int> _laserRunIndex = new Dictionary<string, int>();
 
         /// <summary>
-        /// Key=ControllerName, Value=ImagesInOneLoop
+        /// Key=ControllerName, Value=ImagesInOneRound
         /// FirstImage=HeightImageFromRightSocket, SecondImage=HeightImageFromLeftSocket
         /// </summary>
         private readonly Dictionary<string, List<HImage>> _laserImageBuffers = new Dictionary<string, List<HImage>>();
@@ -111,11 +112,11 @@ namespace Core.ViewModels.Application
         private List<FaiItem> _faiItems3DRight;
 
 
-        private readonly Dictionary<SocketType, FixedSizeQueue<MeasurementResult2D>> _resultQueues2D =
-            new Dictionary<SocketType, FixedSizeQueue<MeasurementResult2D>>()
+        private readonly Dictionary<SocketType, Queue<MeasurementResult2D>> _resultQueues2D =
+            new Dictionary<SocketType, Queue<MeasurementResult2D>>()
             {
-                [SocketType.Left] = new FixedSizeQueue<MeasurementResult2D>(2),
-                [SocketType.Right] = new FixedSizeQueue<MeasurementResult2D>(2)
+                [SocketType.Left] = new Queue<MeasurementResult2D>(2),
+                [SocketType.Right] = new Queue<MeasurementResult2D>(2)
             };
 
         private readonly Object _lockerOfResultQueues2D = new Object();
@@ -138,12 +139,23 @@ namespace Core.ViewModels.Application
 
             LoadFindLineParams2D();
 
-            ClearLaserImagesForNewLoop();
+            LoadProductionLineRecords();
+
+            ClearLaserImagesForNewRound();
 
             InitCommands();
         }
 
-        private void ClearLaserImagesForNewLoop()
+        /// <summary>
+        /// Load records of the production line
+        /// </summary>
+        private void LoadProductionLineRecords()
+        {
+            Bins = AutoSerializableHelper.LoadAutoSerializable<BinListViewModel>("Bins",
+                DirectoryConstants.ProductionLineRecordDir);
+        }
+
+        private void ClearLaserImagesForNewRound()
         {
             lock (_lockerOfLaserImageBuffers)
             {
@@ -227,7 +239,7 @@ namespace Core.ViewModels.Application
             Server.ClientHooked += OnPlcHooked;
             Server.CustomCommandReceived += PlcCustomCommandHandler;
             Server.PlcInitFinished += OnPlcInitFinished;
-            Server.NewLoopStarted += OnNewLoopStarted;
+            Server.NewRoundStarted += OnNewRoundStarted;
         }
 
         private void OnPlcHooked(Socket socket)
@@ -235,10 +247,33 @@ namespace Core.ViewModels.Application
             LogPlcMessage(socket.RemoteEndPoint + " is hooked");
         }
 
-        private void OnNewLoopStarted()
+        private void OnNewRoundStarted()
         {
             LogPlcMessage("Received start permission from ALC");
-            ClearLaserImagesForNewLoop();
+            ClearLaserImagesForNewRound();
+            Rearrange2DImageQueues();
+        }
+
+        /// <summary>
+        /// When starting a new round
+        /// the last one in the queue must be the one
+        /// that will be concluded with 3D results in the new round
+        /// </summary>
+        private void Rearrange2DImageQueues()
+        {
+            lock (_lockerOfResultQueues2D)
+            {
+                var lastInLeft = _resultQueues2D[SocketType.Left].LastOrDefault();
+                var isFirstRoundAfterReset = lastInLeft == null;
+                if (isFirstRoundAfterReset) return;
+            
+                _resultQueues2D[SocketType.Left].Clear();
+                _resultQueues2D[SocketType.Left].Enqueue(lastInLeft);
+            
+                var lastInRight = _resultQueues2D[SocketType.Right].LastOrDefault();
+                _resultQueues2D[SocketType.Right].Clear();
+                _resultQueues2D[SocketType.Right].Enqueue(lastInRight);
+            }
         }
 
         private void OnPlcInitFinished()
@@ -254,6 +289,8 @@ namespace Core.ViewModels.Application
                 _resultQueues2D[SocketType.Left].Clear();
                 _resultQueues2D[SocketType.Right].Clear();
             }
+
+            RoundCountSinceReset = 0;
         }
 
         private void PlcCustomCommandHandler(int commandId)
@@ -303,7 +340,7 @@ namespace Core.ViewModels.Application
             foreach (var controller in ControllerManager.AttachedControllers)
             {
                 controller.RunFinished += (heightImages, luminanceImages) =>
-                    OnControllerRunFinished(heightImages, luminanceImages, controller);
+                    OnSingleControllerFinishedScanningSingleSocket(heightImages, luminanceImages, controller);
             }
         }
 
@@ -313,7 +350,7 @@ namespace Core.ViewModels.Application
         /// <param name="heightImages"></param>
         /// <param name="luminanceImages"></param>
         /// <param name="controller"></param>
-        private void OnControllerRunFinished(List<HImage> heightImages, List<HImage> luminanceImages,
+        private void OnSingleControllerFinishedScanningSingleSocket(List<HImage> heightImages, List<HImage> luminanceImages,
             ControllerViewModel controller)
         {
             Trace.Assert(heightImages.Count == 1);
@@ -353,33 +390,40 @@ namespace Core.ViewModels.Application
             _results3D[socketIndex] = _procedure3D.Execute(imagesForOneSocket, _shapeModel3D);
 
             // If all reserved places for 3D image buffers are filled,
-            // 3D image collection of one loop is done
+            // 3D image collection of one round is done
             // and product level can be submit to plc
             var all3DImagesCollected =
                 _laserImageBuffers.Values.All(list => list.All(image => image != null));
             if (all3DImagesCollected)
             {
-                OnLeftSocketFinished3DImageCollection();
+                OnAllSocketsFinished3DImageCollection();
             }
         }
 
         /// <summary>
         /// Left socket finishing scanning indicates
-        /// collection of images for one loop is finished
+        /// collection of images for one round is finished
         /// </summary>
-        private void OnLeftSocketFinished3DImageCollection()
+        private void OnAllSocketsFinished3DImageCollection()
         {
-            WaitFor2DProcessingToFinish();
-            if (CorrespondingResultsFromCamerasNotAvailable)
+            var isFirstRoundSinceReset = RoundCountSinceReset == 0;
+            if (isFirstRoundSinceReset)
             {
                 // Send dummy product level, Ng5 for now
                 Server.SendProductLevels(ProductLevel.Ng5, ProductLevel.Ng5);
                 return;
             }
-
+            
+            //NOTE: don't need to wait for new results of 2d,
+            // since they are only required in the next round
+            // and the corresponding 2d results that are needed
+            // in this round is already available at the start of this round
             Combine2D3DResults();
             SubmitProductLevels();
             SerializeCsv();
+            
+            // Round finished, increment round count
+            RoundCountSinceReset++;
         }
 
         /// <summary>
@@ -391,41 +435,7 @@ namespace Core.ViewModels.Application
             RightProductLevel = GetProductLevel(_results3D[(int) SocketType.Right].ItemExists, FaiItemsRight);
             Server.SendProductLevels(LeftProductLevel, RightProductLevel);
         }
-
-        /// <summary>
-        /// Wait for 2D processing to finish upon concluding one loop
-        /// </summary>
-        private void WaitFor2DProcessingToFinish()
-        {
-            while (true)
-            {
-                lock (_lockerOfResultQueues2D)
-                {
-                    // Check if two queues are of the same size
-                    var leftCount = _resultQueues2D[SocketType.Left].Count;
-                    var rightCount = _resultQueues2D[SocketType.Right].Count;
-                    if (leftCount == rightCount) break;
-                    IsBusyWaitingFor2DToFinished = true;
-                }
-            }
-
-            IsBusyWaitingFor2DToFinished = false;
-        }
-
-
-        /// <summary>
-        /// 第一次上料， 綫掃還沒有相應的2D結果產生
-        /// </summary>
-        private bool CorrespondingResultsFromCamerasNotAvailable
-        {
-            get
-            {
-                lock (_lockerOfResultQueues2D)
-                {
-                    return _resultQueues2D[SocketType.Left].Count < 2;
-                }
-            }
-        }
+        
 
         private void SerializeCsv()
         {
@@ -445,6 +455,9 @@ namespace Core.ViewModels.Application
             // Update _results2D
             lock (_lockerOfResultQueues2D)
             {
+                // Corresponding results are put to the head of queues
+                // when new round starts
+                // No worry about this
                 _results2D[leftSocketIndex] = _resultQueues2D[SocketType.Left].Dequeue();
                 _results2D[rightSocketIndex] = _resultQueues2D[SocketType.Right].Dequeue();
             }
@@ -667,6 +680,10 @@ namespace Core.ViewModels.Application
 
 
         #region Properties
+        
+        public int RoundCountSinceReset { get; set; }
+
+        public BinListViewModel Bins { get; set; }
 
         public bool IsAllControllersHighSpeedConnected
         {

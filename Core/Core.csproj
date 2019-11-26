@@ -100,6 +100,7 @@
     <Compile Include="Stubs\MeasurementProcedure2DStub.cs" />
     <Compile Include="Stubs\MeasurementProcedure3DStub.cs" />
     <Compile Include="ViewModels\Application\ApplicationViewModel.cs" />
+    <Compile Include="ViewModels\Bin\BinListViewModel.cs" />
     <Compile Include="ViewModels\CameraHost\CameraHostViewModel.cs" />
     <Compile Include="ViewModels\Fai\FaiItem.cs" />
     <Compile Include="ViewModels\Fai\FaiItemUILogic.cs" />
