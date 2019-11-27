@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace UI.Views.CameraHostView
+namespace UI.Views.Vision2D
 {
     /// <summary>
     /// Host for camera views

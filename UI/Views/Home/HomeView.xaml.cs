@@ -1,8 +1,6 @@
-﻿using System.Diagnostics;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 
-namespace UI.Views.HomeView
+namespace UI.Views.Home
 {
     public partial class HomeView : UserControl
     {

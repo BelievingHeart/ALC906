@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Core.ViewModels.Plc;
 
-namespace UI.Views.ServerView
+namespace UI.Views.Server
 {
     public partial class AutoScrollMessageBox : UserControl
     {

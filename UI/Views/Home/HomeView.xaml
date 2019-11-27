@@ -1,14 +1,13 @@
-﻿<UserControl x:Class="UI.Views.HomeView.HomeView"
+﻿<UserControl x:Class="UI.Views.Home.HomeView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:UI.Views.HomeView"
              xmlns:views="clr-namespace:UI.Views"
              xmlns:application="clr-namespace:Core.ViewModels.Application;assembly=Core"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:faiItem="clr-namespace:UI.Views.FaiItem"
-             xmlns:bin="clr-namespace:UI.Views.Bin"
+             xmlns:bins="clr-namespace:UI.Views.Bins"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
@@ -20,7 +19,7 @@
         <!-- Left socket fai items -->
         <faiItem:FaiItemListStackView Grid.Column="0" FaiItems="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=FaiItemsLeft}"/>
         <!-- Bin views -->
-        <bin:BinListView Grid.Column="1"/>
+        <bins:BinListView Grid.Column="1"/>
         <!-- Right socket fai items -->
         <faiItem:FaiItemListStackView Grid.Column="2"  FaiItems="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=FaiItemsRight}"/>
     </Grid>

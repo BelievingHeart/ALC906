@@ -82,32 +82,35 @@
     <Compile Include="Views\Bins\BinListView.xaml.cs">
       <DependentUpon>BinListView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\CameraHostView\CameraHostView.xaml.cs">
-      <DependentUpon>CameraHostView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\FaiItem\FaiItemListStackView.xaml.cs">
       <DependentUpon>FaiItemListStackView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\FaiItem\FaiItemListView.xaml.cs">
       <DependentUpon>FaiItemListWarpView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ServerView\ServerView.xaml.cs">
+    <Compile Include="Views\LineScan\LineScanHostView.xaml.cs">
+      <DependentUpon>LineScanHostView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LineScan\LineScanView.xaml.cs">
+      <DependentUpon>LineScanView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Server\ServerView.xaml.cs">
       <DependentUpon>ServerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Vision2D\CameraHostView.xaml.cs">
+      <DependentUpon>CameraHostView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Vision2D\Vision2DView.xaml.cs">
       <DependentUpon>Vision2DView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\HomeView\HomeView.xaml.cs">
+    <Compile Include="Views\Home\HomeView.xaml.cs">
       <DependentUpon>HomeView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\LineScanHostView\LineScanHostView.xaml.cs">
-      <DependentUpon>LineScanHostView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Views\ServerView\AutoScrollMessageBox.xaml.cs">
+    <Compile Include="Views\Server\AutoScrollMessageBox.xaml.cs">
       <DependentUpon>AutoScrollMessageBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UserControlBase.cs" />
@@ -135,18 +138,19 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\Bins\BinListView.xaml" />
-    <Page Include="Views\CameraHostView\CameraHostView.xaml" />
     <Page Include="Views\FaiItem\FaiItemListStackView.xaml" />
     <Page Include="Views\FaiItem\FaiItemListWarpView.xaml" />
-    <Page Include="Views\ServerView\ServerView.xaml" />
+    <Page Include="Views\LineScan\LineScanHostView.xaml" />
+    <Page Include="Views\LineScan\LineScanView.xaml" />
+    <Page Include="Views\Server\ServerView.xaml" />
+    <Page Include="Views\Vision2D\CameraHostView.xaml" />
     <Page Include="Views\Vision2D\Vision2DView.xaml" />
-    <Page Include="Views\HomeView\HomeView.xaml" />
-    <Page Include="Views\LineScanHostView\LineScanHostView.xaml" />
+    <Page Include="Views\Home\HomeView.xaml" />
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\ServerView\AutoScrollMessageBox.xaml" />
+    <Page Include="Views\Server\AutoScrollMessageBox.xaml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\WPFCommon\WPFCommon\WPFCommon.csproj">

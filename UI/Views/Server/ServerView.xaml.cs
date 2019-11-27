@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace UI.Views.ServerView
+namespace UI.Views.Server
 {
     public partial class ServerView : UserControl
     {

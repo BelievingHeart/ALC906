@@ -124,27 +124,23 @@
             <e p="BinListView.xaml" t="Include" />
             <e p="BinListView.xaml.cs" t="Include" />
           </e>
-          <e p="CameraHostView" t="Include">
-            <e p="CameraHostView.xaml" t="Include" />
-            <e p="CameraHostView.xaml.cs" t="Include" />
-          </e>
           <e p="FaiItem" t="Include">
             <e p="FaiItemListStackView.xaml" t="Include" />
             <e p="FaiItemListStackView.xaml.cs" t="Include" />
             <e p="FaiItemListView.xaml.cs" t="Include" />
             <e p="FaiItemListWarpView.xaml" t="Include" />
           </e>
-          <e p="HomeView" t="Include">
+          <e p="Home" t="Include">
             <e p="HomeView.xaml" t="Include" />
             <e p="HomeView.xaml.cs" t="Include" />
           </e>
-          <e p="LineScanHostView" t="Include">
+          <e p="LineScan" t="Include">
             <e p="LineScanHostView.xaml" t="Include" />
             <e p="LineScanHostView.xaml.cs" t="Include" />
           </e>
           <e p="MainWindow.xaml" t="Include" />
           <e p="MainWindow.xaml.cs" t="Include" />
-          <e p="ServerView" t="Include">
+          <e p="Server" t="Include">
             <e p="AutoScrollMessageBox.xaml" t="Include" />
             <e p="AutoScrollMessageBox.xaml.cs" t="Include" />
             <e p="ServerView.xaml" t="Include" />
@@ -152,6 +148,8 @@
           </e>
           <e p="UserControlBase.cs" t="Include" />
           <e p="Vision2D" t="Include">
+            <e p="CameraHostView.xaml" t="Include" />
+            <e p="CameraHostView.xaml.cs" t="Include" />
             <e p="Vision2DView.xaml" t="Include" />
             <e p="Vision2DView.xaml.cs" t="Include" />
           </e>

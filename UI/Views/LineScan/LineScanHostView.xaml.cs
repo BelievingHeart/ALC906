@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace UI.Views.LineScanHostView
+namespace UI.Views.LineScan
 {
     public partial class LineScanHostView : UserControl
     {

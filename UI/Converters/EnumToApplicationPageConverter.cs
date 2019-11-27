@@ -5,10 +5,10 @@ using System.Linq;
 using System.Management.Instrumentation;
 using System.Windows.Controls;
 using Core.Enums;
-using UI.Views.CameraHostView;
-using UI.Views.HomeView;
-using UI.Views.LineScanHostView;
-using UI.Views.ServerView;
+using UI.Views.Home;
+using UI.Views.LineScan;
+using UI.Views.Server;
+using UI.Views.Vision2D;
 
 namespace UI.Converters
 {
