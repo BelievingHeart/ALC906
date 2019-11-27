@@ -71,16 +71,14 @@ namespace Core.ViewModels.Application
         /// Keep results of left and right socket in memory
         /// for displaying purpose when switching between socket views
         /// </summary>
-        private readonly List<MeasurementResult2D> _results2D = new List<MeasurementResult2D>()
-        {
-            null, null
-        };
+        public MeasurementResult2D Result2DLeft { get; set; } = new MeasurementResult2D();
+        public MeasurementResult2D Result2DRight { get; set; } = new MeasurementResult2D();
 
         /// <summary>
         /// Keep results of left and right socket in memory
         /// for displaying purpose when switching between socket views
         /// </summary>
-        private readonly List<MeasurementResult3D> _results3D = new List<MeasurementResult3D>() {null, null};
+        public List<MeasurementResult3D> Results3D { get; set; } = new List<MeasurementResult3D>() {null, null};
 
         private int _maxRoutineLogs = 100;
 
@@ -108,10 +106,7 @@ namespace Core.ViewModels.Application
         };
 
 
-        private List<FaiItem> _faiItems2DLeft;
-        private List<FaiItem> _faiItems2DRight;
-        private List<FaiItem> _faiItems3DLeft;
-        private List<FaiItem> _faiItems3DRight;
+   
 
 
         private readonly Dictionary<SocketType, Queue<MeasurementResult2D>> _resultQueues2D =
@@ -202,34 +197,16 @@ namespace Core.ViewModels.Application
 
         private void InitCommands()
         {
-            SwitchSocketView2DCommand = new RelayCommand(SwitchSocketView2D);
             SwitchSocketView3DCommand = new RelayCommand(SwitchSocketView3D);
-            ManualTest2DCommand =
-                new SimpleCommand(
-                    o => RunOnlySingleFireIsAllowedEachTimeCommand(() => IsBusyRunningManualTest2D,
-                        async () => await RunManualTest2D()), o => !Server.IsAutoRunning);
         }
 
         private void SwitchSocketView3D()
         {
             SocketToDisplay3D = _socketToDisplay3D == SocketType.Left ? SocketType.Right : SocketType.Left;
         }
+        
 
-        private async Task RunManualTest2D()
-        {
-            // Preserve images for next manual run
-            var images = ResultToDisplay2D.Images;
-            var result2D =
-                await Task.Run(() => _procedure2D.Execute(images, FindLineParams2D.ToDict()));
-            result2D.Images = images;
-
-            ResultToDisplay2D = result2D;
-        }
-
-        private void SwitchSocketView2D()
-        {
-            SocketToDisplay2D = _socketToDisplay2D == SocketType.Left ? SocketType.Right : SocketType.Left;
-        }
+  
 
         private void SetupServer()
         {
@@ -398,7 +375,7 @@ namespace Core.ViewModels.Application
             // Do processing for one socket and get its result
             var imagesForOneSocket =
                 _laserImageBuffers.Values.Select(list => list[socketIndex]).ToList();
-            _results3D[socketIndex] = _procedure3D.Execute(imagesForOneSocket, _shapeModel3D);
+            Results3D[socketIndex] = _procedure3D.Execute(imagesForOneSocket, _shapeModel3D);
 
 
 
@@ -480,8 +457,8 @@ namespace Core.ViewModels.Application
         /// </summary>
         private void SubmitProductLevels()
         {
-            LeftProductLevel = GetProductLevel(_results3D[(int) SocketType.Left].ItemExists, FaiItemsLeft);
-            RightProductLevel = GetProductLevel(_results3D[(int) SocketType.Right].ItemExists, FaiItemsRight);
+            LeftProductLevel = GetProductLevel(Results3D[(int) SocketType.Left].ItemExists, FaiItemsLeft);
+            RightProductLevel = GetProductLevel(Results3D[(int) SocketType.Right].ItemExists, FaiItemsRight);
             Server.SendProductLevels(LeftProductLevel, RightProductLevel);
         }
         
@@ -507,56 +484,53 @@ namespace Core.ViewModels.Application
                 // Corresponding results are put to the head of queues
                 // when new round starts
                 // No worry about this
-                _results2D[leftSocketIndex] = _resultQueues2D[SocketType.Left].Dequeue();
-                _results2D[rightSocketIndex] = _resultQueues2D[SocketType.Right].Dequeue();
+                Result2DLeft = _resultQueues2D[SocketType.Left].Dequeue();
+                Result2DRight = _resultQueues2D[SocketType.Right].Dequeue();
             }
 
-            var faiResultDictLeft = ConcatDictionaryNew(_results2D[leftSocketIndex].FaiResults,
-                _results3D[leftSocketIndex].FaiResults);
-            var faiResultDictRight = ConcatDictionaryNew(_results2D[rightSocketIndex].FaiResults,
-                _results3D[rightSocketIndex].FaiResults);
+            var faiResultDictLeft = ConcatDictionaryNew(Result2DLeft.FaiResults,
+                Results3D[leftSocketIndex].FaiResults);
+            var faiResultDictRight = ConcatDictionaryNew(Result2DRight.FaiResults,
+                Results3D[rightSocketIndex].FaiResults);
 
             // To avoid frequent context switching
             // Wrap all the UI-updating code in single Invoke block
             Dispatcher.CurrentDispatcher.Invoke(() =>
             {
                 // Update fai item lists using dictionaries from image processing modules
-                UpdateFaiItems(_faiItems2DLeft, _results2D[leftSocketIndex].FaiResults);
-                UpdateFaiItems(_faiItems2DRight, _results2D[rightSocketIndex].FaiResults);
-                UpdateFaiItems(_faiItems3DLeft, _results3D[leftSocketIndex].FaiResults);
-                UpdateFaiItems(_faiItems3DRight, _results3D[rightSocketIndex].FaiResults);
+                UpdateFaiItems(FaiItems2DLeft, Result2DLeft.FaiResults);
+                UpdateFaiItems(FaiItems2DRight, Result2DRight.FaiResults);
+                UpdateFaiItems(FaiItems3DLeft, Results3D[leftSocketIndex].FaiResults);
+                UpdateFaiItems(FaiItems3DRight, Results3D[rightSocketIndex].FaiResults);
                 UpdateFaiItems(FaiItemsLeft, faiResultDictLeft);
                 UpdateFaiItems(FaiItemsRight, faiResultDictRight);
 
-                // Optionally display results and fai items based on current displaying page
-                // 2D
-                ResultToDisplay2D = _results2D[(int) SocketToDisplay2D];
-                FaiItems2D = SocketToDisplay2D == SocketType.Left ? _faiItems2DLeft : _faiItems2DRight;
+           
 
                 // 3D
-                ResultToDisplay3D = _results3D[(int) SocketToDisplay3D];
-                FaiItems3D = SocketToDisplay3D == SocketType.Left ? _faiItems3DLeft : _faiItems3DRight;
+                ResultToDisplay3D = Results3D[(int) SocketToDisplay3D];
+                FaiItems3D = SocketToDisplay3D == SocketType.Left ? FaiItems3DLeft : FaiItems3DRight;
             });
         }
 
 
         private void LoadFaiItems()
         {
-            _faiItems2DLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames2D,
+            FaiItems2DLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames2D,
                     DirectoryConstants.FaiConfigDir2DLeft)
                 .ToList();
-            _faiItems2DRight = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames2D,
+            FaiItems2DRight = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames2D,
                     DirectoryConstants.FaiConfigDir2DRight)
                 .ToList();
-            _faiItems3DLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames3D,
+            FaiItems3DLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames3D,
                     DirectoryConstants.FaiConfigDir3DLeft)
                 .ToList();
-            _faiItems3DRight = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames3D,
+            FaiItems3DRight = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames3D,
                     DirectoryConstants.FaiConfigDir3DRight)
                 .ToList();
 
-            FaiItemsLeft = _faiItems2DLeft.ConcatNew(_faiItems3DLeft);
-            FaiItemsRight = _faiItems2DRight.ConcatNew(_faiItems3DRight);
+            FaiItemsLeft = FaiItems2DLeft.ConcatNew(FaiItems3DLeft);
+            FaiItemsRight = FaiItems2DRight.ConcatNew(FaiItems3DRight);
         }
 
         private void LoadShapeModels()
@@ -794,41 +768,9 @@ namespace Core.ViewModels.Application
         public List<FindLineParam> FindLineParams2D { get; set; }
 
         public bool IsBusyRunningManualTest2D { get; set; }
+        
 
-        /// <summary>
-        /// Current image to display in Vision2DView
-        /// </summary>
-        public HImage ImageToDisplay2D
-        {
-            get { return ResultToDisplay2D?.Images?[ImageIndexToDisplay2D]; }
-        }
 
-        /// <summary>
-        /// Index of current displayed image in Vision2DView
-        /// </summary>
-
-        [AlsoNotifyFor(nameof(ImageToDisplay2D))]
-        public int ImageIndexToDisplay2D { get; set; } = 0;
-
-        /// <summary>
-        /// 2D image result from left or right socket
-        /// </summary>
-        [AlsoNotifyFor(nameof(ImageToDisplay2D))]
-        public MeasurementResult2D ResultToDisplay2D { get; set; }
-
-        /// <summary>
-        /// Current 
-        /// </summary>
-        public SocketType SocketToDisplay2D
-        {
-            get { return _socketToDisplay2D; }
-            set
-            {
-                _socketToDisplay2D = value;
-                ResultToDisplay2D = _results2D[(int) value];
-                FaiItems2D = value == SocketType.Left ? _faiItems2DLeft : _faiItems2DRight;
-            }
-        }
 
 
         public SocketType SocketToDisplay3D
@@ -837,8 +779,8 @@ namespace Core.ViewModels.Application
             set
             {
                 _socketToDisplay3D = value;
-                ResultToDisplay3D = _results3D[(int) value];
-                FaiItems3D = value == SocketType.Left ? _faiItems3DLeft : _faiItems3DRight;
+                ResultToDisplay3D = Results3D[(int) value];
+                FaiItems3D = value == SocketType.Left ? FaiItems3DLeft : FaiItems3DRight;
             }
         }
 
@@ -849,17 +791,9 @@ namespace Core.ViewModels.Application
         public ProductLevel RightProductLevel { get; set; }
 
 
-        /// <summary>
-        /// Switch 2D view between left and right socket
-        /// </summary>
-        public ICommand SwitchSocketView2DCommand { get; set; }
+
 
         public ICommand SwitchSocketView3DCommand { get; set; }
-
-        /// <summary>
-        /// Manually run test on the last 2D images
-        /// </summary>
-        public ICommand ManualTest2DCommand { get; set; }
 
         /// <summary>
         /// Current application page
@@ -894,6 +828,10 @@ namespace Core.ViewModels.Application
         public List<FaiItem> FaiItemsLeft { get; set; }
         public List<FaiItem> FaiItemsRight { get; set; }
 
+        public List<FaiItem> FaiItems2DLeft { get; set; }
+        public List<FaiItem> FaiItems2DRight { get; set; }
+        public List<FaiItem> FaiItems3DLeft{ get; set; }
+        public List<FaiItem> FaiItems3DRight{ get; set; }
         #endregion
     }
 }

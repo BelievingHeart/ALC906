@@ -120,7 +120,7 @@
         </e>
         <e p="UI.csproj" t="IncludeRecursive" />
         <e p="Views" t="Include">
-          <e p="bin" t="Include">
+          <e p="Bins" t="Include">
             <e p="BinListView.xaml" t="Include" />
             <e p="BinListView.xaml.cs" t="Include" />
           </e>
@@ -152,8 +152,8 @@
           </e>
           <e p="UserControlBase.cs" t="Include" />
           <e p="Vision2D" t="Include">
-            <e p="CameraView.xaml.cs" t="Include" />
             <e p="Vision2DView.xaml" t="Include" />
+            <e p="Vision2DView.xaml.cs" t="Include" />
           </e>
         </e>
       </e>

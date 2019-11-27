@@ -94,7 +94,7 @@
     <Compile Include="Views\ServerView\ServerView.xaml.cs">
       <DependentUpon>ServerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Vision2D\CameraView.xaml.cs">
+    <Compile Include="Views\Vision2D\Vision2DView.xaml.cs">
       <DependentUpon>Vision2DView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\HomeView\HomeView.xaml.cs">
