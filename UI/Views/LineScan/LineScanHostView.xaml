@@ -3,11 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:halconDotNet="clr-namespace:HalconDotNet;assembly=halcondotnet"
              xmlns:application="clr-namespace:Core.ViewModels.Application;assembly=Core"
              xmlns:lineScan="clr-namespace:UI.Views.LineScan"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-     <lineScan:LineScanView/>
+     <lineScan:LineScanView 
+         LeftFaiItems="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=FaiItems3DLeft}"
+         RightFaiItems="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=FaiItems3DRight}"
+         Result3DLeft="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Result3DLeft}"
+         Result3DRight="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Result3DRight}"
+         />
 
 </UserControl>

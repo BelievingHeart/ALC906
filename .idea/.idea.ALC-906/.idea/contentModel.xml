@@ -137,6 +137,8 @@
           <e p="LineScan" t="Include">
             <e p="LineScanHostView.xaml" t="Include" />
             <e p="LineScanHostView.xaml.cs" t="Include" />
+            <e p="LineScanView.xaml" t="Include" />
+            <e p="LineScanView.xaml.cs" t="Include" />
           </e>
           <e p="MainWindow.xaml" t="Include" />
           <e p="MainWindow.xaml.cs" t="Include" />

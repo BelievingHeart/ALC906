@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:UI.Views.LineScan"
              xmlns:halconDotNet="clr-namespace:HalconDotNet;assembly=halcondotnet"
              xmlns:application="clr-namespace:Core.ViewModels.Application;assembly=Core"
+             xmlns:faiItem="clr-namespace:UI.Views.FaiItem"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
  <Grid>
@@ -14,7 +15,7 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <!-- Halcon window -->
-        <halconDotNet:HSmartWindowControlWPF Grid.Column="0" DataContext="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=ResultToDisplay3D}">
+        <halconDotNet:HSmartWindowControlWPF Grid.Column="0" DataContext="{Binding RelativeSource={RelativeSource AncestorType=local:LineScanView}, Path=ResultToDisplay}">
             <halconDotNet:HIconicDisplayObjectWPF IconicObject="{Binding Path=CompositeImage}"/>
             <halconDotNet:HIconicDisplayObjectWPF IconicObject="{Binding Path=CoordinateLines}" HColor="blue" LineWidth="2"/>
             <halconDotNet:HIconicDisplayObjectWPF IconicObject="{Binding Path=FindLineRectangles}" HColor="orange" LineWidth="3"/>
@@ -23,21 +24,15 @@
         </halconDotNet:HSmartWindowControlWPF>
         
         <!-- Switch socket view -->
-        <Button Grid.Column="0" Command="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=SwitchSocketView3DCommand}" Margin="20" MinHeight="80" HorizontalAlignment="Left" VerticalAlignment="Top">
+        <Button Grid.Column="0" Command="{Binding RelativeSource={RelativeSource AncestorType=local:LineScanView}, Path=ChangeSocketViewCommand}" Margin="20" MinHeight="80" HorizontalAlignment="Left" VerticalAlignment="Top">
             <StackPanel>
                 <TextBlock Text="Switch socket" HorizontalAlignment="Left" FontSize="10"/>
                 <Separator/>
-                <TextBlock Text="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=SocketToDisplay3D}" FontSize="24" VerticalAlignment="Center" Margin="3"/>
+                <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=local:LineScanView}, Path=SocketToDisplay}" FontSize="24" VerticalAlignment="Center" Margin="3"/>
             </StackPanel>
         </Button>
 
-        <GroupBox Header="Fai items" Grid.Column="1">
-            <!-- Fai items view -->
-            <DataGrid HorizontalAlignment="Right"
-                          ItemsSource="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=FaiItems3D}"
-                          CanUserSortColumns="True"
-                          CanUserAddRows="False" />
-        </GroupBox>
+       <faiItem:FaiItemListStackView Grid.Column="1" FaiItems="{Binding RelativeSource={RelativeSource AncestorType=local:LineScanView}, Path=FaiItemsToDisplay}"/>
         
     </Grid>
 </UserControl>
