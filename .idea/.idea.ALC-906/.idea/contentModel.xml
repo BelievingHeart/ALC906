@@ -69,6 +69,9 @@
           <e p="Application" t="Include">
             <e p="ApplicationViewModel.cs" t="Include" />
           </e>
+          <e p="bin" t="Include">
+            <e p="BinListViewModel.cs" t="Include" />
+          </e>
           <e p="CameraHost" t="Include">
             <e p="CameraHostViewModel.cs" t="Include" />
           </e>

@@ -52,6 +52,8 @@ namespace Core.ViewModels.Application
         private static ApplicationViewModel _instance;
 
         private readonly Object _lockerOfLaserImageBuffers = new Object();
+        
+
 
         /// <summary>
         /// Key=ControllerName, Value=CurrentIndexOfSocket
@@ -121,6 +123,9 @@ namespace Core.ViewModels.Application
 
         private readonly Object _lockerOfResultQueues2D = new Object();
         private bool _isAllControllersHighSpeedConnected;
+        private int _rightSocketIndexSinceReset2D;
+        private readonly object _lockerOfRightSocketIndexSinceReset2D = new object();
+        private readonly object _lockerOfCurrentArrivedSocket2D = new object();
 
         protected ApplicationViewModel()
         {
@@ -252,6 +257,12 @@ namespace Core.ViewModels.Application
             LogPlcMessage("Received start permission from ALC");
             ClearLaserImagesForNewRound();
             Rearrange2DImageQueues();
+            lock (_lockerOfRightSocketIndexSinceReset2D)
+            {
+                // Note: this must be updated at the time arrived
+                // since current round is guaranteed unfinished 
+                _rightSocketIndexSinceReset2D = RoundCountSinceReset*2 + 1;
+            }
         }
 
         /// <summary>
@@ -298,11 +309,11 @@ namespace Core.ViewModels.Application
             switch (commandId)
             {
                 case PlcMessagePackConstants.CommandIdLeftSocketArrived:
-                    CurrentArrivedSocket = SocketType.Left;
+                    CurrentArrivedSocket2D = SocketType.Left;
                     LogPlcMessage("2D left socket arrived");
                     break;
                 case PlcMessagePackConstants.CommandIdRightSocketArrived:
-                    CurrentArrivedSocket = SocketType.Right;
+                    CurrentArrivedSocket2D = SocketType.Right;
                     LogPlcMessage("2D right socket arrived");
                     break;
             }
@@ -389,6 +400,40 @@ namespace Core.ViewModels.Application
                 _laserImageBuffers.Values.Select(list => list[socketIndex]).ToList();
             _results3D[socketIndex] = _procedure3D.Execute(imagesForOneSocket, _shapeModel3D);
 
+
+
+
+
+            #region ImageSerialization
+
+            int itemIndexSinceReset;
+            lock (_lockerOfRightSocketIndexSinceReset2D)
+            {
+                itemIndexSinceReset = socketIndex == (int)SocketType.Right
+                    ? _rightSocketIndexSinceReset2D - 2
+                    : _rightSocketIndexSinceReset2D - 1;
+            }
+
+            // TODO: remove the following image serialization logic
+            if (itemIndexSinceReset > 0 && socketIndex == (int)SocketType.Left)
+            {
+                Task.Run(() =>
+                {
+                    Directory.CreateDirectory(DirectoryConstants.ImageDir3D);
+                    for (int i = 0; i < imagesForOneSocket.Count; i++)
+                    {
+                        var imageName = $"{itemIndexSinceReset}-{i}.tif";
+                        imagesForOneSocket[i].WriteImage("tiff", 0, Path.Combine(DirectoryConstants.ImageDir3D, imageName));
+                    }
+                });
+            }
+            
+            
+
+            #endregion
+            
+            
+
             // If all reserved places for 3D image buffers are filled,
             // 3D image collection of one round is done
             // and product level can be submit to plc
@@ -411,17 +456,21 @@ namespace Core.ViewModels.Application
             {
                 // Send dummy product level, Ng5 for now
                 Server.SendProductLevels(ProductLevel.Ng5, ProductLevel.Ng5);
-                return;
+               
             }
-            
-            //NOTE: don't need to wait for new results of 2d,
-            // since they are only required in the next round
-            // and the corresponding 2d results that are needed
-            // in this round is already available at the start of this round
-            Combine2D3DResults();
-            SubmitProductLevels();
-            SerializeCsv();
-            
+
+            else
+            {
+                //NOTE: don't need to wait for new results of 2d,
+                // since they are only required in the next round
+                // and the corresponding 2d results that are needed
+                // in this round is already available at the start of this round
+                Combine2D3DResults();
+                SubmitProductLevels();
+                SerializeCsv();
+
+            }
+
             // Round finished, increment round count
             RoundCountSinceReset++;
         }
@@ -569,10 +618,41 @@ namespace Core.ViewModels.Application
         /// <param name="images"></param>
         private void ProcessImages2DFireForget(List<HImage> images)
         {
-            LogRoutine($"{CurrentArrivedSocket} socket start processing {images.Count} 2D images");
+
+            SocketType currentArrivedSocket2D;
+            lock (_lockerOfCurrentArrivedSocket2D)
+            {
+                currentArrivedSocket2D = CurrentArrivedSocket2D;
+            }
+            
+            LogRoutine($"{currentArrivedSocket2D} socket start processing {images.Count} 2D images");
+
+            int itemIndexSinceReset;
+            lock (_lockerOfRightSocketIndexSinceReset2D)
+            {
+                itemIndexSinceReset = currentArrivedSocket2D == SocketType.Right
+                    ? _rightSocketIndexSinceReset2D
+                    : _rightSocketIndexSinceReset2D + 1;
+            }
+
+            // TODO: remove the following image serialization logic
+            if (currentArrivedSocket2D == SocketType.Left)
+            {
+                Task.Run(() =>
+                {
+                    Directory.CreateDirectory(DirectoryConstants.ImageDir2D);
+                    for (int i = 0; i < images.Count; i++)
+                    {
+                        var imageName = $"{itemIndexSinceReset}-{i}.bmp";
+                        images[i].WriteImage("bmp", 0, Path.Combine(DirectoryConstants.ImageDir2D, imageName));
+                    }
+                });
+            }
+            
+            
             Task.Run(() =>
             {
-                if (CurrentArrivedSocket == SocketType.Left)
+                if (CurrentArrivedSocket2D == SocketType.Left)
                 {
                     var result = _procedure2D.Execute(images, FindLineParams2D.ToDict());
                     result.Images = images;
@@ -682,6 +762,7 @@ namespace Core.ViewModels.Application
         #region Properties
         
         public int RoundCountSinceReset { get; set; }
+        
 
         public BinListViewModel Bins { get; set; }
 
@@ -763,7 +844,7 @@ namespace Core.ViewModels.Application
 
         public MeasurementResult3D ResultToDisplay3D { get; set; }
 
-        public SocketType CurrentArrivedSocket { get; set; }
+        public SocketType CurrentArrivedSocket2D { get; set; }
         public ProductLevel LeftProductLevel { get; set; }
         public ProductLevel RightProductLevel { get; set; }
 
