@@ -146,8 +146,8 @@ namespace Core.ViewModels.Application
         private void OnLazyTimerClicked(object sender, EventArgs e)
         {
             // Clear messages if overflows
-            ClearMessagesIfOverflows(PlcMessageList, 5);
-            ClearMessagesIfOverflows(RoutineMessageList, 5);
+            ClearMessagesIfOverflows(PlcMessageList, 100);
+            ClearMessagesIfOverflows(RoutineMessageList, 100);
         }
 
         private void ClearMessagesIfOverflows(ObservableCollection<LoggingMessageItem> messageList, int maxCount)
