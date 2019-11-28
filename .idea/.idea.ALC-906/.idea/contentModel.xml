@@ -35,6 +35,8 @@
           <e p="FaiItemsHelper.cs" t="Include" />
           <e p="FindLineParamHelper.cs" t="Include" />
           <e p="PlcMessagePackHelper.cs" t="Include" />
+          <e p="SummaryHelper.cs" t="Include" />
+          <e p="TimeHelper.cs" t="Include" />
         </e>
         <e p="ImageProcessing" t="Include">
           <e p="FindLineParam.cs" t="Include" />
@@ -69,9 +71,6 @@
           <e p="Application" t="Include">
             <e p="ApplicationViewModel.cs" t="Include" />
           </e>
-          <e p="bin" t="Include">
-            <e p="BinListViewModel.cs" t="Include" />
-          </e>
           <e p="CameraHost" t="Include">
             <e p="CameraHostViewModel.cs" t="Include" />
           </e>
@@ -84,6 +83,9 @@
           </e>
           <e p="Plc" t="Include">
             <e p="LoggingMessageItem.cs" t="Include" />
+          </e>
+          <e p="Summary" t="Include">
+            <e p="SummaryViewModel.cs" t="Include" />
           </e>
           <e p="Vision2D" t="Include">
             <e p="Vision2DViewModel.cs" t="Include" />
@@ -121,8 +123,8 @@
         <e p="UI.csproj" t="IncludeRecursive" />
         <e p="Views" t="Include">
           <e p="Bins" t="Include">
-            <e p="BinListView.xaml" t="Include" />
-            <e p="BinListView.xaml.cs" t="Include" />
+            <e p="SummaryView.xaml" t="Include" />
+            <e p="SummaryView.xaml.cs" t="Include" />
           </e>
           <e p="FaiItem" t="Include">
             <e p="FaiItemListStackView.xaml" t="Include" />

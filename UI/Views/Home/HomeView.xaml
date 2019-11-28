@@ -9,7 +9,7 @@
              xmlns:faiItem="clr-namespace:UI.Views.FaiItem"
              xmlns:bins="clr-namespace:UI.Views.Bins"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300" DataContext="{Binding Source={x:Static application:ApplicationViewModel.Instance}}">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -17,10 +17,10 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <!-- Left socket fai items -->
-        <faiItem:FaiItemListStackView Grid.Column="0" FaiItems="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=FaiItemsLeft}"/>
+        <faiItem:FaiItemListStackView Grid.Column="0" FaiItems="{Binding Path=FaiItemsLeft}"/>
         <!-- Bin views -->
-        <bins:BinListView Grid.Column="1"/>
+        <bins:SummaryView Grid.Column="1" DataContext="{Binding Path=SelectedSummary}"/>
         <!-- Right socket fai items -->
-        <faiItem:FaiItemListStackView Grid.Column="2"  FaiItems="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=FaiItemsRight}"/>
+        <faiItem:FaiItemListStackView Grid.Column="2"  FaiItems="{Binding Path=FaiItemsRight}"/>
     </Grid>
 </UserControl>

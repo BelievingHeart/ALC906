@@ -79,8 +79,8 @@
     <Compile Include="Converters\EventToCommandBehaviour.cs" />
     <Compile Include="Converters\ValueConverterBase.cs" />
     <Compile Include="DataAccess\LoggingServiceProvider.cs" />
-    <Compile Include="Views\Bins\BinListView.xaml.cs">
-      <DependentUpon>BinListView.xaml</DependentUpon>
+    <Compile Include="Views\Bins\SummaryView.xaml.cs">
+      <DependentUpon>SummaryView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\FaiItem\FaiItemListStackView.xaml.cs">
       <DependentUpon>FaiItemListStackView.xaml</DependentUpon>
@@ -137,7 +137,7 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Views\Bins\BinListView.xaml" />
+    <Page Include="Views\Bins\SummaryView.xaml" />
     <Page Include="Views\FaiItem\FaiItemListStackView.xaml" />
     <Page Include="Views\FaiItem\FaiItemListWarpView.xaml" />
     <Page Include="Views\LineScan\LineScanHostView.xaml" />

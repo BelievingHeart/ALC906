@@ -31,10 +31,14 @@ namespace Core.Constants
         
         public static string FaiConfigDir3DLeft => Path.Combine(FaiConfigDir3D, "Left");
         public static string FaiConfigDir3DRight => Path.Combine(FaiConfigDir3D, "Right");
+        public static string SummaryDirToday => Path.Combine(DirectoryConstants.ProductionLineRecordDir, DateTime.Now.ToString("MM-dd"));
+
         
         //TODO: remove the following dirs
         public static string ImageDir2D => Path.Combine(Directory.GetCurrentDirectory(), "2D");
         public static string ImageDir3D => Path.Combine(Directory.GetCurrentDirectory(), "3D");
+        
+        
         
     }
 }

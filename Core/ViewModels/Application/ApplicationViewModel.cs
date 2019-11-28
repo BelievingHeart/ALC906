@@ -18,9 +18,9 @@ using Core.ImageProcessing;
 using Core.IoC.Loggers;
 using Core.Models;
 using Core.Stubs;
-using Core.ViewModels.Bin;
 using Core.ViewModels.Fai;
 using Core.ViewModels.Plc;
+using Core.ViewModels.Summary;
 using HalconDotNet;
 using HKCameraDev.Core.IoC.Interface;
 using HKCameraDev.Core.ViewModels.Camera;
@@ -124,22 +124,20 @@ namespace Core.ViewModels.Application
 
             InitTimers();
 
-            LoadShapeModels();
-
-            LoadFaiItems();
-
-            LoadFindLineParams2D();
-
-            LoadProductionLineRecords();
+            InitCommands();
 
             ClearLaserImagesForNewRound();
+        }
+
+        private void InitCommands()
+        {
         }
 
         private void InitTimers()
         {
             _lazyTimer.Interval = TimeSpan.FromSeconds(5);
             _lazyTimer.Tick += OnLazyTimerClicked;
-            
+
             _lazyTimer.Start();
         }
 
@@ -148,7 +146,35 @@ namespace Core.ViewModels.Application
             // Clear messages if overflows
             ClearMessagesIfOverflows(PlcMessageList, 100);
             ClearMessagesIfOverflows(RoutineMessageList, 100);
+
+            GenerateSummaryNameList();
+            ReadSelectedSummary();
         }
+
+        public void ReadSelectedSummary()
+        {
+            if (string.IsNullOrEmpty(SelectedSummaryName))
+            {
+                SelectedSummary = SummaryCurrentHour;
+            }
+            else
+            {
+                SelectedSummary = AutoSerializableHelper.LoadAutoSerializable<SummaryViewModel>(
+                    DirectoryConstants.SummaryDirToday,
+                    SelectedSummaryName);
+            }
+        }
+
+        /// <summary>
+        /// Scan disk and add the existing hour summary of today to list
+        /// </summary>
+        private void GenerateSummaryNameList()
+        {
+            Directory.CreateDirectory(DirectoryConstants.SummaryDirToday);
+            var xmls = Directory.GetFiles(DirectoryConstants.SummaryDirToday);
+            SummaryNames = xmls.Select(Path.GetFileNameWithoutExtension).ToList();
+        }
+
 
         private void ClearMessagesIfOverflows(ObservableCollection<LoggingMessageItem> messageList, int maxCount)
         {
@@ -161,12 +187,21 @@ namespace Core.ViewModels.Application
         }
 
         /// <summary>
-        /// Load records of the production line
+        /// Load summaries of the production line
         /// </summary>
-        private void LoadProductionLineRecords()
+        private void LoadProductionLineSummaries()
         {
-            Bins = AutoSerializableHelper.LoadAutoSerializable<BinListViewModel>("Bins",
-                DirectoryConstants.ProductionLineRecordDir);
+            // Today
+            SummaryToday =
+                AutoSerializableHelper.LoadAutoSerializable<SummaryViewModel>(DirectoryConstants.SummaryDirToday,
+                    "Today");
+            SummaryToday.ShouldAutoSerialize = true;
+
+            // Current hour
+            SummaryCurrentHour = AutoSerializableHelper.LoadAutoSerializable<SummaryViewModel>(
+                DirectoryConstants.SummaryDirToday,
+                TimeHelper.CurrentHour);
+            SummaryCurrentHour.ShouldAutoSerialize = true;
         }
 
         private void ClearLaserImagesForNewRound()
@@ -447,11 +482,21 @@ namespace Core.ViewModels.Application
                 // in this round is already available at the start of this round
                 Combine2D3DResults();
                 SubmitProductLevels();
+                UpdateSummaries();
                 SerializeCsv();
             }
 
             // Round finished, increment round count
             RoundCountSinceReset++;
+        }
+
+        private void UpdateSummaries()
+        {
+            SummaryToday.Update(LeftProductLevel);
+            SummaryToday.Update(RightProductLevel);
+
+            SummaryCurrentHour.Update(LeftProductLevel);
+            SummaryCurrentHour.Update(RightProductLevel);
         }
 
         /// <summary>
@@ -682,12 +727,21 @@ namespace Core.ViewModels.Application
         /// </summary>
         public void InitHardWares()
         {
+            LoadShapeModels();
+
+            LoadFaiItems();
+
+            LoadFindLineParams2D();
+
+            LoadProductionLineSummaries();
+
             SetupServer();
 
             SetupCameras();
 
             SetupLaserControllers();
         }
+
 
         /// <summary>
         /// Init before any binding taking place can avoid bazaar <see cref="TypeInitializationException"/> exceptions
@@ -721,7 +775,7 @@ namespace Core.ViewModels.Application
         public int RoundCountSinceReset { get; set; }
 
 
-        public BinListViewModel Bins { get; set; }
+        public SummaryViewModel Bins { get; set; }
 
         public bool IsAllControllersHighSpeedConnected
         {
@@ -791,6 +845,13 @@ namespace Core.ViewModels.Application
         public List<FaiItem> FaiItems2DRight { get; set; }
         public List<FaiItem> FaiItems3DLeft { get; set; }
         public List<FaiItem> FaiItems3DRight { get; set; }
+
+        public SummaryViewModel SummaryCurrentHour { get; set; }
+        public SummaryViewModel SelectedSummary { get; set; }
+        public SummaryViewModel SummaryToday { get; set; }
+        public List<string> SummaryNames { get; set; }
+
+        public string SelectedSummaryName { get; set; }
 
         #endregion
     }
