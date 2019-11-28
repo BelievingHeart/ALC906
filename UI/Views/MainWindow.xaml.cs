@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using Core.ViewModels.Application;
 using Core.ViewModels.MainWindow;
@@ -34,16 +35,20 @@ namespace UI.Views
             var sideBarMessages = SideBarLoggingBox.ItemsSource as ObservableCollection<LoggingMessageItem>;
             sideBarMessages.CollectionChanged += ScrollToBottom;
         }
-
+        
         private void ScrollToBottom(object sender, NotifyCollectionChangedEventArgs e)
         {
-            var me = sender as ObservableCollection<LoggingMessageItem>;
-            if (me.Count == 0) return;
             Dispatcher.Invoke(() =>
             {
-                SideBarLoggingBox.SelectedIndex = me.Count - 1;
+                var sideBarMessages = SideBarLoggingBox.ItemsSource as ObservableCollection<LoggingMessageItem>;
+
+                if (sideBarMessages.Count == 0) return;
+                // Scroll to the last item
+                SideBarLoggingBox.SelectedIndex = sideBarMessages.Count - 1;
                 SideBarLoggingBox.ScrollIntoView(SideBarLoggingBox.SelectedItem);
             });
         }
+
+        public int MaxMessageCount { get; set; } = 10;
     }
 }

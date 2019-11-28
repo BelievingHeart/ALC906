@@ -110,6 +110,7 @@ namespace Core.ViewModels.Application
         private int _rightSocketIndexSinceReset2D;
         private readonly object _lockerOfRightSocketIndexSinceReset2D = new object();
         private readonly object _lockerOfCurrentArrivedSocket2D = new object();
+        private readonly DispatcherTimer _lazyTimer = new DispatcherTimer(DispatcherPriority.Background);
 
         protected ApplicationViewModel()
         {
@@ -121,6 +122,7 @@ namespace Core.ViewModels.Application
             BindingOperations.EnableCollectionSynchronization(RoutineMessageList, _lockerOfRoutineMessageList);
             BindingOperations.EnableCollectionSynchronization(PlcMessageList, _lockerOfPlcMessageList);
 
+            InitTimers();
 
             LoadShapeModels();
 
@@ -131,7 +133,31 @@ namespace Core.ViewModels.Application
             LoadProductionLineRecords();
 
             ClearLaserImagesForNewRound();
+        }
 
+        private void InitTimers()
+        {
+            _lazyTimer.Interval = TimeSpan.FromSeconds(5);
+            _lazyTimer.Tick += OnLazyTimerClicked;
+            
+            _lazyTimer.Start();
+        }
+
+        private void OnLazyTimerClicked(object sender, EventArgs e)
+        {
+            // Clear messages if overflows
+            ClearMessagesIfOverflows(PlcMessageList, 5);
+            ClearMessagesIfOverflows(RoutineMessageList, 5);
+        }
+
+        private void ClearMessagesIfOverflows(ObservableCollection<LoggingMessageItem> messageList, int maxCount)
+        {
+            if (messageList.Count < maxCount) return;
+            int numToRemove = (int) (maxCount * 0.3);
+            for (int i = 0; i < numToRemove; i++)
+            {
+                messageList.RemoveAt(i);
+            }
         }
 
         /// <summary>
@@ -184,8 +210,6 @@ namespace Core.ViewModels.Application
         }
 
 
-
-
         private void SetupServer()
         {
             Server = new AlcServerViewModel()
@@ -193,13 +217,12 @@ namespace Core.ViewModels.Application
                 IpAddress = IPAddress.Parse("192.168.100.100"),
                 Port = 4000
             };
-            Server.AutoRunStartRequested += () => LogPlcMessage("Auto-mode-start requested from plc");
+            Server.AutoRunStartRequested += OnNewRoundStarted;
             Server.AutoRunStopRequested += () => LogPlcMessage("Auto-mode-stop requested from plc");
             Server.InitRequested += () => LogPlcMessage("Init requested from plc");
             Server.ClientHooked += OnPlcHooked;
             Server.CustomCommandReceived += PlcCustomCommandHandler;
             Server.PlcInitFinished += OnPlcInitFinished;
-            Server.NewRoundStarted += OnNewRoundStarted;
         }
 
         private void OnPlcHooked(Socket socket)
@@ -209,13 +232,12 @@ namespace Core.ViewModels.Application
 
         private void OnNewRoundStarted()
         {
-            LogPlcMessage("Received start permission from ALC");
+            LogPlcMessage("Auto-mode-start requested from plc");
             ClearLaserImagesForNewRound();
-            Rearrange2DImageQueues();
+            Enqueue2DImagesFromPreviousRound();
             lock (_lockerOfRightSocketIndexSinceReset2D)
             {
-                // Note: this must be updated at the time arrived
-                // since current round is guaranteed unfinished 
+                // Note: this must be updated at the time of take-off
                 _rightSocketIndexSinceReset2D = RoundCountSinceReset * 2 + 1;
             }
         }
@@ -225,7 +247,7 @@ namespace Core.ViewModels.Application
         /// the last one in the queue must be the one
         /// that will be concluded with 3D results in the new round
         /// </summary>
-        private void Rearrange2DImageQueues()
+        private void Enqueue2DImagesFromPreviousRound()
         {
             lock (_lockerOfResultQueues2D)
             {
@@ -624,21 +646,11 @@ namespace Core.ViewModels.Application
         {
             Dispatcher.CurrentDispatcher.Invoke(() =>
             {
-                lock (_lockerOfPlcMessageList)
+                PlcMessageList.Add(new LoggingMessageItem()
                 {
-                    PlcMessageList.Add(new LoggingMessageItem()
-                    {
-                        Time = DateTime.Now.ToString("T"),
-                        Message = message
-                    });
-
-                    // Remove some messages if overflows
-                    if (PlcMessageList.Count > _maxRoutineLogs)
-                    {
-                        PlcMessageList =
-                            new ObservableCollection<LoggingMessageItem>(PlcMessageList.Skip(_maxRoutineLogs / 3));
-                    }
-                }
+                    Time = DateTime.Now.ToString("T"),
+                    Message = message
+                });
             });
         }
 
@@ -653,12 +665,10 @@ namespace Core.ViewModels.Application
                         Time = DateTime.Now.ToString("T"),
                         Message = message
                     });
-                    // Remove some messages if overflows
-                    if (RoutineMessageList.Count > _maxRoutineLogs)
-                    {
-                        RoutineMessageList =
-                            new ObservableCollection<LoggingMessageItem>(RoutineMessageList.Skip(_maxRoutineLogs / 3));
-                    }
+
+                    var tempList = RoutineMessageList;
+                    RoutineMessageList = null;
+                    RoutineMessageList = tempList;
 
                     // Expand logging box
                     AutoResetFlag = true;
@@ -734,11 +744,7 @@ namespace Core.ViewModels.Application
         public List<FaiItem> FaiItems2D { get; set; }
 
 
-
         public List<FindLineParam> FindLineParams2D { get; set; }
-
-
-        
 
 
         public SocketType CurrentArrivedSocket2D { get; set; }

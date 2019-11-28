@@ -17,69 +17,58 @@ namespace UI.Views.Server
 
         private void MessageListOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            // Shrink size if message list overflows
-            if (MessageList.Count > MaxMessageCount)
+            Dispatcher.Invoke(() =>
             {
-                var numToSkip = (int) (MaxMessageCount * 0.3);
-                MessageList = new ObservableCollection<LoggingMessageItem>(MessageList.Skip(numToSkip));
-            }
-
-            if (MessageList.Count == 0) return;
-            // Scroll to the last item
-            MessageListBox.SelectedIndex = MessageList.Count - 1;
-            MessageListBox.ScrollIntoView(MessageListBox.SelectedItem);
+                if (MessageList.Count == 0) return;
+                // Scroll to the last item
+                MessageListBox.SelectedIndex = MessageList.Count - 1;
+                MessageListBox.ScrollIntoView(MessageListBox.SelectedItem);
+            });
         }
+
 
         public static readonly DependencyProperty MessageListProperty = DependencyProperty.Register(
             "MessageList", typeof(ObservableCollection<LoggingMessageItem>), typeof(AutoScrollMessageBox), new PropertyMetadata(default(ObservableCollection<LoggingMessageItem>), OnMessageListBindingChanged));
 
+        public ObservableCollection<LoggingMessageItem> MessageList
+        {
+            get
+            {
+                return  Dispatcher.Invoke(() => (ObservableCollection<LoggingMessageItem>) GetValue(MessageListProperty));
+            }
+            set { Dispatcher.Invoke(() => SetValue(MessageListProperty, value)); }
+        }
+        
         private static void OnMessageListBindingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var serverView = (AutoScrollMessageBox) d;
-            var newList = (ObservableCollection<LoggingMessageItem>)e.NewValue;
-            var oldList = (ObservableCollection<LoggingMessageItem>)e.OldValue;
-            
-            if (newList != null)
+            serverView.Dispatcher.Invoke(() =>
             {
-                newList.CollectionChanged +=serverView.MessageListOnCollectionChanged;
-            }
+                var newList = (ObservableCollection<LoggingMessageItem>) e.NewValue;
+                var oldList = (ObservableCollection<LoggingMessageItem>) e.OldValue;
 
-            if (oldList != null)
-            {
-                oldList.CollectionChanged -= serverView.MessageListOnCollectionChanged;
-            }
+                if (newList != null)
+                {
+                    newList.CollectionChanged += serverView.MessageListOnCollectionChanged;
+                }
+
+                if (oldList != null)
+                {
+                    oldList.CollectionChanged -= serverView.MessageListOnCollectionChanged;
+                }
+            });
         }
 
-        public ObservableCollection<LoggingMessageItem> MessageList
-        {
-            get { return (ObservableCollection<LoggingMessageItem>) GetValue(MessageListProperty); }
-            set { SetValue(MessageListProperty, value); }
-        }
+  
 
-        public static readonly DependencyProperty MaxMessageCountProperty = DependencyProperty.Register(
-            "MaxMessageCount", typeof(int), typeof(AutoScrollMessageBox), new PropertyMetadata(100));
-
-        public int MaxMessageCount
-        {
-            get { return (int) GetValue(MaxMessageCountProperty); }
-            set { SetValue(MaxMessageCountProperty, value); }
-        }
+  
+ 
 
         private void OnMessageBoxLoaded(object sender, RoutedEventArgs e)
         {
             var messages = MessageListBox.ItemsSource as ObservableCollection<LoggingMessageItem>;
-            messages.CollectionChanged += ScrollToBottom;
+            messages.CollectionChanged += MessageListOnCollectionChanged;
         }
-
-        private void ScrollToBottom(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            var me = sender as ObservableCollection<LoggingMessageItem>;
-            if (me.Count == 0) return;
-            Dispatcher.Invoke(() =>
-            {
-                MessageListBox.SelectedIndex = me.Count - 1;
-                MessageListBox.ScrollIntoView(MessageListBox.SelectedItem);
-            });
-        }
+        
     }
 }

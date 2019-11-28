@@ -51,6 +51,6 @@
            </StackPanel>
        </Grid>
        <!-- Plc message box -->
-       <server:AutoScrollMessageBox Grid.Row="1"/>
+       <server:AutoScrollMessageBox Grid.Row="1" MessageList="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=PlcMessageList}" />
    </Grid>
 </UserControl>
