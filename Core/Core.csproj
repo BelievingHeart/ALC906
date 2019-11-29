@@ -86,6 +86,7 @@
     <Compile Include="Helpers\FaiItemsHelper.cs" />
     <Compile Include="Helpers\FindLineParamHelper.cs" />
     <Compile Include="Helpers\PlcMessagePackHelper.cs" />
+    <Compile Include="Helpers\StringMatrixHelper.cs" />
     <Compile Include="Helpers\SummaryHelper.cs" />
     <Compile Include="Helpers\TimeHelper.cs" />
     <Compile Include="ImageProcessing\FindLineParam.cs" />
