@@ -88,6 +88,9 @@
     <Compile Include="Views\FaiItem\FaiItemListView.xaml.cs">
       <DependentUpon>FaiItemListWarpView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Home\BasicInfoView.xaml.cs">
+      <DependentUpon>BasicInfoView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\LineScan\LineScanHostView.xaml.cs">
       <DependentUpon>LineScanHostView.xaml</DependentUpon>
     </Compile>
@@ -96,6 +99,9 @@
     </Compile>
     <Compile Include="Views\Server\ServerView.xaml.cs">
       <DependentUpon>ServerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SideLogger\SideLoggerView.xaml.cs">
+      <DependentUpon>SideLoggerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\StringMatrix\StringMatrixView.xaml.cs">
       <DependentUpon>StringMatrixView.xaml</DependentUpon>
@@ -137,15 +143,73 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="FodyWeavers.xml" />
+    <Resource Include="Icons\1PLC.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\2dcam.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\3dline.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\advancedsettings.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Content Include="Icons\daemons.png" />
+    <Content Include="Icons\file-manager.png" />
+    <Content Include="Icons\go-home-5.png" />
+    <Content Include="Icons\grayPoint.png" />
+    <Content Include="Icons\greenPoint.png" />
+    <Resource Include="Icons\home.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\icon_init.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\icon_restore.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\icon_start.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\icon_stop.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\icon_suspended.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Content Include="Icons\kchart.png" />
+    <Resource Include="Icons\Login Manager.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Icons\logo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Content Include="Icons\logo1_48X48.ico" />
+    <Content Include="Icons\OutputWindow.ico" />
+    <Content Include="Icons\redPoint.png" />
+    <Content Include="Icons\smserver.png" />
+    <Content Include="Icons\top_adaptive_normal.png" />
+    <Content Include="Icons\top_close_normal.png" />
+    <Content Include="Icons\top_full_screen_normal.png" />
+    <Content Include="Icons\top_minimize_normal.png" />
+    <Content Include="Icons\tray.png" />
+    <Content Include="Icons\tray_exist.png" />
+    <Content Include="Icons\tray_null.png" />
+    <Content Include="Icons\tray_pass.png" />
+    <Content Include="Icons\Trilian_Pro_014.png" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Resources\Images.xaml" />
     <Page Include="Views\Bins\SummaryView.xaml" />
     <Page Include="Views\FaiItem\FaiItemListStackView.xaml" />
     <Page Include="Views\FaiItem\FaiItemListWarpView.xaml" />
+    <Page Include="Views\Home\BasicInfoView.xaml" />
     <Page Include="Views\LineScan\LineScanHostView.xaml" />
     <Page Include="Views\LineScan\LineScanView.xaml" />
     <Page Include="Views\Server\ServerView.xaml" />
+    <Page Include="Views\SideLogger\SideLoggerView.xaml" />
     <Page Include="Views\StringMatrix\StringMatrixView.xaml" />
     <Page Include="Views\Vision2D\CameraHostView.xaml" />
     <Page Include="Views\Vision2D\Vision2DView.xaml" />

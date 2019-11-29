@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 using Core.ViewModels.Application;
 using Core.ViewModels.MainWindow;
 using Core.ViewModels.Plc;
@@ -24,31 +25,35 @@ namespace UI.Views
         private void CleanupApplication(object sender, EventArgs eventArgs)
         {
             //TODO: uncomment this line
-            ApplicationViewModel.Cleanup();
+//            ApplicationViewModel.Cleanup();
         }
-
 
         private void OnMainWindowLoaded(object sender, RoutedEventArgs e)
         {
-            ApplicationViewModel.Instance.InitHardWares();
-
-            var sideBarMessages = SideBarLoggingBox.ItemsSource as ObservableCollection<LoggingMessageItem>;
-            sideBarMessages.CollectionChanged += ScrollToBottom;
+//            ApplicationViewModel.Instance.InitHardWares();
+            ApplicationViewModel.Instance.LoadFiles();
         }
-        
-        private void ScrollToBottom(object sender, NotifyCollectionChangedEventArgs e)
+
+
+        private void DragWindow(object sender, MouseButtonEventArgs e)
         {
-            Dispatcher.Invoke(() =>
-            {
-                var sideBarMessages = SideBarLoggingBox.ItemsSource as ObservableCollection<LoggingMessageItem>;
-
-                if (sideBarMessages.Count == 0) return;
-                // Scroll to the last item
-                SideBarLoggingBox.SelectedIndex = sideBarMessages.Count - 1;
-                SideBarLoggingBox.ScrollIntoView(SideBarLoggingBox.SelectedItem);
-            });
+            DragMove();
         }
 
-        public int MaxMessageCount { get; set; } = 10;
+        private void CloseWindow(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void MinimizeWindow(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+
+        private void RestoreWindow(object sender, RoutedEventArgs e)
+        {
+            if (WindowState == WindowState.Maximized) WindowState = WindowState.Normal;
+            else WindowState = WindowState.Maximized;
+        }
     }
 }

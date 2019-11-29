@@ -727,6 +727,18 @@ namespace Core.ViewModels.Application
         /// </summary>
         public void InitHardWares()
         {
+ 
+
+            SetupServer();
+
+            SetupCameras();
+
+            SetupLaserControllers();
+        }
+
+        
+        public void LoadFiles()
+        {
             LoadShapeModels();
 
             LoadFaiItems();
@@ -734,12 +746,6 @@ namespace Core.ViewModels.Application
             LoadFindLineParams2D();
 
             LoadProductionLineSummaries();
-
-            SetupServer();
-
-            SetupCameras();
-
-            SetupLaserControllers();
         }
 
 

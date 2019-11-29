@@ -3,24 +3,94 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:views="clr-namespace:UI.Views"
              xmlns:application="clr-namespace:Core.ViewModels.Application;assembly=Core"
-             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:faiItem="clr-namespace:UI.Views.FaiItem"
              xmlns:bins="clr-namespace:UI.Views.Bins"
+             xmlns:home="clr-namespace:UI.Views.Home"
+             xmlns:halconDotNet="clr-namespace:HalconDotNet;assembly=halcondotnet"
+             xmlns:faiItem="clr-namespace:UI.Views.FaiItem"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300" DataContext="{Binding Source={x:Static application:ApplicationViewModel.Instance}}">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
-        </Grid.ColumnDefinitions>
-        <!-- Left socket fai items -->
-        <faiItem:FaiItemListStackView Grid.Column="0" FaiItems="{Binding Path=FaiItemsLeft}"/>
-        <!-- Bin views -->
-        <bins:SummaryView Grid.Column="1" DataContext="{Binding Path=SelectedSummary}"/>
-        <!-- Right socket fai items -->
-        <faiItem:FaiItemListStackView Grid.Column="2"  FaiItems="{Binding Path=FaiItemsRight}"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+     
+        <!-- PLC buttons -->
+        <Grid DockPanel.Dock="Top" Grid.Row="0" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                    
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Height="60" Margin="3" Width="150" Background="{StaticResource PrimaryHueLightBrush}">
+                <StackPanel>
+                    <Image Height="35" Source="{StaticResource Init}"/>
+                    <TextBlock HorizontalAlignment="Center" Text="Init"/>
+                </StackPanel>
+            </Button>
+            <Button Grid.Column="1" Height="60" Margin="3" Width="150" Background="{StaticResource PrimaryHueLightBrush}">
+                <StackPanel>
+                    <Image Height="35" Source="{StaticResource Start}"/>
+                    <TextBlock HorizontalAlignment="Center" Text="Start"/>
+                </StackPanel>
+            </Button>
+            <Button Grid.Column="2" Height="60" Margin="3" Width="150" Background="{StaticResource PrimaryHueLightBrush}">
+                <StackPanel>
+                    <Image Height="35" Source="{StaticResource Pause}"/>
+                    <TextBlock HorizontalAlignment="Center" Text="Pause"/>
+                </StackPanel>
+            </Button>
+            <Button Grid.Column="3" Height="60" Margin="3" Width="150" Background="{StaticResource PrimaryHueLightBrush}">
+                <StackPanel>
+                    <Image Height="35" Source="{StaticResource Restore}"/>
+                    <TextBlock HorizontalAlignment="Center" Text="Reset"/>
+                </StackPanel>
+            </Button>
+            <materialDesign:ColorZone Grid.Column="4" Background="Green" Height="70" CornerRadius="10">
+                <TextBlock Text="Idle" FontSize="35" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </materialDesign:ColorZone>
+        </Grid>
+        
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            
+            <!-- Basic product info -->
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <!-- Basic info view -->
+                <home:BasicInfoView Grid.Row="0"/>
+                <!-- Bin views -->
+                <bins:SummaryView Grid.Row="1"  DataContext="{Binding Path=SelectedSummary}"/>
+            </Grid>
+            
+            <!-- Left socket preview -->
+            <halconDotNet:HSmartWindowControlWPF Grid.Column="1">
+                <halconDotNet:HIconicDisplayObjectWPF/>
+            </halconDotNet:HSmartWindowControlWPF>
+            
+            <!-- Right socket preview -->
+            <halconDotNet:HSmartWindowControlWPF Grid.Column="2">
+                <halconDotNet:HIconicDisplayObjectWPF/>
+            </halconDotNet:HSmartWindowControlWPF>
+
+        </Grid>
+
+        <faiItem:FaiItemListStackView Grid.Row="2" FaiItems="{Binding FaiItemsLeft}" Header="Left"/>
+        <faiItem:FaiItemListStackView Grid.Row="3" FaiItems="{Binding FaiItemsRight}" Header="Right"/>
     </Grid>
 </UserControl>

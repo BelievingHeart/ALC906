@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\25001858\.Rider2019.2\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\25001858\.Rider2019.2\system\resharper-host\local\Transient\ReSharperHost\v192\SolutionCaches\_ALC-906.-755041043.00" t="ExcludeRecursive" />
-    <e p="E:\Projects\ALC\ALC-906" t="IncludeFlat">
+    <e p="C:\Users\afterbunny\.Rider2019.2\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\afterbunny\.Rider2019.2\system\resharper-host\local\Transient\ReSharperHost\v192\SolutionCaches\_ALC-906.-148365339.00" t="ExcludeRecursive" />
+    <e p="C:\Users\afterbunny\Desktop\Projects\ALC\ALC-906" t="IncludeFlat">
       <e p="ALC-906.sln" t="IncludeFlat" />
       <e p="Core" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
@@ -114,12 +114,48 @@
           <e p="LoggingServiceProvider.cs" t="Include" />
         </e>
         <e p="FodyWeavers.xml" t="Include" />
+        <e p="Icons" t="Include">
+          <e p="1PLC.ico" t="Include" />
+          <e p="2dcam.ico" t="Include" />
+          <e p="3dline.png" t="Include" />
+          <e p="advancedsettings.png" t="Include" />
+          <e p="daemons.png" t="Include" />
+          <e p="file-manager.png" t="Include" />
+          <e p="go-home-5.png" t="Include" />
+          <e p="grayPoint.png" t="Include" />
+          <e p="greenPoint.png" t="Include" />
+          <e p="home.png" t="Include" />
+          <e p="icon_init.png" t="Include" />
+          <e p="icon_restore.png" t="Include" />
+          <e p="icon_start.png" t="Include" />
+          <e p="icon_stop.png" t="Include" />
+          <e p="icon_suspended.png" t="Include" />
+          <e p="kchart.png" t="Include" />
+          <e p="Login Manager.png" t="Include" />
+          <e p="logo.png" t="Include" />
+          <e p="logo1_48X48.ico" t="Include" />
+          <e p="OutputWindow.ico" t="Include" />
+          <e p="redPoint.png" t="Include" />
+          <e p="smserver.png" t="Include" />
+          <e p="top_adaptive_normal.png" t="Include" />
+          <e p="top_close_normal.png" t="Include" />
+          <e p="top_full_screen_normal.png" t="Include" />
+          <e p="top_minimize_normal.png" t="Include" />
+          <e p="tray.png" t="Include" />
+          <e p="tray_exist.png" t="Include" />
+          <e p="tray_null.png" t="Include" />
+          <e p="tray_pass.png" t="Include" />
+          <e p="Trilian_Pro_014.png" t="Include" />
+        </e>
         <e p="obj" t="ExcludeRecursive" />
         <e p="packages.config" t="Include" />
         <e p="Properties" t="Include">
           <e p="AssemblyInfo.cs" t="Include" />
           <e p="Resources.Designer.cs" t="Include" />
           <e p="Resources.resx" t="Include" />
+        </e>
+        <e p="Resources" t="Include">
+          <e p="Images.xaml" t="Include" />
         </e>
         <e p="UI.csproj" t="IncludeRecursive" />
         <e p="Views" t="Include">
@@ -134,6 +170,8 @@
             <e p="FaiItemListWarpView.xaml" t="Include" />
           </e>
           <e p="Home" t="Include">
+            <e p="BasicInfoView.xaml" t="Include" />
+            <e p="BasicInfoView.xaml.cs" t="Include" />
             <e p="HomeView.xaml" t="Include" />
             <e p="HomeView.xaml.cs" t="Include" />
           </e>
@@ -151,6 +189,10 @@
             <e p="ServerView.xaml" t="Include" />
             <e p="ServerView.xaml.cs" t="Include" />
           </e>
+          <e p="SideLogger" t="Include">
+            <e p="SideLoggerView.xaml" t="Include" />
+            <e p="SideLoggerView.xaml.cs" t="Include" />
+          </e>
           <e p="StringMatrix" t="Include">
             <e p="StringMatrixView.xaml" t="Include" />
             <e p="StringMatrixView.xaml.cs" t="Include" />
@@ -165,7 +207,7 @@
         </e>
       </e>
     </e>
-    <e p="E:\Projects\ALC\HKCameraDev\HKCameraDev.Core" t="IncludeRecursive">
+    <e p="C:\Users\afterbunny\Desktop\Projects\ALC\HKCameraDev\HKCameraDev.Core" t="IncludeRecursive">
       <e p="bin" t="ExcludeRecursive" />
       <e p="Enums" t="Include">
         <e p="CameraTriggerModeType.cs" t="Include" />
@@ -201,8 +243,8 @@
         </e>
       </e>
     </e>
-    <e p="E:\Projects\ALC\HKCameraDev\UI\FodyWeavers.xml" t="Include" />
-    <e p="E:\Projects\ALC\LJX8000Dev\LJX8000.Core" t="IncludeRecursive">
+    <e p="C:\Users\afterbunny\Desktop\Projects\ALC\HKCameraDev\UI\FodyWeavers.xml" t="Include" />
+    <e p="C:\Users\afterbunny\Desktop\Projects\ALC\LJX8000Dev\LJX8000.Core" t="IncludeRecursive">
       <e p="Attributes" t="Include">
         <e p="AutoSerializeAttribute.cs" t="Include" />
       </e>
@@ -256,8 +298,8 @@
         </e>
       </e>
     </e>
-    <e p="E:\Projects\ALC\LJX8000Dev\UI\FodyWeavers.xml" t="Include" />
-    <e p="E:\Projects\ALC\PLCCommunication\PLCCommunication.Core" t="IncludeRecursive">
+    <e p="C:\Users\afterbunny\Desktop\Projects\ALC\LJX8000Dev\UI\FodyWeavers.xml" t="Include" />
+    <e p="C:\Users\afterbunny\Desktop\Projects\ALC\PLCCommunication\PLCCommunication.Core" t="IncludeRecursive">
       <e p="bin" t="ExcludeRecursive" />
       <e p="Helpers" t="Include" />
       <e p="Models" t="Include" />
@@ -273,7 +315,7 @@
         <e p="LibraryViewModel.cs" t="Include" />
       </e>
     </e>
-    <e p="E:\Projects\ALC\WPFCommon\WPFCommon" t="IncludeRecursive">
+    <e p="C:\Users\afterbunny\Desktop\Projects\ALC\WPFCommon\WPFCommon" t="IncludeRecursive">
       <e p="bin" t="ExcludeRecursive" />
       <e p="Commands" t="Include">
         <e p="ParameterizedCommand.cs" t="Include" />

@@ -1,0 +1,15 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <BitmapImage x:Key="Login" UriSource="../Icons/Login Manager.png"/>
+    <BitmapImage x:Key="Home" UriSource="../Icons/home.png"/>
+    <BitmapImage x:Key="PLC" UriSource="../Icons/1PLC.ico"/>
+    <BitmapImage x:Key="Camera" UriSource="../Icons/2dcam.ico"/>
+    <BitmapImage x:Key="Laser" UriSource="../Icons/3dline.png"/>
+    <BitmapImage x:Key="Settings" UriSource="../Icons/advancedsettings.png"/>
+    <BitmapImage x:Key="Logo" UriSource="../Icons/logo.png"/>
+    <BitmapImage x:Key="Init" UriSource="../Icons/icon_init.png"/>
+    <BitmapImage x:Key="Pause" UriSource="../Icons/icon_suspended.png"/>
+    <BitmapImage x:Key="Start" UriSource="../Icons/icon_start.png"/>
+    <BitmapImage x:Key="Stop" UriSource="../Icons/icon_stop.png"/>
+    <BitmapImage x:Key="Restore" UriSource="../Icons/icon_restore.png"/>
+</ResourceDictionary>
