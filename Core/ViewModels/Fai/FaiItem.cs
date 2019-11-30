@@ -50,13 +50,15 @@ namespace Core.ViewModels.Fai
         /// <summary>
         /// Measure result
         /// </summary>
+        [XmlIgnore]
         public bool Rejected
         {
             get { return Value < MinBoundary || Value > MaxBoundary; }
         }
+
         
-
-
+        [XmlIgnore]
+        public bool Passed => !Rejected;
     
 
         public FaiItem(string name)

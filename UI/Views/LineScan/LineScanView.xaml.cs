@@ -60,7 +60,15 @@ namespace UI.Views.LineScan
 
         public static readonly DependencyProperty ResultToDisplayProperty = DependencyProperty.Register(
             "ResultToDisplay", typeof(MeasurementResult3D), typeof(LineScanView),
-            new PropertyMetadata(default(MeasurementResult3D)));
+            new PropertyMetadata(default(MeasurementResult3D), OnResultToDisplayChanged));
+
+        private static void OnResultToDisplayChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var sender = (LineScanView) d;
+            var newValue = (MeasurementResult3D) e.NewValue;
+            if (newValue == null) return;
+            sender.PART_HalconWindow.DataContext = newValue;
+        }
 
         public MeasurementResult3D ResultToDisplay
         {
@@ -138,7 +146,15 @@ namespace UI.Views.LineScan
         }
 
         public static readonly DependencyProperty FaiItemsToDisplayProperty = DependencyProperty.Register(
-            "FaiItemsToDisplay", typeof(List<Core.ViewModels.Fai.FaiItem>), typeof(LineScanView), new PropertyMetadata(default(List<Core.ViewModels.Fai.FaiItem>)));
+            "FaiItemsToDisplay", typeof(List<Core.ViewModels.Fai.FaiItem>), typeof(LineScanView), new PropertyMetadata(default(List<Core.ViewModels.Fai.FaiItem>), OnFaiItemsToDisplayChanged));
+
+        private static void OnFaiItemsToDisplayChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var sender = d as LineScanView;
+            var newValue = (List<Core.ViewModels.Fai.FaiItem>) e.NewValue;
+            if (newValue == null) return;
+            sender.PART_FaiItemGridView.FaiItems = newValue;
+        }
 
         public List<Core.ViewModels.Fai.FaiItem> FaiItemsToDisplay
         {

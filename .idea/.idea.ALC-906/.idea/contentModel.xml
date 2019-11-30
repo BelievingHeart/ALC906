@@ -164,6 +164,8 @@
             <e p="SummaryView.xaml.cs" t="Include" />
           </e>
           <e p="FaiItem" t="Include">
+            <e p="FaiItemGridView.xaml" t="Include" />
+            <e p="FaiItemGridView.xaml.cs" t="Include" />
             <e p="FaiItemListStackView.xaml" t="Include" />
             <e p="FaiItemListStackView.xaml.cs" t="Include" />
             <e p="FaiItemListView.xaml.cs" t="Include" />

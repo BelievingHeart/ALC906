@@ -54,6 +54,9 @@
         <!-- ToolBar -->
         <ToolBarTray Orientation="Horizontal" DockPanel.Dock="Top">
             <ToolBar>
+                <ToolBar.DataContext>
+                    <mainWindow:MainWindowViewModel/>
+                </ToolBar.DataContext>
                 <Button Command="{Binding SwitchHomePageCommand}" Margin="10 0">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="{StaticResource Login}" Height="30" />
@@ -66,19 +69,19 @@
                         <TextBlock Text=" Home" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
-                <Button Command="{Binding SwitchHomePageCommand}" Margin="10 0">
+                <Button Command="{Binding SwitchServerPageCommand}" Margin="10 0">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="{StaticResource PLC}" Height="30" />
                         <TextBlock Text=" PLC" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
-                <Button Command="{Binding SwitchHomePageCommand}" Margin="10 0">
+                <Button Command="{Binding SwitchCameraHostPageCommand}" Margin="10 0">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="{StaticResource Camera}" Height="30" />
                         <TextBlock Text=" 2D" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
-                <Button Command="{Binding SwitchHomePageCommand}" Margin="10 0">
+                <Button Command="{Binding SwitchLineScanHostPageCommand}" Margin="10 0">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="{StaticResource Laser}" Height="30" />
                         <TextBlock Text=" 3D" VerticalAlignment="Center" />

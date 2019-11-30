@@ -46,5 +46,7 @@ namespace UI.Views.FaiItem
             get { return (string) GetValue(HeaderProperty); }
             set { SetValue(HeaderProperty, value); }
         }
+
+        
     }
 }

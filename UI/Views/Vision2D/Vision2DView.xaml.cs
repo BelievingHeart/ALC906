@@ -199,7 +199,15 @@ namespace UI.Views.Vision2D
         }
 
         public static readonly DependencyProperty DisplayedFaiItemsProperty = DependencyProperty.Register(
-            "DisplayedFaiItems", typeof(List<Core.ViewModels.Fai.FaiItem>), typeof(Vision2DView), new PropertyMetadata(default(List<Core.ViewModels.Fai.FaiItem>)));
+            "DisplayedFaiItems", typeof(List<Core.ViewModels.Fai.FaiItem>), typeof(Vision2DView), new PropertyMetadata(default(List<Core.ViewModels.Fai.FaiItem>), OnDisplayedFaiItemsChanged));
+
+        private static void OnDisplayedFaiItemsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var sender = (Vision2DView) d;
+            var newValue = (List<Core.ViewModels.Fai.FaiItem>) e.NewValue;
+            if (newValue == null) return;
+            sender.PART_FaiItemsGridView.FaiItems = newValue;
+        }
 
         public List<Core.ViewModels.Fai.FaiItem> DisplayedFaiItems
         {

@@ -57,10 +57,13 @@
 
         <!-- Fai items -->
         <GroupBox Header="Fai items" Grid.Column="1">
-            <faiItem:FaiItemListStackView
-                FaiItems="{Binding RelativeSource={RelativeSource AncestorType=vision2D:Vision2DView}, Path=DisplayedFaiItems}" />
+            <faiItem:FaiItemGridView x:Name="PART_FaiItemsGridView"/>
         </GroupBox>
 
+        
+        
+        
+        
         <Expander Grid.Column="0" Grid.ColumnSpan="2" Background="Transparent"
                   ExpandDirection="Right" Foreground="White"
                   HorizontalAlignment="Left">

@@ -19,7 +19,7 @@
                 </TextBlock.LayoutTransform>
             </TextBlock>
             <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto">
-            <ListView x:Name="FaiList" >
+            <ListView x:Name="FaiList">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal" />

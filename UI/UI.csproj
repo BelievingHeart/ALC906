@@ -82,6 +82,9 @@
     <Compile Include="Views\Bins\SummaryView.xaml.cs">
       <DependentUpon>SummaryView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\FaiItem\FaiItemGridView.xaml.cs">
+      <DependentUpon>FaiItemGridView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\FaiItem\FaiItemListStackView.xaml.cs">
       <DependentUpon>FaiItemListStackView.xaml</DependentUpon>
     </Compile>
@@ -203,6 +206,7 @@
   <ItemGroup>
     <Page Include="Resources\Images.xaml" />
     <Page Include="Views\Bins\SummaryView.xaml" />
+    <Page Include="Views\FaiItem\FaiItemGridView.xaml" />
     <Page Include="Views\FaiItem\FaiItemListStackView.xaml" />
     <Page Include="Views\FaiItem\FaiItemListWarpView.xaml" />
     <Page Include="Views\Home\BasicInfoView.xaml" />

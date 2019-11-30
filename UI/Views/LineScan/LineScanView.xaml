@@ -15,7 +15,7 @@
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <!-- Halcon window -->
-        <halconDotNet:HSmartWindowControlWPF Grid.Column="0" DataContext="{Binding RelativeSource={RelativeSource AncestorType=local:LineScanView}, Path=ResultToDisplay}">
+        <halconDotNet:HSmartWindowControlWPF Grid.Column="0" x:Name="PART_HalconWindow">
             <halconDotNet:HIconicDisplayObjectWPF IconicObject="{Binding Path=CompositeImage}"/>
             <halconDotNet:HIconicDisplayObjectWPF IconicObject="{Binding Path=CoordinateLines}" HColor="blue" LineWidth="2"/>
             <halconDotNet:HIconicDisplayObjectWPF IconicObject="{Binding Path=FindLineRectangles}" HColor="orange" LineWidth="3"/>
@@ -32,7 +32,8 @@
             </StackPanel>
         </Button>
 
-       <faiItem:FaiItemListStackView Grid.Column="1" FaiItems="{Binding RelativeSource={RelativeSource AncestorType=local:LineScanView}, Path=FaiItemsToDisplay}"/>
+        <GroupBox Grid.Column="1" Header="Fai Items">
+            <faiItem:FaiItemGridView  x:Name="PART_FaiItemGridView" /></GroupBox>
         
     </Grid>
 </UserControl>
