@@ -7,9 +7,9 @@ namespace Core.Constants
     public static class DirectoryConstants
     {
         public static string FaiConfigDir => Path.Combine(DirectoryHelper.ConfigDirectory, "Fai");
+        public static string Config2DDir => Path.Combine(DirectoryHelper.ConfigDirectory, "2D");
         public static string FindLineParamsConfigDir => Path.Combine(DirectoryHelper.ConfigDirectory, "FindLineParams");
         
- 
 
         /// <summary>
         /// Base dir to output various records
@@ -32,6 +32,8 @@ namespace Core.Constants
         public static string FaiConfigDir3DLeft => Path.Combine(FaiConfigDir3D, "Left");
         public static string FaiConfigDir3DRight => Path.Combine(FaiConfigDir3D, "Right");
         public static string SummaryDirToday => Path.Combine(DirectoryConstants.ProductionLineRecordDir, DateTime.Now.ToString("MM-dd"));
+        
+        
 
         
         //TODO: remove the following dirs

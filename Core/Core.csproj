@@ -66,6 +66,9 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
+    <Reference Include="_2DI40Check, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>bin\Debug\_2DI40Check.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants\DirectoryConstants.cs" />
@@ -85,10 +88,14 @@
     <Compile Include="Enums\SocketType.cs" />
     <Compile Include="Helpers\FaiItemsHelper.cs" />
     <Compile Include="Helpers\FindLineParamHelper.cs" />
+    <Compile Include="Helpers\I40Helper.cs" />
+    <Compile Include="Helpers\ObservableCollectionHelper.cs" />
     <Compile Include="Helpers\PlcMessagePackHelper.cs" />
     <Compile Include="Helpers\StringMatrixHelper.cs" />
     <Compile Include="Helpers\SummaryHelper.cs" />
     <Compile Include="Helpers\TimeHelper.cs" />
+    <Compile Include="ImageProcessing\2D\I40_CheckDemo.cs" />
+    <Compile Include="ImageProcessing\2D\ResultValueClass.cs" />
     <Compile Include="ImageProcessing\FindLineParam.cs" />
     <Compile Include="ImageProcessing\IMeasurementProcedure2D.cs" />
     <Compile Include="ImageProcessing\IMeasurementProcedure3D.cs" />

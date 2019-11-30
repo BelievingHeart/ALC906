@@ -128,7 +128,7 @@ namespace UI.Views.StringMatrix
             set { SetValue(HeaderProperty, value); }
         }
         
-        private List<List<string>> ParseContent()
+        public List<List<string>> ParseContent()
         {
             if (StringMatrix == null) return null;
             
@@ -150,6 +150,17 @@ namespace UI.Views.StringMatrix
             }
 
             return output;
+        }
+
+        public void ClearGrid()
+        {
+            // Clear grid control
+            StringGrid.ColumnDefinitions.Clear();
+            StringGrid.RowDefinitions.Clear();
+            StringGrid.Children.Clear();
+            
+            StringMatrix.Clear();
+            Header.Clear();
         }
     }
 }

@@ -21,6 +21,7 @@ using Core.Stubs;
 using Core.ViewModels.Fai;
 using Core.ViewModels.Plc;
 using Core.ViewModels.Summary;
+using CYG906ALC.ALG;
 using HalconDotNet;
 using HKCameraDev.Core.IoC.Interface;
 using HKCameraDev.Core.ViewModels.Camera;
@@ -87,9 +88,8 @@ namespace Core.ViewModels.Application
         private readonly IMeasurementProcedure3D _procedure3D = new MeasurementProcedure3DStub();
 
         private readonly object _lockerOfRoutineMessageList = new object();
-        private readonly object _lockerOfPlcMessageList = new object();
-        private SocketType _socketToDisplay2D;
-        private SocketType _socketToDisplay3D;
+
+  
 
         private readonly List<string> _findLineParam2DNames = new List<string>()
         {
@@ -111,6 +111,7 @@ namespace Core.ViewModels.Application
         private readonly object _lockerOfRightSocketIndexSinceReset2D = new object();
         private readonly object _lockerOfCurrentArrivedSocket2D = new object();
         private readonly DispatcherTimer _lazyTimer = new DispatcherTimer(DispatcherPriority.Background);
+        private readonly object _lockerOfPlcMessageList = new object();
 
         protected ApplicationViewModel()
         {
@@ -119,8 +120,7 @@ namespace Core.ViewModels.Application
             CurrentApplicationPage = ApplicationPageType.Home;
             MessageQueue = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(3000));
             PlcMessageList = new ObservableCollection<LoggingMessageItem>();
-            BindingOperations.EnableCollectionSynchronization(RoutineMessageList, _lockerOfRoutineMessageList);
-            BindingOperations.EnableCollectionSynchronization(PlcMessageList, _lockerOfPlcMessageList);
+            EnableSynchronization();
 
             InitTimers();
 
@@ -144,8 +144,15 @@ namespace Core.ViewModels.Application
         private void OnLazyTimerClicked(object sender, EventArgs e)
         {
             // Clear messages if overflows
-            ClearMessagesIfOverflows(PlcMessageList, 100);
-            ClearMessagesIfOverflows(RoutineMessageList, 100);
+            lock (_lockerOfPlcMessageList)
+            {
+                ClearMessagesIfOverflows(PlcMessageList, 100);
+            }
+
+            lock (_lockerOfRoutineMessageList)
+            {
+                ClearMessagesIfOverflows(RoutineMessageList, 100);
+            }
 
             GenerateSummaryNameList();
             ReadSelectedSummary();
@@ -179,10 +186,17 @@ namespace Core.ViewModels.Application
         private void ClearMessagesIfOverflows(ObservableCollection<LoggingMessageItem> messageList, int maxCount)
         {
             if (messageList.Count < maxCount) return;
-            int numToRemove = (int) (maxCount * 0.3);
-            for (int i = 0; i < numToRemove; i++)
+            try
             {
-                messageList.RemoveAt(i);
+                int numToRemove = (int) (maxCount * 0.3);
+                for (int i = 0; i < numToRemove; i++)
+                {
+                    messageList.RemoveAt(i);
+                }
+            }
+            catch
+            {
+              // it's fine to remove it later
             }
         }
 
@@ -688,15 +702,8 @@ namespace Core.ViewModels.Application
         }
 
         public void LogPlcMessage(string message)
-        {
-            Dispatcher.CurrentDispatcher.Invoke(() =>
-            {
-                PlcMessageList.Add(new LoggingMessageItem()
-                {
-                    Time = DateTime.Now.ToString("T"),
-                    Message = message
-                });
-            });
+        { 
+            PlcMessageList.LogMessageRetryIfFailedAsync(new LoggingMessageItem(){Message = message, Time = DateTime.Now.ToString("T")},_lockerOfPlcMessageList, 200 );
         }
 
         public void LogRoutine(string message)
@@ -736,9 +743,18 @@ namespace Core.ViewModels.Application
             SetupLaserControllers();
         }
 
+        public void EnableSynchronization()
+        {
+            BindingOperations.EnableCollectionSynchronization(RoutineMessageList, _lockerOfRoutineMessageList);
+
+            BindingOperations.EnableCollectionSynchronization(PlcMessageList, _lockerOfPlcMessageList);
+
+        }
         
         public void LoadFiles()
         {
+//            LoadI40CheckConfigs();
+            
             LoadShapeModels();
 
             LoadFaiItems();
@@ -746,6 +762,11 @@ namespace Core.ViewModels.Application
             LoadFindLineParams2D();
 
             LoadProductionLineSummaries();
+        }
+
+        private void LoadI40CheckConfigs()
+        {
+            I40Check = new I40Check(DirectoryConstants.Config2DDir+"I40_searchAlg.ini", DirectoryConstants.Config2DDir+"I40_Result2.ini", DirectoryConstants.Config2DDir+"I40_System2.Ini");
         }
 
 
@@ -858,6 +879,10 @@ namespace Core.ViewModels.Application
         public List<string> SummaryNames { get; set; }
 
         public string SelectedSummaryName { get; set; }
+
+        public I40Check I40Check { get; set; }
+
+        public HWindow WindowHandle2D { get; set; }
 
         #endregion
     }

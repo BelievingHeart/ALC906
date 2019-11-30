@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
@@ -14,6 +15,7 @@ namespace UI.Views.Server
             InitializeComponent();
            
         }
+        
 
         private void MessageListOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {

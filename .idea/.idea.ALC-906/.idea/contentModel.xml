@@ -34,12 +34,18 @@
         <e p="Helpers" t="Include">
           <e p="FaiItemsHelper.cs" t="Include" />
           <e p="FindLineParamHelper.cs" t="Include" />
+          <e p="I40Helper.cs" t="Include" />
+          <e p="ObservableCollectionHelper.cs" t="Include" />
           <e p="PlcMessagePackHelper.cs" t="Include" />
           <e p="StringMatrixHelper.cs" t="Include" />
           <e p="SummaryHelper.cs" t="Include" />
           <e p="TimeHelper.cs" t="Include" />
         </e>
         <e p="ImageProcessing" t="Include">
+          <e p="2D" t="Include">
+            <e p="I40_CheckDemo.cs" t="Include" />
+            <e p="ResultValueClass.cs" t="Include" />
+          </e>
           <e p="FindLineParam.cs" t="Include" />
           <e p="IMeasurementProcedure2D.cs" t="Include" />
           <e p="IMeasurementProcedure3D.cs" t="Include" />
@@ -201,6 +207,8 @@
           </e>
           <e p="UserControlBase.cs" t="Include" />
           <e p="Vision2D" t="Include">
+            <e p="CameraDataView.xaml" t="Include" />
+            <e p="CameraDataView.xaml.cs" t="Include" />
             <e p="CameraHostView.xaml" t="Include" />
             <e p="CameraHostView.xaml.cs" t="Include" />
             <e p="Vision2DView.xaml" t="Include" />

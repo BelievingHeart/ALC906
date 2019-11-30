@@ -7,8 +7,8 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:server="clr-namespace:UI.Views.Server"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300">
-       <Grid>
+             d:DesignHeight="300" d:DesignWidth="300" DataContext="{Binding Source={x:Static application:ApplicationViewModel.Instance}}">
+    <Grid>
        <Grid.RowDefinitions>
            <RowDefinition Height="Auto" />
            <RowDefinition Height="*" />
@@ -19,12 +19,12 @@
            <StackPanel Orientation="Horizontal" Grid.Column="0">
                <!-- Connect button -->
                <Button
-                   Command="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Server.ConnectCommand}"
+                   Command="{Binding Path=Server.ConnectCommand}"
                    Content="Connect" Style="{StaticResource MaterialDesignRaisedLightButton}" Height="50"
                    materialDesign:ButtonAssist.CornerRadius="5"/>
                <!-- Disconnect button -->
                <Button
-                   Command="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Server.DisconnectCommand}"
+                   Command="{Binding Path=Server.DisconnectCommand}"
                    Content="Disconnect" Style="{StaticResource MaterialDesignRaisedLightButton}" Height="50"
                    materialDesign:ButtonAssist.CornerRadius="5" />
              
@@ -32,6 +32,6 @@
            
        </Grid>
        <!-- Plc message box -->
-       <server:AutoScrollMessageBox Grid.Row="1" MessageList="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=PlcMessageList}" />
+       <server:AutoScrollMessageBox Grid.Row="1" MessageList="{Binding Path=PlcMessageList}"/>
    </Grid>
 </UserControl>

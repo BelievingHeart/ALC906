@@ -11,8 +11,6 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <vIsion2D:Vision2DView
-            LeftFaiItems="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=FaiItems2DLeft}"
-            RightFaiItems="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=FaiItems2DRight}"
             LeftResult2D="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Result2DLeft}"
             RightResult2D="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Result2DRight}" />
     </Grid>

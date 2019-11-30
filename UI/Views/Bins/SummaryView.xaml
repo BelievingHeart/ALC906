@@ -72,21 +72,21 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0">
                             <materialDesign:ColorZone Background="Chocolate" Height="50" Margin="10 3">
-                                <TextBlock Text="Bin 2" FontSize="24" HorizontalAlignment="Center"
+                                <TextBlock Text="Bin 4" FontSize="24" HorizontalAlignment="Center"
                                            VerticalAlignment="Center" />
                             </materialDesign:ColorZone>
                             <Label Content="{Binding Ng4Count}" HorizontalContentAlignment="Center" BorderBrush="Black" BorderThickness="1"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1">
                             <materialDesign:ColorZone Background="Coral" Height="50" Margin="10 3">
-                                <TextBlock Text="Bin 3" FontSize="24" HorizontalAlignment="Center"
+                                <TextBlock Text="Bin 5" FontSize="24" HorizontalAlignment="Center"
                                            VerticalAlignment="Center" />
                             </materialDesign:ColorZone>
                             <Label Content="{Binding Ng5Count}" HorizontalContentAlignment="Center" BorderBrush="Black" BorderThickness="1"/>
                         </StackPanel>
                     </Grid>
                 </StackPanel>
-            </Grid>
+            </Grid> 
             
     
             

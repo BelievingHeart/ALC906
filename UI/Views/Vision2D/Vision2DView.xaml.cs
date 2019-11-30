@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Core.Enums;
 using Core.ImageProcessing;
+using Core.ViewModels.Application;
 using HalconDotNet;
 using WPFCommon.Commands;
 
@@ -80,12 +81,10 @@ namespace UI.Views.Vision2D
             var sender = (Vision2DView) d;
             if (socket == SocketType.Left)
             {
-                sender.DisplayedFaiItems = sender.LeftFaiItems;
                 sender.DisplayedResults2D = sender.LeftResult2D;
             }
             else
             {
-                sender.DisplayedFaiItems = sender.RightFaiItems;
                 sender.DisplayedResults2D = sender.RightResult2D;
             }
         }
@@ -162,66 +161,11 @@ namespace UI.Views.Vision2D
         }
         
         #endregion
-
-        
-        
-        #region FaiItems
-
-        public static readonly DependencyProperty LeftFaiItemsProperty = DependencyProperty.Register(
-            "LeftFaiItems", typeof(List<Core.ViewModels.Fai.FaiItem>), typeof(Vision2DView), new PropertyMetadata(default(List<Core.ViewModels.Fai.FaiItem>), OnLeftFaiItemsChanged));
-
-        private static void OnLeftFaiItemsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var sender = d as Vision2DView;
-            if (sender.SocketToDisplay == SocketType.Left) sender.DisplayedFaiItems = (List<Core.ViewModels.Fai.FaiItem>) e.NewValue;
-        }
-
-
-        public List<Core.ViewModels.Fai.FaiItem> LeftFaiItems
-        {
-            get { return (List<Core.ViewModels.Fai.FaiItem>) GetValue(LeftFaiItemsProperty); }
-            set { SetValue(LeftFaiItemsProperty, value); }
-        }
-
-        public static readonly DependencyProperty RightFaiItemsProperty = DependencyProperty.Register(
-            "RightFaiItems", typeof(List<Core.ViewModels.Fai.FaiItem>), typeof(Vision2DView), new PropertyMetadata(default(List<Core.ViewModels.Fai.FaiItem>), OnRightFaiItemsChanged));
-
-        private static void OnRightFaiItemsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var sender = d as Vision2DView;
-            if (sender.SocketToDisplay == SocketType.Right) sender.DisplayedFaiItems = (List<Core.ViewModels.Fai.FaiItem>) e.NewValue;
-        }
-
-        public List<Core.ViewModels.Fai.FaiItem> RightFaiItems
-        {
-            get { return (List<Core.ViewModels.Fai.FaiItem>) GetValue(RightFaiItemsProperty); }
-            set { SetValue(RightFaiItemsProperty, value); }
-        }
-
-        public static readonly DependencyProperty DisplayedFaiItemsProperty = DependencyProperty.Register(
-            "DisplayedFaiItems", typeof(List<Core.ViewModels.Fai.FaiItem>), typeof(Vision2DView), new PropertyMetadata(default(List<Core.ViewModels.Fai.FaiItem>), OnDisplayedFaiItemsChanged));
-
-        private static void OnDisplayedFaiItemsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var sender = (Vision2DView) d;
-            var newValue = (List<Core.ViewModels.Fai.FaiItem>) e.NewValue;
-            if (newValue == null) return;
-            sender.PART_FaiItemsGridView.FaiItems = newValue;
-        }
-
-        public List<Core.ViewModels.Fai.FaiItem> DisplayedFaiItems
-        {
-            get { return (List<Core.ViewModels.Fai.FaiItem>) GetValue(DisplayedFaiItemsProperty); }
-            set { SetValue(DisplayedFaiItemsProperty, value); }
-        }
         
 
-        #endregion
-
-        private void OnFindLineParamGridAutoGenerateColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        private void OnVision2DViewLoaded(object sender, RoutedEventArgs e)
         {
-            var header = (string)e.Column.Header;
-            if (header == "SerializationDirectory" || header == "ShouldAutoSerialize" || header == "AutoResetFlag" || header == "AutoResetInterval") e.Cancel = true;
+            ApplicationViewModel.Instance.WindowHandle2D = HalconScreen.HalconWindow;
         }
     }
 }
