@@ -20,7 +20,7 @@
         </Grid.RowDefinitions>
      
         <!-- PLC buttons -->
-        <Grid DockPanel.Dock="Top" Grid.Row="0" DataContext="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Server}">
+        <Grid Grid.Row="0" DataContext="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Server}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
@@ -92,5 +92,6 @@
 
         <faiItem:FaiItemListStackView Grid.Row="2" FaiItems="{Binding FaiItemsLeft}" Header="Left" />
         <faiItem:FaiItemListStackView Grid.Row="3" FaiItems="{Binding FaiItemsRight}" Header="Right" />
+        
     </Grid>
 </UserControl>

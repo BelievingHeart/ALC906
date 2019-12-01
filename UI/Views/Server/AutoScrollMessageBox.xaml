@@ -7,12 +7,12 @@
              xmlns:server="clr-namespace:UI.Views.Server"
 
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300" Loaded="OnMessageBoxLoaded">
+             d:DesignHeight="300" d:DesignWidth="300">
 
        <!-- Plc message box -->
        <GroupBox Header="Plc messages" >
            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-               <ListBox x:Name="MessageListBox" ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=server:AutoScrollMessageBox}, Path=MessageList}">
+               <ListBox x:Name="MessageListBox">
                    <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Grid>

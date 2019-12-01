@@ -1,1 +1,1 @@
-1. Add image switching logic to LineScanView
+1. Read Fai names to from text file

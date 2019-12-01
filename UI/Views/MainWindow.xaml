@@ -8,6 +8,7 @@
         xmlns:converters="clr-namespace:UI.Converters"
         xmlns:mainWindow="clr-namespace:Core.ViewModels.MainWindow;assembly=Core"
         xmlns:applicationViewModel="clr-namespace:Core.ViewModels.Application;assembly=Core"
+        xmlns:sideLogger="clr-namespace:UI.Views.SideLogger"
         mc:Ignorable="d"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
@@ -51,6 +52,7 @@
             </Grid>
         </materialDesign:ColorZone>
 
+        <sideLogger:SideLoggerView DockPanel.Dock="Right" MessageList="{Binding Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Path=RoutineMessageList}"/>
         <!-- ToolBar -->
         <ToolBarTray Orientation="Horizontal" DockPanel.Dock="Top">
             <ToolBar>

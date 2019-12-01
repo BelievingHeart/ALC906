@@ -17,16 +17,7 @@ namespace UI.Views.Server
         }
         
 
-        private void MessageListOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                if (MessageList.Count == 0) return;
-                // Scroll to the last item
-                MessageListBox.SelectedIndex = MessageList.Count - 1;
-                MessageListBox.ScrollIntoView(MessageListBox.SelectedItem);
-            });
-        }
+
 
 
         public static readonly DependencyProperty MessageListProperty = DependencyProperty.Register(
@@ -43,33 +34,33 @@ namespace UI.Views.Server
         
         private static void OnMessageListBindingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var serverView = (AutoScrollMessageBox) d;
-            serverView.Dispatcher.Invoke(() =>
+            var sender = (AutoScrollMessageBox) d;
+            var newValue = (ObservableCollection<LoggingMessageItem>)e.NewValue;
+            if (newValue == null) return;
+            sender.MessageListBox.ItemsSource = newValue;
+            
+            sender.Dispatcher.Invoke(() =>
             {
-                var newList = (ObservableCollection<LoggingMessageItem>) e.NewValue;
                 var oldList = (ObservableCollection<LoggingMessageItem>) e.OldValue;
 
-                if (newList != null)
-                {
-                    newList.CollectionChanged += serverView.MessageListOnCollectionChanged;
-                }
-
+                newValue.CollectionChanged += sender.ScrollToBottom;
+                
                 if (oldList != null)
                 {
-                    oldList.CollectionChanged -= serverView.MessageListOnCollectionChanged;
+                    oldList.CollectionChanged -= sender.ScrollToBottom;
                 }
             });
         }
-
-  
-
-  
- 
-
-        private void OnMessageBoxLoaded(object sender, RoutedEventArgs e)
+        
+        private void ScrollToBottom(object sender, NotifyCollectionChangedEventArgs e)
         {
-            var messages = MessageListBox.ItemsSource as ObservableCollection<LoggingMessageItem>;
-            messages.CollectionChanged += MessageListOnCollectionChanged;
+            Dispatcher.Invoke(() =>
+            {
+                if (MessageList.Count == 0) return;
+                // Scroll to the last item
+                MessageListBox.SelectedIndex = MessageList.Count - 1;
+                MessageListBox.ScrollIntoView(MessageListBox.SelectedItem);
+            });
         }
         
     }

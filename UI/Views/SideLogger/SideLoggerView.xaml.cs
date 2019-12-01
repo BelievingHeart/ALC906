@@ -13,24 +13,51 @@ namespace UI.Views.SideLogger
         {
             InitializeComponent();
         }
-        
-        private void OnLoggerLoaded(object sender, RoutedEventArgs e)
+
+
+
+        public static readonly DependencyProperty MessageListProperty = DependencyProperty.Register(
+            "MessageList", typeof(ObservableCollection<LoggingMessageItem>), typeof(SideLoggerView), new PropertyMetadata(default(ObservableCollection<LoggingMessageItem>), OnMessageListBindingChanged));
+
+        public ObservableCollection<LoggingMessageItem> MessageList
         {
-            var sideBarMessages = SideBarLoggingBox.ItemsSource as ObservableCollection<LoggingMessageItem>;
-            sideBarMessages.CollectionChanged += ScrollToBottom;
+            get
+            {
+                return  Dispatcher.Invoke(() => (ObservableCollection<LoggingMessageItem>) GetValue(MessageListProperty));
+            }
+            set { Dispatcher.Invoke(() => SetValue(MessageListProperty, value)); }
+        }
+        
+        private static void OnMessageListBindingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var sender = (SideLoggerView) d;
+            var newValue = (ObservableCollection<LoggingMessageItem>)e.NewValue;
+            if (newValue == null) return;
+            sender.MessageListBox.ItemsSource = newValue;
+            
+            sender.Dispatcher.Invoke(() =>
+            {
+                var oldList = (ObservableCollection<LoggingMessageItem>) e.OldValue;
+
+                newValue.CollectionChanged += sender.ScrollToBottom;
+                
+                if (oldList != null)
+                {
+                    oldList.CollectionChanged -= sender.ScrollToBottom;
+                }
+            });
         }
         
         private void ScrollToBottom(object sender, NotifyCollectionChangedEventArgs e)
         {
             Dispatcher.Invoke(() =>
             {
-                var sideBarMessages = SideBarLoggingBox.ItemsSource as ObservableCollection<LoggingMessageItem>;
-
-                if (sideBarMessages.Count == 0) return;
+                if (MessageList.Count == 0) return;
                 // Scroll to the last item
-                SideBarLoggingBox.SelectedIndex = sideBarMessages.Count - 1;
-                SideBarLoggingBox.ScrollIntoView(SideBarLoggingBox.SelectedItem);
+                MessageListBox.SelectedIndex = MessageList.Count - 1;
+                MessageListBox.ScrollIntoView(MessageListBox.SelectedItem);
             });
         }
+
     }
 }

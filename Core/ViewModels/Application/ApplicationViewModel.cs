@@ -684,21 +684,9 @@ namespace Core.ViewModels.Application
 
         public void LogRoutine(string message)
         {
-            Dispatcher.CurrentDispatcher.Invoke(() =>
-            {
-                lock (_lockerOfRoutineMessageList)
-                {
-                    RoutineMessageList.Add(new LoggingMessageItem()
-                    {
-                        Time = DateTime.Now.ToString("T"),
-                        Message = message
-                    });
-
-                    var tempList = RoutineMessageList;
-                    RoutineMessageList = null;
-                    RoutineMessageList = tempList;
-                }
-            });
+            RoutineMessageList.LogMessageRetryIfFailedAsync(
+                new LoggingMessageItem() {Message = message, Time = DateTime.Now.ToString("T")},
+                _lockerOfRoutineMessageList, 20);
         }
 
         /// <summary>

@@ -49,7 +49,6 @@
           <e p="3D" t="Include" />
           <e p="FindLineParam.cs" t="Include" />
           <e p="IMeasurementProcedure2D.cs" t="Include" />
-          <e p="MeasurementResult2D.cs" t="Include" />
         </e>
         <e p="IoC" t="Include">
           <e p="Interface" t="Include">
@@ -69,10 +68,6 @@
         <e p="Properties" t="Include">
           <e p="AssemblyInfo.cs" t="Include" />
         </e>
-        <e p="Stubs" t="Include">
-          <e p="MeasurementProcedure2DStub.cs" t="Include" />
-          <e p="MeasurementProcedure3DStub.cs" t="Include" />
-        </e>
         <e p="ViewModels" t="Include">
           <e p="Application" t="Include">
             <e p="ApplicationViewModel.cs" t="Include" />
@@ -91,7 +86,7 @@
             <e p="LoggingMessageItem.cs" t="Include" />
           </e>
           <e p="Results" t="Include">
-            <e p="GraphicPack3DViewModel.cs" t="Include" />
+            <e p="GraphicsPackViewModel.cs" t="Include" />
           </e>
           <e p="Summary" t="Include">
             <e p="SummaryViewModel.cs" t="Include" />
@@ -178,6 +173,10 @@
             <e p="FaiItemListStackView.xaml.cs" t="Include" />
             <e p="FaiItemListView.xaml.cs" t="Include" />
             <e p="FaiItemListWarpView.xaml" t="Include" />
+          </e>
+          <e p="HalconScreen" t="Include">
+            <e p="HalconScreenView.xaml" t="Include" />
+            <e p="HalconScreenView.xaml.cs" t="Include" />
           </e>
           <e p="Home" t="Include">
             <e p="BasicInfoView.xaml" t="Include" />

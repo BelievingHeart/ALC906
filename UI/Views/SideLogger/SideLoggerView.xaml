@@ -7,7 +7,7 @@
              xmlns:applicationViewModel="clr-namespace:Core.ViewModels.Application;assembly=Core"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300" Loaded="OnLoggerLoaded">
+             d:DesignHeight="300" d:DesignWidth="300">
          <!-- Side bar logging system -->
                 <Expander  Background="Transparent"
                            ExpandDirection="Left"
@@ -25,8 +25,8 @@
                     </Expander.Header>
 
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <ListBox Name="SideBarLoggingBox"
-                            ItemsSource="{Binding Path=RoutineMessageList, Source={x:Static applicationViewModel:ApplicationViewModel.Instance}}">
+                        <ListBox Name="MessageListBox"
+                            >
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
                                     <materialDesign:Card Margin="3 5"
