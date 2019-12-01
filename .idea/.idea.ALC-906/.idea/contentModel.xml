@@ -34,7 +34,7 @@
         <e p="Helpers" t="Include">
           <e p="FaiItemsHelper.cs" t="Include" />
           <e p="FindLineParamHelper.cs" t="Include" />
-          <e p="I40CheckHelper.cs" t="Include" />
+          <e p="I40Helper.cs" t="Include" />
           <e p="ObservableCollectionHelper.cs" t="Include" />
           <e p="PlcMessagePackHelper.cs" t="Include" />
           <e p="StringMatrixHelper.cs" t="Include" />
@@ -46,11 +46,10 @@
             <e p="I40_CheckDemo.cs" t="Include" />
             <e p="ResultValueClass.cs" t="Include" />
           </e>
+          <e p="3D" t="Include" />
           <e p="FindLineParam.cs" t="Include" />
           <e p="IMeasurementProcedure2D.cs" t="Include" />
-          <e p="IMeasurementProcedure3D.cs" t="Include" />
           <e p="MeasurementResult2D.cs" t="Include" />
-          <e p="MeasurementResult3D.cs" t="Include" />
         </e>
         <e p="IoC" t="Include">
           <e p="Interface" t="Include">
@@ -90,6 +89,9 @@
           </e>
           <e p="Plc" t="Include">
             <e p="LoggingMessageItem.cs" t="Include" />
+          </e>
+          <e p="Results" t="Include">
+            <e p="GraphicPack3DViewModel.cs" t="Include" />
           </e>
           <e p="Summary" t="Include">
             <e p="SummaryViewModel.cs" t="Include" />

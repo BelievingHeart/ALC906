@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Core.ImageProcessing;
 using Core.ViewModels.Application;
 using HalconDotNet;
+using I40_3D_Test;
 
 namespace Core.Stubs
 {
@@ -14,7 +15,7 @@ namespace Core.Stubs
             
             return new MeasurementResult3D()
             {
-                CompositeImage = images[0],
+                Images = images,
                 FaiResults = new Dictionary<string, double>()
                 {
                     ["16.1"] = 999,

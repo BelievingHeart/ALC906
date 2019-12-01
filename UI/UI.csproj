@@ -38,6 +38,9 @@
     <Reference Include="halcondotnet, Version=18.11.0.0, Culture=neutral, PublicKeyToken=4973bed59ddbf2b8">
       <HintPath>..\..\..\..\..\Program Files\MVTec\HALCON-18.11-Progress\bin\dotnet35\halcondotnet.dll</HintPath>
     </Reference>
+    <Reference Include="I40_3D_Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\Core\bin\Debug\I40_3D_Test.dll</HintPath>
+    </Reference>
     <Reference Include="MaterialDesignColors, Version=1.2.0.325, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MaterialDesignColors.1.2.0\lib\net45\MaterialDesignColors.dll</HintPath>
     </Reference>

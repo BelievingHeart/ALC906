@@ -1,16 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Management.Instrumentation;
 using Core.Enums;
 using Core.ImageProcessing;
+using Core.ViewModels.Results;
 using CYG906ALC.ALG;
+using I40_3D_Test;
 
 namespace Core.Helpers
 {
     /// <summary>
     /// Helper class to convert types from image processing units' modules
     /// </summary>
-    public static class I40CheckHelper
+    public static class I40Helper
     {
         public static List<List<string>> ToStringMatrix(this Dictionary<string, List<string>> dictionary)
         {
@@ -42,6 +45,17 @@ namespace Core.Helpers
             }
             
             return new MeasurementResult2D(){FaiResults = output};
+        }
+
+        public static GraphicPack3DViewModel GetGraphics(this MeasurementResult3D result3D)
+        {
+            var output = new GraphicPack3DViewModel();
+            output.Graphics = result3D.CoordinateLinesAndCrosses;
+            output.Images = result3D.Images;
+            output.ErrorMessage = result3D.ErrorMessage;
+            output.ItemExists = result3D.ItemExists;
+            output.FaiResults = result3D.FaiResults;
+            return output;
         }
     }
 }

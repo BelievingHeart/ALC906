@@ -1,2 +1,1 @@
-1. Add day, hour mode to bin views
-2. Add production line summary for different time span in a day
+1. Add image switching logic to LineScanView

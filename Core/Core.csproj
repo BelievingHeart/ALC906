@@ -38,6 +38,9 @@
     <Reference Include="halcondotnet, Version=18.11.0.0, Culture=neutral, PublicKeyToken=4973bed59ddbf2b8">
       <HintPath>..\..\..\..\..\Program Files\MVTec\HALCON-18.11-Progress\bin\dotnet35\halcondotnet.dll</HintPath>
     </Reference>
+    <Reference Include="I40_3D_Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>bin\Debug\I40_3D_Test.dll</HintPath>
+    </Reference>
     <Reference Include="MaterialDesignColors, Version=1.2.0.325, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MaterialDesignColors.1.2.0\lib\net45\MaterialDesignColors.dll</HintPath>
     </Reference>
@@ -88,7 +91,7 @@
     <Compile Include="Enums\SocketType.cs" />
     <Compile Include="Helpers\FaiItemsHelper.cs" />
     <Compile Include="Helpers\FindLineParamHelper.cs" />
-    <Compile Include="Helpers\I40CheckHelper.cs" />
+    <Compile Include="Helpers\I40Helper.cs" />
     <Compile Include="Helpers\ObservableCollectionHelper.cs" />
     <Compile Include="Helpers\PlcMessagePackHelper.cs" />
     <Compile Include="Helpers\StringMatrixHelper.cs" />
@@ -98,9 +101,7 @@
     <Compile Include="ImageProcessing\2D\ResultValueClass.cs" />
     <Compile Include="ImageProcessing\FindLineParam.cs" />
     <Compile Include="ImageProcessing\IMeasurementProcedure2D.cs" />
-    <Compile Include="ImageProcessing\IMeasurementProcedure3D.cs" />
     <Compile Include="ImageProcessing\MeasurementResult2D.cs" />
-    <Compile Include="ImageProcessing\MeasurementResult3D.cs" />
     <Compile Include="IoC\Interface\ILoggingServiceProvider.cs" />
     <Compile Include="IoC\IoC.cs" />
     <Compile Include="IoC\Loggers\CameraMessageLogger.cs" />
@@ -110,6 +111,7 @@
     <Compile Include="Stubs\MeasurementProcedure2DStub.cs" />
     <Compile Include="Stubs\MeasurementProcedure3DStub.cs" />
     <Compile Include="ViewModels\Application\ApplicationViewModel.cs" />
+    <Compile Include="ViewModels\Results\GraphicPack3DViewModel.cs" />
     <Compile Include="ViewModels\Summary\SummaryViewModel.cs" />
     <Compile Include="ViewModels\CameraHost\CameraHostViewModel.cs" />
     <Compile Include="ViewModels\Fai\FaiItem.cs" />
@@ -145,6 +147,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Helpers\" />
+    <Folder Include="ImageProcessing\3D" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Fody.4.2.1\build\Fody.targets" Condition="Exists('..\packages\Fody.4.2.1\build\Fody.targets')" />

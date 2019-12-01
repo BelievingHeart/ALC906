@@ -8,20 +8,14 @@
              xmlns:application="clr-namespace:Core.ViewModels.Application;assembly=Core"
              xmlns:faiItem="clr-namespace:UI.Views.FaiItem"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300" Loaded="LineScanView_OnLoaded">
  <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <!-- Halcon window -->
-        <halconDotNet:HSmartWindowControlWPF Grid.Column="0" x:Name="PART_HalconWindow">
-            <halconDotNet:HIconicDisplayObjectWPF IconicObject="{Binding Path=CompositeImage}"/>
-            <halconDotNet:HIconicDisplayObjectWPF IconicObject="{Binding Path=CoordinateLines}" HColor="blue" LineWidth="2"/>
-            <halconDotNet:HIconicDisplayObjectWPF IconicObject="{Binding Path=FindLineRectangles}" HColor="orange" LineWidth="3"/>
-            <halconDotNet:HIconicDisplayObjectWPF IconicObject="{Binding Path=RegionB}" HColor="green" HDraw="fill"/>
-            <halconDotNet:HIconicDisplayObjectWPF IconicObject="{Binding Path=Crosses}" HColor="magenta" LineWidth="1"/>
-        </halconDotNet:HSmartWindowControlWPF>
+        <halconDotNet:HSmartWindowControlWPF Grid.Column="0" x:Name="PART_HalconWindow"/>
         
         <!-- Switch socket view -->
         <Button Grid.Column="0" Command="{Binding RelativeSource={RelativeSource AncestorType=local:LineScanView}, Path=ChangeSocketViewCommand}" Margin="20" MinHeight="80" HorizontalAlignment="Left" VerticalAlignment="Top">

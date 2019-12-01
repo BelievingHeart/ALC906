@@ -9,7 +9,6 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
-using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using Core.Constants;
@@ -21,11 +20,13 @@ using Core.Models;
 using Core.Stubs;
 using Core.ViewModels.Fai;
 using Core.ViewModels.Plc;
+using Core.ViewModels.Results;
 using Core.ViewModels.Summary;
 using CYG906ALC.ALG;
 using HalconDotNet;
 using HKCameraDev.Core.IoC.Interface;
 using HKCameraDev.Core.ViewModels.Camera;
+using I40_3D_Test;
 using LJX8000.Core.ViewModels.Controller;
 using MaterialDesignThemes.Wpf;
 using PLCCommunication.Core.ViewModels;
@@ -71,8 +72,8 @@ namespace Core.ViewModels.Application
         public MeasurementResult2D Result2DLeft { get; set; } = new MeasurementResult2D();
         public MeasurementResult2D Result2DRight { get; set; } = new MeasurementResult2D();
 
-        public MeasurementResult3D Result3DLeft { get; set; } = new MeasurementResult3D();
-        public MeasurementResult3D Result3DRight { get; set; } = new MeasurementResult3D();
+        public GraphicPack3DViewModel Graphics3DLeft { get; set; } = new GraphicPack3DViewModel();
+        public GraphicPack3DViewModel Graphics3DRight { get; set; } = new GraphicPack3DViewModel();
 
         private int _maxRoutineLogs = 100;
 
@@ -86,7 +87,7 @@ namespace Core.ViewModels.Application
 
         private readonly IMeasurementProcedure2D _procedure2D = new MeasurementProcedure2DStub();
 
-        private readonly IMeasurementProcedure3D _procedure3D = new MeasurementProcedure3DStub();
+        private readonly IMeasurementProcedure3D _procedure3D = new I40_3D_Output();
 
         private readonly object _lockerOfRoutineMessageList = new object();
 
@@ -427,11 +428,11 @@ namespace Core.ViewModels.Application
             var result3D = _procedure3D.Execute(imagesForOneSocket, _shapeModel3D);
             if (socketIndex == (int) SocketType.Left)
             {
-                Result3DLeft = result3D;
+                Graphics3DLeft = result3D.GetGraphics();
             }
             else
             {
-                Result3DRight = result3D;
+                Graphics3DRight = result3D.GetGraphics();
             }
             LogRoutine($"3D processing ends for {enumValue} socket");
 
@@ -520,8 +521,8 @@ namespace Core.ViewModels.Application
         /// </summary>
         private void SubmitProductLevels()
         {
-            LeftProductLevel = GetProductLevel(Result3DLeft.ItemExists, FaiItemsLeft);
-            RightProductLevel = GetProductLevel(Result3DRight.ItemExists, FaiItemsRight);
+            LeftProductLevel = GetProductLevel(Graphics3DLeft.ItemExists, FaiItemsLeft);
+            RightProductLevel = GetProductLevel(Graphics3DRight.ItemExists, FaiItemsRight);
             Server.SendProductLevels(LeftProductLevel, RightProductLevel);
         }
 
@@ -549,9 +550,9 @@ namespace Core.ViewModels.Application
             }
 
             var faiResultDictLeft = ConcatDictionaryNew(Result2DLeft.FaiResults,
-                Result3DLeft.FaiResults);
+                Graphics3DLeft.FaiResults);
             var faiResultDictRight = ConcatDictionaryNew(Result2DRight.FaiResults,
-                Result3DRight.FaiResults);
+                Graphics3DRight.FaiResults);
 
             // To avoid frequent context switching
             // Wrap all the UI-updating code in single Invoke block
@@ -560,8 +561,8 @@ namespace Core.ViewModels.Application
                 // Update fai item lists using dictionaries from image processing modules
                 UpdateFaiItems(FaiItems2DLeft, Result2DLeft.FaiResults);
                 UpdateFaiItems(FaiItems2DRight, Result2DRight.FaiResults);
-                UpdateFaiItems(FaiItems3DLeft, Result3DLeft.FaiResults);
-                UpdateFaiItems(FaiItems3DRight, Result3DRight.FaiResults);
+                UpdateFaiItems(FaiItems3DLeft, Graphics3DLeft.FaiResults);
+                UpdateFaiItems(FaiItems3DRight, Graphics3DRight.FaiResults);
                 UpdateFaiItems(FaiItemsLeft, faiResultDictLeft);
                 UpdateFaiItems(FaiItemsRight, faiResultDictRight);
             });
@@ -841,8 +842,6 @@ namespace Core.ViewModels.Application
         public ProductLevel LeftProductLevel { get; set; }
         public ProductLevel RightProductLevel { get; set; }
 
-
-        public ICommand SwitchSocketView3DCommand { get; set; }
 
         /// <summary>
         /// Current application page
