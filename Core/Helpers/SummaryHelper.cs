@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.Contracts;
-using Core.Enums;
+﻿using Core.Enums;
 using Core.ViewModels.Summary;
 
 namespace Core.Helpers

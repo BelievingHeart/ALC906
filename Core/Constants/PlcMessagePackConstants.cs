@@ -1,6 +1,4 @@
-﻿using PLCCommunication.Core;
-
-namespace Core.Constants
+﻿namespace Core.Constants
 {
     public static class PlcMessagePackConstants
     {

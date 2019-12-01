@@ -6,17 +6,14 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
-using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using Core.Constants;
 using Core.Enums;
 using Core.Helpers;
 using Core.ImageProcessing;
 using Core.IoC.Loggers;
-
 using Core.ViewModels.Fai;
 using Core.ViewModels.Plc;
 using Core.ViewModels.Results;
@@ -29,8 +26,6 @@ using I40_3D_Test;
 using LJX8000.Core.ViewModels.Controller;
 using MaterialDesignThemes.Wpf;
 using PLCCommunication.Core.ViewModels;
-using PropertyChanged;
-using WPFCommon.Commands;
 using WPFCommon.Helpers;
 using WPFCommon.ViewModels.Base;
 using CameraTriggerSourceType = HKCameraDev.Core.Enums.CameraTriggerSourceType;
@@ -55,7 +50,9 @@ namespace Core.ViewModels.Application
 
         private readonly Object _lockerOfLaserImageBuffers = new Object();
 
-
+ 
+        
+        
         /// <summary>
         /// Key=ControllerName, Value=CurrentIndexOfSocket
         /// CurrentIndexOfSocket: 0 for right, 1 for left
@@ -88,7 +85,7 @@ namespace Core.ViewModels.Application
         private readonly object _lockerOfRoutineMessageList = new object();
 
         private readonly Dictionary<SocketType, Queue<GraphicsPackViewModel>> _resultQueues2D =
-            new Dictionary<SocketType, Queue<GraphicsPackViewModel>>()
+            new Dictionary<SocketType, Queue<GraphicsPackViewModel>>
             {
                 [SocketType.Left] = new Queue<GraphicsPackViewModel>(2),
                 [SocketType.Right] = new Queue<GraphicsPackViewModel>(2)
@@ -220,7 +217,7 @@ namespace Core.ViewModels.Application
                 // Reset image buffers
                 foreach (var name in NameConstants.ControllerNames)
                 {
-                    _laserImageBuffers[name] = new List<HImage>()
+                    _laserImageBuffers[name] = new List<HImage>
                     {
                         null, null
                     };
@@ -243,7 +240,7 @@ namespace Core.ViewModels.Application
 
         private void SetupServer()
         {
-            Server = new AlcServerViewModel()
+            Server = new AlcServerViewModel
             {
                 IpAddress = IPAddress.Parse("192.168.100.100"),
                 Port = 4000
@@ -345,13 +342,13 @@ namespace Core.ViewModels.Application
         {
             ControllerManager.AttachedControllers = new List<ControllerViewModel>(NameConstants.ControllerNames
                 .Select(name =>
-                    new ControllerViewModel()
+                    new ControllerViewModel
                     {
                         Name = name,
                         // 每800行发一张图回来
                         RowsPerRun = 800,
                         NumImagesPerRun = 1,
-                        ProfileCountEachFetch = 100,
+                        ProfileCountEachFetch = 100
                     }).OrderBy(c => c.Name));
             ControllerManager.Init();
             IsAllControllersHighSpeedConnected = true;
@@ -437,7 +434,7 @@ namespace Core.ViewModels.Application
                         Directory.CreateDirectory(DirectoryConstants.ImageDir3D);
                         for (int i = 0; i < imagesForOneSocket.Count; i++)
                         {
-                            var imageName = $"{itemIndexSinceReset}-{i}.tif";
+                            var imageName = $"{itemIndexSinceReset}-{i:D4}.tif";
                             imagesForOneSocket[i].WriteImage("tiff", 0,
                                 Path.Combine(DirectoryConstants.ImageDir3D, imageName));
                         }
@@ -552,16 +549,27 @@ namespace Core.ViewModels.Application
 
         private void LoadFaiItems()
         {
-            FaiItems2DLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames2D,
+           // load all fai names 
+//           List<string> names2d =
+//               ParseFaiNames(DirectoryConstants.FaiNamesDir, NameConstants.FaiNamesFile2D);
+//           List<string> names3d =
+//               ParseFaiNames(DirectoryConstants.FaiNamesDir, NameConstants.FaiNamesFile3D);
+//           
+            //TODO: replace these with names from text files
+            var names2d = NameConstants.FaiItemNames2D;
+            var names3d = NameConstants.FaiItemNames3D;
+            
+            // Load fai items configs
+            FaiItems2DLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(names2d,
                     DirectoryConstants.FaiConfigDir2DLeft)
                 .ToList();
-            FaiItems2DRight = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames2D,
+            FaiItems2DRight = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(names2d,
                     DirectoryConstants.FaiConfigDir2DRight)
                 .ToList();
-            FaiItems3DLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames3D,
+            FaiItems3DLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(names3d,
                     DirectoryConstants.FaiConfigDir3DLeft)
                 .ToList();
-            FaiItems3DRight = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(NameConstants.FaiItemNames3D,
+            FaiItems3DRight = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(names3d,
                     DirectoryConstants.FaiConfigDir3DRight)
                 .ToList();
 
@@ -653,7 +661,7 @@ namespace Core.ViewModels.Application
                     Directory.CreateDirectory(DirectoryConstants.ImageDir2D);
                     for (int i = 0; i < images.Count; i++)
                     {
-                        var imageName = $"{itemIndexSinceReset}-{i}.bmp";
+                        var imageName = $"{itemIndexSinceReset}-{i:D4}.bmp";
                         images[i].WriteImage("bmp", 0, Path.Combine(DirectoryConstants.ImageDir2D, imageName));
                     }
 
@@ -678,14 +686,14 @@ namespace Core.ViewModels.Application
         public void LogPlcMessage(string message)
         {
             PlcMessageList.LogMessageRetryIfFailedAsync(
-                new LoggingMessageItem() {Message = message, Time = DateTime.Now.ToString("T")},
+                new LoggingMessageItem {Message = message, Time = DateTime.Now.ToString("T")},
                 _lockerOfPlcMessageList, 20);
         }
 
         public void LogRoutine(string message)
         {
             RoutineMessageList.LogMessageRetryIfFailedAsync(
-                new LoggingMessageItem() {Message = message, Time = DateTime.Now.ToString("T")},
+                new LoggingMessageItem {Message = message, Time = DateTime.Now.ToString("T")},
                 _lockerOfRoutineMessageList, 20);
         }
 
@@ -714,11 +722,18 @@ namespace Core.ViewModels.Application
             LoadI40CheckConfigs();
 
             LoadShapeModels();
-
+            
             LoadFaiItems();
-
-
+            
             LoadProductionLineSummaries();
+        }
+
+
+        private List<string> ParseFaiNames(string dir, string fileName)
+        {
+            var filePath = Path.Combine(dir, fileName);
+            var names = File.ReadAllText(filePath).Split(',').Select(ele => ele.Trim());
+            return names.ToList();
         }
 
         private void LoadI40CheckConfigs()

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Management.Instrumentation;
 using Core.Enums;
-using Core.ImageProcessing;
 using Core.ViewModels.Results;
 using CYG906ALC.ALG;
 using HalconDotNet;

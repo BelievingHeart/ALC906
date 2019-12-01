@@ -41,7 +41,7 @@ namespace Core.CsvSerializer
 
         private void InitHeader(IEnumerable<string> names)
         {
-            Header = new List<string>(){"Time"};
+            Header = new List<string> {"Time"};
             foreach (var name in names)
             {
                 Header.Add(name);

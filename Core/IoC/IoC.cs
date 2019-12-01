@@ -1,5 +1,4 @@
 ﻿﻿using Core.IoC.Interface;
- using Core.ViewModels.Application;
  using Ninject;
 
  namespace Core.IoC

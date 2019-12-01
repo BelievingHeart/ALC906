@@ -1,1 +1,1 @@
-1. Read Fai names to from text file
+1. Read Fai names to from text file > Await names 

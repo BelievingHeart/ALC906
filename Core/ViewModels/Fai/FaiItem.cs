@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System;
+using System.Xml.Serialization;
 using Core.CsvSerializer;
 using PropertyChanged;
 using WPFCommon.ViewModels.Base;
@@ -36,7 +37,7 @@ namespace Core.ViewModels.Fai
          public double Value
         {
             get { return ValueUnbiased * Weight + Bias; }
-            set { throw new System.NotImplementedException(); }
+            set { throw new NotImplementedException(); }
         }
 
         [XmlAttribute][AlsoNotifyFor(nameof(Value))] public double Weight { get; set; } = 1;

@@ -4,7 +4,11 @@ namespace Core.Constants
 {
     public static class NameConstants
     {
-        public static List<string> FaiItemNames3D = new List<string>()
+        
+        public static readonly string FaiNamesFile2D = "2D.txt";
+        public static readonly string FaiNamesFile3D = "3D.txt";
+        
+        public static List<string> FaiItemNames3D = new List<string>
         {
             "16.1", "16.2",
             "18.E", "18.M",
@@ -26,7 +30,7 @@ namespace Core.Constants
         /// <summary>
         /// Names of all LJX-8000A controllers
         /// </summary>
-        public static List<string> ControllerNames = new List<string>()
+        public static List<string> ControllerNames = new List<string>
         {
             "192.168.0.1@24691", "192.168.0.2@24691", "192.168.0.3@24691"
         };

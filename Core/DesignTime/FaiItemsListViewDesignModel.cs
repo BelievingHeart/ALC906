@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Core.ViewModels.Application;
 using Core.ViewModels.Fai;
 using WPFCommon.ViewModels.Base;
 
@@ -22,20 +21,20 @@ namespace Core.DesignTime
 
         public FaiItemsListViewDesignModel()
         {
-            FaiItems = new List<FaiItem>()
+            FaiItems = new List<FaiItem>
             {
-                new FaiItem()
+                new FaiItem
                 {
                     Name = "2.1", Bias = 1, MaxBoundary = 100, MinBoundary = 0, ValueUnbiased = 100, Weight = 1
                 },
-                new FaiItem()
+                new FaiItem
                 {
                     Name = "2.2", Bias = 1, MaxBoundary = 100, MinBoundary = 0, ValueUnbiased = -100, Weight = 1
                 },
-                new FaiItem()
+                new FaiItem
                 {
                     Name = "2.3", Bias = 1, MaxBoundary = 100, MinBoundary = 0, ValueUnbiased = 50, Weight = 1
-                },
+                }
             };
         }
     }

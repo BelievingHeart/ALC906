@@ -31,7 +31,9 @@ namespace Core.Constants
         
         public static string FaiConfigDir3DLeft => Path.Combine(FaiConfigDir3D, "Left");
         public static string FaiConfigDir3DRight => Path.Combine(FaiConfigDir3D, "Right");
-        public static string SummaryDirToday => Path.Combine(DirectoryConstants.ProductionLineRecordDir, DateTime.Now.ToString("MM-dd"));
+        public static string SummaryDirToday => Path.Combine(ProductionLineRecordDir, DateTime.Now.ToString("MM-dd"));
+        
+        public static string FaiNamesDir => Path.Combine(FaiConfigDir, "FaiNames");
         
         
 
