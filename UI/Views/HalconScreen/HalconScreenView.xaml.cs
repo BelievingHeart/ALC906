@@ -26,7 +26,23 @@ namespace UI.Views.HalconScreen
             _windowHandle.SetPart(0,0,-2,-2);
             _windowHandle.SetColor("green");
         }
-        
+
+        public static readonly DependencyProperty ButtonVisibilityProperty = DependencyProperty.Register(
+            "ButtonVisibility", typeof(Visibility), typeof(HalconScreenView), new PropertyMetadata(System.Windows.Visibility.Visible, OnButtonVisibilityChanged));
+
+        private static void OnButtonVisibilityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var sender = (HalconScreenView) d;
+            var newValue = (Visibility) e.NewValue;
+            sender.PART_SwitchViewButton.Visibility = newValue;
+            sender.PART_SelectImageComboBox.Visibility = newValue;
+        }
+
+        public Visibility ButtonVisibility
+        {
+            get { return (Visibility) GetValue(ButtonVisibilityProperty); }
+            set { SetValue(ButtonVisibilityProperty, value); }
+        }
         
         private void SwitchSocketView()
         {

@@ -11,7 +11,7 @@
     <Grid>
         <halconDotNet:HSmartWindowControlWPF Grid.Column="0" x:Name="HalconScreen" />
         <!-- Switch socket view -->
-        <Button Command="{Binding RelativeSource={RelativeSource AncestorType=local:HalconScreenView}, Path=ChangeSocketViewCommand}" Margin="20" MinHeight="80" HorizontalAlignment="Left" VerticalAlignment="Top">
+        <Button x:Name="PART_SwitchViewButton" Command="{Binding RelativeSource={RelativeSource AncestorType=local:HalconScreenView}, Path=ChangeSocketViewCommand}" Margin="20" MinHeight="80" HorizontalAlignment="Left" VerticalAlignment="Top">
             <StackPanel>
                 <TextBlock Text="Switch socket" HorizontalAlignment="Left" FontSize="10"/>
                 <Separator/>
@@ -19,7 +19,7 @@
             </StackPanel>
         </Button>
         <!-- Switch image of which index to display -->
-        <materialDesign:ColorZone Grid.Column="0" HorizontalAlignment="Right"
+        <materialDesign:ColorZone Grid.Column="0" HorizontalAlignment="Right" x:Name="PART_SelectImageComboBox"
                                   VerticalAlignment="Top" Margin="20" CornerRadius="10"
                                   Background="{StaticResource PrimaryHueDarkBrush}"
                                   Width="80">
