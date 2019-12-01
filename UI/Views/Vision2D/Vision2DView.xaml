@@ -17,16 +17,7 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <!-- Halcon window -->
-        <halconDotNet:HSmartWindowControlWPF Grid.Column="0" x:Name="HalconScreen">
-            <halconDotNet:HIconicDisplayObjectWPF
-                IconicObject="{Binding RelativeSource={RelativeSource AncestorType=vision2D:Vision2DView}, Path=ImageToDisplay}" />
-            <halconDotNet:HIconicDisplayObjectWPF IconicObject="{Binding FitLines}" HColor="blue" LineWidth="2" />
-            <halconDotNet:HIconicDisplayObjectWPF IconicObject="{Binding Contours}" HColor="orange" LineWidth="3" />
-            <halconDotNet:HIconicDisplayObjectWPF IconicObject="{Binding Path=PointsUsed}" HColor="green" LineWidth="1" />
-            <halconDotNet:HIconicDisplayObjectWPF IconicObject="{Binding Path=PointsIgnore}" HColor="red" LineWidth="1" />
-            <halconDotNet:HIconicDisplayObjectWPF IconicObject="{Binding Path=RoiRectangles}" HDraw="margin"
-                                                  HColor="yellow" />
-        </halconDotNet:HSmartWindowControlWPF>
+        <halconDotNet:HSmartWindowControlWPF Grid.Column="0" x:Name="HalconScreen"/>
 
         <!-- Switch socket view -->
         <Button Grid.Column="0"
@@ -58,10 +49,6 @@
         <GroupBox Header="Settings" Grid.Column="1">
             <vision2D:CameraDataView/>
         </GroupBox>
-
         
-        
-        
-
     </Grid>
 </UserControl>

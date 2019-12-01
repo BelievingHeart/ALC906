@@ -6,6 +6,7 @@ using Core.Enums;
 using Core.ImageProcessing;
 using Core.ViewModels.Results;
 using CYG906ALC.ALG;
+using HalconDotNet;
 using I40_3D_Test;
 
 namespace Core.Helpers
@@ -31,7 +32,7 @@ namespace Core.Helpers
             return output;
         }
 
-        public static MeasurementResult2D GetMeasurementResult(this I40Check procedure, SocketType socketType)
+        public static Dictionary<string, double> GetFaiDict(this I40Check procedure, SocketType socketType)
         {
             var socketIndex = (int) socketType;
             var numFaiItems = procedure.resultNum;
@@ -43,15 +44,24 @@ namespace Core.Helpers
                 var result = procedure.myResult[index];
                 output[result.nameStr] = result.measureValue;
             }
-            
-            return new MeasurementResult2D(){FaiResults = output};
+
+            return output;
+        }
+
+        public static MeasurementResult2D GetResultAndGraphics(this I40Check procedure, SocketType socketType, List<HImage> images)
+        {
+            var result = new MeasurementResult2D {Images = images};
+            result.Graphics = procedure.OnGetCheckValue(images, (int) socketType, 0);
+            result.FaiResults = procedure.GetFaiDict(socketType);
+
+            return result;
         }
 
         public static GraphicPack3DViewModel GetGraphics(this MeasurementResult3D result3D)
         {
             var output = new GraphicPack3DViewModel();
             output.Graphics = result3D.CoordinateLinesAndCrosses;
-            output.Images = result3D.Images;
+            output.Images = result3D.CompositeImage;
             output.ErrorMessage = result3D.ErrorMessage;
             output.ItemExists = result3D.ItemExists;
             output.FaiResults = result3D.FaiResults;

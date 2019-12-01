@@ -75,7 +75,6 @@ namespace Core.ViewModels.Application
         public GraphicPack3DViewModel Graphics3DLeft { get; set; } = new GraphicPack3DViewModel();
         public GraphicPack3DViewModel Graphics3DRight { get; set; } = new GraphicPack3DViewModel();
 
-        private int _maxRoutineLogs = 100;
 
         private HTuple _shapeModel2D, _shapeModel3D;
 
@@ -90,15 +89,6 @@ namespace Core.ViewModels.Application
         private readonly IMeasurementProcedure3D _procedure3D = new I40_3D_Output();
 
         private readonly object _lockerOfRoutineMessageList = new object();
-
-  
-
-        private readonly List<string> _findLineParam2DNames = new List<string>()
-        {
-            //TODO: make this meaningful
-            "test1", "test2"
-        };
-
 
         private readonly Dictionary<SocketType, Queue<MeasurementResult2D>> _resultQueues2D =
             new Dictionary<SocketType, Queue<MeasurementResult2D>>()
@@ -198,7 +188,7 @@ namespace Core.ViewModels.Application
             }
             catch
             {
-              // it's fine to remove it later
+                // it's fine to remove it later
             }
         }
 
@@ -251,13 +241,6 @@ namespace Core.ViewModels.Application
         private void InitContainer()
         {
             HKCameraDev.Core.IoC.IoC.Kernel.Bind<IHKCameraLibLogger>().ToConstant(new CameraMessageLogger());
-        }
-
-        private void LoadFindLineParams2D()
-        {
-            FindLineParams2D = AutoSerializableHelper
-                .LoadAutoSerializables<FindLineParam>(_findLineParam2DNames, DirectoryConstants.FindLineParamsConfigDir)
-                .ToList();
         }
 
 
@@ -434,8 +417,8 @@ namespace Core.ViewModels.Application
             {
                 Graphics3DRight = result3D.GetGraphics();
             }
-            LogRoutine($"3D processing ends for {enumValue} socket");
 
+            LogRoutine($"3D processing ends for {enumValue} socket");
 
 
             // Image serialization
@@ -461,12 +444,13 @@ namespace Core.ViewModels.Application
                             imagesForOneSocket[i].WriteImage("tiff", 0,
                                 Path.Combine(DirectoryConstants.ImageDir3D, imageName));
                         }
+
                         LogRoutine($"3D images end saving for {enumValue} socket");
                     });
                 }
             }
 
-            
+
             // If all reserved places for 3D image buffers are filled,
             // 3D image collection of one round is done
             // and product level can be submit to plc
@@ -675,50 +659,30 @@ namespace Core.ViewModels.Application
                         var imageName = $"{itemIndexSinceReset}-{i}.bmp";
                         images[i].WriteImage("bmp", 0, Path.Combine(DirectoryConstants.ImageDir2D, imageName));
                     }
-                    LogRoutine($"2D images end saving for {currentArrivedSocket2D} socket");
 
+                    LogRoutine($"2D images end saving for {currentArrivedSocket2D} socket");
                 });
             }
 
 
             Task.Run(() =>
             {
-//                if (CurrentArrivedSocket2D == SocketType.Left)
-//                {
-//                    var result = _procedure2D.Execute(images, FindLineParams2D.ToDict());
-//                    result.Images = images;
-//                    lock (_lockerOfResultQueues2D)
-//                    {
-//                        _resultQueues2D[SocketType.Left].Enqueue(result);
-//                    }
-//                }
-//                else
-//                {
-//                    var result = _procedure2D.Execute(images, FindLineParams2D.ToDict());
-//                    result.Images = images;
-//                    lock (_lockerOfResultQueues2D)
-//                    {
-//                        _resultQueues2D[SocketType.Right].Enqueue(result);
-//                    }
-//                }
+                LogRoutine($"2D processing starts for {currentArrivedSocket2D} socket");
+                var result = I40Check.GetResultAndGraphics(currentArrivedSocket2D, images);
+                lock (_lockerOfResultQueues2D)
+                {
+                    _resultQueues2D[currentArrivedSocket2D].Enqueue(result);
+                }
 
-                    LogRoutine($"2D processing starts for {currentArrivedSocket2D} socket");
-
-                    I40Check.OnGetCheckValue(images, (int) currentArrivedSocket2D, 0, WindowHandle2D);
-                    var result = I40Check.GetMeasurementResult(currentArrivedSocket2D);
-                    lock (_lockerOfResultQueues2D)
-                    {
-                        _resultQueues2D[currentArrivedSocket2D].Enqueue(result);
-                    }
-                
-                    LogRoutine($"2D processing ends for {currentArrivedSocket2D} socket");
-
+                LogRoutine($"2D processing ends for {currentArrivedSocket2D} socket");
             });
         }
 
         public void LogPlcMessage(string message)
-        { 
-            PlcMessageList.LogMessageRetryIfFailedAsync(new LoggingMessageItem(){Message = message, Time = DateTime.Now.ToString("T")},_lockerOfPlcMessageList, 20 );
+        {
+            PlcMessageList.LogMessageRetryIfFailedAsync(
+                new LoggingMessageItem() {Message = message, Time = DateTime.Now.ToString("T")},
+                _lockerOfPlcMessageList, 20);
         }
 
         public void LogRoutine(string message)
@@ -746,8 +710,6 @@ namespace Core.ViewModels.Application
         /// </summary>
         public void InitHardWares()
         {
- 
-
             SetupServer();
 
             SetupCameras();
@@ -760,25 +722,23 @@ namespace Core.ViewModels.Application
             BindingOperations.EnableCollectionSynchronization(RoutineMessageList, _lockerOfRoutineMessageList);
 
             BindingOperations.EnableCollectionSynchronization(PlcMessageList, _lockerOfPlcMessageList);
-
         }
-        
+
         public void LoadFiles()
         {
-//            LoadI40CheckConfigs();
-            
+            LoadI40CheckConfigs();
+
             LoadShapeModels();
 
             LoadFaiItems();
 
-            LoadFindLineParams2D();
 
             LoadProductionLineSummaries();
         }
 
         private void LoadI40CheckConfigs()
         {
-            I40Check = new I40Check(DirectoryConstants.Config2DDir+"I40_searchAlg.ini", DirectoryConstants.Config2DDir+"I40_Result2.ini", DirectoryConstants.Config2DDir+"I40_System2.Ini");
+            I40Check = new I40Check( DirectoryConstants.Config2DDir, "I40");
         }
 
 

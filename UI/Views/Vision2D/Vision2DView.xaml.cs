@@ -33,8 +33,7 @@ namespace UI.Views.Vision2D
         private static void OnImageIndexToDisplayChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var sender = d as Vision2DView;
-            var index = (int) e.NewValue;
-            sender.ImageToDisplay = sender.DisplayedResults2D.Images[index];
+            sender.RefreshHalconScreen();
         }
 
         public int ImageIndexToDisplay
@@ -61,6 +60,8 @@ namespace UI.Views.Vision2D
             get { return (HImage) GetValue(ImageToDisplayProperty); }
             set { SetValue(ImageToDisplayProperty, value); }
         }
+        
+        
 
         public static readonly DependencyProperty ChangeSocketViewCommandProperty = DependencyProperty.Register(
             "ChangeSocketViewCommand", typeof(ICommand), typeof(Vision2DView), new PropertyMetadata(default(ICommand)));
@@ -77,16 +78,8 @@ namespace UI.Views.Vision2D
 
         private static void OnSocketToDisplayChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var socket = (SocketType)e.NewValue;
             var sender = (Vision2DView) d;
-            if (socket == SocketType.Left)
-            {
-                sender.DisplayedResults2D = sender.LeftResult2D;
-            }
-            else
-            {
-                sender.DisplayedResults2D = sender.RightResult2D;
-            }
+            sender.RefreshHalconScreen();
         }
 
         public SocketType SocketToDisplay
@@ -103,7 +96,7 @@ namespace UI.Views.Vision2D
         private static void OnLeftResult2DChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var sender = d as Vision2DView;
-            if (sender.SocketToDisplay == SocketType.Left) sender.DisplayedResults2D = (MeasurementResult2D) e.NewValue;
+            if (sender.SocketToDisplay == SocketType.Left) sender.RefreshHalconScreen();
         }
 
 
@@ -121,7 +114,7 @@ namespace UI.Views.Vision2D
         private static void OnRightResult2DChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var sender = d as Vision2DView;
-            if (sender.SocketToDisplay == SocketType.Right) sender.DisplayedResults2D = (MeasurementResult2D) e.NewValue;
+            if (sender.SocketToDisplay == SocketType.Right) sender.RefreshHalconScreen();
         }
 
         public MeasurementResult2D RightResult2D
@@ -130,42 +123,41 @@ namespace UI.Views.Vision2D
             set { SetValue(RightResult2DProperty, value); }
         }
         
-        
-        public static readonly DependencyProperty DisplayedResults2DProperty = DependencyProperty.Register(
-            "DisplayedResults2D", typeof(MeasurementResult2D), typeof(Vision2DView), new PropertyMetadata(default(MeasurementResult2D), OnDisplayedResults2DChanged));
-        
-        private static void OnDisplayedResults2DChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var newVal = e.NewValue as MeasurementResult2D;
-            if (newVal == null) return;
-            
-            var sender = d as Vision2DView;
-            // Init image index list
-            if (sender.ImageIndexListToDisplay ==  null && newVal.Images!=null)
-            {
-                var indexList = new List<int>();
-                for (int i = 0; i < newVal.Images.Count; i++)
-                {
-                    indexList.Add(i);
-                }
-                sender.ImageIndexListToDisplay = indexList;
-            }
-            // Update image to display
-            if (newVal.Images != null) sender.ImageToDisplay = newVal.Images[sender.ImageIndexToDisplay];
-        }
-
-        public MeasurementResult2D DisplayedResults2D
-        {
-            get { return (MeasurementResult2D) GetValue(DisplayedResults2DProperty); }
-            set { SetValue(DisplayedResults2DProperty, value); }
-        }
-        
         #endregion
-        
 
+        private HWindow _windowHandle;
+        
         private void OnVision2DViewLoaded(object sender, RoutedEventArgs e)
         {
             ApplicationViewModel.Instance.WindowHandle2D = HalconScreen.HalconWindow;
+            _windowHandle = HalconScreen.HalconWindow;
+            _windowHandle.SetColored(3);
+            _windowHandle.SetPart(0,0,-2,-2);
+            _windowHandle.SetColor("green");
+        }
+
+        private void UpdateImageIndexList(MeasurementResult2D result2D)
+        {
+            // Init image index list
+            if (ImageIndexListToDisplay !=  null &&  result2D.Images!=null)
+            {
+                var indexList = new List<int>();
+                for (int i = 0; i < result2D.Images.Count; i++)
+                {
+                    indexList.Add(i);
+                }
+                ImageIndexListToDisplay = indexList;
+            }
+        }
+        
+        private void RefreshHalconScreen()
+        {
+            var result2D = SocketToDisplay == SocketType.Left ? LeftResult2D : RightResult2D;
+            UpdateImageIndexList(result2D);
+            var image = result2D.Images[ImageIndexToDisplay];
+            var graphics = result2D.Graphics;
+            _windowHandle.DispImage(image);
+            _windowHandle.DispObj(graphics);
         }
     }
 }

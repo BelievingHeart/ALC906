@@ -26,12 +26,12 @@ namespace UI.Views
         private void CleanupApplication(object sender, EventArgs eventArgs)
         {
             //TODO: uncomment this line
-//            ApplicationViewModel.Cleanup();
+            ApplicationViewModel.Cleanup();
         }
 
         private void OnMainWindowLoaded(object sender, RoutedEventArgs e)
         {
-//            ApplicationViewModel.Instance.InitHardWares();
+            ApplicationViewModel.Instance.InitHardWares();
             ApplicationViewModel.Instance.LoadFiles();
         }
 

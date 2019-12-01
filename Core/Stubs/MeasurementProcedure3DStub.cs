@@ -15,7 +15,7 @@ namespace Core.Stubs
             
             return new MeasurementResult3D()
             {
-                Images = images,
+                CompositeImage = images,
                 FaiResults = new Dictionary<string, double>()
                 {
                     ["16.1"] = 999,

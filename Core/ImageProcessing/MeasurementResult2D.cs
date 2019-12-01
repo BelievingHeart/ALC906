@@ -8,15 +8,7 @@ namespace Core.ImageProcessing
     {
         public Dictionary<string, double> FaiResults { get; set; }
 
-        public HObject PointsIgnore { get; set; }
-
-        public HObject PointsUsed { get; set; }
-
-        public HObject FitLines { get; set; }
-
-        public HObject RoiRectangles { get; set; }
-
-        public HObject Contours { get; set; }
+        public HObject Graphics { get; set; }
 
         public List<HImage> Images { get; set; }
     }
