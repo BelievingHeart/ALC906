@@ -7,25 +7,19 @@
              xmlns:halconDotNet="clr-namespace:HalconDotNet;assembly=halcondotnet"
              xmlns:application="clr-namespace:Core.ViewModels.Application;assembly=Core"
              xmlns:faiItem="clr-namespace:UI.Views.FaiItem"
+             xmlns:halconScreen="clr-namespace:UI.Views.HalconScreen"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300" Loaded="LineScanView_OnLoaded">
+             d:DesignHeight="300" d:DesignWidth="300">
  <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <!-- Halcon window -->
-        <halconDotNet:HSmartWindowControlWPF Grid.Column="0" x:Name="PART_HalconWindow"/>
+        <halconScreen:HalconScreenView LeftGraphics="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Graphics3DLeft}"
+                                       RightGraphics="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Graphics3DRight}"/>
         
-        <!-- Switch socket view -->
-        <Button Grid.Column="0" Command="{Binding RelativeSource={RelativeSource AncestorType=local:LineScanView}, Path=ChangeSocketViewCommand}" Margin="20" MinHeight="80" HorizontalAlignment="Left" VerticalAlignment="Top">
-            <StackPanel>
-                <TextBlock Text="Switch socket" HorizontalAlignment="Left" FontSize="10"/>
-                <Separator/>
-                <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=local:LineScanView}, Path=SocketToDisplay}" FontSize="24" VerticalAlignment="Center" Margin="3"/>
-            </StackPanel>
-        </Button>
-
+      
         <GroupBox Grid.Column="1" Header="Fai Items">
             <faiItem:FaiItemGridView  x:Name="PART_FaiItemGridView" /></GroupBox>
         

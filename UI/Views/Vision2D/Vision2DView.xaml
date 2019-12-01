@@ -9,46 +9,26 @@
              xmlns:vision2D="clr-namespace:UI.Views.Vision2D"
              xmlns:faiItem="clr-namespace:UI.Views.FaiItem"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:halconScreen="clr-namespace:UI.Views.HalconScreen"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300" Loaded="OnVision2DViewLoaded">
+             d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <!-- Halcon window -->
-        <halconDotNet:HSmartWindowControlWPF Grid.Column="0" x:Name="HalconScreen"/>
+        <halconScreen:HalconScreenView Grid.Column="0"
+                                       LeftGraphics="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Graphics2DLeft}"
+                                       RightGraphics="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Graphics2DRight}" />
 
-        <!-- Switch socket view -->
-        <Button Grid.Column="0"
-                Command="{Binding RelativeSource={RelativeSource AncestorType=vision2D:Vision2DView}, Path=ChangeSocketViewCommand}"
-                Margin="20" MinHeight="80" HorizontalAlignment="Left" VerticalAlignment="Top">
-            <StackPanel>
-                <TextBlock Text="Switch socket" HorizontalAlignment="Left" FontSize="10" />
-                <Separator />
-                <TextBlock
-                    Text="{Binding RelativeSource={RelativeSource AncestorType=vision2D:Vision2DView}, Path=SocketToDisplay}"
-                    FontSize="24" VerticalAlignment="Center" Margin="3" />
-            </StackPanel>
-        </Button>
 
-        <!-- Switch image of which index to display -->
-        <materialDesign:ColorZone Grid.Column="0" HorizontalAlignment="Right"
-                                  VerticalAlignment="Top" Margin="20" CornerRadius="10"
-                                  Background="{StaticResource PrimaryHueDarkBrush}"
-                                  Width="80">
-            <StackPanel>
-                <TextBlock Text="Image index" Foreground="White" HorizontalAlignment="Center" />
-                <Separator />
-                <ComboBox SelectedIndex="{Binding RelativeSource={RelativeSource AncestorType=vision2D:Vision2DView}, Path=ImageIndexToDisplay}"
-                    ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=vision2D:Vision2DView}, Path=ImageIndexListToDisplay}" />
-            </StackPanel>
-        </materialDesign:ColorZone>
+    
 
         <!-- 2D data view -->
         <GroupBox Header="Settings" Grid.Column="1">
-            <vision2D:CameraDataView/>
+            <vision2D:CameraDataView />
         </GroupBox>
-        
+
     </Grid>
 </UserControl>

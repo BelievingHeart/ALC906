@@ -97,6 +97,9 @@
     <Compile Include="Views\FaiItem\FaiItemListView.xaml.cs">
       <DependentUpon>FaiItemListWarpView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\HalconScreen\HalconScreenView.xaml.cs">
+      <DependentUpon>HalconScreenView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Home\BasicInfoView.xaml.cs">
       <DependentUpon>BasicInfoView.xaml</DependentUpon>
     </Compile>
@@ -218,6 +221,7 @@
     <Page Include="Views\FaiItem\FaiItemGridView.xaml" />
     <Page Include="Views\FaiItem\FaiItemListStackView.xaml" />
     <Page Include="Views\FaiItem\FaiItemListWarpView.xaml" />
+    <Page Include="Views\HalconScreen\HalconScreenView.xaml" />
     <Page Include="Views\Home\BasicInfoView.xaml" />
     <Page Include="Views\LineScan\LineScanHostView.xaml" />
     <Page Include="Views\LineScan\LineScanView.xaml" />

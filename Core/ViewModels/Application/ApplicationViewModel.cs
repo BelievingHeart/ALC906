@@ -16,8 +16,7 @@ using Core.Enums;
 using Core.Helpers;
 using Core.ImageProcessing;
 using Core.IoC.Loggers;
-using Core.Models;
-using Core.Stubs;
+
 using Core.ViewModels.Fai;
 using Core.ViewModels.Plc;
 using Core.ViewModels.Results;
@@ -69,11 +68,11 @@ namespace Core.ViewModels.Application
         /// </summary>
         private readonly Dictionary<string, List<HImage>> _laserImageBuffers = new Dictionary<string, List<HImage>>();
 
-        public MeasurementResult2D Result2DLeft { get; set; } = new MeasurementResult2D();
-        public MeasurementResult2D Result2DRight { get; set; } = new MeasurementResult2D();
+        public GraphicsPackViewModel Graphics2DLeft { get; set; } = new GraphicsPackViewModel();
+        public GraphicsPackViewModel Graphics2DRight { get; set; } = new GraphicsPackViewModel();
 
-        public GraphicPack3DViewModel Graphics3DLeft { get; set; } = new GraphicPack3DViewModel();
-        public GraphicPack3DViewModel Graphics3DRight { get; set; } = new GraphicPack3DViewModel();
+        public GraphicsPackViewModel Graphics3DLeft { get; set; } = new GraphicsPackViewModel();
+        public GraphicsPackViewModel Graphics3DRight { get; set; } = new GraphicsPackViewModel();
 
 
         private HTuple _shapeModel2D, _shapeModel3D;
@@ -83,18 +82,16 @@ namespace Core.ViewModels.Application
 
         private readonly CsvSerializer.CsvSerializer _serializerRight =
             new CsvSerializer.CsvSerializer(Path.Combine(DirectoryConstants.CsvOutputDir, "Right"));
-
-        private readonly IMeasurementProcedure2D _procedure2D = new MeasurementProcedure2DStub();
-
+        
         private readonly IMeasurementProcedure3D _procedure3D = new I40_3D_Output();
 
         private readonly object _lockerOfRoutineMessageList = new object();
 
-        private readonly Dictionary<SocketType, Queue<MeasurementResult2D>> _resultQueues2D =
-            new Dictionary<SocketType, Queue<MeasurementResult2D>>()
+        private readonly Dictionary<SocketType, Queue<GraphicsPackViewModel>> _resultQueues2D =
+            new Dictionary<SocketType, Queue<GraphicsPackViewModel>>()
             {
-                [SocketType.Left] = new Queue<MeasurementResult2D>(2),
-                [SocketType.Right] = new Queue<MeasurementResult2D>(2)
+                [SocketType.Left] = new Queue<GraphicsPackViewModel>(2),
+                [SocketType.Right] = new Queue<GraphicsPackViewModel>(2)
             };
 
         private readonly Object _lockerOfResultQueues2D = new Object();
@@ -529,13 +526,13 @@ namespace Core.ViewModels.Application
                 // Corresponding results are put to the head of queues
                 // when new round starts
                 // No worry about this
-                Result2DLeft = _resultQueues2D[SocketType.Left].Dequeue();
-                Result2DRight = _resultQueues2D[SocketType.Right].Dequeue();
+                Graphics2DLeft = _resultQueues2D[SocketType.Left].Dequeue();
+                Graphics2DRight = _resultQueues2D[SocketType.Right].Dequeue();
             }
 
-            var faiResultDictLeft = ConcatDictionaryNew(Result2DLeft.FaiResults,
+            var faiResultDictLeft = ConcatDictionaryNew(Graphics2DLeft.FaiResults,
                 Graphics3DLeft.FaiResults);
-            var faiResultDictRight = ConcatDictionaryNew(Result2DRight.FaiResults,
+            var faiResultDictRight = ConcatDictionaryNew(Graphics2DRight.FaiResults,
                 Graphics3DRight.FaiResults);
 
             // To avoid frequent context switching
@@ -543,8 +540,8 @@ namespace Core.ViewModels.Application
             Dispatcher.CurrentDispatcher.Invoke(() =>
             {
                 // Update fai item lists using dictionaries from image processing modules
-                UpdateFaiItems(FaiItems2DLeft, Result2DLeft.FaiResults);
-                UpdateFaiItems(FaiItems2DRight, Result2DRight.FaiResults);
+                UpdateFaiItems(FaiItems2DLeft, Graphics2DLeft.FaiResults);
+                UpdateFaiItems(FaiItems2DRight, Graphics2DRight.FaiResults);
                 UpdateFaiItems(FaiItems3DLeft, Graphics3DLeft.FaiResults);
                 UpdateFaiItems(FaiItems3DRight, Graphics3DRight.FaiResults);
                 UpdateFaiItems(FaiItemsLeft, faiResultDictLeft);
@@ -849,9 +846,7 @@ namespace Core.ViewModels.Application
         public string SelectedSummaryName { get; set; }
 
         public I40Check I40Check { get; set; }
-
-        public HWindow WindowHandle2D { get; set; }
-
+        
         public bool ShouldSaveImages { get; set; }
 
         #endregion

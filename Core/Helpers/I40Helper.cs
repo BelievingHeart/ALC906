@@ -48,18 +48,18 @@ namespace Core.Helpers
             return output;
         }
 
-        public static MeasurementResult2D GetResultAndGraphics(this I40Check procedure, SocketType socketType, List<HImage> images)
+        public static GraphicsPackViewModel GetResultAndGraphics(this I40Check procedure, SocketType socketType, List<HImage> images)
         {
-            var result = new MeasurementResult2D {Images = images};
+            var result = new GraphicsPackViewModel {Images = images};
             result.Graphics = procedure.OnGetCheckValue(images, (int) socketType, 0);
             result.FaiResults = procedure.GetFaiDict(socketType);
 
             return result;
         }
 
-        public static GraphicPack3DViewModel GetGraphics(this MeasurementResult3D result3D)
+        public static GraphicsPackViewModel GetGraphics(this MeasurementResult3D result3D)
         {
-            var output = new GraphicPack3DViewModel();
+            var output = new GraphicsPackViewModel();
             output.Graphics = result3D.CoordinateLinesAndCrosses;
             output.Images = result3D.CompositeImage;
             output.ErrorMessage = result3D.ErrorMessage;

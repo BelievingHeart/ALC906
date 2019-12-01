@@ -52,37 +52,37 @@ namespace UI.Views.LineScan
         }
 
         public static readonly DependencyProperty GraphicPackLeftProperty = DependencyProperty.Register(
-            "GraphicPackLeft", typeof(GraphicPack3DViewModel), typeof(LineScanView),
-            new PropertyMetadata(default(GraphicPack3DViewModel), OnResult3DLeftChanged));
+            "GraphicPackLeft", typeof(GraphicsPackViewModel), typeof(LineScanView),
+            new PropertyMetadata(default(GraphicsPackViewModel), OnResult3DLeftChanged));
 
         private static void OnResult3DLeftChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var leftResult = (GraphicPack3DViewModel) e.NewValue;
+            var leftResult = (GraphicsPackViewModel) e.NewValue;
             if (leftResult == null) return;
             var sender = d as LineScanView;
             if (sender.SocketToDisplay == SocketType.Left) sender.UpdateGraphics(sender.SocketToDisplay, sender.ImageIndex);
         }
-        public GraphicPack3DViewModel GraphicPackLeft
+        public GraphicsPackViewModel GraphicPackLeft
         {
-            get { return (GraphicPack3DViewModel) GetValue(GraphicPackLeftProperty); }
+            get { return (GraphicsPackViewModel) GetValue(GraphicPackLeftProperty); }
             set { SetValue(GraphicPackLeftProperty, value); }
         }
 
         public static readonly DependencyProperty GraphicPackRightProperty = DependencyProperty.Register(
-            "GraphicPackRight", typeof(GraphicPack3DViewModel), typeof(LineScanView),
-            new PropertyMetadata(default(GraphicPack3DViewModel), OnResult3DRightChanged));
+            "GraphicPackRight", typeof(GraphicsPackViewModel), typeof(LineScanView),
+            new PropertyMetadata(default(GraphicsPackViewModel), OnResult3DRightChanged));
 
         private static void OnResult3DRightChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var rightResult = (GraphicPack3DViewModel) e.NewValue;
+            var rightResult = (GraphicsPackViewModel) e.NewValue;
             if (rightResult == null) return;
             var sender = d as LineScanView;
             if (sender.SocketToDisplay == SocketType.Right) sender.UpdateGraphics(sender.SocketToDisplay, sender.ImageIndex);
         }
 
-        public GraphicPack3DViewModel GraphicPackRight
+        public GraphicsPackViewModel GraphicPackRight
         {
-            get { return (GraphicPack3DViewModel) GetValue(GraphicPackRightProperty); }
+            get { return (GraphicsPackViewModel) GetValue(GraphicPackRightProperty); }
             set { SetValue(GraphicPackRightProperty, value); }
         }
 
@@ -159,12 +159,6 @@ namespace UI.Views.LineScan
         
 
         private HWindow _windowHandle;
-        private void LineScanView_OnLoaded(object sender, RoutedEventArgs e)
-        {
-            _windowHandle = PART_HalconWindow.HalconWindow;
-            _windowHandle.SetPart(0, 0, -2, -2);
-            _windowHandle.SetColor("green");
-        }
 
         private void UpdateGraphics(SocketType socketType, int imageIndex)
         {

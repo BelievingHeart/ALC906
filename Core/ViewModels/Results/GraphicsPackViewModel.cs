@@ -4,7 +4,7 @@ using WPFCommon.ViewModels.Base;
 
 namespace Core.ViewModels.Results
 {
-    public class GraphicPack3DViewModel : ViewModelBase
+    public class GraphicsPackViewModel : ViewModelBase
     {
         public List<HImage> Images { get; set; }
 
