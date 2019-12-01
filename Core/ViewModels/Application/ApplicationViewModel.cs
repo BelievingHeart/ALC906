@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using Core.Constants;
 using Core.Enums;
@@ -377,7 +378,7 @@ namespace Core.ViewModels.Application
             foreach (var controller in ControllerManager.AttachedControllers)
             {
                 controller.RunFinished += (heightImages, luminanceImages) =>
-                    OnSingleControllerFinishedScanningSingleSocket(heightImages, luminanceImages, controller);
+                    OnSingleControllerFinishedScanningSingleSocket(heightImages, controller);
             }
         }
 
@@ -385,10 +386,8 @@ namespace Core.ViewModels.Application
         /// When a controller finished scanning one socket ...
         /// </summary>
         /// <param name="heightImages"></param>
-        /// <param name="luminanceImages"></param>
         /// <param name="controller"></param>
-        private void OnSingleControllerFinishedScanningSingleSocket(List<HImage> heightImages,
-            List<HImage> luminanceImages,
+        private void OnSingleControllerFinishedScanningSingleSocket(IReadOnlyList<HImage> heightImages,
             ControllerViewModel controller)
         {
             Trace.Assert(heightImages.Count == 1);
@@ -420,8 +419,8 @@ namespace Core.ViewModels.Application
         private void On3DImagesOfOneSocketFinishedCollecting(int socketIndex)
         {
             var enumValue = (SocketType) socketIndex;
-            LogRoutine($"{enumValue} socket finished 3D image collected");
 
+            LogRoutine($"3D processing starts for {enumValue} socket");
             // Do processing for one socket and get its result
             var imagesForOneSocket =
                 _laserImageBuffers.Values.Select(list => list[socketIndex]).ToList();
@@ -434,36 +433,39 @@ namespace Core.ViewModels.Application
             {
                 Result3DRight = result3D;
             }
+            LogRoutine($"3D processing ends for {enumValue} socket");
 
 
-            #region ImageSerialization
 
-            int itemIndexSinceReset;
-            lock (_lockerOfRightSocketIndexSinceReset2D)
+            // Image serialization
+            if (ShouldSaveImages)
             {
-                itemIndexSinceReset = socketIndex == (int) SocketType.Right
-                    ? _rightSocketIndexSinceReset2D - 2
-                    : _rightSocketIndexSinceReset2D - 1;
-            }
-
-            // TODO: remove the following image serialization logic
-            if (itemIndexSinceReset > 0 && socketIndex == (int) SocketType.Left)
-            {
-                Task.Run(() =>
+                int itemIndexSinceReset;
+                lock (_lockerOfRightSocketIndexSinceReset2D)
                 {
-                    Directory.CreateDirectory(DirectoryConstants.ImageDir3D);
-                    for (int i = 0; i < imagesForOneSocket.Count; i++)
+                    itemIndexSinceReset = socketIndex == (int) SocketType.Right
+                        ? _rightSocketIndexSinceReset2D - 2
+                        : _rightSocketIndexSinceReset2D - 1;
+                }
+
+                if (itemIndexSinceReset > 0 && enumValue == SocketType.Left)
+                {
+                    Task.Run(() =>
                     {
-                        var imageName = $"{itemIndexSinceReset}-{i}.tif";
-                        imagesForOneSocket[i].WriteImage("tiff", 0,
-                            Path.Combine(DirectoryConstants.ImageDir3D, imageName));
-                    }
-                });
+                        LogRoutine($"3D images start saving for {enumValue} socket");
+                        Directory.CreateDirectory(DirectoryConstants.ImageDir3D);
+                        for (int i = 0; i < imagesForOneSocket.Count; i++)
+                        {
+                            var imageName = $"{itemIndexSinceReset}-{i}.tif";
+                            imagesForOneSocket[i].WriteImage("tiff", 0,
+                                Path.Combine(DirectoryConstants.ImageDir3D, imageName));
+                        }
+                        LogRoutine($"3D images end saving for {enumValue} socket");
+                    });
+                }
             }
 
-            #endregion
-
-
+            
             // If all reserved places for 3D image buffers are filled,
             // 3D image collection of one round is done
             // and product level can be submit to plc
@@ -536,9 +538,6 @@ namespace Core.ViewModels.Application
         /// </summary>
         private void Combine2D3DResults()
         {
-            var leftSocketIndex = (int) SocketType.Left;
-            var rightSocketIndex = (int) SocketType.Right;
-
             // Update _results2D
             lock (_lockerOfResultQueues2D)
             {
@@ -601,7 +600,7 @@ namespace Core.ViewModels.Application
         /// <param name="itemExists"></param>
         /// <param name="faiItems"></param>
         /// <returns></returns>
-        private ProductLevel GetProductLevel(bool itemExists, List<FaiItem> faiItems)
+        private ProductLevel GetProductLevel(bool itemExists, IEnumerable<FaiItem> faiItems)
         {
             if (!itemExists) return ProductLevel.Ng5;
             return faiItems.Any(item => item.Rejected) ? ProductLevel.Ng2 : ProductLevel.Ok;
@@ -614,6 +613,7 @@ namespace Core.ViewModels.Application
         /// <param name="faiResultDict"></param>
         private void UpdateFaiItems(List<FaiItem> faiItems, Dictionary<string, double> faiResultDict)
         {
+            if (faiItems == null) throw new ArgumentNullException(nameof(faiItems));
             foreach (var faiResult in faiResultDict)
             {
                 faiItems.ByName(faiResult.Key).ValueUnbiased = faiResult.Value;
@@ -653,7 +653,6 @@ namespace Core.ViewModels.Application
                 currentArrivedSocket2D = CurrentArrivedSocket2D;
             }
 
-            LogRoutine($"{currentArrivedSocket2D} socket start processing {images.Count} 2D images");
 
             int itemIndexSinceReset;
             lock (_lockerOfRightSocketIndexSinceReset2D)
@@ -663,47 +662,62 @@ namespace Core.ViewModels.Application
                     : _rightSocketIndexSinceReset2D + 1;
             }
 
-            // TODO: remove the following image serialization logic
-            if (currentArrivedSocket2D == SocketType.Left)
+            // Image serialization
+            if (currentArrivedSocket2D == SocketType.Left && ShouldSaveImages)
             {
                 Task.Run(() =>
                 {
+                    LogRoutine($"2D images start saving for {currentArrivedSocket2D} socket");
                     Directory.CreateDirectory(DirectoryConstants.ImageDir2D);
                     for (int i = 0; i < images.Count; i++)
                     {
                         var imageName = $"{itemIndexSinceReset}-{i}.bmp";
                         images[i].WriteImage("bmp", 0, Path.Combine(DirectoryConstants.ImageDir2D, imageName));
                     }
+                    LogRoutine($"2D images end saving for {currentArrivedSocket2D} socket");
+
                 });
             }
 
 
             Task.Run(() =>
             {
-                if (CurrentArrivedSocket2D == SocketType.Left)
-                {
-                    var result = _procedure2D.Execute(images, FindLineParams2D.ToDict());
-                    result.Images = images;
+//                if (CurrentArrivedSocket2D == SocketType.Left)
+//                {
+//                    var result = _procedure2D.Execute(images, FindLineParams2D.ToDict());
+//                    result.Images = images;
+//                    lock (_lockerOfResultQueues2D)
+//                    {
+//                        _resultQueues2D[SocketType.Left].Enqueue(result);
+//                    }
+//                }
+//                else
+//                {
+//                    var result = _procedure2D.Execute(images, FindLineParams2D.ToDict());
+//                    result.Images = images;
+//                    lock (_lockerOfResultQueues2D)
+//                    {
+//                        _resultQueues2D[SocketType.Right].Enqueue(result);
+//                    }
+//                }
+
+                    LogRoutine($"2D processing starts for {currentArrivedSocket2D} socket");
+
+                    I40Check.OnGetCheckValue(images, (int) currentArrivedSocket2D, 0, WindowHandle2D);
+                    var result = I40Check.GetMeasurementResult(currentArrivedSocket2D);
                     lock (_lockerOfResultQueues2D)
                     {
-                        _resultQueues2D[SocketType.Left].Enqueue(result);
+                        _resultQueues2D[currentArrivedSocket2D].Enqueue(result);
                     }
-                }
-                else
-                {
-                    var result = _procedure2D.Execute(images, FindLineParams2D.ToDict());
-                    result.Images = images;
-                    lock (_lockerOfResultQueues2D)
-                    {
-                        _resultQueues2D[SocketType.Right].Enqueue(result);
-                    }
-                }
+                
+                    LogRoutine($"2D processing ends for {currentArrivedSocket2D} socket");
+
             });
         }
 
         public void LogPlcMessage(string message)
         { 
-            PlcMessageList.LogMessageRetryIfFailedAsync(new LoggingMessageItem(){Message = message, Time = DateTime.Now.ToString("T")},_lockerOfPlcMessageList, 200 );
+            PlcMessageList.LogMessageRetryIfFailedAsync(new LoggingMessageItem(){Message = message, Time = DateTime.Now.ToString("T")},_lockerOfPlcMessageList, 20 );
         }
 
         public void LogRoutine(string message)
@@ -721,9 +735,6 @@ namespace Core.ViewModels.Application
                     var tempList = RoutineMessageList;
                     RoutineMessageList = null;
                     RoutineMessageList = tempList;
-
-                    // Expand logging box
-                    AutoResetFlag = true;
                 }
             });
         }
@@ -817,8 +828,6 @@ namespace Core.ViewModels.Application
             }
         }
 
-        public bool IsBusyWaitingFor2DToFinished { get; set; }
-
         /// <summary>
         /// 2D fai items from left or right socket
         /// </summary>
@@ -883,6 +892,8 @@ namespace Core.ViewModels.Application
         public I40Check I40Check { get; set; }
 
         public HWindow WindowHandle2D { get; set; }
+
+        public bool ShouldSaveImages { get; set; }
 
         #endregion
     }

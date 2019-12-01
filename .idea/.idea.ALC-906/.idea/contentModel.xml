@@ -34,7 +34,7 @@
         <e p="Helpers" t="Include">
           <e p="FaiItemsHelper.cs" t="Include" />
           <e p="FindLineParamHelper.cs" t="Include" />
-          <e p="I40Helper.cs" t="Include" />
+          <e p="I40CheckHelper.cs" t="Include" />
           <e p="ObservableCollectionHelper.cs" t="Include" />
           <e p="PlcMessagePackHelper.cs" t="Include" />
           <e p="StringMatrixHelper.cs" t="Include" />

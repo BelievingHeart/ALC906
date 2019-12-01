@@ -88,7 +88,7 @@
     <Compile Include="Enums\SocketType.cs" />
     <Compile Include="Helpers\FaiItemsHelper.cs" />
     <Compile Include="Helpers\FindLineParamHelper.cs" />
-    <Compile Include="Helpers\I40Helper.cs" />
+    <Compile Include="Helpers\I40CheckHelper.cs" />
     <Compile Include="Helpers\ObservableCollectionHelper.cs" />
     <Compile Include="Helpers\PlcMessagePackHelper.cs" />
     <Compile Include="Helpers\StringMatrixHelper.cs" />
