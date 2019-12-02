@@ -15,7 +15,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <!-- Halcon window -->
         <halconScreen:HalconScreenView Grid.Column="0"
@@ -26,9 +26,8 @@
     
 
         <!-- 2D data view -->
-        <GroupBox Header="Settings" Grid.Column="1">
-            <vision2D:CameraDataView />
-        </GroupBox>
+            <vision2D:CameraDataView Grid.Column="1"/>
+        
 
     </Grid>
 </UserControl>

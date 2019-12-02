@@ -31,11 +31,10 @@
                         <Border>
                             <materialDesign:DialogHost>
                                 <!-- Name and value -->
-                                <Button Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}" Width="150"
-                                        Height="60" Margin="-5">
+                                <Button Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}" Width="80"
+                                        Height="40" Margin="-10">
                                     <StackPanel>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="Fai" />
                                             <TextBlock Text="{Binding Name}" HorizontalAlignment="Left" />
                                         </StackPanel>
                                         <Separator BorderThickness="2" BorderBrush="Black">

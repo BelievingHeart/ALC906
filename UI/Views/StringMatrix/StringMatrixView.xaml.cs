@@ -105,7 +105,7 @@ namespace UI.Views.StringMatrix
             var newValue = (List<string>) e.NewValue;
             if (newValue == null) return;
             
-            if(sender.StringMatrix != null)
+            if(sender.StringMatrix?.Count>0)
             {
                 Trace.Assert(newValue.Count == sender.StringMatrix[0].Count);
                 for (int col = 0; col < newValue.Count; col++)
@@ -159,8 +159,8 @@ namespace UI.Views.StringMatrix
             StringGrid.RowDefinitions.Clear();
             StringGrid.Children.Clear();
             
-            StringMatrix.Clear();
-            Header.Clear();
+            StringMatrix?.Clear();
+            Header?.Clear();
         }
     }
 }

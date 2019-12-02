@@ -30,6 +30,7 @@
           <e p="MeasurementDecision.cs" t="Include" />
           <e p="ProductLevel.cs" t="Include" />
           <e p="SocketType.cs" t="Include" />
+          <e p="StringMatrixType.cs" t="Include" />
         </e>
         <e p="Helpers" t="Include">
           <e p="FaiItemsHelper.cs" t="Include" />

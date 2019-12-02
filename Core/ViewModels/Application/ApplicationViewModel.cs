@@ -549,15 +549,15 @@ namespace Core.ViewModels.Application
 
         private void LoadFaiItems()
         {
-           // load all fai names 
-//           List<string> names2d =
-//               ParseFaiNames(DirectoryConstants.FaiNamesDir, NameConstants.FaiNamesFile2D);
-//           List<string> names3d =
-//               ParseFaiNames(DirectoryConstants.FaiNamesDir, NameConstants.FaiNamesFile3D);
+//            load all fai names 
+           List<string> names2d =
+               ParseFaiNames(DirectoryConstants.FaiNamesDir, NameConstants.FaiNamesFile2D);
+           List<string> names3d =
+               ParseFaiNames(DirectoryConstants.FaiNamesDir, NameConstants.FaiNamesFile3D);
 //           
             //TODO: replace these with names from text files
-            var names2d = NameConstants.FaiItemNames2D;
-            var names3d = NameConstants.FaiItemNames3D;
+//            var names2d = NameConstants.FaiItemNames2D;
+//            var names3d = NameConstants.FaiItemNames3D;
             
             // Load fai items configs
             FaiItems2DLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(names2d,

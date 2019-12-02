@@ -30,7 +30,11 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             
-            <Button Grid.Column="0" Height="60" Margin="3" Width="150" Background="{StaticResource PrimaryHueLightBrush}" Command="{Binding InitCommand}">
+            <Button Grid.Column="0" Height="60" Margin="3" Width="150" Background="{StaticResource PrimaryHueLightBrush}" Command="{Binding InitCommand}" 
+                    Style="{StaticResource MaterialDesignRaisedButton}"
+                    materialDesign:ButtonProgressAssist.Value="-1"
+                    materialDesign:ButtonProgressAssist.IsIndicatorVisible="True"
+                    materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding IsBusyResetting}">
                 <StackPanel>
                     <Image Height="35" Source="{StaticResource Init}"/>
                     <TextBlock HorizontalAlignment="Center" Text="Init"/>

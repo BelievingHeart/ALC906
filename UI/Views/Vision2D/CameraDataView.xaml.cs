@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using Core.Enums;
 using Core.Helpers;
 using Core.ViewModels.Application;
 
@@ -12,6 +13,17 @@ namespace UI.Views.Vision2D
             InitializeComponent();
         }
 
+        private bool _isFirstLoaded = true;
+
+        public static readonly DependencyProperty MatrixTypeProperty = DependencyProperty.Register(
+            "MatrixType", typeof(StringMatrixType), typeof(CameraDataView), new PropertyMetadata(default(StringMatrixType)));
+
+        public StringMatrixType MatrixType
+        {
+            get { return (StringMatrixType) GetValue(MatrixTypeProperty); }
+            set { SetValue(MatrixTypeProperty, value); }
+        }
+        
         private void LoadMiscData(object sender, RoutedEventArgs e)
         {
             var header = ApplicationViewModel.Instance.I40Check.AlgHeader;
@@ -63,6 +75,17 @@ namespace UI.Views.Vision2D
 
             ApplicationViewModel.Instance.I40Check.ResultDictionary1 = stringMatrix.ToDict();
             ApplicationViewModel.Instance.I40Check.SaveResultLimitParam();
+        }
+
+        private void OnCameraDataViewLoaded(object sender, RoutedEventArgs e)
+        {
+            if (_isFirstLoaded)
+            {
+                MatrixType = StringMatrixType.Results;
+                LoadResultData(null, null);
+            }
+
+            _isFirstLoaded = false;
         }
     }
 }
