@@ -1,6 +1,7 @@
 ﻿using System.Windows.Input;
 using Core.Enums;
 using Core.ViewModels.Application;
+using Core.ViewModels.Plc;
 using WPFCommon.Commands;
 using WPFCommon.ViewModels.Base;
 
@@ -44,6 +45,8 @@ namespace Core.ViewModels.MainWindow
             ApplicationViewModel.Instance.CurrentApplicationPage = ApplicationPageType.ServerPage;
             IoC.IoC.Logger.Log("Switched to server page");
 
+            // TODO: remove these lines
+            ApplicationViewModel.Instance.WaringMessageHighLevel = LoggingMessageItem.CreateMessage("Helloooooooooooooooooooooooooooooooooooooooooooooooo");
         }
 
         #endregion

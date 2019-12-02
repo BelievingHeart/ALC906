@@ -1,4 +1,5 @@
-﻿using WPFCommon.ViewModels.Base;
+﻿using System;
+using WPFCommon.ViewModels.Base;
 
 namespace Core.ViewModels.Plc
 {
@@ -7,5 +8,14 @@ namespace Core.ViewModels.Plc
         public string Message { get; set; }
 
         public string Time { get; set; }
+
+        public static LoggingMessageItem CreateMessage(string message)
+        {
+            return new LoggingMessageItem()
+            {
+                Time = DateTime.Now.ToString("T"),
+                Message = message
+            };
+        }
     }
 }

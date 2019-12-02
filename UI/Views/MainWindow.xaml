@@ -22,7 +22,8 @@
         Title="CYGIA ALC-906" WindowStyle="None">
     <DockPanel>
         <!-- Drag border -->
-        <materialDesign:ColorZone Height="30" DockPanel.Dock="Top" MouseDown="DragWindow" MouseDoubleClick="ResizeWindow"
+        <materialDesign:ColorZone Height="30" DockPanel.Dock="Top" MouseDown="DragWindow"
+                                  MouseDoubleClick="ResizeWindow"
                                   Width="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=ActualWidth}">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -53,8 +54,8 @@
         </materialDesign:ColorZone>
         <Grid DockPanel.Dock="Top">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <sideLogger:SideLoggerView HorizontalAlignment="Right" Grid.Row="0" Grid.RowSpan="2" Panel.ZIndex="3"
                                        MessageList="{Binding Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Path=RoutineMessageList}" />
@@ -104,9 +105,25 @@
             </ToolBarTray>
 
 
-            <!-- Pages here -->
-            <ContentControl Grid.Row="1"
-                            Content="{Binding CurrentApplicationPage, Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Converter={converters:EnumToApplicationPageConverter}}" />
+            <materialDesign:DialogHost Grid.Row="1"
+                                       DataContext="{Binding Source={x:Static applicationViewModel:ApplicationViewModel.Instance}}"
+                                       IsOpen="{Binding Path=ShouldMessageBoxPopup}">
+                <!-- Pages here -->
+                <ContentControl
+                    Content="{Binding Path=CurrentApplicationPage, Converter={converters:EnumToApplicationPageConverter}}" />
+
+                <!-- Message dialog -->
+                <materialDesign:DialogHost.DialogContent>
+                    <GroupBox Header="{Binding WaringMessageHighLevel.Time}" Width="300" Height="200">
+                        <DockPanel>
+                            <WrapPanel DockPanel.Dock="Top" Margin="10">
+                                <TextBox Text="{Binding WaringMessageHighLevel.Message}" />
+                            </WrapPanel>
+                            <Button Content="OK" IsCancel="True" IsDefault="True" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" DockPanel.Dock="Bottom" />
+                        </DockPanel>
+                    </GroupBox>
+                </materialDesign:DialogHost.DialogContent>
+            </materialDesign:DialogHost>
         </Grid>
 
 

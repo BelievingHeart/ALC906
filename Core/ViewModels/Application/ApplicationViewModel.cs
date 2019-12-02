@@ -99,6 +99,7 @@ namespace Core.ViewModels.Application
         private readonly object _lockerOfCurrentArrivedSocket2D = new object();
         private readonly DispatcherTimer _lazyTimer = new DispatcherTimer(DispatcherPriority.Background);
         private readonly object _lockerOfPlcMessageList = new object();
+        private LoggingMessageItem _waringMessageHighLevel;
 
         protected ApplicationViewModel()
         {
@@ -889,6 +890,18 @@ namespace Core.ViewModels.Application
         public I40Check I40Check { get; set; }
         
         public bool ShouldSaveImages { get; set; }
+
+        public bool ShouldMessageBoxPopup { get; set; }
+
+        public LoggingMessageItem WaringMessageHighLevel
+        {
+            get { return _waringMessageHighLevel; }
+            set
+            {
+                _waringMessageHighLevel = value;
+                ShouldMessageBoxPopup = true;
+            }
+        }
 
         #endregion
     }
