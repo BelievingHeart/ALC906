@@ -14,6 +14,7 @@ using Core.Enums;
 using Core.Helpers;
 using Core.ImageProcessing;
 using Core.IoC.Loggers;
+using Core.IoC.PlcErrorParser;
 using Core.ViewModels.Fai;
 using Core.ViewModels.Plc;
 using Core.ViewModels.Results;
@@ -132,12 +133,12 @@ namespace Core.ViewModels.Application
             // Clear messages if overflows
             lock (_lockerOfPlcMessageList)
             {
-                ClearMessagesIfOverflows(PlcMessageList, 100);
+                ClearMessagesIfOverflows(PlcMessageList, 5);
             }
 
             lock (_lockerOfRoutineMessageList)
             {
-                ClearMessagesIfOverflows(RoutineMessageList, 100);
+                ClearMessagesIfOverflows(RoutineMessageList, 5);
             }
 
             GenerateSummaryNameList();
@@ -251,6 +252,33 @@ namespace Core.ViewModels.Application
             Server.ClientHooked += OnPlcHooked;
             Server.CustomCommandReceived += PlcCustomCommandHandler;
             Server.PlcInitFinished += OnPlcInitFinished;
+            
+            var errorParser = new PlcErrorParser(Path.Combine(DirectoryHelper.ConfigDirectory, "ErrorSheet.csv"));
+            errorParser.WarningL1Emit += OnWarningL1Received;
+            errorParser.WarningL2Emit += OnWarningL2Received;
+            errorParser.WarningL3Emit += OnWarningL3Received;
+            errorParser.WarningL4Emit += OnWarningL4Received;
+            Server.ErrorParser = errorParser;
+        }
+
+        private void OnWarningL4Received(string obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void OnWarningL3Received(string obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void OnWarningL2Received(string obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void OnWarningL1Received(string obj)
+        {
+            ErrorLogger.Instance.LogToFile(obj);
         }
 
         private void OnPlcHooked(Socket socket)
@@ -673,7 +701,17 @@ namespace Core.ViewModels.Application
             Task.Run(() =>
             {
                 LogRoutine($"2D processing starts for {currentArrivedSocket2D} socket");
-                var result = I40Check.GetResultAndGraphics(currentArrivedSocket2D, images);
+                GraphicsPackViewModel result;
+                try
+                {
+                    result = I40Check.GetResultAndGraphics(currentArrivedSocket2D, images);
+                }
+                catch
+                {
+                    result = GraphicsPackViewModel.Stub;
+                    LogRoutine($"2D processing for {currentArrivedSocket2D} socket errored");
+                }
+                
                 lock (_lockerOfResultQueues2D)
                 {
                     _resultQueues2D[currentArrivedSocket2D].Enqueue(result);
@@ -685,14 +723,14 @@ namespace Core.ViewModels.Application
 
         public void LogPlcMessage(string message)
         {
-            PlcMessageList.LogMessageRetryIfFailedAsync(
+            PlcMessageList.LogMessageRetryIfFailed(
                 new LoggingMessageItem {Message = message, Time = DateTime.Now.ToString("T")},
                 _lockerOfPlcMessageList, 20);
         }
 
         public void LogRoutine(string message)
         {
-            RoutineMessageList.LogMessageRetryIfFailedAsync(
+            RoutineMessageList.LogMessageRetryIfFailed(
                 new LoggingMessageItem {Message = message, Time = DateTime.Now.ToString("T")},
                 _lockerOfRoutineMessageList, 20);
         }

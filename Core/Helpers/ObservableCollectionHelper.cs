@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using Core.ViewModels.Plc;
 
 namespace Core.Helpers
 {
@@ -19,9 +20,9 @@ namespace Core.Helpers
         /// <param name="timeRetry"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static void LogMessageRetryIfFailedAsync<T>(this ObservableCollection<T> collection, T message, object locker, int timeRetry)
+        public static void LogMessageRetryIfFailed(this ObservableCollection<LoggingMessageItem> collection, LoggingMessageItem message, object locker, int timeRetry)
         {
-           
+            string resendMarker = "--resend";
                 try
                 {
                     Dispatcher.CurrentDispatcher.Invoke(() =>
@@ -37,7 +38,10 @@ namespace Core.Helpers
                     Task.Run(()=>
                     {
                         Thread.Sleep(timeRetry);
-                        collection.LogMessageRetryIfFailedAsync(message, locker, timeRetry);
+                        // Mark it resent if it is resent
+                        if (!message.Message.Contains(resendMarker)) message.Message += resendMarker;
+                        
+                        collection.LogMessageRetryIfFailed(message, locker, timeRetry);
                     });
                 }
             

@@ -15,5 +15,14 @@ namespace Core.ViewModels.Results
         public Dictionary<string, double> FaiResults { get; set; }
 
         public bool ItemExists { get; set; }
+        
+        
+        public static GraphicsPackViewModel Stub => new GraphicsPackViewModel()
+        {
+            ErrorMessage = "Run Failed",
+            FaiResults = new Dictionary<string, double>()
+        };
     }
+    
+    
 }

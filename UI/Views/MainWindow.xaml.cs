@@ -56,5 +56,10 @@ namespace UI.Views
             if (WindowState == WindowState.Maximized) WindowState = WindowState.Normal;
             else WindowState = WindowState.Maximized;
         }
+
+        private void ResizeWindow(object sender, MouseButtonEventArgs e)
+        {
+            WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+        }
     }
 }

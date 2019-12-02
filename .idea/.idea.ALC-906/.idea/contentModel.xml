@@ -58,7 +58,12 @@
           <e p="IoC.cs" t="Include" />
           <e p="Loggers" t="Include">
             <e p="CameraMessageLogger.cs" t="Include" />
+            <e p="ErrorLogger.cs" t="Include" />
             <e p="LaserControllerLibLogger.cs" t="Include" />
+          </e>
+          <e p="PlcErrorParser" t="Include">
+            <e p="ErrorMessageItem.cs" t="Include" />
+            <e p="PlcErrorParser.cs" t="Include" />
           </e>
         </e>
         <e p="Models" t="Include">
@@ -314,6 +319,9 @@
     <e p="D:\share\晓进\ALC\PLCCommunication\PLCCommunication.Core" t="IncludeRecursive">
       <e p="bin" t="ExcludeRecursive" />
       <e p="Helpers" t="Include" />
+      <e p="Interfaces" t="Include">
+        <e p="IPlcErrorParser.cs" t="Include" />
+      </e>
       <e p="Models" t="Include" />
       <e p="obj" t="ExcludeRecursive" />
       <e p="packages.config" t="Include" />

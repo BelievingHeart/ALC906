@@ -22,7 +22,7 @@
         Title="CYGIA ALC-906" WindowStyle="None">
     <DockPanel>
         <!-- Drag border -->
-        <materialDesign:ColorZone Height="30" DockPanel.Dock="Top" MouseDown="DragWindow"
+        <materialDesign:ColorZone Height="30" DockPanel.Dock="Top" MouseDown="DragWindow" MouseDoubleClick="ResizeWindow"
                                   Width="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=ActualWidth}">
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -51,59 +51,62 @@
                 </materialDesign:ColorZone>
             </Grid>
         </materialDesign:ColorZone>
+        <Grid DockPanel.Dock="Top">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <sideLogger:SideLoggerView HorizontalAlignment="Right" Grid.Row="0" Grid.RowSpan="2" Panel.ZIndex="3"
+                                       MessageList="{Binding Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Path=RoutineMessageList}" />
+            <!-- ToolBar -->
+            <ToolBarTray Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Top">
+                <ToolBar>
+                    <ToolBar.DataContext>
+                        <mainWindow:MainWindowViewModel />
+                    </ToolBar.DataContext>
+                    <Button Command="{Binding SwitchHomePageCommand}" Margin="10 0">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{StaticResource Login}" Height="30" />
+                            <TextBlock Text=" Login" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding SwitchHomePageCommand}" Margin="10 0">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{StaticResource Home}" Height="30" />
+                            <TextBlock Text=" Home" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding SwitchServerPageCommand}" Margin="10 0">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{StaticResource PLC}" Height="30" />
+                            <TextBlock Text=" PLC" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding SwitchCameraHostPageCommand}" Margin="10 0">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{StaticResource Camera}" Height="30" />
+                            <TextBlock Text=" 2D" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding SwitchLineScanHostPageCommand}" Margin="10 0">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{StaticResource Laser}" Height="30" />
+                            <TextBlock Text=" 3D" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Button Margin="10 0">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="{StaticResource Settings}" Height="30" />
+                            <TextBlock Text=" Settings" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                </ToolBar>
+            </ToolBarTray>
 
-        <sideLogger:SideLoggerView DockPanel.Dock="Right" MessageList="{Binding Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Path=RoutineMessageList}"/>
-        <!-- ToolBar -->
-        <ToolBarTray Orientation="Horizontal" DockPanel.Dock="Top">
-            <ToolBar>
-                <ToolBar.DataContext>
-                    <mainWindow:MainWindowViewModel/>
-                </ToolBar.DataContext>
-                <Button Command="{Binding SwitchHomePageCommand}" Margin="10 0">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="{StaticResource Login}" Height="30" />
-                        <TextBlock Text=" Login" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-                <Button Command="{Binding SwitchHomePageCommand}" Margin="10 0">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="{StaticResource Home}" Height="30" />
-                        <TextBlock Text=" Home" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-                <Button Command="{Binding SwitchServerPageCommand}" Margin="10 0">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="{StaticResource PLC}" Height="30" />
-                        <TextBlock Text=" PLC" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-                <Button Command="{Binding SwitchCameraHostPageCommand}" Margin="10 0">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="{StaticResource Camera}" Height="30" />
-                        <TextBlock Text=" 2D" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-                <Button Command="{Binding SwitchLineScanHostPageCommand}" Margin="10 0">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="{StaticResource Laser}" Height="30" />
-                        <TextBlock Text=" 3D" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-                <Button Margin="10 0">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="{StaticResource Settings}" Height="30" />
-                        <TextBlock Text=" Settings" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-            </ToolBar>
-        </ToolBarTray>
 
-        
-        
-        
-        <Grid>
             <!-- Pages here -->
-            <ContentControl Content="{Binding CurrentApplicationPage, Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Converter={converters:EnumToApplicationPageConverter}}"/>
+            <ContentControl Grid.Row="1"
+                            Content="{Binding CurrentApplicationPage, Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Converter={converters:EnumToApplicationPageConverter}}" />
         </Grid>
 
 
