@@ -10,8 +10,6 @@
      <lineScan:LineScanView 
          LeftFaiItems="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=FaiItems3DLeft}"
          RightFaiItems="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=FaiItems3DRight}"
-         GraphicPackLeft="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Graphics3DLeft}"
-         GraphicPackRight="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Graphics3DRight}"
          />
 
 </UserControl>

@@ -17,11 +17,11 @@
         </Grid.ColumnDefinitions>
         <!-- Halcon window -->
         <halconScreen:HalconScreenView LeftGraphics="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Graphics3DLeft}"
-                                       RightGraphics="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Graphics3DRight}"/>
+                                       RightGraphics="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Graphics3DRight}" SocketToDisplay="{Binding RelativeSource={RelativeSource AncestorType=local:LineScanView}, Path=SocketToDisplay}"/>
         
       
         <GroupBox Grid.Column="1" Header="Fai Items">
-            <faiItem:FaiItemGridView  x:Name="PART_FaiItemGridView" /></GroupBox>
+            <faiItem:FaiItemGridView  x:Name="PART_FaiItemGridView"/></GroupBox>
         
     </Grid>
 </UserControl>

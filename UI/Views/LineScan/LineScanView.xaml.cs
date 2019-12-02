@@ -16,14 +16,8 @@ namespace UI.Views.LineScan
         public LineScanView()
         {
             InitializeComponent();
-            SocketToDisplay = SocketType.Left;
-            ChangeSocketViewCommand = new RelayCommand(SwitchSocketView);
+   
 
-        }
-        
-        private void SwitchSocketView()
-        {
-            SocketToDisplay = SocketToDisplay == SocketType.Left ? SocketType.Right : SocketType.Left;
         }
         
         public static readonly DependencyProperty ChangeSocketViewCommandProperty = DependencyProperty.Register(
@@ -42,7 +36,7 @@ namespace UI.Views.LineScan
         {
             var socket = (SocketType) e.NewValue;
             var sender = d as LineScanView;
-            sender.UpdateGraphics(socket, sender.ImageIndex);
+            sender.UpdateFaiItemsView(socket == SocketType.Left? sender.LeftFaiItems : sender.RightFaiItems);
         }
 
         public SocketType SocketToDisplay
@@ -50,42 +44,6 @@ namespace UI.Views.LineScan
             get { return (SocketType) GetValue(SocketToDisplayProperty); }
             set { SetValue(SocketToDisplayProperty, value); }
         }
-
-        public static readonly DependencyProperty GraphicPackLeftProperty = DependencyProperty.Register(
-            "GraphicPackLeft", typeof(GraphicsPackViewModel), typeof(LineScanView),
-            new PropertyMetadata(default(GraphicsPackViewModel), OnResult3DLeftChanged));
-
-        private static void OnResult3DLeftChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var leftResult = (GraphicsPackViewModel) e.NewValue;
-            if (leftResult == null) return;
-            var sender = d as LineScanView;
-            if (sender.SocketToDisplay == SocketType.Left) sender.UpdateGraphics(sender.SocketToDisplay, sender.ImageIndex);
-        }
-        public GraphicsPackViewModel GraphicPackLeft
-        {
-            get { return (GraphicsPackViewModel) GetValue(GraphicPackLeftProperty); }
-            set { SetValue(GraphicPackLeftProperty, value); }
-        }
-
-        public static readonly DependencyProperty GraphicPackRightProperty = DependencyProperty.Register(
-            "GraphicPackRight", typeof(GraphicsPackViewModel), typeof(LineScanView),
-            new PropertyMetadata(default(GraphicsPackViewModel), OnResult3DRightChanged));
-
-        private static void OnResult3DRightChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var rightResult = (GraphicsPackViewModel) e.NewValue;
-            if (rightResult == null) return;
-            var sender = d as LineScanView;
-            if (sender.SocketToDisplay == SocketType.Right) sender.UpdateGraphics(sender.SocketToDisplay, sender.ImageIndex);
-        }
-
-        public GraphicsPackViewModel GraphicPackRight
-        {
-            get { return (GraphicsPackViewModel) GetValue(GraphicPackRightProperty); }
-            set { SetValue(GraphicPackRightProperty, value); }
-        }
-
         
            #region FaiItems
 
@@ -124,51 +82,12 @@ namespace UI.Views.LineScan
             set { SetValue(RightFaiItemsProperty, value); }
         }
 
-        public static readonly DependencyProperty FaiItemsToDisplayProperty = DependencyProperty.Register(
-            "FaiItemsToDisplay", typeof(List<Core.ViewModels.Fai.FaiItem>), typeof(LineScanView), new PropertyMetadata(default(List<Core.ViewModels.Fai.FaiItem>), OnFaiItemsToDisplayChanged));
-
-        private static void OnFaiItemsToDisplayChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var sender = d as LineScanView;
-            var newValue = (List<Core.ViewModels.Fai.FaiItem>) e.NewValue;
-            if (newValue == null) return;
-            sender.PART_FaiItemGridView.FaiItems = newValue;
-        }
-
-  
         
-
         #endregion
 
 
-        public static readonly DependencyProperty ImageIndexProperty = DependencyProperty.Register(
-            "ImageIndex", typeof(int), typeof(LineScanView), new PropertyMetadata(default(int), OnImageIndexChanged));
 
-        private static void OnImageIndexChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var sender = d as LineScanView;
-            var newValue = (int) e.NewValue;
-            sender?.UpdateGraphics(sender.SocketToDisplay, newValue);
-        }
-
-        public int ImageIndex
-        {
-            get { return (int) GetValue(ImageIndexProperty); }
-            set { SetValue(ImageIndexProperty, value); }
-        }
-        
-
-        private HWindow _windowHandle;
-
-        private void UpdateGraphics(SocketType socketType, int imageIndex)
-        {
-            var graphics = socketType == SocketType.Left ? GraphicPackLeft : GraphicPackRight;
-            if (graphics == null) return;
-
-            _windowHandle.DispImage(graphics.Images[imageIndex]);
-            _windowHandle.DispObj(graphics.Graphics);
-            if(graphics.ErrorMessage!=null) _windowHandle.DispText(graphics.ErrorMessage, "window", "center", "center", "red", "box", 12);
-        }
+   
 
         private void UpdateFaiItemsView(List<Core.ViewModels.Fai.FaiItem> faiItems)
         {

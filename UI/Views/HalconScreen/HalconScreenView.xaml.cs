@@ -154,10 +154,11 @@ namespace UI.Views.HalconScreen
         {
             var result2D = SocketToDisplay == SocketType.Left ? LeftGraphics : RightGraphics;
             UpdateImageIndexList(result2D);
+            if(result2D.Images == null) return;
             var image = result2D.Images[ImageIndexToDisplay];
             var graphics = result2D.Graphics;
-            _windowHandle.DispImage(image);
-            _windowHandle.DispObj(graphics);
+            _windowHandle?.DispImage(image);
+            _windowHandle?.DispObj(graphics);
         }
 
     }
