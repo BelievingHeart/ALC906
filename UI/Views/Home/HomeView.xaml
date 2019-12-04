@@ -11,89 +11,112 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:halconScreen="clr-namespace:UI.Views.HalconScreen"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300" DataContext="{Binding Source={x:Static application:ApplicationViewModel.Instance}}">
+             d:DesignHeight="300" d:DesignWidth="300"
+             DataContext="{Binding Source={x:Static application:ApplicationViewModel.Instance}}">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-     
+
         <!-- PLC buttons -->
-        <Grid Grid.Row="0" DataContext="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Server}">
+        <Grid Grid.Row="0"
+              DataContext="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Server}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            
-            <Button Grid.Column="0" Height="60" Margin="3" Width="150" Background="{StaticResource PrimaryHueLightBrush}" Command="{Binding InitCommand}" 
+
+            <!-- Reset button -->
+            <Button Grid.Column="0" Height="60" Margin="3" Width="150"
+                    Background="{StaticResource PrimaryHueLightBrush}" Command="{Binding ResetCommand}"
                     Style="{StaticResource MaterialDesignRaisedButton}"
                     materialDesign:ButtonProgressAssist.Value="-1"
                     materialDesign:ButtonProgressAssist.IsIndicatorVisible="True"
                     materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding IsBusyResetting}">
                 <StackPanel>
-                    <Image Height="35" Source="{StaticResource Init}"/>
-                    <TextBlock HorizontalAlignment="Center" Text="Init"/>
+                    <Image Height="35" Source="{StaticResource Init}" />
+                    <TextBlock HorizontalAlignment="Center" Text="Reset" />
                 </StackPanel>
             </Button>
-            <Button Grid.Column="1" Height="60" Margin="3" Width="150" Background="{StaticResource PrimaryHueLightBrush}" Command="{Binding StartCommand}">
+            <!-- Start button -->
+            <Button Grid.Column="1" Height="60" Margin="3" Width="150"
+                    Background="{StaticResource PrimaryHueLightBrush}" Command="{Binding StartCommand}">
                 <StackPanel>
-                    <Image Height="35" Source="{StaticResource Start}"/>
-                    <TextBlock HorizontalAlignment="Center" Text="Start"/>
+                    <Image Height="35" Source="{StaticResource Start}" />
+                    <TextBlock HorizontalAlignment="Center" Text="Start" />
                 </StackPanel>
-            </Button>
-            <Button Grid.Column="2" Height="60" Margin="3" Width="150" Background="{StaticResource PrimaryHueLightBrush}" Command="{Binding StopCommand}">
+            </Button>   
+            <!-- Stop button -->
+            <Button Grid.Column="2" Height="60" Margin="3" Width="150"
+                    Background="{StaticResource PrimaryHueLightBrush}" Command="{Binding StopCommand}">
                 <StackPanel>
-                    <Image Height="35" Source="{StaticResource Pause}"/>
-                    <TextBlock HorizontalAlignment="Center" Text="Pause"/>
+                    <Image Height="35" Source="{StaticResource Stop}" />
+                    <TextBlock HorizontalAlignment="Center" Text="Stop" />
                 </StackPanel>
             </Button>
-            <Button Grid.Column="3" Height="60" Margin="3" Width="150" Background="{StaticResource PrimaryHueLightBrush}">
+            <!-- Pause button -->
+            <Button Grid.Column="3" Height="60" Margin="3" Width="150"
+                    Background="{StaticResource PrimaryHueLightBrush}" Command="{Binding PauseCommand}">
                 <StackPanel>
-                    <Image Height="35" Source="{StaticResource Restore}"/>
-                    <TextBlock HorizontalAlignment="Center" Text="Reset"/>
+                    <Image Height="35" Source="{StaticResource Pause}" />
+                    <TextBlock HorizontalAlignment="Center" Text="Pause" />
                 </StackPanel>
             </Button>
-            <materialDesign:ColorZone Grid.Column="4" Background="Green" Height="70" CornerRadius="10">
-                <TextBlock Text="Idle" FontSize="35" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <!-- Continue button -->
+            <Button Grid.Column="4" Height="60" Margin="3" Width="150"
+                    Background="{StaticResource PrimaryHueLightBrush}" Command="{Binding ContinueCommand}">
+                <StackPanel>
+                    <Image Height="35" Source="{StaticResource Restore}" />
+                    <TextBlock HorizontalAlignment="Center" Text="Continue" />
+                </StackPanel>
+            </Button>
+            <materialDesign:ColorZone Grid.Column="5" Background="Green" Height="70" CornerRadius="10">
+                <TextBlock Text="Idle" FontSize="35" HorizontalAlignment="Center" VerticalAlignment="Center" />
             </materialDesign:ColorZone>
         </Grid>
-        
+
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            
+
             <!-- Basic product info -->
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                
+
                 <!-- Basic info view -->
-                <home:BasicInfoView Grid.Row="0"/>
+                <home:BasicInfoView Grid.Row="0" />
                 <!-- Bin views -->
-                <bins:SummaryView Grid.Row="1"  DataContext="{Binding Path=SelectedSummary}"/>
+                <bins:SummaryView Grid.Row="1" DataContext="{Binding Path=SelectedSummary}" />
             </Grid>
-            
+
             <!-- Left socket preview -->
-            <halconScreen:HalconScreenView Grid.Column="1" ButtonVisibility="Hidden" LeftGraphics="{Binding Path=Graphics2DLeft}" RightGraphics="{Binding Path=Graphics2DRight}"/>
-            
+            <halconScreen:HalconScreenView Grid.Column="1" ButtonVisibility="Hidden"
+                                           LeftGraphics="{Binding Path=Graphics2DLeft}"
+                                           RightGraphics="{Binding Path=Graphics2DRight}" />
+
             <!-- Right socket preview -->
-            <halconScreen:HalconScreenView Grid.Column="2" ButtonVisibility="Hidden" LeftGraphics="{Binding Path=Graphics3DLeft}" RightGraphics="{Binding Path=Graphics3DRight}"/>
+            <halconScreen:HalconScreenView Grid.Column="2" ButtonVisibility="Hidden"
+                                           LeftGraphics="{Binding Path=Graphics3DLeft}"
+                                           RightGraphics="{Binding Path=Graphics3DRight}" />
 
 
         </Grid>
 
         <faiItem:FaiItemListStackView Grid.Row="2" FaiItems="{Binding FaiItemsLeft}" Header="Left" />
         <faiItem:FaiItemListStackView Grid.Row="3" FaiItems="{Binding FaiItemsRight}" Header="Right" />
-        
+
     </Grid>
 </UserControl>

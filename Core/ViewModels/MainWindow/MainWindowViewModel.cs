@@ -25,28 +25,23 @@ namespace Core.ViewModels.MainWindow
             ApplicationViewModel.Instance.CurrentApplicationPage = ApplicationPageType.Home;
             IoC.IoC.Logger.Log("Switched to home page");
         }
-        
+
         private void SwitchCameraHostPage()
         {
             ApplicationViewModel.Instance.CurrentApplicationPage = ApplicationPageType.CameraHostPage;
             IoC.IoC.Logger.Log("Switched to camera host page");
-
         }
-        
+
         private void SwitchLineScanHostPage()
         {
             ApplicationViewModel.Instance.CurrentApplicationPage = ApplicationPageType.LineScanHostPage;
             IoC.IoC.Logger.Log("Switched to line scan host page");
-
         }
-        
+
         private void SwitchServerPage()
         {
             ApplicationViewModel.Instance.CurrentApplicationPage = ApplicationPageType.ServerPage;
             IoC.IoC.Logger.Log("Switched to server page");
-
-            // TODO: remove these lines
-            ApplicationViewModel.Instance.WaringMessageHighLevel = LoggingMessageItem.CreateMessage("Helloooooooooooooooooooooooooooooooooooooooooooooooo");
         }
 
         #endregion
@@ -54,12 +49,14 @@ namespace Core.ViewModels.MainWindow
 
         public MainWindowViewModel()
         {
-            SwitchHomePageCommand = new SimpleCommand(o=>SwitchHomePage(), o=>ApplicationViewModel.Instance.CurrentApplicationPage != ApplicationPageType.Home);
-            SwitchCameraHostPageCommand = new SimpleCommand(o=>SwitchCameraHostPage(), o=>ApplicationViewModel.Instance.CurrentApplicationPage != ApplicationPageType.CameraHostPage);
-            SwitchLineScanHostPageCommand = new SimpleCommand(o=>SwitchLineScanHostPage(), o=>ApplicationViewModel.Instance.CurrentApplicationPage != ApplicationPageType.LineScanHostPage);
-            SwitchServerPageCommand = new SimpleCommand(o=>SwitchServerPage(), o=>ApplicationViewModel.Instance.CurrentApplicationPage != ApplicationPageType.ServerPage);
+            SwitchHomePageCommand = new SimpleCommand(o => SwitchHomePage(),
+                o => ApplicationViewModel.Instance.CurrentApplicationPage != ApplicationPageType.Home);
+            SwitchCameraHostPageCommand = new SimpleCommand(o => SwitchCameraHostPage(),
+                o => ApplicationViewModel.Instance.CurrentApplicationPage != ApplicationPageType.CameraHostPage);
+            SwitchLineScanHostPageCommand = new SimpleCommand(o => SwitchLineScanHostPage(),
+                o => ApplicationViewModel.Instance.CurrentApplicationPage != ApplicationPageType.LineScanHostPage);
+            SwitchServerPageCommand = new SimpleCommand(o => SwitchServerPage(),
+                o => ApplicationViewModel.Instance.CurrentApplicationPage != ApplicationPageType.ServerPage);
         }
-        
-        
     }
 }

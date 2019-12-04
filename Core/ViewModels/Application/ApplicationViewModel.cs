@@ -249,7 +249,7 @@ namespace Core.ViewModels.Application
             };
             Server.AutoRunStartRequested += OnNewRoundStarted;
             Server.AutoRunStopRequested += () => LogPlcMessage("Auto-mode-stop requested from plc");
-            Server.InitRequested += () => LogPlcMessage("Init requested from plc");
+            Server.InitRequested += OnPlcInitRequested;
             Server.ClientHooked += OnPlcHooked;
             Server.CustomCommandReceived += PlcCustomCommandHandler;
             Server.PlcInitFinished += OnPlcInitFinished;
@@ -262,24 +262,50 @@ namespace Core.ViewModels.Application
             Server.ErrorParser = errorParser;
         }
 
-        private void OnWarningL4Received(string obj)
+        private void OnPlcInitRequested()
         {
-            throw new NotImplementedException();
+            LogPlcMessage("Init requested from plc");
         }
 
-        private void OnWarningL3Received(string obj)
+
+
+
+        /// <summary>
+        /// Enable plc init command
+        /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
+        private void EnablePlcInit()
         {
-            throw new NotImplementedException();
+            Server.IsBusyResetting = false;
         }
 
-        private void OnWarningL2Received(string obj)
+        private void LogHighLevelWarning(string s)
         {
-            throw new NotImplementedException();
+            WaringMessageHighLevel = new LoggingMessageItem(){Time = DateTime.Now.ToString("hh:mm:ss t z"), Message = s};
         }
 
-        private void OnWarningL1Received(string obj)
+        private void OnWarningL4Received(string message)
         {
-            ErrorLogger.Instance.LogToFile(obj);
+            ErrorLogger.Instance.LogToFile(message);
+            LogHighLevelWarning(message);
+            //  Init must be able to execute after L4 warning received
+            EnablePlcInit();
+        }
+        private void OnWarningL3Received(string message)
+        {
+            ErrorLogger.Instance.LogToFile(message);
+            LogHighLevelWarning(message);
+        }
+
+        private void OnWarningL2Received(string message)
+        {
+            ErrorLogger.Instance.LogToFile(message);
+            LogHighLevelWarning(message);
+        }
+
+        private void OnWarningL1Received(string message)
+        {
+            ErrorLogger.Instance.LogToFile(message);
         }
 
         private void OnPlcHooked(Socket socket)
@@ -357,7 +383,7 @@ namespace Core.ViewModels.Application
         {
             HKCameraManager.ScannedForAttachedCameras();
             TopCamera = HKCameraManager.AttachedCameras.First(cam => cam.Name == NameConstants.TopCameraName);
-            TopCamera.ImageBatchSize = 5;
+            TopCamera.ImageBatchSize = 6;
             TopCamera.BatchImageReceived += ProcessImages2DFireForget;
 
 

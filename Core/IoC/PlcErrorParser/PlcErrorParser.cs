@@ -19,6 +19,9 @@ namespace Core.IoC.PlcErrorParser
         private Dictionary<long, ErrorMessageItem> _errorLookUpTable = new Dictionary<long, ErrorMessageItem>();
         public void ParseErrorCode(long errorCode)
         {
+            // TODO: remove these lines
+            if(errorCode == 0) return;
+
             var errorMessageItem = _errorLookUpTable[errorCode];
             switch (errorMessageItem.Level)
             {

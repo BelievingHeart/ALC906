@@ -22,10 +22,7 @@ namespace Core.IoC.Loggers
             if (!File.Exists(LogFilePath) || CurrentDate != _previousDate) File.Create(LogFilePath);
 
             var line = $"{DateTime.Now:h:mm:ss tt zz}> {message}";
-            using (var fs = new StreamWriter(LogFilePath, true))
-            {
-                fs.WriteLine(line);
-            }
+            File.AppendAllLines(LogFilePath, new []{line});
         }
 
         public ErrorLogger(string logDir)
