@@ -105,7 +105,7 @@
     <Compile Include="IoC\Interface\ILoggingServiceProvider.cs" />
     <Compile Include="IoC\IoC.cs" />
     <Compile Include="IoC\Loggers\CameraMessageLogger.cs" />
-    <Compile Include="IoC\Loggers\ErrorLogger.cs" />
+    <Compile Include="IoC\Loggers\Logger.cs" />
     <Compile Include="IoC\Loggers\LaserControllerLibLogger.cs" />
     <Compile Include="IoC\PlcErrorParser\ErrorMessageItem.cs" />
     <Compile Include="IoC\PlcErrorParser\PlcErrorParser.cs" />

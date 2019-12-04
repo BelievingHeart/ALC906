@@ -26,6 +26,7 @@ using HKCameraDev.Core.ViewModels.Camera;
 using I40_3D_Test;
 using LJX8000.Core.ViewModels.Controller;
 using MaterialDesignThemes.Wpf;
+using PLCCommunication.Core.Enums;
 using PLCCommunication.Core.ViewModels;
 using WPFCommon.Helpers;
 using WPFCommon.ViewModels.Base;
@@ -252,7 +253,7 @@ namespace Core.ViewModels.Application
             Server.InitRequested += OnPlcInitRequested;
             Server.ClientHooked += OnPlcHooked;
             Server.CustomCommandReceived += PlcCustomCommandHandler;
-            Server.PlcInitFinished += OnPlcInitFinished;
+            Server.PlcResetFinished += OnPlcResetFinished;
             
             var errorParser = new PlcErrorParser(Path.Combine(DirectoryHelper.ConfigDirectory, "ErrorSheet.csv"));
             errorParser.WarningL1Emit += OnWarningL1Received;
@@ -273,10 +274,10 @@ namespace Core.ViewModels.Application
         /// <summary>
         /// Enable plc init command
         /// </summary>
-        /// <exception cref="NotImplementedException"></exception>
         private void EnablePlcInit()
         {
             Server.IsBusyResetting = false;
+            Server.CurrentMachineState = MachineState.Idle;
         }
 
         private void LogHighLevelWarning(string s)
@@ -286,26 +287,26 @@ namespace Core.ViewModels.Application
 
         private void OnWarningL4Received(string message)
         {
-            ErrorLogger.Instance.LogToFile(message);
+            Logger.Instance.LogErrorToFile(message);
             LogHighLevelWarning(message);
             //  Init must be able to execute after L4 warning received
             EnablePlcInit();
         }
         private void OnWarningL3Received(string message)
         {
-            ErrorLogger.Instance.LogToFile(message);
+            Logger.Instance.LogErrorToFile(message);
             LogHighLevelWarning(message);
         }
 
         private void OnWarningL2Received(string message)
         {
-            ErrorLogger.Instance.LogToFile(message);
+            Logger.Instance.LogErrorToFile(message);
             LogHighLevelWarning(message);
         }
 
         private void OnWarningL1Received(string message)
         {
-            ErrorLogger.Instance.LogToFile(message);
+            Logger.Instance.LogErrorToFile(message);
         }
 
         private void OnPlcHooked(Socket socket)
@@ -347,7 +348,7 @@ namespace Core.ViewModels.Application
             }
         }
 
-        private void OnPlcInitFinished()
+        private void OnPlcResetFinished()
         {
             LogPlcMessage("Plc init done");
             ResetStates();

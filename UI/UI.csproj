@@ -83,6 +83,7 @@
     <Compile Include="Behaviours\ListBoxBehavior.cs" />
     <Compile Include="Converters\EnumToApplicationPageConverter.cs" />
     <Compile Include="Converters\EventToCommandBehaviour.cs" />
+    <Compile Include="Converters\MachineStateToColorConverter.cs" />
     <Compile Include="Converters\ValueConverterBase.cs" />
     <Compile Include="DataAccess\LoggingServiceProvider.cs" />
     <Compile Include="Views\Bins\SummaryView.xaml.cs">
@@ -239,6 +240,10 @@
     <Page Include="Views\Server\AutoScrollMessageBox.xaml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\PLCCommunication\PLCCommunication.Core\PLCCommunication.Core.csproj">
+      <Project>{fe922df9-e533-4310-aee4-6bdaf738aee1}</Project>
+      <Name>PLCCommunication.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\WPFCommon\WPFCommon\WPFCommon.csproj">
       <Project>{7d6be37f-d81b-4a5e-a1a0-a8d4381f0536}</Project>
       <Name>WPFCommon</Name>
