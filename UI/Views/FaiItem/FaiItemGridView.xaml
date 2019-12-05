@@ -9,7 +9,7 @@
     <DataGrid GridLinesVisibility="Horizontal" AutoGenerateColumns="False" Name="PART_DataGrid" CanUserAddRows="False" CanUserDeleteRows="False">
         <DataGrid.Columns>
             <DataGridTextColumn Binding="{Binding Name}" Header="Name"/>
-            <DataGridTextColumn Binding="{Binding Value}" Header="Value"/>
+            <DataGridTextColumn Binding="{Binding Value}" IsReadOnly="True" Header="Value"/>
             <DataGridTextColumn Binding="{Binding Passed}" Header="Passed"/>
             <DataGridTextColumn Binding="{Binding MinBoundary}" Header="Min"/>
             <DataGridTextColumn Binding="{Binding MaxBoundary}" Header="Max"/>

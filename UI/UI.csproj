@@ -85,7 +85,6 @@
     <Compile Include="Converters\EventToCommandBehaviour.cs" />
     <Compile Include="Converters\MachineStateToColorConverter.cs" />
     <Compile Include="Converters\ValueConverterBase.cs" />
-    <Compile Include="DataAccess\LoggingServiceProvider.cs" />
     <Compile Include="Views\Bins\SummaryView.xaml.cs">
       <DependentUpon>SummaryView.xaml</DependentUpon>
     </Compile>
@@ -252,6 +251,9 @@
       <Project>{58d4eaf0-6487-4548-b5af-cf2f4095549a}</Project>
       <Name>Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DataAccess" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

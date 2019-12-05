@@ -105,12 +105,12 @@
             </Grid>
 
             <!-- Left socket preview -->
-            <halconScreen:HalconScreenView Grid.Column="1" ButtonVisibility="Hidden"
+            <halconScreen:HalconScreenView Grid.Column="1" ButtonVisibility="Visible"
                                            LeftGraphics="{Binding Path=Graphics2DLeft}"
                                            RightGraphics="{Binding Path=Graphics2DRight}" />
 
             <!-- Right socket preview -->
-            <halconScreen:HalconScreenView Grid.Column="2" ButtonVisibility="Hidden"
+            <halconScreen:HalconScreenView Grid.Column="2" ButtonVisibility="Visible"
                                            LeftGraphics="{Binding Path=Graphics3DLeft}"
                                            RightGraphics="{Binding Path=Graphics3DRight}" />
 

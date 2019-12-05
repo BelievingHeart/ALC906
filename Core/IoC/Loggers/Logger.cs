@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using Core.ViewModels.Plc;
 using MaterialDesignThemes.Wpf;
 using WPFCommon.ViewModels.Base;
 

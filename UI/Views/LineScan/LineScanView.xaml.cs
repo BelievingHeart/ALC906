@@ -91,7 +91,7 @@ namespace UI.Views.LineScan
 
         private void UpdateFaiItemsView(List<Core.ViewModels.Fai.FaiItem> faiItems)
         {
-            PART_FaiItemGridView.FaiItems = faiItems;
+            PART_FaiItemGridView.LeftFaiItems = faiItems;
         }
     }
 }

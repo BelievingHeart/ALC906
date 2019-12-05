@@ -52,9 +52,7 @@
           <e p="IMeasurementProcedure2D.cs" t="Include" />
         </e>
         <e p="IoC" t="Include">
-          <e p="Interface" t="Include">
-            <e p="ILoggingServiceProvider.cs" t="Include" />
-          </e>
+          <e p="Interface" t="Include" />
           <e p="IoC.cs" t="Include" />
           <e p="Loggers" t="Include">
             <e p="CameraMessageLogger.cs" t="Include" />
@@ -120,9 +118,7 @@
           <e p="MachineStateToColorConverter.cs" t="Include" />
           <e p="ValueConverterBase.cs" t="Include" />
         </e>
-        <e p="DataAccess" t="Include">
-          <e p="LoggingServiceProvider.cs" t="Include" />
-        </e>
+        <e p="DataAccess" t="Include" />
         <e p="FodyWeavers.xml" t="Include" />
         <e p="Icons" t="Include">
           <e p="1PLC.ico" t="Include" />

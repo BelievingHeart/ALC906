@@ -1,0 +1,2 @@
+1. Separate region of loop-related variables
+2. Separate Logging from application view model

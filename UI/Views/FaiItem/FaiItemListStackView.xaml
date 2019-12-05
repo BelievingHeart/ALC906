@@ -39,7 +39,7 @@
                                         </StackPanel>
                                         <Separator BorderThickness="2" BorderBrush="Black">
                                         </Separator>
-                                        <TextBlock Text="{Binding Value}" HorizontalAlignment="Center" />
+                                        <TextBlock Text="{Binding Value, StringFormat=N3}" HorizontalAlignment="Center" />
                                     </StackPanel>
                                     <Button.Style>
                                         <Style TargetType="{x:Type Button}">

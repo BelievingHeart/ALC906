@@ -102,7 +102,6 @@
     <Compile Include="ImageProcessing\2D\ResultValueClass.cs" />
     <Compile Include="ImageProcessing\FindLineParam.cs" />
     <Compile Include="ImageProcessing\IMeasurementProcedure2D.cs" />
-    <Compile Include="IoC\Interface\ILoggingServiceProvider.cs" />
     <Compile Include="IoC\IoC.cs" />
     <Compile Include="IoC\Loggers\CameraMessageLogger.cs" />
     <Compile Include="IoC\Loggers\Logger.cs" />
@@ -149,6 +148,7 @@
   <ItemGroup>
     <Folder Include="Helpers\" />
     <Folder Include="ImageProcessing\3D" />
+    <Folder Include="IoC\Interface" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Fody.4.2.1\build\Fody.targets" Condition="Exists('..\packages\Fody.4.2.1\build\Fody.targets')" />

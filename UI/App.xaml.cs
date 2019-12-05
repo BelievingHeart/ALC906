@@ -1,8 +1,6 @@
 ﻿using System.Windows;
 using Core.IoC;
-using Core.IoC.Interface;
 using Core.ViewModels.Application;
-using UI.DataAccess;
 using UI.Views;
 
 namespace UI
@@ -21,7 +19,6 @@ namespace UI
             base.OnStartup(e);
             
             // IoC setup
-            IoC.Kernel.Bind<ILoggingServiceProvider>().ToConstant(new LoggingServiceProvider());
             IoC.Setup();
             ApplicationViewModel.Init();
             

@@ -25,6 +25,7 @@ namespace UI.Views.HalconScreen
             _windowHandle.SetColored(3);
             _windowHandle.SetPart(0,0,-2,-2);
             _windowHandle.SetColor("green");
+            _windowHandle.SetDraw("margin");
         }
 
         public static readonly DependencyProperty ButtonVisibilityProperty = DependencyProperty.Register(
@@ -139,7 +140,7 @@ namespace UI.Views.HalconScreen
         private void UpdateImageIndexList(GraphicsPackViewModel result2D)
         {
             // Init image index list
-            if (ImageIndexListToDisplay !=  null &&  result2D.Images!=null)
+            if (result2D.Images!=null)
             {
                 var indexList = new List<int>();
                 for (int i = 0; i < result2D.Images.Count; i++)
@@ -158,7 +159,7 @@ namespace UI.Views.HalconScreen
             var image = result2D.Images[ImageIndexToDisplay];
             var graphics = result2D.Graphics;
             _windowHandle?.DispImage(image);
-            _windowHandle?.DispObj(graphics);
+            if(graphics!=null) _windowHandle?.DispObj(graphics);
         }
 
     }

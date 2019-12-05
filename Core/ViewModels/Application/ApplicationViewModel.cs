@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Threading;
 using Core.Constants;
 using Core.Enums;
@@ -25,9 +26,9 @@ using HKCameraDev.Core.IoC.Interface;
 using HKCameraDev.Core.ViewModels.Camera;
 using I40_3D_Test;
 using LJX8000.Core.ViewModels.Controller;
-using MaterialDesignThemes.Wpf;
 using PLCCommunication.Core.Enums;
 using PLCCommunication.Core.ViewModels;
+using WPFCommon.Commands;
 using WPFCommon.Helpers;
 using WPFCommon.ViewModels.Base;
 using CameraTriggerSourceType = HKCameraDev.Core.Enums.CameraTriggerSourceType;
@@ -51,9 +52,6 @@ namespace Core.ViewModels.Application
         private static ApplicationViewModel _instance;
 
         private readonly Object _lockerOfLaserImageBuffers = new Object();
-
- 
-        
         
         /// <summary>
         /// Key=ControllerName, Value=CurrentIndexOfSocket
@@ -76,8 +74,12 @@ namespace Core.ViewModels.Application
 
         private HTuple _shapeModel2D, _shapeModel3D;
 
+        private readonly CsvSerializer.CsvSerializer _serializerAll =
+            new CsvSerializer.CsvSerializer(Path.Combine(DirectoryConstants.CsvOutputDir, "All"));
+        
         private readonly CsvSerializer.CsvSerializer _serializerLeft =
             new CsvSerializer.CsvSerializer(Path.Combine(DirectoryConstants.CsvOutputDir, "Left"));
+        
 
         private readonly CsvSerializer.CsvSerializer _serializerRight =
             new CsvSerializer.CsvSerializer(Path.Combine(DirectoryConstants.CsvOutputDir, "Right"));
@@ -107,7 +109,6 @@ namespace Core.ViewModels.Application
             InitContainer();
             AutoResetInterval = 10000;
             CurrentApplicationPage = ApplicationPageType.Home;
-            MessageQueue = new SnackbarMessageQueue(TimeSpan.FromMilliseconds(3000));
             PlcMessageList = new ObservableCollection<LoggingMessageItem>();
             EnableSynchronization();
 
@@ -120,6 +121,11 @@ namespace Core.ViewModels.Application
 
         private void InitCommands()
         {
+            OpenCSVDirCommand = new RelayCommand(() =>
+            {
+                Directory.CreateDirectory(DirectoryConstants.CsvOutputDir);
+                Process.Start(DirectoryConstants.CsvOutputDir);
+            });
         }
 
         private void InitTimers()
@@ -135,12 +141,12 @@ namespace Core.ViewModels.Application
             // Clear messages if overflows
             lock (_lockerOfPlcMessageList)
             {
-                ClearMessagesIfOverflows(PlcMessageList, 5);
+                ClearMessagesIfOverflows(PlcMessageList, 100);
             }
 
             lock (_lockerOfRoutineMessageList)
             {
-                ClearMessagesIfOverflows(RoutineMessageList, 5);
+                ClearMessagesIfOverflows(RoutineMessageList, 100);
             }
 
             GenerateSummaryNameList();
@@ -254,6 +260,7 @@ namespace Core.ViewModels.Application
             Server.ClientHooked += OnPlcHooked;
             Server.CustomCommandReceived += PlcCustomCommandHandler;
             Server.PlcResetFinished += OnPlcResetFinished;
+            Server.PlcStopFinished += OnPlcStopFinished;
             
             var errorParser = new PlcErrorParser(Path.Combine(DirectoryHelper.ConfigDirectory, "ErrorSheet.csv"));
             errorParser.WarningL1Emit += OnWarningL1Received;
@@ -261,6 +268,11 @@ namespace Core.ViewModels.Application
             errorParser.WarningL3Emit += OnWarningL3Received;
             errorParser.WarningL4Emit += OnWarningL4Received;
             Server.ErrorParser = errorParser;
+        }
+
+        private void OnPlcStopFinished()
+        {
+            ResetStates();
         }
 
         private void OnPlcInitRequested()
@@ -277,6 +289,7 @@ namespace Core.ViewModels.Application
         private void EnablePlcInit()
         {
             Server.IsBusyResetting = false;
+            Server.IsAutoRunning = false;
             Server.CurrentMachineState = MachineState.Idle;
         }
 
@@ -363,6 +376,7 @@ namespace Core.ViewModels.Application
             }
 
             RoundCountSinceReset = 0;
+            Logger.Instance.LogStateChanged("State reset done!");
         }
 
         private void PlcCustomCommandHandler(int commandId)
@@ -424,6 +438,7 @@ namespace Core.ViewModels.Application
         private void OnSingleControllerFinishedScanningSingleSocket(IReadOnlyList<HImage> heightImages,
             ControllerViewModel controller)
         {
+            if (!Server.IsAutoRunning) return;
             Trace.Assert(heightImages.Count == 1);
             // 绕开机台RESET时的蜜汁采图触发
             if (Server.IsBusyResetting) return;
@@ -482,17 +497,18 @@ namespace Core.ViewModels.Application
                         : _rightSocketIndexSinceReset2D - 1;
                 }
 
-                if (itemIndexSinceReset > 0 && enumValue == SocketType.Left)
+                if (itemIndexSinceReset > 0)
                 {
                     Task.Run(() =>
                     {
                         LogRoutine($"3D images start saving for {enumValue} socket");
-                        Directory.CreateDirectory(DirectoryConstants.ImageDir3D);
+                        var imageDir = Path.Combine(DirectoryConstants.ImageDir3D, enumValue.ToString());
+                        Directory.CreateDirectory(imageDir);
                         for (int i = 0; i < imagesForOneSocket.Count; i++)
                         {
-                            var imageName = $"{itemIndexSinceReset}-{i:D4}.tif";
+                            var imageName = $"{itemIndexSinceReset:D4}-{i}.tif";
                             imagesForOneSocket[i].WriteImage("tiff", 0,
-                                Path.Combine(DirectoryConstants.ImageDir3D, imageName));
+                                Path.Combine(imageDir, imageName));
                         }
 
                         LogRoutine($"3D images end saving for {enumValue} socket");
@@ -565,6 +581,10 @@ namespace Core.ViewModels.Application
         {
             _serializerLeft.Serialize(FaiItemsLeft, DateTime.Now.ToString("T"));
             _serializerRight.Serialize(FaiItemsRight, DateTime.Now.ToString("T"));
+            
+            // Write right and left
+            _serializerAll.Serialize(FaiItemsRight, DateTime.Now.ToString("T"));
+            _serializerAll.Serialize(FaiItemsLeft, DateTime.Now.ToString("T"));
         }
 
         /// <summary>
@@ -599,6 +619,14 @@ namespace Core.ViewModels.Application
                 UpdateFaiItems(FaiItems3DRight, Graphics3DRight.FaiResults);
                 UpdateFaiItems(FaiItemsLeft, faiResultDictLeft);
                 UpdateFaiItems(FaiItemsRight, faiResultDictRight);
+                
+                // Notify Ui
+                OnPropertyChanged(nameof(FaiItems2DLeft));
+                OnPropertyChanged(nameof(FaiItems2DRight));
+                OnPropertyChanged(nameof(FaiItems3DLeft));
+                OnPropertyChanged(nameof(FaiItems3DRight));
+                OnPropertyChanged(nameof(FaiItemsLeft));
+                OnPropertyChanged(nameof(FaiItemsRight));
             });
         }
 
@@ -648,7 +676,7 @@ namespace Core.ViewModels.Application
         /// <returns></returns>
         private ProductLevel GetProductLevel(bool itemExists, IEnumerable<FaiItem> faiItems)
         {
-            if (!itemExists) return ProductLevel.Ng5;
+            if (!itemExists) return ProductLevel.Ng4;
             return faiItems.Any(item => item.Rejected) ? ProductLevel.Ng2 : ProductLevel.Ok;
         }
 
@@ -693,6 +721,7 @@ namespace Core.ViewModels.Application
         /// <param name="images"></param>
         private void ProcessImages2DFireForget(List<HImage> images)
         {
+            if (!Server.IsAutoRunning) return;
             SocketType currentArrivedSocket2D;
             lock (_lockerOfCurrentArrivedSocket2D)
             {
@@ -709,16 +738,17 @@ namespace Core.ViewModels.Application
             }
 
             // Image serialization
-            if (currentArrivedSocket2D == SocketType.Left && ShouldSaveImages)
+            if (ShouldSaveImages)
             {
                 Task.Run(() =>
                 {
+                    var imageDir = Path.Combine(DirectoryConstants.ImageDir2D, currentArrivedSocket2D.ToString());
                     LogRoutine($"2D images start saving for {currentArrivedSocket2D} socket");
-                    Directory.CreateDirectory(DirectoryConstants.ImageDir2D);
+                    Directory.CreateDirectory(imageDir);
                     for (int i = 0; i < images.Count; i++)
                     {
-                        var imageName = $"{itemIndexSinceReset}-{i:D4}.bmp";
-                        images[i].WriteImage("bmp", 0, Path.Combine(DirectoryConstants.ImageDir2D, imageName));
+                        var imageName = $"{itemIndexSinceReset:D4}-{i}.bmp";
+                        images[i].WriteImage("bmp", 0, Path.Combine(imageDir, imageName));
                     }
 
                     LogRoutine($"2D images end saving for {currentArrivedSocket2D} socket");
@@ -732,11 +762,12 @@ namespace Core.ViewModels.Application
                 GraphicsPackViewModel result;
                 try
                 {
-                    result = I40Check.GetResultAndGraphics(currentArrivedSocket2D, images);
+                    result = I40Check.Execute(currentArrivedSocket2D, images);
                 }
                 catch
                 {
                     result = GraphicsPackViewModel.Stub;
+                    result.Images = images;
                     LogRoutine($"2D processing for {currentArrivedSocket2D} socket errored");
                 }
                 
@@ -874,10 +905,7 @@ namespace Core.ViewModels.Application
         /// </summary>
         public ApplicationPageType CurrentApplicationPage { get; set; }
 
-        /// <summary>
-        /// Message queue for global UI logging
-        /// </summary>
-        public ISnackbarMessageQueue MessageQueue { get; set; }
+     
 
 
         /// <summary>
@@ -929,6 +957,8 @@ namespace Core.ViewModels.Application
                 ShouldMessageBoxPopup = true;
             }
         }
+
+        public ICommand OpenCSVDirCommand { get; set; }
 
         #endregion
     }

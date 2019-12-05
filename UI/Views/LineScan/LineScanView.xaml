@@ -10,18 +10,18 @@
              xmlns:halconScreen="clr-namespace:UI.Views.HalconScreen"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
- <Grid>
+ <Grid DataContext="{Binding Source={x:Static application:ApplicationViewModel.Instance}}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <!-- Halcon window -->
-        <halconScreen:HalconScreenView LeftGraphics="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Graphics3DLeft}"
-                                       RightGraphics="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Graphics3DRight}" SocketToDisplay="{Binding RelativeSource={RelativeSource AncestorType=local:LineScanView}, Path=SocketToDisplay}"/>
+        <halconScreen:HalconScreenView x:Name="HalconScreen" LeftGraphics="{Binding Path=Graphics3DLeft}" 
+                                       RightGraphics="{Binding Path=Graphics3DRight}" SocketToDisplay="{Binding RelativeSource={RelativeSource AncestorType=local:LineScanView}, Path=SocketToDisplay}"/>
         
       
         <GroupBox Grid.Column="1" Header="Fai Items">
-            <faiItem:FaiItemGridView  x:Name="PART_FaiItemGridView"/></GroupBox>
+            <faiItem:FaiItemGridView  x:Name="PART_FaiItemGridView" LeftFaiItems="{Binding Path=FaiItems3DLeft}" RightFaiItems="{Binding FaiItems3DRight}" SocketType="{Binding ElementName=HalconScreen, Path=SocketToDisplay}"/></GroupBox>
         
     </Grid>
 </UserControl>

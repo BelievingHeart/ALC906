@@ -45,7 +45,7 @@ namespace Core.Helpers
             return output;
         }
 
-        public static GraphicsPackViewModel GetResultAndGraphics(this I40Check procedure, SocketType socketType, List<HImage> images)
+        public static GraphicsPackViewModel Execute(this I40Check procedure, SocketType socketType, List<HImage> images)
         {
             var result = new GraphicsPackViewModel {Images = images};
             result.Graphics = procedure.OnGetCheckValue(images, (int) socketType, 0);
@@ -61,7 +61,7 @@ namespace Core.Helpers
             output.Images = result3D.CompositeImage;
             output.ErrorMessage = result3D.ErrorMessage;
             output.ItemExists = result3D.ItemExists;
-            output.FaiResults = result3D.FaiResults;
+            output.FaiResults = result3D.ItemExists? result3D.FaiResults : new Dictionary<string, double>();
             return output;
         }
     }
