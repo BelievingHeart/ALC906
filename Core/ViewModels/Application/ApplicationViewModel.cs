@@ -107,7 +107,6 @@ namespace Core.ViewModels.Application
         protected ApplicationViewModel()
         {
             InitContainer();
-            AutoResetInterval = 10000;
             CurrentApplicationPage = ApplicationPageType.Home;
             PlcMessageList = new ObservableCollection<LoggingMessageItem>();
             EnableSynchronization();
@@ -479,7 +478,19 @@ namespace Core.ViewModels.Application
             // Do processing for one socket and get its result
             var imagesForOneSocket =
                 _laserImageBuffers.Values.Select(list => list[socketIndex]).ToList();
-            var result3D = _procedure3D.Execute(imagesForOneSocket, _shapeModel3D);
+            MeasurementResult3D result3D = null;
+            try
+            {
+                result3D =  _procedure3D.Execute(imagesForOneSocket, _shapeModel3D);
+            }
+            catch 
+            {
+                result3D = new MeasurementResult3D()
+                {
+                    FaiResults = new Dictionary<string, double>(),
+                    CompositeImage = imagesForOneSocket,
+                };
+            }
             if (socketIndex == (int) SocketType.Left)
             {
                 Graphics3DLeft = result3D.GetGraphics();

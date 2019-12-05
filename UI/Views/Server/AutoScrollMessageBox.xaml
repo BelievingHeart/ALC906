@@ -11,7 +11,7 @@
 
        <!-- Plc message box -->
        <GroupBox Header="Plc messages" >
-           <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+           <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0 0 50 0">
                <ListBox x:Name="MessageListBox">
                    <ListBox.ItemTemplate>
                         <DataTemplate>

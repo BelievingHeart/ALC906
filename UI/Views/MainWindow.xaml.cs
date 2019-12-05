@@ -25,7 +25,6 @@ namespace UI.Views
 
         private void CleanupApplication(object sender, EventArgs eventArgs)
         {
-            //TODO: uncomment this line
             ApplicationViewModel.Cleanup();
         }
 

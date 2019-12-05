@@ -95,6 +95,7 @@
     <Compile Include="Helpers\I40Helper.cs" />
     <Compile Include="Helpers\ObservableCollectionHelper.cs" />
     <Compile Include="Helpers\PlcMessagePackHelper.cs" />
+    <Compile Include="Helpers\SocketTypeHelper.cs" />
     <Compile Include="Helpers\StringMatrixHelper.cs" />
     <Compile Include="Helpers\SummaryHelper.cs" />
     <Compile Include="Helpers\TimeHelper.cs" />

@@ -42,12 +42,8 @@
             <TextBlock Text="0.0%" HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="20" />
         </materialDesign:ColorZone>
              <materialDesign:ColorZone Grid.Column="1" Grid.Row="3" Background="{StaticResource PrimaryHueLightBrush}" Height="60" BorderBrush="Gray" BorderThickness="1">
-                 <!-- TODO: Uncomment this line -->
-                 <!-- <TextBlock Text="10000" HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="20" /> -->
-            
-                 <!-- TODO: comment this line -->
-                 <CheckBox Content="Save images" IsChecked="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=ShouldSaveImages}"></CheckBox>
-        </materialDesign:ColorZone>
+                 <TextBlock Text="10000" HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="20" />
+             </materialDesign:ColorZone>
         
     </Grid>
 </UserControl>

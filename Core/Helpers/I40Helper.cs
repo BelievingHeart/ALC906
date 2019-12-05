@@ -47,9 +47,12 @@ namespace Core.Helpers
 
         public static GraphicsPackViewModel Execute(this I40Check procedure, SocketType socketType, List<HImage> images)
         {
-            var result = new GraphicsPackViewModel {Images = images};
-            result.Graphics = procedure.OnGetCheckValue(images, (int) socketType, 0);
-            result.FaiResults = procedure.GetFaiDict(socketType);
+            var result = new GraphicsPackViewModel
+            {
+                Images = images,
+                Graphics = procedure.OnGetCheckValue(images, socketType.ToChusIndex(), 0),
+                FaiResults = procedure.GetFaiDict(socketType)
+            };
 
             return result;
         }

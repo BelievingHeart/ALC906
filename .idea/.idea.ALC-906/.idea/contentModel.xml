@@ -38,6 +38,7 @@
           <e p="I40Helper.cs" t="Include" />
           <e p="ObservableCollectionHelper.cs" t="Include" />
           <e p="PlcMessagePackHelper.cs" t="Include" />
+          <e p="SocketTypeHelper.cs" t="Include" />
           <e p="StringMatrixHelper.cs" t="Include" />
           <e p="SummaryHelper.cs" t="Include" />
           <e p="TimeHelper.cs" t="Include" />
