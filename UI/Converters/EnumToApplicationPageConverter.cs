@@ -8,6 +8,7 @@ using Core.Enums;
 using UI.Views.Home;
 using UI.Views.LineScan;
 using UI.Views.Server;
+using UI.Views.Settings;
 using UI.Views.Vision2D;
 
 namespace UI.Converters
@@ -37,8 +38,10 @@ namespace UI.Converters
                     : pageEnum == ApplicationPageType.Home
                         ? ApplicationPages.First(ele => ele is HomeView)
                         : pageEnum == ApplicationPageType.LineScanHostPage
-                            ? ApplicationPages.First(ele => ele is LineScanHostView) :
-                            ApplicationPages.First(ele => ele is ServerView);
+                            ? ApplicationPages.First(ele => ele is LineScanHostView)
+                            : pageEnum == ApplicationPageType.ServerPage
+                                ? ApplicationPages.First(ele => ele is ServerView)
+                                : ApplicationPages.First(ele => ele is SettingsView);
             }
             // If the list not contain an instance of such type
             // Add one and return it
@@ -47,7 +50,8 @@ namespace UI.Converters
                 output = pageEnum == ApplicationPageType.CameraHostPage ? new CameraHostView() :
                     pageEnum == ApplicationPageType.Home ? new HomeView() :
                     pageEnum == ApplicationPageType.LineScanHostPage ? new LineScanHostView() :
-                    new ServerView() as UserControl;
+                    pageEnum == ApplicationPageType.ServerPage? new ServerView():
+                   new SettingsView() as UserControl;
 
 
                 ApplicationPages.Add(output);

@@ -112,6 +112,9 @@
     <Compile Include="Views\Server\ServerView.xaml.cs">
       <DependentUpon>ServerView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\SettingsView.xaml.cs">
+      <DependentUpon>SettingsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SideLogger\SideLoggerView.xaml.cs">
       <DependentUpon>SideLoggerView.xaml</DependentUpon>
     </Compile>
@@ -226,6 +229,7 @@
     <Page Include="Views\LineScan\LineScanHostView.xaml" />
     <Page Include="Views\LineScan\LineScanView.xaml" />
     <Page Include="Views\Server\ServerView.xaml" />
+    <Page Include="Views\Settings\SettingsView.xaml" />
     <Page Include="Views\SideLogger\SideLoggerView.xaml" />
     <Page Include="Views\StringMatrix\StringMatrixView.xaml" />
     <Page Include="Views\Vision2D\CameraDataView.xaml" />

@@ -15,6 +15,8 @@ namespace Core.ViewModels.MainWindow
         public ICommand SwitchLineScanHostPageCommand { get; set; }
         public ICommand SwitchServerPageCommand { get; set; }
 
+        public ICommand SwitchSettingsPageCommand { get; }
+
         #endregion
 
         #region Command Implemtations
@@ -38,6 +40,11 @@ namespace Core.ViewModels.MainWindow
         {
             ApplicationViewModel.Instance.CurrentApplicationPage = ApplicationPageType.ServerPage;
         }
+        
+        private void SwitchSettingsPage()
+        {
+            ApplicationViewModel.Instance.CurrentApplicationPage = ApplicationPageType.SettingsPage;
+        }
 
         #endregion
 
@@ -52,6 +59,11 @@ namespace Core.ViewModels.MainWindow
                 o => ApplicationViewModel.Instance.CurrentApplicationPage != ApplicationPageType.LineScanHostPage);
             SwitchServerPageCommand = new SimpleCommand(o => SwitchServerPage(),
                 o => ApplicationViewModel.Instance.CurrentApplicationPage != ApplicationPageType.ServerPage);
+            SwitchSettingsPageCommand = new SimpleCommand(o => SwitchSettingsPage(),
+                o => ApplicationViewModel.Instance.CurrentApplicationPage != ApplicationPageType.SettingsPage);
+
         }
+
+      
     }
 }

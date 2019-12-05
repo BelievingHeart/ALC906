@@ -96,10 +96,10 @@
                             <TextBlock Text=" 3D" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    <Button Margin="10 0" Command="{Binding Path=OpenCSVDirCommand, Source={x:Static applicationViewModel:ApplicationViewModel.Instance}}">
+                    <Button Margin="10 0" Command="{Binding Path=SwitchSettingsPageCommand}">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{StaticResource Settings}" Height="30" />
-                            <TextBlock Text=" CSV" VerticalAlignment="Center" />
+                            <TextBlock Text=" Settings" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
                 </ToolBar>

@@ -125,7 +125,13 @@ namespace Core.ViewModels.Application
             {
                 Directory.CreateDirectory(DirectoryConstants.CsvOutputDir);
                 Process.Start(DirectoryConstants.CsvOutputDir);
+            });   
+            OpenImageDirCommand = new RelayCommand(() =>
+            {
+                Process.Start(Directory.GetCurrentDirectory());
             });
+            
+            
         }
 
         private void InitTimers()
@@ -487,7 +493,7 @@ namespace Core.ViewModels.Application
 
 
             // Image serialization
-            if (ShouldSaveImages)
+            if (ShouldSave3DImagesLeft&&enumValue == SocketType.Left || ShouldSave3DImagesRight&& enumValue==SocketType.Right)
             {
                 int itemIndexSinceReset;
                 lock (_lockerOfRightSocketIndexSinceReset2D)
@@ -738,7 +744,7 @@ namespace Core.ViewModels.Application
             }
 
             // Image serialization
-            if (ShouldSaveImages)
+            if (ShouldSave2DImagesLeft && currentArrivedSocket2D == SocketType.Left || ShouldSave2DImagesRight && currentArrivedSocket2D == SocketType.Right)
             {
                 Task.Run(() =>
                 {
@@ -944,7 +950,6 @@ namespace Core.ViewModels.Application
 
         public I40Check I40Check { get; set; }
         
-        public bool ShouldSaveImages { get; set; }
 
         public bool ShouldMessageBoxPopup { get; set; }
 
@@ -959,6 +964,12 @@ namespace Core.ViewModels.Application
         }
 
         public ICommand OpenCSVDirCommand { get; set; }
+        public ICommand OpenImageDirCommand { get; set; }
+
+        public bool ShouldSave2DImagesLeft { get; set; }
+        public bool ShouldSave2DImagesRight { get; set; }
+        public bool ShouldSave3DImagesLeft { get; set; }
+        public bool ShouldSave3DImagesRight { get; set; }
 
         #endregion
     }

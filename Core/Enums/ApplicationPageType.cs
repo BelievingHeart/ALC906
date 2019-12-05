@@ -20,6 +20,11 @@
         /// <summary>
         /// Server page
         /// </summary>
-        ServerPage
+        ServerPage,
+        
+        /// <summary>
+        /// Settings page
+        /// </summary>
+        SettingsPage
     }
 }
