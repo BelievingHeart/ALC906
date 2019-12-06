@@ -24,7 +24,7 @@ namespace UI.Views.FaiItem
             
             var sender = (FaiItemGridView) d;
             var newValue = (IEnumerable<Core.ViewModels.Fai.FaiItem>) e.NewValue;
-            if (newValue == null && sender.SocketType == SocketType.Left) return;
+            if (newValue == null && sender.SocketType == SocketType.Cavity1) return;
             sender.PART_DataGrid.ItemsSource = newValue;
         }
 
@@ -41,7 +41,7 @@ namespace UI.Views.FaiItem
         {
             var sender = (FaiItemGridView) d;
             var newValue = (IEnumerable<Core.ViewModels.Fai.FaiItem>) e.NewValue;
-            if (newValue == null && sender.SocketType == SocketType.Right) return;
+            if (newValue == null && sender.SocketType == SocketType.Cavity2) return;
             sender.PART_DataGrid.ItemsSource = newValue;
         }
 
@@ -59,7 +59,7 @@ namespace UI.Views.FaiItem
             var sender = (FaiItemGridView) d;
             var newSocketType = (Core.Enums.SocketType) e.NewValue;
             sender.PART_DataGrid.ItemsSource =
-                newSocketType == SocketType.Left ? sender.LeftFaiItems : sender.RightFaiItems;
+                newSocketType == SocketType.Cavity1 ? sender.LeftFaiItems : sender.RightFaiItems;
         }
 
         public SocketType SocketType

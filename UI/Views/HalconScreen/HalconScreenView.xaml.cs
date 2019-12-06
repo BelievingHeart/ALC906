@@ -20,7 +20,7 @@ namespace UI.Views.HalconScreen
         private void OnHalconWindowLoaded(object sender, RoutedEventArgs e)
         {
             ChangeSocketViewCommand = new RelayCommand(SwitchSocketView);
-            SocketToDisplay = SocketType.Left;
+            SocketToDisplay = SocketType.Cavity1;
             _windowHandle = HalconScreen.HalconWindow;
             _windowHandle.SetColored(3);
             _windowHandle.SetPart(0,0,-2,-2);
@@ -47,7 +47,7 @@ namespace UI.Views.HalconScreen
         
         private void SwitchSocketView()
         {
-            SocketToDisplay = SocketToDisplay == SocketType.Left ? SocketType.Right : SocketType.Left;
+            SocketToDisplay = SocketToDisplay == SocketType.Cavity1 ? SocketType.Cavity2 : SocketType.Cavity1;
         }
 
         public static readonly DependencyProperty ImageIndexToDisplayProperty = DependencyProperty.Register(
@@ -107,7 +107,7 @@ namespace UI.Views.HalconScreen
         private static void OnLeftResult2DChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var sender = d as HalconScreenView;
-            if (sender.SocketToDisplay == SocketType.Left) sender.RefreshHalconScreen();
+            if (sender.SocketToDisplay == SocketType.Cavity1) sender.RefreshHalconScreen();
         }
 
 
@@ -125,7 +125,7 @@ namespace UI.Views.HalconScreen
         private static void OnRightResult2DChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var sender = d as HalconScreenView;
-            if (sender.SocketToDisplay == SocketType.Right) sender.RefreshHalconScreen();
+            if (sender.SocketToDisplay == SocketType.Cavity2) sender.RefreshHalconScreen();
         }
 
         public GraphicsPackViewModel RightGraphics
@@ -153,7 +153,7 @@ namespace UI.Views.HalconScreen
         
         private void RefreshHalconScreen()
         {
-            var result2D = SocketToDisplay == SocketType.Left ? LeftGraphics : RightGraphics;
+            var result2D = SocketToDisplay == SocketType.Cavity1 ? LeftGraphics : RightGraphics;
             UpdateImageIndexList(result2D);
             if(result2D.Images == null || result2D.Images.Count ==0) return;
             var image = result2D.Images[ImageIndexToDisplay];

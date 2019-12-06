@@ -2,7 +2,7 @@
 {
     public enum SocketType
     {
-        Left = 1,
-        Right = 0
+        Cavity1 = 1,
+        Cavity2 = 0
     }
 }

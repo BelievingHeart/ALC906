@@ -117,8 +117,8 @@
 
         </Grid>
 
-        <faiItem:FaiItemListStackView Grid.Row="2" FaiItems="{Binding FaiItemsLeft}" Header="Left" />
-        <faiItem:FaiItemListStackView Grid.Row="3" FaiItems="{Binding FaiItemsRight}" Header="Right" />
+        <faiItem:FaiItemListStackView Grid.Row="2" FaiItems="{Binding FaiItemsLeft}" Header="Cavity1" />
+        <faiItem:FaiItemListStackView Grid.Row="3" FaiItems="{Binding FaiItemsRight}" Header="Cavity2" />
 
     </Grid>
 </UserControl>

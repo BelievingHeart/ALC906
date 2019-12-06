@@ -32,7 +32,7 @@ using WPFCommon.Commands;
 using WPFCommon.Helpers;
 using WPFCommon.ViewModels.Base;
 using CameraTriggerSourceType = HKCameraDev.Core.Enums.CameraTriggerSourceType;
-using SocketType = Core.Enums.SocketType;
+using CavityType = Core.Enums.SocketType;
 
 namespace Core.ViewModels.Application
 {
@@ -88,11 +88,11 @@ namespace Core.ViewModels.Application
 
         private readonly object _lockerOfRoutineMessageList = new object();
 
-        private readonly Dictionary<SocketType, Queue<GraphicsPackViewModel>> _resultQueues2D =
-            new Dictionary<SocketType, Queue<GraphicsPackViewModel>>
+        private readonly Dictionary<CavityType, Queue<GraphicsPackViewModel>> _resultQueues2D =
+            new Dictionary<CavityType, Queue<GraphicsPackViewModel>>
             {
-                [SocketType.Left] = new Queue<GraphicsPackViewModel>(2),
-                [SocketType.Right] = new Queue<GraphicsPackViewModel>(2)
+                [CavityType.Cavity1] = new Queue<GraphicsPackViewModel>(),
+                [CavityType.Cavity2] = new Queue<GraphicsPackViewModel>()
             };
 
         private readonly object _lockerOfResultQueues2D = new object();
@@ -357,16 +357,16 @@ namespace Core.ViewModels.Application
         {
             lock (_lockerOfResultQueues2D)
             {
-                var lastInLeft = _resultQueues2D[SocketType.Left].LastOrDefault();
+                var lastInLeft = _resultQueues2D[CavityType.Cavity1].LastOrDefault();
                 var isFirstRoundAfterReset = lastInLeft == null;
                 if (isFirstRoundAfterReset) return;
 
-                _resultQueues2D[SocketType.Left].Clear();
-                _resultQueues2D[SocketType.Left].Enqueue(lastInLeft);
+                _resultQueues2D[CavityType.Cavity1].Clear();
+                _resultQueues2D[CavityType.Cavity1].Enqueue(lastInLeft);
 
-                var lastInRight = _resultQueues2D[SocketType.Right].LastOrDefault();
-                _resultQueues2D[SocketType.Right].Clear();
-                _resultQueues2D[SocketType.Right].Enqueue(lastInRight);
+                var lastInRight = _resultQueues2D[CavityType.Cavity2].LastOrDefault();
+                _resultQueues2D[CavityType.Cavity2].Clear();
+                _resultQueues2D[CavityType.Cavity2].Enqueue(lastInRight);
             }
         }
 
@@ -380,8 +380,8 @@ namespace Core.ViewModels.Application
         {
             lock (_lockerOfResultQueues2D)
             {
-                _resultQueues2D[SocketType.Left].Clear();
-                _resultQueues2D[SocketType.Right].Clear();
+                _resultQueues2D[CavityType.Cavity1].Clear();
+                _resultQueues2D[CavityType.Cavity2].Clear();
             }
 
             RoundCountSinceReset = 0;
@@ -392,11 +392,11 @@ namespace Core.ViewModels.Application
             switch (commandId)
             {
                 case PlcMessagePackConstants.CommandIdLeftSocketArrived:
-                    CurrentArrivedSocket2D = SocketType.Left;
+                    CurrentArrivedSocket2D = CavityType.Cavity1;
                     LogPlcMessage("2D left socket arrived");
                     break;
                 case PlcMessagePackConstants.CommandIdRightSocketArrived:
-                    CurrentArrivedSocket2D = SocketType.Right;
+                    CurrentArrivedSocket2D = CavityType.Cavity2;
                     LogPlcMessage("2D right socket arrived");
                     break;
             }
@@ -475,7 +475,7 @@ namespace Core.ViewModels.Application
         /// <param name="socketIndex"></param>
         private void On3DImagesOfOneSocketFinishedCollecting(int socketIndex)
         {
-            var enumValue = (SocketType) socketIndex;
+            var enumValue = (CavityType) socketIndex;
             
 
             LogRoutine($"3D processing starts for {enumValue} socket");
@@ -484,7 +484,7 @@ namespace Core.ViewModels.Application
                 _laserImageBuffers.Values.Select(list => list[socketIndex]).ToList();
 
             // Save images for later serialization when 2d and 3d combine
-            if (enumValue == SocketType.Left) _imagesToSerialize3dLeft = imagesForOneSocket;
+            if (enumValue == CavityType.Cavity1) _imagesToSerialize3dLeft = imagesForOneSocket;
             else _imagesToSerialize3dRight = imagesForOneSocket;
             
             MeasurementResult3D result3D = null;
@@ -500,7 +500,7 @@ namespace Core.ViewModels.Application
                     CompositeImage = imagesForOneSocket,
                 };
             }
-            if (socketIndex == (int) SocketType.Left)
+            if (socketIndex == (int) CavityType.Cavity1)
             {
                 Graphics3DLeft = result3D.GetGraphics();
             }
@@ -562,11 +562,11 @@ namespace Core.ViewModels.Application
 
         private void UpdateSummaries()
         {
-            SummaryToday.Update(LeftProductLevel);
-            SummaryToday.Update(RightProductLevel);
+            SummaryToday.Update(Cavity1ProductLevel);
+            SummaryToday.Update(Cavity2ProductLevel);
 
-            SummaryCurrentHour.Update(LeftProductLevel);
-            SummaryCurrentHour.Update(RightProductLevel);
+            SummaryCurrentHour.Update(Cavity1ProductLevel);
+            SummaryCurrentHour.Update(Cavity2ProductLevel);
         }
 
         /// <summary>
@@ -574,9 +574,9 @@ namespace Core.ViewModels.Application
         /// </summary>
         private void SubmitProductLevels()
         {
-            LeftProductLevel = GetProductLevel(Graphics3DLeft.ItemExists, FaiItemsLeft);
-            RightProductLevel = GetProductLevel(Graphics3DRight.ItemExists, FaiItemsRight);
-            Server.SendProductLevels(LeftProductLevel, RightProductLevel);
+            Cavity1ProductLevel = GetProductLevel(Graphics3DLeft.ItemExists, FaiItemsLeft);
+            Cavity2ProductLevel = GetProductLevel(Graphics3DRight.ItemExists, FaiItemsRight);
+            Server.SendProductLevels(Cavity1ProductLevel, Cavity2ProductLevel);
         }
 
 
@@ -602,8 +602,8 @@ namespace Core.ViewModels.Application
                 // Corresponding results are put to the head of queues
                 // when new round starts
                 // No worry about this
-                Graphics2DLeft = _resultQueues2D[SocketType.Left].Dequeue();
-                Graphics2DRight = _resultQueues2D[SocketType.Right].Dequeue();
+                Graphics2DLeft = _resultQueues2D[CavityType.Cavity1].Dequeue();
+                Graphics2DRight = _resultQueues2D[CavityType.Cavity2].Dequeue();
             }
 
             Task.Run((Action) SerializeImages);
@@ -618,12 +618,8 @@ namespace Core.ViewModels.Application
             Dispatcher.CurrentDispatcher.Invoke(() =>
             {
                 // Update fai item lists using dictionaries from image processing modules
-                UpdateFaiItems(FaiItems2DLeft, Graphics2DLeft.FaiResults);
-                UpdateFaiItems(FaiItems2DRight, Graphics2DRight.FaiResults);
-                UpdateFaiItems(FaiItems3DLeft, Graphics3DLeft.FaiResults);
-                UpdateFaiItems(FaiItems3DRight, Graphics3DRight.FaiResults);
-                UpdateFaiItems(FaiItemsLeft, faiResultDictLeft);
-                UpdateFaiItems(FaiItemsRight, faiResultDictRight);
+                UpdateFaiItems(FaiItemsLeft, faiResultDictLeft, Graphics3DLeft.ItemExists);
+                UpdateFaiItems(FaiItemsRight, faiResultDictRight, Graphics3DRight.ItemExists);
                 
                 // Notify Ui
                 OnPropertyChanged(nameof(FaiItems2DLeft));
@@ -702,13 +698,24 @@ namespace Core.ViewModels.Application
         /// </summary>
         /// <param name="faiItems"></param>
         /// <param name="faiResultDict"></param>
-        private void UpdateFaiItems(List<FaiItem> faiItems, Dictionary<string, double> faiResultDict)
+        /// <param name="itemExists"></param>
+        private void UpdateFaiItems(List<FaiItem> faiItems, Dictionary<string, double> faiResultDict, bool itemExists)
         {
             if (faiItems == null) throw new ArgumentNullException(nameof(faiItems));
-            var faiNames = faiResultDict.Keys;
-            foreach (var name in faiNames)
+            if (itemExists)
             {
-                faiItems.ByName(name).ValueUnbiased = faiResultDict[name];
+                var faiNames = faiResultDict.Keys;
+                foreach (var name in faiNames)
+                {
+                    faiItems.ByName(name).ValueUnbiased = faiResultDict[name];
+                }
+            }
+            else
+            {
+                foreach (var item in faiItems)
+                {
+                    item.ValueUnbiased = double.NaN;
+                }
             }
         }
 
@@ -740,7 +747,7 @@ namespace Core.ViewModels.Application
         private void ProcessImages2DFireForget(List<HImage> images)
         {
             if (!Server.IsAutoRunning) return;
-            SocketType currentArrivedSocket2D;
+            CavityType currentArrivedSocket2D;
             lock (_lockerOfCurrentArrivedSocket2D)
             {
                 currentArrivedSocket2D = CurrentArrivedSocket2D;
@@ -750,7 +757,7 @@ namespace Core.ViewModels.Application
             int itemIndexSinceReset;
             lock (_lockerOfRightSocketIndexSinceReset2D)
             {
-                itemIndexSinceReset = currentArrivedSocket2D == SocketType.Right
+                itemIndexSinceReset = currentArrivedSocket2D == CavityType.Cavity2
                     ? _rightSocketIndexSinceReset2D
                     : _rightSocketIndexSinceReset2D + 1;
             }
@@ -903,9 +910,9 @@ namespace Core.ViewModels.Application
         public List<FindLineParam> FindLineParams2D { get; set; }
 
 
-        public SocketType CurrentArrivedSocket2D { get; set; }
-        public ProductLevel LeftProductLevel { get; set; }
-        public ProductLevel RightProductLevel { get; set; }
+        public CavityType CurrentArrivedSocket2D { get; set; }
+        public ProductLevel Cavity1ProductLevel { get; set; }
+        public ProductLevel Cavity2ProductLevel { get; set; }
 
 
         /// <summary>

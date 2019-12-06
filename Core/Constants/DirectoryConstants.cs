@@ -25,11 +25,11 @@ namespace Core.Constants
         private static string FaiConfigDir2D => Path.Combine(FaiConfigDir, "2D");
         private static string FaiConfigDir3D => Path.Combine(FaiConfigDir, "3D");
         
-        public static string FaiConfigDir2DLeft => Path.Combine(FaiConfigDir2D, "Left");
-        public static string FaiConfigDir2DRight => Path.Combine(FaiConfigDir2D, "Right");
+        public static string FaiConfigDir2DLeft => Path.Combine(FaiConfigDir2D, "Cavity1");
+        public static string FaiConfigDir2DRight => Path.Combine(FaiConfigDir2D, "Cavity2");
         
-        public static string FaiConfigDir3DLeft => Path.Combine(FaiConfigDir3D, "Left");
-        public static string FaiConfigDir3DRight => Path.Combine(FaiConfigDir3D, "Right");
+        public static string FaiConfigDir3DLeft => Path.Combine(FaiConfigDir3D, "Cavity1");
+        public static string FaiConfigDir3DRight => Path.Combine(FaiConfigDir3D, "Cavity2");
         public static string SummaryDirToday => Path.Combine(ProductionLineRecordDir, DateTime.Now.ToString("MM-dd"));
         
         public static string FaiNamesDir => Path.Combine(FaiConfigDir, "FaiNames");

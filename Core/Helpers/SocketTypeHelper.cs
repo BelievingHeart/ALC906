@@ -8,9 +8,9 @@ namespace Core.Helpers
         {
             switch (socketType)
             {
-                case SocketType.Left:
+                case SocketType.Cavity1:
                     return 0;
-                case SocketType.Right:
+                case SocketType.Cavity2:
                     return 1;
             }
 

@@ -36,7 +36,7 @@ namespace UI.Views.LineScan
         {
             var socket = (SocketType) e.NewValue;
             var sender = d as LineScanView;
-            sender.UpdateFaiItemsView(socket == SocketType.Left? sender.LeftFaiItems : sender.RightFaiItems);
+            sender.UpdateFaiItemsView(socket == SocketType.Cavity1? sender.LeftFaiItems : sender.RightFaiItems);
         }
 
         public SocketType SocketToDisplay
@@ -55,7 +55,7 @@ namespace UI.Views.LineScan
             var sender = d as LineScanView;
             var newValue = (List<Core.ViewModels.Fai.FaiItem>) e.NewValue;
             if (newValue == null) return;
-            if (sender.SocketToDisplay == SocketType.Left) sender.UpdateFaiItemsView(newValue);
+            if (sender.SocketToDisplay == SocketType.Cavity1) sender.UpdateFaiItemsView(newValue);
         }
 
 
@@ -73,7 +73,7 @@ namespace UI.Views.LineScan
             var sender = d as LineScanView;
             var newValue = (List<Core.ViewModels.Fai.FaiItem>) e.NewValue;
             if (newValue == null) return;
-            if (sender.SocketToDisplay == SocketType.Right) sender.UpdateFaiItemsView(newValue);
+            if (sender.SocketToDisplay == SocketType.Cavity2) sender.UpdateFaiItemsView(newValue);
         }
 
         public List<Core.ViewModels.Fai.FaiItem> RightFaiItems
