@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Core.Enums;
 using Core.ViewModels.Results;
@@ -29,13 +30,14 @@ namespace Core.Helpers
             return output;
         }
 
-        public static Dictionary<string, double> GetFaiDict(this I40Check procedure, SocketType socketType)
+        public static Dictionary<string, double> GetFaiDict(this I40Check procedure, int chusIndex)
         {
-            var socketIndex = (int) socketType;
             var numFaiItems = procedure.resultNum;
-            var startIndex = socketIndex * numFaiItems;
-            var endIndex = startIndex + numFaiItems;
+            var startIndex = chusIndex * numFaiItems;
+            var numValidFai = I40Check.YouXiaoFAINum;
+            var endIndex = startIndex + numValidFai;
             var output = new Dictionary<string, double>();
+
             for (int index = startIndex; index < endIndex; index++)
             {
                 var result = procedure.myResult[index];
@@ -45,13 +47,13 @@ namespace Core.Helpers
             return output;
         }
 
-        public static GraphicsPackViewModel Execute(this I40Check procedure, SocketType socketType, List<HImage> images)
+        public static GraphicsPackViewModel Execute(this I40Check procedure, int chusIndex, List<HImage> images)
         {
             var result = new GraphicsPackViewModel
             {
                 Images = images,
-                Graphics = procedure.OnGetCheckValue(images, socketType.ToChusIndex(), 0),
-                FaiResults = procedure.GetFaiDict(socketType)
+                Graphics = procedure.OnGetCheckValue(images, chusIndex, 0),
+                FaiResults = procedure.GetFaiDict(chusIndex)
             };
 
             return result;

@@ -23,7 +23,7 @@ namespace Core.Constants
         public static string ProductionLineRecordDir => Path.Combine(OutputDir, "General");
 
         
-        private static string FaiConfigDir2D => Path.Combine(FaiConfigDir, "2D");
+        private static string FaiConfigDir2D => Path.Combine(Directory.GetCurrentDirectory(), "2DConfigs");
         private static string FaiConfigDir3D => Path.Combine(FaiConfigDir, "3D");
         
         public static string FaiConfigDir2DLeft => Path.Combine(FaiConfigDir2D, "Left");
@@ -39,8 +39,8 @@ namespace Core.Constants
 
         
         //TODO: remove the following dirs
-        public static string ImageDir2D => Path.Combine(Directory.GetCurrentDirectory(), "2D");
-        public static string ImageDir3D => Path.Combine(Directory.GetCurrentDirectory(), "3D");
+        public static string ImageDirRight => Path.Combine(Directory.GetCurrentDirectory(), "Cavity2");
+        public static string ImageDirLeft => Path.Combine(Directory.GetCurrentDirectory(), "Cavity1");
         
         
         

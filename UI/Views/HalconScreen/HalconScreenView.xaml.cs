@@ -155,7 +155,7 @@ namespace UI.Views.HalconScreen
         {
             var result2D = SocketToDisplay == SocketType.Left ? LeftGraphics : RightGraphics;
             UpdateImageIndexList(result2D);
-            if(result2D.Images == null) return;
+            if(result2D.Images == null || result2D.Images.Count ==0) return;
             var image = result2D.Images[ImageIndexToDisplay];
             var graphics = result2D.Graphics;
             _windowHandle?.DispImage(image);

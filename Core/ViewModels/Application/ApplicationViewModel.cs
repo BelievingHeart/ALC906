@@ -78,11 +78,11 @@ namespace Core.ViewModels.Application
             new CsvSerializer.CsvSerializer(Path.Combine(DirectoryConstants.CsvOutputDir, "All"));
         
         private readonly CsvSerializer.CsvSerializer _serializerLeft =
-            new CsvSerializer.CsvSerializer(Path.Combine(DirectoryConstants.CsvOutputDir, "Left"));
+            new CsvSerializer.CsvSerializer(Path.Combine(DirectoryConstants.CsvOutputDir, "Cavity1"));
         
 
         private readonly CsvSerializer.CsvSerializer _serializerRight =
-            new CsvSerializer.CsvSerializer(Path.Combine(DirectoryConstants.CsvOutputDir, "Right"));
+            new CsvSerializer.CsvSerializer(Path.Combine(DirectoryConstants.CsvOutputDir, "Cavity2"));
         
         private readonly IMeasurementProcedure3D _procedure3D = new I40_3D_Output();
 
@@ -95,7 +95,7 @@ namespace Core.ViewModels.Application
                 [SocketType.Right] = new Queue<GraphicsPackViewModel>(2)
             };
 
-        private readonly Object _lockerOfResultQueues2D = new Object();
+        private readonly object _lockerOfResultQueues2D = new object();
         private bool _isAllControllersHighSpeedConnected;
         private int _rightSocketIndexSinceReset2D;
         private readonly object _lockerOfRightSocketIndexSinceReset2D = new object();
@@ -266,6 +266,10 @@ namespace Core.ViewModels.Application
             Server.CustomCommandReceived += PlcCustomCommandHandler;
             Server.PlcResetFinished += OnPlcResetFinished;
             Server.PlcStopFinished += OnPlcStopFinished;
+            Server.IsAutoRunningChanged += isAutoRunning =>
+            {
+                if (isAutoRunning) ResetStates();
+            };
             
             var errorParser = new PlcErrorParser(Path.Combine(DirectoryHelper.ConfigDirectory, "ErrorSheet.csv"));
             errorParser.WarningL1Emit += OnWarningL1Received;
@@ -381,7 +385,6 @@ namespace Core.ViewModels.Application
             }
 
             RoundCountSinceReset = 0;
-            Logger.Instance.LogStateChanged("State reset done!");
         }
 
         private void PlcCustomCommandHandler(int commandId)
@@ -473,11 +476,17 @@ namespace Core.ViewModels.Application
         private void On3DImagesOfOneSocketFinishedCollecting(int socketIndex)
         {
             var enumValue = (SocketType) socketIndex;
+            
 
             LogRoutine($"3D processing starts for {enumValue} socket");
             // Do processing for one socket and get its result
             var imagesForOneSocket =
                 _laserImageBuffers.Values.Select(list => list[socketIndex]).ToList();
+
+            // Save images for later serialization when 2d and 3d combine
+            if (enumValue == SocketType.Left) _imagesToSerialize3dLeft = imagesForOneSocket;
+            else _imagesToSerialize3dRight = imagesForOneSocket;
+            
             MeasurementResult3D result3D = null;
             try
             {
@@ -503,35 +512,7 @@ namespace Core.ViewModels.Application
             LogRoutine($"3D processing ends for {enumValue} socket");
 
 
-            // Image serialization
-            if (ShouldSave3DImagesLeft&&enumValue == SocketType.Left || ShouldSave3DImagesRight&& enumValue==SocketType.Right)
-            {
-                int itemIndexSinceReset;
-                lock (_lockerOfRightSocketIndexSinceReset2D)
-                {
-                    itemIndexSinceReset = socketIndex == (int) SocketType.Right
-                        ? _rightSocketIndexSinceReset2D - 2
-                        : _rightSocketIndexSinceReset2D - 1;
-                }
-
-                if (itemIndexSinceReset > 0)
-                {
-                    Task.Run(() =>
-                    {
-                        LogRoutine($"3D images start saving for {enumValue} socket");
-                        var imageDir = Path.Combine(DirectoryConstants.ImageDir3D, enumValue.ToString());
-                        Directory.CreateDirectory(imageDir);
-                        for (int i = 0; i < imagesForOneSocket.Count; i++)
-                        {
-                            var imageName = $"{itemIndexSinceReset:D4}-{i}.tif";
-                            imagesForOneSocket[i].WriteImage("tiff", 0,
-                                Path.Combine(imageDir, imageName));
-                        }
-
-                        LogRoutine($"3D images end saving for {enumValue} socket");
-                    });
-                }
-            }
+       
 
 
             // If all reserved places for 3D image buffers are filled,
@@ -544,6 +525,10 @@ namespace Core.ViewModels.Application
                 OnAllSocketsFinished3DImageCollection();
             }
         }
+
+        private List<HImage> _imagesToSerialize3dRight;
+
+        private List<HImage> _imagesToSerialize3dLeft;
 
         /// <summary>
         /// Left socket finishing scanning indicates
@@ -620,6 +605,8 @@ namespace Core.ViewModels.Application
                 Graphics2DRight = _resultQueues2D[SocketType.Right].Dequeue();
             }
 
+            Task.Run((Action) SerializeImages);
+
             var faiResultDictLeft = ConcatDictionaryNew(Graphics2DLeft.FaiResults,
                 Graphics3DLeft.FaiResults);
             var faiResultDictRight = ConcatDictionaryNew(Graphics2DRight.FaiResults,
@@ -647,14 +634,21 @@ namespace Core.ViewModels.Application
             });
         }
 
+        private void SerializeImages()
+        {
+            SerializationHelper.SerializeImagesWith2D3DMatched(Graphics2DRight.Images, _imagesToSerialize3dRight, ShouldSave2DImagesRight, 
+                ShouldSave3DImagesRight, DirectoryConstants.ImageDirRight);
+            
+            SerializationHelper.SerializeImagesWith2D3DMatched(Graphics2DLeft.Images, _imagesToSerialize3dLeft, ShouldSave2DImagesLeft, 
+                ShouldSave3DImagesLeft, DirectoryConstants.ImageDirLeft);
+        }
+
 
         private void LoadFaiItems()
         {
 //            load all fai names 
-           List<string> names2d =
-               ParseFaiNames(DirectoryConstants.FaiNamesDir, NameConstants.FaiNamesFile2D);
-           List<string> names3d =
-               ParseFaiNames(DirectoryConstants.FaiNamesDir, NameConstants.FaiNamesFile3D);
+            List<string> names2d = Get2DFaiNames();
+               List<string> names3d = ParseFaiNames(DirectoryConstants.FaiNamesDir, NameConstants.FaiNamesFile3D);
 //           
             //TODO: replace these with names from text files
 //            var names2d = NameConstants.FaiItemNames2D;
@@ -676,6 +670,11 @@ namespace Core.ViewModels.Application
 
             FaiItemsLeft = FaiItems2DLeft.ConcatNew(FaiItems3DLeft);
             FaiItemsRight = FaiItems2DRight.ConcatNew(FaiItems3DRight);
+        }
+
+        private List<string> Get2DFaiNames()
+        {
+            return  I40Check.OnGetResultDefNameStr().Take(I40Check.YouXiaoFAINum).ToList();
         }
 
         private void LoadShapeModels()
@@ -705,9 +704,10 @@ namespace Core.ViewModels.Application
         private void UpdateFaiItems(List<FaiItem> faiItems, Dictionary<string, double> faiResultDict)
         {
             if (faiItems == null) throw new ArgumentNullException(nameof(faiItems));
-            foreach (var faiResult in faiResultDict)
+            var faiNames = faiResultDict.Keys;
+            foreach (var name in faiNames)
             {
-                faiItems.ByName(faiResult.Key).ValueUnbiased = faiResult.Value;
+                faiItems.ByName(name).ValueUnbiased = faiResultDict[name];
             }
         }
 
@@ -722,7 +722,7 @@ namespace Core.ViewModels.Application
 
             foreach (var resultDict in resultDicts)
             {
-                foreach (var result in resultDict)
+                foreach (var result in  resultDict)
                 {
                     output[result.Key] = result.Value;
                 }
@@ -754,23 +754,7 @@ namespace Core.ViewModels.Application
                     : _rightSocketIndexSinceReset2D + 1;
             }
 
-            // Image serialization
-            if (ShouldSave2DImagesLeft && currentArrivedSocket2D == SocketType.Left || ShouldSave2DImagesRight && currentArrivedSocket2D == SocketType.Right)
-            {
-                Task.Run(() =>
-                {
-                    var imageDir = Path.Combine(DirectoryConstants.ImageDir2D, currentArrivedSocket2D.ToString());
-                    LogRoutine($"2D images start saving for {currentArrivedSocket2D} socket");
-                    Directory.CreateDirectory(imageDir);
-                    for (int i = 0; i < images.Count; i++)
-                    {
-                        var imageName = $"{itemIndexSinceReset:D4}-{i}.bmp";
-                        images[i].WriteImage("bmp", 0, Path.Combine(imageDir, imageName));
-                    }
 
-                    LogRoutine($"2D images end saving for {currentArrivedSocket2D} socket");
-                });
-            }
 
 
             Task.Run(() =>
@@ -779,7 +763,7 @@ namespace Core.ViewModels.Application
                 GraphicsPackViewModel result;
                 try
                 {
-                    result = I40Check.Execute(currentArrivedSocket2D, images);
+                    result = I40Check.Execute(currentArrivedSocket2D.ToChusIndex(), images);
                 }
                 catch
                 {
@@ -852,7 +836,9 @@ namespace Core.ViewModels.Application
 
         private void LoadI40CheckConfigs()
         {
-            I40Check = new I40Check( DirectoryConstants.Config2DDir, "I40");
+            //TODO: refactor this to ui module
+            var i40ConfigDir2d = Path.Combine(DirectoryConstants.Config2DDir, "I40A_Config_1205");
+            I40Check = new I40Check( i40ConfigDir2d, "I40");
         }
 
 
