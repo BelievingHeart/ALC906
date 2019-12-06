@@ -7,8 +7,7 @@ namespace Core.Constants
     public static class DirectoryConstants
     {
         public static string FaiConfigDir => Path.Combine(DirectoryHelper.ConfigDirectory, "Fai");
-        public static string Config2DDir => Path.Combine(DirectoryHelper.ConfigDirectory, "2D");
-        public static string FindLineParamsConfigDir => Path.Combine(DirectoryHelper.ConfigDirectory, "FindLineParams");
+        public static string Config2DDir => Path.Combine(Directory.GetCurrentDirectory(), "2DConfigs");
         
 
         /// <summary>
@@ -23,7 +22,7 @@ namespace Core.Constants
         public static string ProductionLineRecordDir => Path.Combine(OutputDir, "General");
 
         
-        private static string FaiConfigDir2D => Path.Combine(Directory.GetCurrentDirectory(), "2DConfigs");
+        private static string FaiConfigDir2D => Path.Combine(FaiConfigDir, "2D");
         private static string FaiConfigDir3D => Path.Combine(FaiConfigDir, "3D");
         
         public static string FaiConfigDir2DLeft => Path.Combine(FaiConfigDir2D, "Left");

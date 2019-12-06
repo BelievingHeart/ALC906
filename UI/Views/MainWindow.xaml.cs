@@ -37,7 +37,14 @@ namespace UI.Views
 
         private void DragWindow(object sender, MouseButtonEventArgs e)
         {
-            DragMove();
+            try
+            {
+                DragMove();
+            }
+            catch
+            {
+                // Ignore this
+            }
         }
 
         private void CloseWindow(object sender, RoutedEventArgs e)

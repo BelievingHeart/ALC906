@@ -94,6 +94,9 @@
           <e p="Results" t="Include">
             <e p="GraphicsPackViewModel.cs" t="Include" />
           </e>
+          <e p="Settings" t="Include">
+            <e p="SettingsViewModel.cs" t="Include" />
+          </e>
           <e p="Summary" t="Include">
             <e p="SummaryViewModel.cs" t="Include" />
           </e>

@@ -529,6 +529,7 @@ namespace Core.ViewModels.Application
         private List<HImage> _imagesToSerialize3dRight;
 
         private List<HImage> _imagesToSerialize3dLeft;
+        private int _config2dDirIndex;
 
         /// <summary>
         /// Left socket finishing scanning indicates
@@ -817,6 +818,8 @@ namespace Core.ViewModels.Application
 
         public void LoadFiles()
         {
+            Scan2DConfigFolders();
+            
             LoadI40CheckConfigs();
 
             LoadShapeModels();
@@ -824,6 +827,12 @@ namespace Core.ViewModels.Application
             LoadFaiItems();
             
             LoadProductionLineSummaries();
+        }
+
+        private void Scan2DConfigFolders()
+        {
+            var dirNamesInConfigDir = Directory.GetDirectories(DirectoryConstants.Config2DDir).Select(Path.GetFileName).ToList();
+            Config2dDirList = dirNamesInConfigDir;
         }
 
 
@@ -836,8 +845,7 @@ namespace Core.ViewModels.Application
 
         private void LoadI40CheckConfigs()
         {
-            //TODO: refactor this to ui module
-            var i40ConfigDir2d = Path.Combine(DirectoryConstants.Config2DDir, "I40A_Config_1205");
+            var i40ConfigDir2d = Path.Combine(DirectoryConstants.Config2DDir, Config2dDirList[Config2dDirIndex]);
             I40Check = new I40Check( i40ConfigDir2d, "I40");
         }
 
@@ -872,10 +880,7 @@ namespace Core.ViewModels.Application
         #region Properties
 
         public int RoundCountSinceReset { get; set; }
-
-
-        public SummaryViewModel Bins { get; set; }
-
+        
         public bool IsAllControllersHighSpeedConnected
         {
             get { return _isAllControllersHighSpeedConnected; }
@@ -967,6 +972,18 @@ namespace Core.ViewModels.Application
         public bool ShouldSave2DImagesRight { get; set; }
         public bool ShouldSave3DImagesLeft { get; set; }
         public bool ShouldSave3DImagesRight { get; set; }
+
+        public List<string> Config2dDirList { get; set; }
+
+        public int Config2dDirIndex
+        {
+            get { return _config2dDirIndex; }
+            set
+            {
+                _config2dDirIndex = value;
+                LoadI40CheckConfigs();
+            }
+        }
 
         #endregion
     }

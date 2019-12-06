@@ -18,7 +18,7 @@
                     <RotateTransform Angle="90"/>
                 </TextBlock.LayoutTransform>
             </TextBlock>
-            <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto">
+            <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Hidden">
             <ListView x:Name="FaiList">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -31,7 +31,7 @@
                         <Border>
                             <materialDesign:DialogHost>
                                 <!-- Name and value -->
-                                <Button Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}" Width="80"
+                                <Button Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}" Width="60"
                                         Height="40" Margin="-10">
                                     <StackPanel>
                                         <StackPanel Orientation="Horizontal">
