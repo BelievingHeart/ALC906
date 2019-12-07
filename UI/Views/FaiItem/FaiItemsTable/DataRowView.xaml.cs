@@ -31,7 +31,7 @@ namespace UI.Views.FaiItem.FaiItemsTable
             var items = viewModel.Values;
 
             // Add RowName
-            me.PART_LevelIndicator.Background = GetColor(viewModel.ProductLevel);
+            me.PART_LevelIndicator.Background = GetIndicatorColor(viewModel.ProductLevel);
             me.PART_NameText.Text = rowName;
             
             // Add Values
@@ -56,7 +56,7 @@ namespace UI.Views.FaiItem.FaiItemsTable
             return new SolidColorBrush(Colors.Black);
         }
 
-        private static SolidColorBrush GetColor(ProductLevel productLevel)
+        private static SolidColorBrush GetIndicatorColor(ProductLevel productLevel)
         {
             switch (productLevel)
             {

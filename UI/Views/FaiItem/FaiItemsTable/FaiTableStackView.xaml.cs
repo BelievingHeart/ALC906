@@ -1,6 +1,8 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using Core.IoC.Loggers;
 using Core.ViewModels.Fai;
 
 namespace UI.Views.FaiItem.FaiItemsTable
@@ -16,18 +18,21 @@ namespace UI.Views.FaiItem.FaiItemsTable
 
         private void CreateTable(FaiTableStackViewModel viewModel)
         {
-            // Clear grid
-            PART_ItemsStack.Children.Clear();
-            
-            // Add header
-            var headerContent = viewModel.Header;
-            PART_HeaderRow.TextData = headerContent;
-
-            // Add remaining rows
-            foreach (var rowViewModel in viewModel.ValueMatrix)
+            Dispatcher.Invoke(() =>
             {
-                AddNewRow(rowViewModel);
-            }
+                // Clear grid
+                PART_ItemsStack.Children.Clear();
+            
+                // Add header
+                var headerContent = viewModel.Header;
+                PART_HeaderRow.TextData = headerContent;
+
+                // Add remaining rows
+                foreach (var rowViewModel in viewModel.ValueMatrix)
+                {
+                    AddNewRow(rowViewModel);
+                }
+            });
         }
 
 
@@ -46,24 +51,34 @@ namespace UI.Views.FaiItem.FaiItemsTable
 
         private void OnRowsRemoved()
         {
-            CreateTable((FaiTableStackViewModel)DataContext);
+            try
+            {
+                Dispatcher.Invoke(() => { CreateTable((FaiTableStackViewModel) DataContext); });
+            }
+            catch (InvalidOperationException e)
+            {
+                Logger.Instance.LogErrorToFile("Invalid operation on CreateTable");
+            }
         }
 
         private void AddNewRow(DataRowViewModel dataRowViewModel)
         {
-            var newRow = new DataRowView {DataContext = dataRowViewModel, DataCellWidth = DataCellWidth};
-            // Adjust header cells' width
-            var binding = new Binding("ActualWidth")
+            Dispatcher.Invoke(() =>
             {
-                Source = newRow.PART_NameCell
-            };
-            PART_HeaderRow.PART_NameCell.SetBinding(WidthProperty, binding);
+                var newRow = new DataRowView {DataContext = dataRowViewModel, DataCellWidth = DataCellWidth};
+                // Adjust header cells' width
+                var binding = new Binding("ActualWidth")
+                {
+                    Source = newRow.PART_NameCell
+                };
+                PART_HeaderRow.PART_NameCell.SetBinding(WidthProperty, binding);
             
-            // Add separator
-            PART_ItemsStack.Children.Add(new Separator());
+                // Add separator
+                PART_ItemsStack.Children.Add(new Separator());
             
-            // Add new row
-            PART_ItemsStack.Children.Add(newRow);
+                // Add new row
+                PART_ItemsStack.Children.Add(newRow);
+            });
         }
         
         

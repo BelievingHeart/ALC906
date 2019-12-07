@@ -25,6 +25,8 @@
         /// <summary>
         /// Settings page
         /// </summary>
-        SettingsPage
+        SettingsPage,
+        
+        DatabaseHostPage
     }
 }

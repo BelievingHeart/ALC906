@@ -1,0 +1,1 @@
+HALCON error #5566: BMP: Write error on output in operator write_image

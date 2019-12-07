@@ -19,11 +19,18 @@ namespace Core.IoC.Loggers
         
         public void LogErrorToFile(string message)
         {
-            // Create new file if not exists or date changes
-            if (!File.Exists(LogFilePath) || CurrentDate != _previousDate) File.Create(LogFilePath);
+            try
+            {
+                // Create new file if not exists or date changes
+                if (!File.Exists(LogFilePath) || CurrentDate != _previousDate) File.Create(LogFilePath);
 
-            var line = $"{DateTime.Now:h:mm:ss tt zz}> {message}";
-            File.AppendAllLines(LogFilePath, new []{line});
+                var line = $"{DateTime.Now:h:mm:ss tt zz}> {message}";
+                File.AppendAllLines(LogFilePath, new []{line});
+            }
+            catch (Exception e)
+            {
+              // TODO: add later execution logic
+            }
         }
         
         public void LogStateChanged(string message)

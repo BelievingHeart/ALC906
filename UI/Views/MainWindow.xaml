@@ -102,6 +102,12 @@
                             <TextBlock Text=" Settings" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
+                    <Button Margin="10 0" Command="{Binding Path=SwitchDatabaseHostView}">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Table" Height="30" />
+                            <TextBlock Text=" Tables" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
                 </ToolBar>
             </ToolBarTray>
 

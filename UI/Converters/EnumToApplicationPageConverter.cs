@@ -5,6 +5,7 @@ using System.Linq;
 using System.Management.Instrumentation;
 using System.Windows.Controls;
 using Core.Enums;
+using UI.Views.Database;
 using UI.Views.Home;
 using UI.Views.LineScan;
 using UI.Views.Server;
@@ -41,7 +42,9 @@ namespace UI.Converters
                             ? ApplicationPages.First(ele => ele is LineScanHostView)
                             : pageEnum == ApplicationPageType.ServerPage
                                 ? ApplicationPages.First(ele => ele is ServerView)
-                                : ApplicationPages.First(ele => ele is SettingsView);
+                                : pageEnum == ApplicationPageType.SettingsPage
+                                    ? ApplicationPages.First(ele => ele is SettingsView)
+                                    : ApplicationPages.First(ele => ele is DatabaseHostView);
             }
             // If the list not contain an instance of such type
             // Add one and return it
@@ -51,7 +54,8 @@ namespace UI.Converters
                     pageEnum == ApplicationPageType.Home ? new HomeView() :
                     pageEnum == ApplicationPageType.LineScanHostPage ? new LineScanHostView() :
                     pageEnum == ApplicationPageType.ServerPage? new ServerView():
-                   new SettingsView() as UserControl;
+                    pageEnum == ApplicationPageType.SettingsPage ? new SettingsView() :
+                   new DatabaseHostView() as UserControl;
 
 
                 ApplicationPages.Add(output);

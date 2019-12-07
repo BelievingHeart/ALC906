@@ -52,7 +52,7 @@ namespace Core.ViewModels.Application
         private static ApplicationViewModel _instance;
 
         private readonly Object _lockerOfLaserImageBuffers = new Object();
-        
+
         /// <summary>
         /// Key=ControllerName, Value=CurrentIndexOfSocket
         /// CurrentIndexOfSocket: 0 for right, 1 for left
@@ -76,14 +76,14 @@ namespace Core.ViewModels.Application
 
         private readonly CsvSerializer.CsvSerializer _serializerAll =
             new CsvSerializer.CsvSerializer(Path.Combine(DirectoryConstants.CsvOutputDir, "All"));
-        
+
         private readonly CsvSerializer.CsvSerializer _serializerLeft =
             new CsvSerializer.CsvSerializer(Path.Combine(DirectoryConstants.CsvOutputDir, "Cavity1"));
-        
+
 
         private readonly CsvSerializer.CsvSerializer _serializerRight =
             new CsvSerializer.CsvSerializer(Path.Combine(DirectoryConstants.CsvOutputDir, "Cavity2"));
-        
+
         private readonly IMeasurementProcedure3D _procedure3D = new I40_3D_Output();
 
         private readonly object _lockerOfRoutineMessageList = new object();
@@ -124,13 +124,8 @@ namespace Core.ViewModels.Application
             {
                 Directory.CreateDirectory(DirectoryConstants.CsvOutputDir);
                 Process.Start(DirectoryConstants.CsvOutputDir);
-            });   
-            OpenImageDirCommand = new RelayCommand(() =>
-            {
-                Process.Start(Directory.GetCurrentDirectory());
             });
-            
-            
+            OpenImageDirCommand = new RelayCommand(() => { Process.Start(Directory.GetCurrentDirectory()); });
         }
 
         private void InitTimers()
@@ -270,7 +265,7 @@ namespace Core.ViewModels.Application
             {
                 if (isAutoRunning) ResetStates();
             };
-            
+
             var errorParser = new PlcErrorParser(Path.Combine(DirectoryHelper.ConfigDirectory, "ErrorSheet.csv"));
             errorParser.WarningL1Emit += OnWarningL1Received;
             errorParser.WarningL2Emit += OnWarningL2Received;
@@ -290,8 +285,6 @@ namespace Core.ViewModels.Application
         }
 
 
-
-
         /// <summary>
         /// Enable plc init command
         /// </summary>
@@ -304,7 +297,8 @@ namespace Core.ViewModels.Application
 
         private void LogHighLevelWarning(string s)
         {
-            WaringMessageHighLevel = new LoggingMessageItem(){Time = DateTime.Now.ToString("hh:mm:ss t z"), Message = s};
+            WaringMessageHighLevel = new LoggingMessageItem()
+                {Time = DateTime.Now.ToString("hh:mm:ss t z"), Message = s};
         }
 
         private void OnWarningL4Received(string message)
@@ -314,6 +308,7 @@ namespace Core.ViewModels.Application
             //  Init must be able to execute after L4 warning received
             EnablePlcInit();
         }
+
         private void OnWarningL3Received(string message)
         {
             Logger.Instance.LogErrorToFile(message);
@@ -477,7 +472,7 @@ namespace Core.ViewModels.Application
         private void On3DImagesOfOneSocketFinishedCollecting(int socketIndex)
         {
             var enumValue = (CavityType) socketIndex;
-            
+
 
             LogRoutine($"3D processing starts for {enumValue} socket");
             // Do processing for one socket and get its result
@@ -487,13 +482,13 @@ namespace Core.ViewModels.Application
             // Save images for later serialization when 2d and 3d combine
             if (enumValue == CavityType.Cavity1) _imagesToSerialize3dLeft = imagesForOneSocket;
             else _imagesToSerialize3dRight = imagesForOneSocket;
-            
+
             MeasurementResult3D result3D = null;
             try
             {
-                result3D =  _procedure3D.Execute(imagesForOneSocket, _shapeModel3D);
+                result3D = _procedure3D.Execute(imagesForOneSocket, _shapeModel3D);
             }
-            catch 
+            catch
             {
                 result3D = new MeasurementResult3D()
                 {
@@ -501,6 +496,7 @@ namespace Core.ViewModels.Application
                     CompositeImage = imagesForOneSocket,
                 };
             }
+
             if (socketIndex == (int) CavityType.Cavity1)
             {
                 Graphics3DLeft = result3D.GetGraphics();
@@ -511,9 +507,6 @@ namespace Core.ViewModels.Application
             }
 
             LogRoutine($"3D processing ends for {enumValue} socket");
-
-
-       
 
 
             // If all reserved places for 3D image buffers are filled,
@@ -554,7 +547,8 @@ namespace Core.ViewModels.Application
                 Combine2D3DResults();
                 SubmitProductLevels();
                 UpdateSummaries();
-                SerializeCsv();
+                Task.Run(() => SerializeImagesAndCsv(Graphics2DLeft.Images, Graphics2DRight.Images, _imagesToSerialize3dLeft,
+                    _imagesToSerialize3dRight, FaiItemsCavity1, FaiItemsCavity2));
             }
 
             // Round finished, increment round count
@@ -575,21 +569,13 @@ namespace Core.ViewModels.Application
         /// </summary>
         private void SubmitProductLevels()
         {
-            Cavity1ProductLevel = GetProductLevel(Graphics3DLeft.ItemExists, FaiItemsLeft);
-            Cavity2ProductLevel = GetProductLevel(Graphics3DRight.ItemExists, FaiItemsRight);
+            Cavity1ProductLevel = GetProductLevel(Graphics3DLeft.ItemExists, FaiItemsCavity1);
+            Cavity2ProductLevel = GetProductLevel(Graphics3DRight.ItemExists, FaiItemsCavity2);
             Server.SendProductLevels(Cavity1ProductLevel, Cavity2ProductLevel);
         }
 
 
-        private void SerializeCsv()
-        {
-            _serializerLeft.Serialize(FaiItemsLeft, DateTime.Now.ToString("T"));
-            _serializerRight.Serialize(FaiItemsRight, DateTime.Now.ToString("T"));
-            
-            // Write right and left
-            _serializerAll.Serialize(FaiItemsRight, DateTime.Now.ToString("T"));
-            _serializerAll.Serialize(FaiItemsLeft, DateTime.Now.ToString("T"));
-        }
+ 
 
         /// <summary>
         /// Convert dictionaries from image processing units to list of fai items
@@ -607,7 +593,6 @@ namespace Core.ViewModels.Application
                 Graphics2DRight = _resultQueues2D[CavityType.Cavity2].Dequeue();
             }
 
-            Task.Run(()=> SerializeImages(Graphics2DLeft.Images, Graphics2DRight.Images, _imagesToSerialize3dLeft, _imagesToSerialize3dRight));
 
             var faiResultDictLeft = ConcatDictionaryNew(Graphics2DLeft.FaiResults,
                 Graphics3DLeft.FaiResults);
@@ -619,36 +604,66 @@ namespace Core.ViewModels.Application
             Dispatcher.CurrentDispatcher.Invoke(() =>
             {
                 // Update fai item lists using dictionaries from image processing modules
-                UpdateFaiItems(FaiItemsLeft, faiResultDictLeft, Graphics3DLeft.ItemExists);
-                UpdateFaiItems(FaiItemsRight, faiResultDictRight, Graphics3DRight.ItemExists);
-                
+                UpdateFaiItems(FaiItemsCavity1, faiResultDictLeft, Graphics3DLeft.ItemExists);
+                UpdateFaiItems(FaiItemsCavity2, faiResultDictRight, Graphics3DRight.ItemExists);
+
                 // Notify Ui
                 OnPropertyChanged(nameof(FaiItems2DLeft));
                 OnPropertyChanged(nameof(FaiItems2DRight));
                 OnPropertyChanged(nameof(FaiItems3DLeft));
                 OnPropertyChanged(nameof(FaiItems3DRight));
-                OnPropertyChanged(nameof(FaiItemsLeft));
-                OnPropertyChanged(nameof(FaiItemsRight));
+                OnPropertyChanged(nameof(FaiItemsCavity1));
+                OnPropertyChanged(nameof(FaiItemsCavity2));
             });
         }
 
-        private void SerializeImages(List<HImage> images2dCavity1, List<HImage> images2dCavity2, List<HImage> images3dCavity1, List<HImage> images3dCavity2)
+        private void SerializeImagesAndCsv(List<HImage> images2dCavity1, List<HImage> images2dCavity2,
+            List<HImage> images3dCavity1, List<HImage> images3dCavity2, List<FaiItem> faiItemsCavity1, List<FaiItem> faiItemsCavity2)
         {
-            SerializationHelper.SerializeImagesWith2D3DMatched(images2dCavity2, images3dCavity2, ShouldSave2DImagesRight, 
+            // Cavity 2
+            var timestampCavity2 = SerializationHelper.SerializeImagesWith2D3DMatched(images2dCavity2, images3dCavity2,
+                ShouldSave2DImagesRight,
                 ShouldSave3DImagesRight, DirectoryConstants.ImageDirRight);
-            
-            SerializationHelper.SerializeImagesWith2D3DMatched(images2dCavity1, images3dCavity1, ShouldSave2DImagesLeft, 
+            _serializerRight.Serialize(faiItemsCavity2, timestampCavity2);
+            _serializerAll.Serialize(faiItemsCavity2, timestampCavity2);
+
+
+            // Cavity 1
+            var timestampCavity1 = SerializationHelper.SerializeImagesWith2D3DMatched(images2dCavity1, images3dCavity1,
+                ShouldSave2DImagesLeft,
                 ShouldSave3DImagesLeft, DirectoryConstants.ImageDirLeft);
+            _serializerLeft.Serialize(faiItemsCavity1, timestampCavity1);
+            _serializerAll.Serialize(faiItemsCavity1, timestampCavity1);
+            
+            // Update tables
+            Dispatcher.CurrentDispatcher.Invoke(()=>UpdateTables(timestampCavity1, timestampCavity2));
+        }
+
+        private void UpdateTables(string timestampCavity1, string timestampCavity2)
+        {
+            // Init header if necessary
+            if (Table == null)
+            {
+               Table = new FaiTableStackViewModel()
+               {
+                   Header = FaiItemsCavity1.Select(item => item.Name).ToList(),
+                   MaxRows = 50,
+               };
+            }
+
+            // Add rows
+            Table.AddRow(FaiItemsCavity2, Cavity2ProductLevel, timestampCavity2);
+            Table.AddRow(FaiItemsCavity1, Cavity1ProductLevel, timestampCavity1);
         }
 
 
         private void LoadFaiItems()
         {
-                // load all fai names 
+            // load all fai names 
             List<string> names2d = Get2DFaiNames();
-               List<string> names3d = ParseFaiNames(DirectoryConstants.FaiNamesDir, NameConstants.FaiNamesFile3D);
+            List<string> names3d = ParseFaiNames(DirectoryConstants.FaiNamesDir, NameConstants.FaiNamesFile3D);
 
-               // Load fai items configs
+            // Load fai items configs
             FaiItems2DLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(names2d,
                     DirectoryConstants.FaiConfigDir2DLeft)
                 .ToList();
@@ -662,13 +677,13 @@ namespace Core.ViewModels.Application
                     DirectoryConstants.FaiConfigDir3DRight)
                 .ToList();
 
-            FaiItemsLeft = FaiItems2DLeft.ConcatNew(FaiItems3DLeft);
-            FaiItemsRight = FaiItems2DRight.ConcatNew(FaiItems3DRight);
+            FaiItemsCavity1 = FaiItems2DLeft.ConcatNew(FaiItems3DLeft);
+            FaiItemsCavity2 = FaiItems2DRight.ConcatNew(FaiItems3DRight);
         }
 
         private List<string> Get2DFaiNames()
         {
-            return  I40Check.OnGetResultDefNameStr().Take(I40Check.YouXiaoFAINum).ToList();
+            return I40Check.OnGetResultDefNameStr().Take(I40Check.YouXiaoFAINum).ToList();
         }
 
         private void LoadShapeModels()
@@ -686,7 +701,7 @@ namespace Core.ViewModels.Application
         /// <returns></returns>
         private ProductLevel GetProductLevel(bool itemExists, IEnumerable<FaiItem> faiItems)
         {
-            if (!itemExists) return ProductLevel.Ng4;
+            if (!itemExists) return ProductLevel.Empty;
             return faiItems.Any(item => item.Rejected) ? ProductLevel.Ng2 : ProductLevel.Ok;
         }
 
@@ -727,7 +742,7 @@ namespace Core.ViewModels.Application
 
             foreach (var resultDict in resultDicts)
             {
-                foreach (var result in  resultDict)
+                foreach (var result in resultDict)
                 {
                     output[result.Key] = result.Value;
                 }
@@ -760,8 +775,6 @@ namespace Core.ViewModels.Application
             }
 
 
-
-
             Task.Run(() =>
             {
                 LogRoutine($"2D processing starts for {currentArrivedSocket2D} socket");
@@ -776,7 +789,7 @@ namespace Core.ViewModels.Application
                     result.Images = images;
                     LogRoutine($"2D processing for {currentArrivedSocket2D} socket errored");
                 }
-                
+
                 lock (_lockerOfResultQueues2D)
                 {
                     _resultQueues2D[currentArrivedSocket2D].Enqueue(result);
@@ -823,19 +836,20 @@ namespace Core.ViewModels.Application
         public void LoadFiles()
         {
             Scan2DConfigFolders();
-            
+
             LoadI40CheckConfigs();
 
             LoadShapeModels();
-            
+
             LoadFaiItems();
-            
+
             LoadProductionLineSummaries();
         }
 
         private void Scan2DConfigFolders()
         {
-            var dirNamesInConfigDir = Directory.GetDirectories(DirectoryConstants.Config2DDir).Select(Path.GetFileName).ToList();
+            var dirNamesInConfigDir = Directory.GetDirectories(DirectoryConstants.Config2DDir).Select(Path.GetFileName)
+                .ToList();
             Config2dDirList = dirNamesInConfigDir;
         }
 
@@ -850,7 +864,7 @@ namespace Core.ViewModels.Application
         private void LoadI40CheckConfigs()
         {
             var i40ConfigDir2d = Path.Combine(DirectoryConstants.Config2DDir, Config2dDirList[Config2dDirIndex]);
-            I40Check = new I40Check( i40ConfigDir2d, "I40");
+            I40Check = new I40Check(i40ConfigDir2d, "I40");
         }
 
 
@@ -884,7 +898,7 @@ namespace Core.ViewModels.Application
         #region Properties
 
         public int RoundCountSinceReset { get; set; }
-        
+
         public bool IsAllControllersHighSpeedConnected
         {
             get { return _isAllControllersHighSpeedConnected; }
@@ -904,9 +918,6 @@ namespace Core.ViewModels.Application
         public List<FaiItem> FaiItems2D { get; set; }
 
 
-        public List<FindLineParam> FindLineParams2D { get; set; }
-
-
         public CavityType CurrentArrivedSocket2D { get; set; }
         public ProductLevel Cavity1ProductLevel { get; set; }
         public ProductLevel Cavity2ProductLevel { get; set; }
@@ -916,8 +927,6 @@ namespace Core.ViewModels.Application
         /// Current application page
         /// </summary>
         public ApplicationPageType CurrentApplicationPage { get; set; }
-
-     
 
 
         /// <summary>
@@ -939,8 +948,8 @@ namespace Core.ViewModels.Application
 
         public AlcServerViewModel Server { get; set; }
 
-        public List<FaiItem> FaiItemsLeft { get; set; }
-        public List<FaiItem> FaiItemsRight { get; set; }
+        public List<FaiItem> FaiItemsCavity1 { get; set; }
+        public List<FaiItem> FaiItemsCavity2 { get; set; }
 
         public List<FaiItem> FaiItems2DLeft { get; set; }
         public List<FaiItem> FaiItems2DRight { get; set; }
@@ -955,7 +964,7 @@ namespace Core.ViewModels.Application
         public string SelectedSummaryName { get; set; }
 
         public I40Check I40Check { get; set; }
-        
+
 
         public bool ShouldMessageBoxPopup { get; set; }
 
@@ -988,6 +997,8 @@ namespace Core.ViewModels.Application
                 LoadI40CheckConfigs();
             }
         }
+
+        public FaiTableStackViewModel Table { get; set; }
 
         #endregion
     }

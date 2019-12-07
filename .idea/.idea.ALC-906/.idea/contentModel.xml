@@ -176,6 +176,10 @@
             <e p="SummaryView.xaml" t="Include" />
             <e p="SummaryView.xaml.cs" t="Include" />
           </e>
+          <e p="Database" t="Include">
+            <e p="DatabaseHostView.xaml" t="Include" />
+            <e p="DatabaseHostView.xaml.cs" t="Include" />
+          </e>
           <e p="FaiItem" t="Include">
             <e p="FaiItemGridView.xaml" t="Include" />
             <e p="FaiItemGridView.xaml.cs" t="Include" />
