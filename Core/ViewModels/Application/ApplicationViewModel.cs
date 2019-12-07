@@ -361,10 +361,11 @@ namespace Core.ViewModels.Application
                 var isFirstRoundAfterReset = lastInLeft == null;
                 if (isFirstRoundAfterReset) return;
 
+                lastInLeft = _resultQueues2D[CavityType.Cavity1].Dequeue();
                 _resultQueues2D[CavityType.Cavity1].Clear();
                 _resultQueues2D[CavityType.Cavity1].Enqueue(lastInLeft);
 
-                var lastInRight = _resultQueues2D[CavityType.Cavity2].LastOrDefault();
+                var lastInRight = _resultQueues2D[CavityType.Cavity2].Dequeue();
                 _resultQueues2D[CavityType.Cavity2].Clear();
                 _resultQueues2D[CavityType.Cavity2].Enqueue(lastInRight);
             }
@@ -606,7 +607,7 @@ namespace Core.ViewModels.Application
                 Graphics2DRight = _resultQueues2D[CavityType.Cavity2].Dequeue();
             }
 
-            Task.Run((Action) SerializeImages);
+            Task.Run(()=> SerializeImages(Graphics2DLeft.Images, Graphics2DRight.Images, _imagesToSerialize3dLeft, _imagesToSerialize3dRight));
 
             var faiResultDictLeft = ConcatDictionaryNew(Graphics2DLeft.FaiResults,
                 Graphics3DLeft.FaiResults);
@@ -631,27 +632,23 @@ namespace Core.ViewModels.Application
             });
         }
 
-        private void SerializeImages()
+        private void SerializeImages(List<HImage> images2dCavity1, List<HImage> images2dCavity2, List<HImage> images3dCavity1, List<HImage> images3dCavity2)
         {
-            SerializationHelper.SerializeImagesWith2D3DMatched(Graphics2DRight.Images, _imagesToSerialize3dRight, ShouldSave2DImagesRight, 
+            SerializationHelper.SerializeImagesWith2D3DMatched(images2dCavity2, images3dCavity2, ShouldSave2DImagesRight, 
                 ShouldSave3DImagesRight, DirectoryConstants.ImageDirRight);
             
-            SerializationHelper.SerializeImagesWith2D3DMatched(Graphics2DLeft.Images, _imagesToSerialize3dLeft, ShouldSave2DImagesLeft, 
+            SerializationHelper.SerializeImagesWith2D3DMatched(images2dCavity1, images3dCavity1, ShouldSave2DImagesLeft, 
                 ShouldSave3DImagesLeft, DirectoryConstants.ImageDirLeft);
         }
 
 
         private void LoadFaiItems()
         {
-//            load all fai names 
+                // load all fai names 
             List<string> names2d = Get2DFaiNames();
                List<string> names3d = ParseFaiNames(DirectoryConstants.FaiNamesDir, NameConstants.FaiNamesFile3D);
-//           
-            //TODO: replace these with names from text files
-//            var names2d = NameConstants.FaiItemNames2D;
-//            var names3d = NameConstants.FaiItemNames3D;
-            
-            // Load fai items configs
+
+               // Load fai items configs
             FaiItems2DLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(names2d,
                     DirectoryConstants.FaiConfigDir2DLeft)
                 .ToList();

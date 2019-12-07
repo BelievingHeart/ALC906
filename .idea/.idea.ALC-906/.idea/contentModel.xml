@@ -82,8 +82,10 @@
             <e p="CameraHostViewModel.cs" t="Include" />
           </e>
           <e p="Fai" t="Include">
+            <e p="DataRowViewModel.cs" t="Include" />
             <e p="FaiItem.cs" t="Include" />
             <e p="FaiItemUILogic.cs" t="Include" />
+            <e p="FaiTableStackViewModel.cs" t="Include" />
           </e>
           <e p="MainWindow" t="Include">
             <e p="MainWindowViewModel.cs" t="Include" />
@@ -181,6 +183,14 @@
             <e p="FaiItemListStackView.xaml.cs" t="Include" />
             <e p="FaiItemListView.xaml.cs" t="Include" />
             <e p="FaiItemListWarpView.xaml" t="Include" />
+            <e p="FaiItemsTable" t="Include">
+              <e p="DataRowView.xaml" t="Include" />
+              <e p="DataRowView.xaml.cs" t="Include" />
+              <e p="FaiTableStackView.xaml" t="Include" />
+              <e p="FaiTableStackView.xaml.cs" t="Include" />
+              <e p="HeaderRowView.xaml" t="Include" />
+              <e p="HeaderRowView.xaml.cs" t="Include" />
+            </e>
           </e>
           <e p="HalconScreen" t="Include">
             <e p="HalconScreenView.xaml" t="Include" />
@@ -197,6 +207,10 @@
             <e p="LineScanHostView.xaml.cs" t="Include" />
             <e p="LineScanView.xaml" t="Include" />
             <e p="LineScanView.xaml.cs" t="Include" />
+          </e>
+          <e p="Login" t="Include">
+            <e p="LoginView.xaml" t="Include" />
+            <e p="LoginView.xaml.cs" t="Include" />
           </e>
           <e p="MainWindow.xaml" t="Include" />
           <e p="MainWindow.xaml.cs" t="Include" />

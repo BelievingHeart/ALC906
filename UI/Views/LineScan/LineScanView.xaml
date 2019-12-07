@@ -10,18 +10,24 @@
              xmlns:halconScreen="clr-namespace:UI.Views.HalconScreen"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
- <Grid DataContext="{Binding Source={x:Static application:ApplicationViewModel.Instance}}">
+    <Grid DataContext="{Binding Source={x:Static application:ApplicationViewModel.Instance}}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <!-- Halcon window -->
-        <halconScreen:HalconScreenView x:Name="HalconScreen" LeftGraphics="{Binding Path=Graphics3DLeft}" 
-                                       RightGraphics="{Binding Path=Graphics3DRight}" SocketToDisplay="{Binding RelativeSource={RelativeSource AncestorType=local:LineScanView}, Path=SocketToDisplay}"/>
-        
-      
+        <halconScreen:HalconScreenView x:Name="HalconScreen" LeftGraphics="{Binding Path=Graphics3DLeft}"
+                                       RightGraphics="{Binding Path=Graphics3DRight}"
+                                       SocketToDisplay="{Binding RelativeSource={RelativeSource AncestorType=local:LineScanView}, Path=SocketToDisplay}" />
+
+
         <GroupBox Grid.Column="1" Header="Fai Items">
-            <faiItem:FaiItemGridView  x:Name="PART_FaiItemGridView" LeftFaiItems="{Binding Path=FaiItems3DLeft}" RightFaiItems="{Binding FaiItems3DRight}" SocketType="{Binding ElementName=HalconScreen, Path=SocketToDisplay}"/></GroupBox>
-        
+            <faiItem:FaiItemGridView LeftFaiItems="{Binding Path=FaiItems3DLeft}"
+                                     RightFaiItems="{Binding FaiItems3DRight}"
+                                     SocketType="{Binding ElementName=HalconScreen, Path=SocketToDisplay}"
+                                     Margin="0 10 50 0"
+                                     />
+        </GroupBox>
+
     </Grid>
 </UserControl>
