@@ -1,1 +1,7 @@
+1.
 HALCON error #5566: BMP: Write error on output in operator write_image
+
+2.
+“System.InvalidOperationException”类型的异常在 WindowsBase.dll 中发生，但未在用户代码中进行处理
+
+其他信息: 调用线程无法访问此对象，因为另一个线程拥有该对象。

@@ -18,8 +18,7 @@ namespace UI.Views.FaiItem.FaiItemsTable
 
         private void CreateTable(FaiTableStackViewModel viewModel)
         {
-            Dispatcher.Invoke(() =>
-            {
+   
                 // Clear grid
                 PART_ItemsStack.Children.Clear();
             
@@ -32,7 +31,7 @@ namespace UI.Views.FaiItem.FaiItemsTable
                 {
                     AddNewRow(rowViewModel);
                 }
-            });
+          
         }
 
 
@@ -51,20 +50,12 @@ namespace UI.Views.FaiItem.FaiItemsTable
 
         private void OnRowsRemoved()
         {
-            try
-            {
-                Dispatcher.Invoke(() => { CreateTable((FaiTableStackViewModel) DataContext); });
-            }
-            catch (InvalidOperationException e)
-            {
-                Logger.Instance.LogErrorToFile("Invalid operation on CreateTable");
-            }
+            CreateTable((FaiTableStackViewModel) DataContext);
         }
 
         private void AddNewRow(DataRowViewModel dataRowViewModel)
         {
-            Dispatcher.Invoke(() =>
-            {
+      
                 var newRow = new DataRowView {DataContext = dataRowViewModel, DataCellWidth = DataCellWidth};
                 // Adjust header cells' width
                 var binding = new Binding("ActualWidth")
@@ -78,7 +69,7 @@ namespace UI.Views.FaiItem.FaiItemsTable
             
                 // Add new row
                 PART_ItemsStack.Children.Add(newRow);
-            });
+          
         }
         
         

@@ -601,7 +601,7 @@ namespace Core.ViewModels.Application
 
             // To avoid frequent context switching
             // Wrap all the UI-updating code in single Invoke block
-            Dispatcher.CurrentDispatcher.Invoke(() =>
+            UiDispatcher.Invoke(() =>
             {
                 // Update fai item lists using dictionaries from image processing modules
                 UpdateFaiItems(FaiItemsCavity1, faiResultDictLeft, Graphics3DLeft.ItemExists);
@@ -636,7 +636,7 @@ namespace Core.ViewModels.Application
             _serializerAll.Serialize(faiItemsCavity1, timestampCavity1);
             
             // Update tables
-            Dispatcher.CurrentDispatcher.Invoke(()=>UpdateTables(timestampCavity1, timestampCavity2));
+            UiDispatcher.Invoke(()=>UpdateTables(timestampCavity1, timestampCavity2));
         }
 
         private void UpdateTables(string timestampCavity1, string timestampCavity2)
@@ -999,6 +999,8 @@ namespace Core.ViewModels.Application
         }
 
         public FaiTableStackViewModel Table { get; set; }
+
+        public static Dispatcher UiDispatcher => System.Windows.Application.Current.Dispatcher;
 
         #endregion
     }
