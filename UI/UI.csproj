@@ -276,6 +276,10 @@
       <Project>{58d4eaf0-6487-4548-b5af-cf2f4095549a}</Project>
       <Name>Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PLS\PLS.csproj">
+      <Project>{ea4eb787-d8db-413c-922b-64a3192c006d}</Project>
+      <Name>PLS</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DataAccess\" />

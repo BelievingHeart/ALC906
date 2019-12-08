@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LJX8000.Core", "..\LJX8000D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PLCCommunication.Core", "..\PLCCommunication\PLCCommunication.Core\PLCCommunication.Core.csproj", "{FE922DF9-E533-4310-AEE4-6BDAF738AEE1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PLS", "PLS\PLS.csproj", "{EA4EB787-D8DB-413C-922B-64A3192C006D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{FE922DF9-E533-4310-AEE4-6BDAF738AEE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FE922DF9-E533-4310-AEE4-6BDAF738AEE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FE922DF9-E533-4310-AEE4-6BDAF738AEE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA4EB787-D8DB-413C-922B-64A3192C006D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA4EB787-D8DB-413C-922B-64A3192C006D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA4EB787-D8DB-413C-922B-64A3192C006D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA4EB787-D8DB-413C-922B-64A3192C006D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
