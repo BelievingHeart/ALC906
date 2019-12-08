@@ -10,28 +10,36 @@
         <!-- Header -->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <!-- Legends -->
         <StackPanel Orientation="Horizontal" Grid.Row="0">
             <StackPanel Orientation="Horizontal" Margin="10 0">
-                <Border Width="40" Margin="2" Background="Chartreuse"/>
-                <TextBlock Text=" OK"/>
-            </StackPanel> <StackPanel Orientation="Horizontal" Margin="10 0">
-                <Border Width="40" Margin="2" Background="Red"/>
-                <TextBlock Text=" NG"/>
+                <Border Width="40" Margin="2" Background="Chartreuse" />
+                <TextBlock Text=" OK" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="10 0">
+                <Border Width="40" Margin="2" Background="Red" />
+                <TextBlock Text=" NG" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="10 0">
                 <Border Width="40" Margin="2" Background="Aqua" />
                 <TextBlock Text=" Empty" />
             </StackPanel>
         </StackPanel>
-        
-        <faiItemsTable:HeaderRowView x:Name="PART_HeaderRow" Grid.Row="1"/>
-        <!-- Values -->
-        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Grid.Row="2">
-            <StackPanel x:Name="PART_ItemsStack" />
+
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="0 0 50 0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <faiItemsTable:HeaderRowView x:Name="PART_HeaderRow" Grid.Row="0" Background="{DynamicResource PrimaryHueDarkBrush}" Foreground="White"/>
+                <!-- Values -->
+                <ScrollViewer VerticalScrollBarVisibility="Visible" Grid.Row="1">
+                    <StackPanel x:Name="PART_ItemsStack" />
+                </ScrollViewer>
+            </Grid>
         </ScrollViewer>
     </Grid>
 </UserControl>

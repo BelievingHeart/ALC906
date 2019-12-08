@@ -395,6 +395,9 @@ namespace Core.ViewModels.Application
                     CurrentArrivedSocket2D = CavityType.Cavity2;
                     LogPlcMessage("2D right socket arrived");
                     break;
+                default:
+                    LogPlcMessage($"Command ID {commandId} received");
+                    break;
             }
         }
 

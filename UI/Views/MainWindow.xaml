@@ -19,7 +19,7 @@
         TextOptions.TextRenderingMode="Auto"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
-        MinHeight="800" MinWidth="1000" Closed="CleanupApplication" Loaded="OnMainWindowLoaded"
+        MinHeight="300" MinWidth="1000" Closed="CleanupApplication" Loaded="OnMainWindowLoaded"
         Title="CYGIA ALC-906" WindowStyle="None">
     <DockPanel>
         <!-- Drag border -->
