@@ -60,7 +60,7 @@ namespace UI.Views.FaiItem.FaiItemsTable
         {
             switch (productLevel)
             {
-                case ProductLevel.Ok:
+                case ProductLevel.OK:
                     return new SolidColorBrush(Colors.Chartreuse);
                 case ProductLevel.Empty:
                     return new SolidColorBrush(Colors.Aqua);

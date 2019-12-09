@@ -16,7 +16,7 @@ namespace Core.CsvSerializer
             _csvPath = UpdateSerializePath();
         }
 
-        public void Serialize(IEnumerable<ICsvColumnElement> items, string lineName, bool shouldSerialize = true, IEnumerable<string> filters = null)
+        public void Serialize(IEnumerable<ICsvColumnElement> items, string lineName, string resultName = null, bool shouldSerialize = true, IEnumerable<string> filters = null)
         {
             if(!shouldSerialize) return;
 
@@ -27,6 +27,7 @@ namespace Core.CsvSerializer
             if (Header == null) InitHeader(csvColumnElements.Select(item => item.CsvName));
 
             var line = csvColumnElements.Select(item => item.Value.ToString("f4")).ToList();
+            if(resultName!=null)line.Add(resultName);
             line.Insert(0, lineName);
             var csvLine = string.Join(",", line);
 

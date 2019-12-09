@@ -69,5 +69,20 @@ namespace Core.Helpers
             output.FaiResults = result3D.ItemExists? result3D.FaiResults : new Dictionary<string, double>();
             return output;
         }
+
+        public static List<HImage> ToHImages(this IEnumerable<HObject> objects)
+        {
+            return objects.Select(HobjectToHimage).ToList();
+        }
+        
+        private static HImage HobjectToHimage(HObject hobject)
+        {
+            HTuple pointer, type, width, height;
+            HImage output = new HImage();
+            HOperatorSet.GetImagePointer1(hobject, out pointer, out type, out width, out height);
+            output.GenImage1(type, width, height, pointer);
+
+            return output;
+        }
     }
 }

@@ -22,16 +22,15 @@ using Core.ViewModels.Results;
 using Core.ViewModels.Summary;
 using CYG906ALC.ALG;
 using HalconDotNet;
-using HKCameraDev.Core.IoC.Interface;
-using HKCameraDev.Core.ViewModels.Camera;
+using HKCamera;
 using I40_3D_Test;
 using LJX8000.Core.ViewModels.Controller;
 using PLCCommunication.Core.Enums;
 using PLCCommunication.Core.ViewModels;
+using PLS;
 using WPFCommon.Commands;
 using WPFCommon.Helpers;
 using WPFCommon.ViewModels.Base;
-using CameraTriggerSourceType = HKCameraDev.Core.Enums.CameraTriggerSourceType;
 using CavityType = Core.Enums.SocketType;
 
 namespace Core.ViewModels.Application
@@ -65,8 +64,17 @@ namespace Core.ViewModels.Application
         /// </summary>
         private readonly Dictionary<string, List<HImage>> _laserImageBuffers = new Dictionary<string, List<HImage>>();
 
-        public GraphicsPackViewModel Graphics2DLeft { get; set; } = new GraphicsPackViewModel();
-        public GraphicsPackViewModel Graphics2DRight { get; set; } = new GraphicsPackViewModel();
+        public GraphicsPackViewModel Graphics2DLeft
+        {
+            get { return _graphics2DLeft; }
+            set { _graphics2DLeft = value; }
+        }
+
+        public GraphicsPackViewModel Graphics2DRight
+        {
+            get { return _graphics2DRight; }
+            set { _graphics2DRight = value; }
+        }
 
         public GraphicsPackViewModel Graphics3DLeft { get; set; } = new GraphicsPackViewModel();
         public GraphicsPackViewModel Graphics3DRight { get; set; } = new GraphicsPackViewModel();
@@ -106,7 +114,6 @@ namespace Core.ViewModels.Application
 
         protected ApplicationViewModel()
         {
-            InitContainer();
             CurrentApplicationPage = ApplicationPageType.Home;
             PlcMessageList = new ObservableCollection<LoggingMessageItem>();
             EnableSynchronization();
@@ -139,42 +146,15 @@ namespace Core.ViewModels.Application
         private void OnLazyTimerClicked(object sender, EventArgs e)
         {
             // Clear messages if overflows
-            lock (_lockerOfPlcMessageList)
-            {
-                ClearMessagesIfOverflows(PlcMessageList, 100);
-            }
-
-            lock (_lockerOfRoutineMessageList)
-            {
-                ClearMessagesIfOverflows(RoutineMessageList, 100);
-            }
-
-            GenerateSummaryNameList();
-            ReadSelectedSummary();
-        }
-
-        public void ReadSelectedSummary()
-        {
-            if (string.IsNullOrEmpty(SelectedSummaryName))
-            {
-                SelectedSummary = SummaryCurrentHour;
-            }
-            else
-            {
-                SelectedSummary = AutoSerializableHelper.LoadAutoSerializable<SummaryViewModel>(
-                    DirectoryConstants.SummaryDirToday,
-                    SelectedSummaryName);
-            }
-        }
-
-        /// <summary>
-        /// Scan disk and add the existing hour summary of today to list
-        /// </summary>
-        private void GenerateSummaryNameList()
-        {
-            Directory.CreateDirectory(DirectoryConstants.SummaryDirToday);
-            var xmls = Directory.GetFiles(DirectoryConstants.SummaryDirToday);
-            SummaryNames = xmls.Select(Path.GetFileNameWithoutExtension).ToList();
+//            lock (_lockerOfPlcMessageList)
+//            {
+//                ClearMessagesIfOverflows(PlcMessageList, 100);
+//            }
+//
+//            lock (_lockerOfRoutineMessageList)
+//            {
+//                ClearMessagesIfOverflows(RoutineMessageList, 100);
+//            }
         }
 
 
@@ -195,23 +175,6 @@ namespace Core.ViewModels.Application
             }
         }
 
-        /// <summary>
-        /// Load summaries of the production line
-        /// </summary>
-        private void LoadProductionLineSummaries()
-        {
-            // Today
-            SummaryToday =
-                AutoSerializableHelper.LoadAutoSerializable<SummaryViewModel>(DirectoryConstants.SummaryDirToday,
-                    "Today");
-            SummaryToday.ShouldAutoSerialize = true;
-
-            // Current hour
-            SummaryCurrentHour = AutoSerializableHelper.LoadAutoSerializable<SummaryViewModel>(
-                DirectoryConstants.SummaryDirToday,
-                TimeHelper.CurrentHour);
-            SummaryCurrentHour.ShouldAutoSerialize = true;
-        }
 
         private void ClearLaserImagesForNewRound()
         {
@@ -241,11 +204,6 @@ namespace Core.ViewModels.Application
             }
         }
 
-        private void InitContainer()
-        {
-            HKCameraDev.Core.IoC.IoC.Kernel.Bind<IHKCameraLibLogger>().ToConstant(new CameraMessageLogger());
-        }
-
 
         private void SetupServer()
         {
@@ -254,7 +212,7 @@ namespace Core.ViewModels.Application
                 IpAddress = IPAddress.Parse("192.168.100.100"),
                 Port = 4000
             };
-            Server.AutoRunStartRequested += OnNewRoundStarted;
+            Server.NewRunStarted += OnNewRunStarted;
             Server.AutoRunStopRequested += () => LogPlcMessage("Auto-mode-stop requested from plc");
             Server.InitRequested += OnPlcInitRequested;
             Server.ClientHooked += OnPlcHooked;
@@ -331,9 +289,9 @@ namespace Core.ViewModels.Application
             LogPlcMessage(socket.RemoteEndPoint + " is hooked");
         }
 
-        private void OnNewRoundStarted()
+        private void OnNewRunStarted()
         {
-            LogPlcMessage("Auto-mode-start requested from plc");
+            LogPlcMessage("New run starts");
             ClearLaserImagesForNewRound();
             Enqueue2DImagesFromPreviousRound();
             lock (_lockerOfRightSocketIndexSinceReset2D)
@@ -353,16 +311,23 @@ namespace Core.ViewModels.Application
             lock (_lockerOfResultQueues2D)
             {
                 var lastInLeft = _resultQueues2D[CavityType.Cavity1].LastOrDefault();
+                var lastInRight = _resultQueues2D[CavityType.Cavity2].LastOrDefault();
+                if (lastInLeft == null && lastInRight != null || lastInLeft != null && lastInRight == null)
+                    throw new InvalidOperationException("Result of one cavity is missing");
                 var isFirstRoundAfterReset = lastInLeft == null;
-                if (isFirstRoundAfterReset) return;
+                if (isFirstRoundAfterReset)
+                {
+                    return;
+                }
 
-                lastInLeft = _resultQueues2D[CavityType.Cavity1].Dequeue();
-                _resultQueues2D[CavityType.Cavity1].Clear();
-                _resultQueues2D[CavityType.Cavity1].Enqueue(lastInLeft);
+                lock (_lockerOfResultQueues2D)
+                {
+                    _graphics2DLeft = _resultQueues2D[CavityType.Cavity1].Dequeue();
+                    Trace.Assert(_resultQueues2D[CavityType.Cavity1].Count == 0);
 
-                var lastInRight = _resultQueues2D[CavityType.Cavity2].Dequeue();
-                _resultQueues2D[CavityType.Cavity2].Clear();
-                _resultQueues2D[CavityType.Cavity2].Enqueue(lastInRight);
+                    _graphics2DRight = _resultQueues2D[CavityType.Cavity2].Dequeue();
+                    Trace.Assert(_resultQueues2D[CavityType.Cavity2].Count == 0);
+                }
             }
         }
 
@@ -388,12 +353,10 @@ namespace Core.ViewModels.Application
             switch (commandId)
             {
                 case PlcMessagePackConstants.CommandIdLeftSocketArrived:
-                    CurrentArrivedSocket2D = CavityType.Cavity1;
-                    LogPlcMessage("2D left socket arrived");
+                    OnCavity1Arrived2D();
                     break;
                 case PlcMessagePackConstants.CommandIdRightSocketArrived:
-                    CurrentArrivedSocket2D = CavityType.Cavity2;
-                    LogPlcMessage("2D right socket arrived");
+                    OnCavity2Arrived2D();
                     break;
                 default:
                     LogPlcMessage($"Command ID {commandId} received");
@@ -401,18 +364,34 @@ namespace Core.ViewModels.Application
             }
         }
 
+        private void OnCavity1Arrived2D()
+        {
+            lock (_lockerOfCurrentArrivedSocket2D)
+            {
+                CurrentArrivedSocket2D = CavityType.Cavity1;
+            }
+
+            LogPlcMessage("2D left socket arrived");
+        }
+
+        private void OnCavity2Arrived2D()
+        {
+            lock (_lockerOfCurrentArrivedSocket2D)
+            {
+                CurrentArrivedSocket2D = CavityType.Cavity2;
+            }
+
+            LogPlcMessage("2D right socket arrived");
+            ResultReady2D = ResultStatus.Waiting;
+        }
+
         private void SetupCameras()
         {
-            HKCameraManager.ScannedForAttachedCameras();
-            TopCamera = HKCameraManager.AttachedCameras.First(cam => cam.Name == NameConstants.TopCameraName);
-            TopCamera.ImageBatchSize = 6;
-            TopCamera.BatchImageReceived += ProcessImages2DFireForget;
-
-
-            // TODO: remove the following lines
-            TopCamera.IsOpened = true;
-            TopCamera.IsGrabbing = true;
-            TopCamera.TriggerSourceType = CameraTriggerSourceType.Line0;
+            TopCamera = new HKCameraViewModel {ImageBatchSize = 6};
+            TopCamera.ImageBatchCollected += ProcessImages2D;
+            TopCamera.Open();
+            TopCamera.SetTriggerToLine0();
+            TopCamera.StartGrabbing();
         }
 
         private void SetupLaserControllers()
@@ -527,6 +506,8 @@ namespace Core.ViewModels.Application
 
         private List<HImage> _imagesToSerialize3dLeft;
         private int _config2dDirIndex;
+        private GraphicsPackViewModel _graphics2DLeft = new GraphicsPackViewModel();
+        private GraphicsPackViewModel _graphics2DRight = new GraphicsPackViewModel();
 
         /// <summary>
         /// Left socket finishing scanning indicates
@@ -549,8 +530,10 @@ namespace Core.ViewModels.Application
                 // in this round is already available at the start of this round
                 Combine2D3DResults();
                 SubmitProductLevels();
-                UpdateSummaries();
-                Task.Run(() => SerializeImagesAndCsv(Graphics2DLeft.Images, Graphics2DRight.Images, _imagesToSerialize3dLeft,
+
+                UiDispatcher.InvokeAsync(UpdateSummaries);
+                Task.Run(() => SerializeImagesAndCsv(Graphics2DLeft.Images, Graphics2DRight.Images,
+                    _imagesToSerialize3dLeft,
                     _imagesToSerialize3dRight, FaiItemsCavity1, FaiItemsCavity2));
             }
 
@@ -560,11 +543,8 @@ namespace Core.ViewModels.Application
 
         private void UpdateSummaries()
         {
-            SummaryToday.Update(Cavity1ProductLevel);
-            SummaryToday.Update(Cavity2ProductLevel);
-
-            SummaryCurrentHour.Update(Cavity1ProductLevel);
-            SummaryCurrentHour.Update(Cavity2ProductLevel);
+            if (Cavity1ProductLevel != ProductLevel.Empty) Summary.UpdateCurrentSummary(Cavity1ProductLevel.ToString());
+            if (Cavity2ProductLevel != ProductLevel.Empty) Summary.UpdateCurrentSummary(Cavity2ProductLevel.ToString());
         }
 
         /// <summary>
@@ -578,25 +558,12 @@ namespace Core.ViewModels.Application
         }
 
 
- 
-
         /// <summary>
         /// Convert dictionaries from image processing units to list of fai items
         /// and display them
         /// </summary>
         private void Combine2D3DResults()
         {
-            // Update _results2D
-            lock (_lockerOfResultQueues2D)
-            {
-                // Corresponding results are put to the head of queues
-                // when new round starts
-                // No worry about this
-                Graphics2DLeft = _resultQueues2D[CavityType.Cavity1].Dequeue();
-                Graphics2DRight = _resultQueues2D[CavityType.Cavity2].Dequeue();
-            }
-
-
             var faiResultDictLeft = ConcatDictionaryNew(Graphics2DLeft.FaiResults,
                 Graphics3DLeft.FaiResults);
             var faiResultDictRight = ConcatDictionaryNew(Graphics2DRight.FaiResults,
@@ -604,7 +571,7 @@ namespace Core.ViewModels.Application
 
             // To avoid frequent context switching
             // Wrap all the UI-updating code in single Invoke block
-            UiDispatcher.Invoke(() =>
+            UiDispatcher.InvokeAsync(() =>
             {
                 // Update fai item lists using dictionaries from image processing modules
                 UpdateFaiItems(FaiItemsCavity1, faiResultDictLeft, Graphics3DLeft.ItemExists);
@@ -617,29 +584,34 @@ namespace Core.ViewModels.Application
                 OnPropertyChanged(nameof(FaiItems3DRight));
                 OnPropertyChanged(nameof(FaiItemsCavity1));
                 OnPropertyChanged(nameof(FaiItemsCavity2));
+                
+                // Ensure 2d and 3d graphics are updated with approximate time
+                OnPropertyChanged(nameof(Graphics2DLeft));
+                OnPropertyChanged(nameof(Graphics2DRight));
             });
         }
 
         private void SerializeImagesAndCsv(List<HImage> images2dCavity1, List<HImage> images2dCavity2,
-            List<HImage> images3dCavity1, List<HImage> images3dCavity2, List<FaiItem> faiItemsCavity1, List<FaiItem> faiItemsCavity2)
+            List<HImage> images3dCavity1, List<HImage> images3dCavity2, List<FaiItem> faiItemsCavity1,
+            List<FaiItem> faiItemsCavity2)
         {
             // Cavity 2
             var timestampCavity2 = SerializationHelper.SerializeImagesWith2D3DMatched(images2dCavity2, images3dCavity2,
                 ShouldSave2DImagesRight,
                 ShouldSave3DImagesRight, DirectoryConstants.ImageDirRight);
-            _serializerRight.Serialize(faiItemsCavity2, timestampCavity2);
-            _serializerAll.Serialize(faiItemsCavity2, timestampCavity2);
+            _serializerRight.Serialize(faiItemsCavity2, timestampCavity2, Cavity2ProductLevel.GetResultText());
+            _serializerAll.Serialize(faiItemsCavity2, timestampCavity2, Cavity2ProductLevel.GetResultText());
 
 
             // Cavity 1
             var timestampCavity1 = SerializationHelper.SerializeImagesWith2D3DMatched(images2dCavity1, images3dCavity1,
                 ShouldSave2DImagesLeft,
                 ShouldSave3DImagesLeft, DirectoryConstants.ImageDirLeft);
-            _serializerLeft.Serialize(faiItemsCavity1, timestampCavity1);
-            _serializerAll.Serialize(faiItemsCavity1, timestampCavity1);
-            
+            _serializerLeft.Serialize(faiItemsCavity1, timestampCavity1, Cavity1ProductLevel.GetResultText());
+            _serializerAll.Serialize(faiItemsCavity1, timestampCavity1, Cavity1ProductLevel.GetResultText());
+
             // Update tables
-            UiDispatcher.Invoke(()=>UpdateTables(timestampCavity1, timestampCavity2));
+            UiDispatcher.InvokeAsync(() => UpdateTables(timestampCavity1, timestampCavity2));
         }
 
         private void UpdateTables(string timestampCavity1, string timestampCavity2)
@@ -647,11 +619,11 @@ namespace Core.ViewModels.Application
             // Init header if necessary
             if (Table == null)
             {
-               Table = new FaiTableStackViewModel()
-               {
-                   Header = FaiItemsCavity1.Select(item => item.Name).ToList(),
-                   MaxRows = 50,
-               };
+                Table = new FaiTableStackViewModel()
+                {
+                    Header = FaiItemsCavity1.Select(item => item.Name).ToList(),
+                    MaxRows = 50,
+                };
             }
 
             // Add rows
@@ -705,7 +677,7 @@ namespace Core.ViewModels.Application
         private ProductLevel GetProductLevel(bool itemExists, IEnumerable<FaiItem> faiItems)
         {
             if (!itemExists) return ProductLevel.Empty;
-            return faiItems.Any(item => item.Rejected) ? ProductLevel.Ng2 : ProductLevel.Ok;
+            return faiItems.Any(item => item.Rejected) ? ProductLevel.Ng2 : ProductLevel.OK;
         }
 
         /// <summary>
@@ -729,7 +701,7 @@ namespace Core.ViewModels.Application
             {
                 foreach (var item in faiItems)
                 {
-                    item.ValueUnbiased = double.NaN;
+                    item.ValueUnbiased = 999;
                 }
             }
         }
@@ -759,8 +731,9 @@ namespace Core.ViewModels.Application
         /// Process 2d images from one socket and queue up the results
         /// </summary>
         /// <param name="images"></param>
-        private void ProcessImages2DFireForget(List<HImage> images)
+        private void ProcessImages2D(List<HObject> images)
         {
+            LogRoutine($"Received {images.Count} 2d images");
             if (!Server.IsAutoRunning) return;
             CavityType currentArrivedSocket2D;
             lock (_lockerOfCurrentArrivedSocket2D)
@@ -778,42 +751,53 @@ namespace Core.ViewModels.Application
             }
 
 
-            Task.Run(() =>
+            LogRoutine($"2D processing starts for {currentArrivedSocket2D}");
+            GraphicsPackViewModel result;
+            var hImages = images.ToHImages();
+            try
             {
-                LogRoutine($"2D processing starts for {currentArrivedSocket2D} socket");
-                GraphicsPackViewModel result;
-                try
-                {
-                    result = I40Check.Execute(currentArrivedSocket2D.ToChusIndex(), images);
-                }
-                catch
-                {
-                    result = GraphicsPackViewModel.Stub;
-                    result.Images = images;
-                    LogRoutine($"2D processing for {currentArrivedSocket2D} socket errored");
-                }
+                result = I40Check.Execute(currentArrivedSocket2D.ToChusIndex(), hImages);
+            }
+            catch
+            {
+                result = GraphicsPackViewModel.Stub;
+                result.Images = hImages;
+                LogRoutine($"2D processing for {currentArrivedSocket2D} errored");
+            }
 
-                lock (_lockerOfResultQueues2D)
-                {
-                    _resultQueues2D[currentArrivedSocket2D].Enqueue(result);
-                }
+            LogRoutine($"2D processing ends for {currentArrivedSocket2D}");
 
-                LogRoutine($"2D processing ends for {currentArrivedSocket2D} socket");
-            });
+            lock (_lockerOfResultQueues2D)
+            {
+                _resultQueues2D[currentArrivedSocket2D].Enqueue(result);
+                var lastInCavity1 = _resultQueues2D[CavityType.Cavity1].LastOrDefault();
+                var lastInCavity2 = _resultQueues2D[CavityType.Cavity2].LastOrDefault();
+                var all2DProcessingForThisRunIsDone = lastInCavity1 != null && lastInCavity2 != null;
+                if (all2DProcessingForThisRunIsDone)
+                {
+                    LogRoutine("All 2D images have processed");
+                    ResultReady2D = ResultStatus.Ready;
+                    Server.NotifyPlcReadyToGoNextLoop();
+                }
+            }
         }
 
         public void LogPlcMessage(string message)
         {
-            PlcMessageList.LogMessageRetryIfFailed(
-                new LoggingMessageItem {Message = message, Time = DateTime.Now.ToString("T")},
-                _lockerOfPlcMessageList, 20);
+            UiDispatcher.InvokeAsync(() =>
+            {
+                PlcMessageList.Add(
+                    new LoggingMessageItem {Message = message, Time = DateTime.Now.ToString("T")});
+            });
         }
 
         public void LogRoutine(string message)
         {
-            RoutineMessageList.LogMessageRetryIfFailed(
-                new LoggingMessageItem {Message = message, Time = DateTime.Now.ToString("T")},
-                _lockerOfRoutineMessageList, 20);
+            UiDispatcher.InvokeAsync(() =>
+            {
+                RoutineMessageList.Add(
+                    new LoggingMessageItem {Message = message, Time = DateTime.Now.ToString("T")});
+            });
         }
 
         /// <summary>
@@ -849,6 +833,16 @@ namespace Core.ViewModels.Application
             LoadProductionLineSummaries();
         }
 
+        private void LoadProductionLineSummaries()
+        {
+            var binNames = new List<string>
+            {
+                ProductLevel.OK.ToString(), ProductLevel.Ng2.ToString(), ProductLevel.Ng3.ToString(),
+                ProductLevel.Ng4.ToString(), ProductLevel.Ng5.ToString()
+            };
+            Summary = new ProductionLineSummary(DirectoryConstants.ProductionLineRecordDir, binNames);
+        }
+
         private void Scan2DConfigFolders()
         {
             var dirNamesInConfigDir = Directory.GetDirectories(DirectoryConstants.Config2DDir).Select(Path.GetFileName)
@@ -882,19 +876,17 @@ namespace Core.ViewModels.Application
         /// <summary>
         /// Disconnect cameras, lasers and plc
         /// </summary>
-        public static void Cleanup()
+        public void Cleanup()
         {
-            foreach (var camera in HKCameraManager.AttachedCameras)
-            {
-                camera.IsOpened = false;
-            }
+            TopCamera.StopGrabbing();
+            TopCamera.Close();
 
             foreach (var controller in ControllerManager.AttachedControllers)
             {
                 controller.IsConnectedHighSpeed = false;
             }
 
-            Instance.Server.Disconnect();
+            Server.Disconnect();
         }
 
 
@@ -935,7 +927,7 @@ namespace Core.ViewModels.Application
         /// <summary>
         /// 2D camera object
         /// </summary>
-        public CameraViewModel TopCamera { get; set; }
+        public HKCameraViewModel TopCamera { get; set; }
 
 
         /// <summary>
@@ -959,12 +951,6 @@ namespace Core.ViewModels.Application
         public List<FaiItem> FaiItems3DLeft { get; set; }
         public List<FaiItem> FaiItems3DRight { get; set; }
 
-        public SummaryViewModel SummaryCurrentHour { get; set; }
-        public SummaryViewModel SelectedSummary { get; set; }
-        public SummaryViewModel SummaryToday { get; set; }
-        public List<string> SummaryNames { get; set; }
-
-        public string SelectedSummaryName { get; set; }
 
         public I40Check I40Check { get; set; }
 
@@ -1004,6 +990,10 @@ namespace Core.ViewModels.Application
         public FaiTableStackViewModel Table { get; set; }
 
         public static Dispatcher UiDispatcher => System.Windows.Application.Current.Dispatcher;
+
+        public ProductionLineSummary Summary { get; set; }
+
+        public ResultStatus ResultReady2D { get; set; }
 
         #endregion
     }

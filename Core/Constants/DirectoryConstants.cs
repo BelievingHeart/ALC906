@@ -30,9 +30,9 @@ namespace Core.Constants
         
         public static string FaiConfigDir3DLeft => Path.Combine(FaiConfigDir3D, "Cavity1");
         public static string FaiConfigDir3DRight => Path.Combine(FaiConfigDir3D, "Cavity2");
-        public static string SummaryDirToday => Path.Combine(ProductionLineRecordDir, DateTime.Now.ToString("MM-dd"));
         
         public static string FaiNamesDir => Path.Combine(FaiConfigDir, "FaiNames");
+        public static string ErrorLogDir => Path.Combine(Directory.GetCurrentDirectory(), "Log");
         
         
 

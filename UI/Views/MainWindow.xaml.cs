@@ -25,7 +25,7 @@ namespace UI.Views
 
         private void CleanupApplication(object sender, EventArgs eventArgs)
         {
-            ApplicationViewModel.Cleanup();
+            ApplicationViewModel.Instance.Cleanup();
         }
 
         private void OnMainWindowLoaded(object sender, RoutedEventArgs e)

@@ -99,9 +99,9 @@
                 </Grid.RowDefinitions>
 
                 <!-- Basic info view -->
-                <home:BasicInfoView Grid.Row="0" />
+                <home:BasicInfoView Grid.Row="0" Yield="{Binding ElementName=SummaryView, Path=ItemToDisplay.Yield}" Uph="{Binding ElementName=SummaryView, Path=ItemToDisplay.TotalCount}"/>
                 <!-- Bin views -->
-                <bins:SummaryView Grid.Row="1" DataContext="{Binding Path=SelectedSummary}" />
+                <bins:SummaryView Grid.Row="1" x:Name="SummaryView" Summary="{Binding Summary}"/>
             </Grid>
 
             <!-- Left socket preview -->

@@ -2,37 +2,35 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Xml;
-using System.Xml.Serialization;
 using WPFCommon.ViewModels.Base;
 
 namespace PLS
 {
-    [Serializable]
     public class ProductionLineSummaryItem : ViewModelBase
     {
         public event Action<Dictionary<string, int>> BinsIncremented;
-        
+
         /// <summary>
         /// Time when the item is created
         /// </summary>
-        [XmlAttribute] public DateTime TimeCreated { get; set; }
+        public DateTime TimeCreated { get; set; }
+
         /// <summary>
         /// The most recent time when the item get updated
         /// </summary>
-        [XmlAttribute] public DateTime TimeUpdated { get; set; }
+        public DateTime TimeUpdated { get; set; }
 
         /// <summary>
         /// Bin name and count of corresponding bin
         /// </summary>
-        [XmlAttribute]
+
         public Dictionary<string, int> BinsAndCounts { get; set; } = new Dictionary<string, int>();
 
         /// <summary>
         /// Name of the summary,
         /// for example, 23 for summary from 23:00 to 24:00
         /// </summary>
-        [XmlAttribute]
+
         public string SummaryName { get; set; }
 
         /// <summary>
@@ -43,7 +41,7 @@ namespace PLS
         /// <summary>
         /// The name of which bin that will store the count of ok products
         /// </summary>
-        [XmlAttribute]
+
         public string OkKey { get; set; } = "OK";
 
 
@@ -52,7 +50,7 @@ namespace PLS
             get
             {
                 var workingSeconds = (TimeUpdated - TimeCreated).Seconds;
-                var unitsPerSecond = TotalCount / (double)workingSeconds;
+                var unitsPerSecond = TotalCount / (double) workingSeconds;
                 return (int) unitsPerSecond * 3600;
             }
         }
@@ -60,7 +58,7 @@ namespace PLS
         /// <summary>
         /// Count-of-OK / Count-of-total
         /// </summary>
-        [XmlIgnore]
+
         public double Yield
         {
             get
@@ -80,6 +78,9 @@ namespace PLS
             }
         }
 
+
+        public int NgCount => TotalCount - BinsAndCounts[OkKey];
+
         public ProductionLineSummaryItem()
         {
             TimeCreated = DateTime.Now;
@@ -88,31 +89,34 @@ namespace PLS
         /// <summary>
         /// Increment bin values
         /// </summary>
-        /// <param name="values"></param>
+        /// <param name="binName"></param>
         /// <exception cref="KeyNotFoundException">
         /// </exception>
-        public void IncrementBins(Dictionary<string, int> values)
+        public void IncrementBins(string binName)
         {
-            foreach (var key in values.Keys)
-            {
-                if (!BinsAndCounts.Keys.Contains(key))
-                    throw new KeyNotFoundException($"Can not find a bin named {key}");
-                BinsAndCounts[key] = values[key];
-            }
+            if (!BinsAndCounts.Keys.Contains(binName))
+                throw new KeyNotFoundException($"Can not find a bin named {binName}");
+            BinsAndCounts[binName] = BinsAndCounts[binName] + 1;
+
 
             TimeUpdated = DateTime.Now;
             OnPropertyChanged(nameof(TotalCount));
             OnPropertyChanged(nameof(UnitsPerHour));
+            OnPropertyChanged(nameof(NgCount));
             OnBinsIncremented(BinsAndCounts);
         }
 
         public void Serialize(string serializationDir)
         {
-            using (var fs = new FileStream(Path.Combine(serializationDir, SummaryName + ".xml")
-                , FileMode.Create))
+            using (var fs = new StreamWriter(Path.Combine(serializationDir, SummaryName + ".summary")))
             {
-                var serializer = new XmlSerializer(typeof(ProductionLineSummaryItem));
-                serializer.Serialize(fs, this);
+                foreach (var key in BinsAndCounts.Keys)
+                {
+                    fs.WriteLine($"{key}={BinsAndCounts[key]}");
+                }
+
+                fs.WriteLine($"TimeCreated<>{TimeCreated}");
+                fs.WriteLine($"TimeUpdated<>{TimeUpdated}");
             }
         }
 
@@ -122,27 +126,46 @@ namespace PLS
             if (!binNames.Contains(okKey))
                 throw new ArgumentException($"{okKey} can not be found in {nameof(binNames)}");
 
-            var filePath = Path.Combine(dir, name + ".xml");
-            ProductionLineSummaryItem output;
+            var filePath = Path.Combine(dir, name + ".summary");
+            var binsAndCounts = new Dictionary<string, int>();
+            foreach (var binName in binNames)
+            {
+                binsAndCounts[binName] = 0;
+            }
+
+            var output = new ProductionLineSummaryItem()
+                {SummaryName = name, BinsAndCounts = binsAndCounts, OkKey = okKey};
             // Load if exists
             if (File.Exists(filePath))
             {
-                using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+                var lines = File.ReadAllLines(filePath);
+                foreach (var line in lines)
                 {
-                    var serializer = new XmlSerializer(typeof(ProductionLineSummaryItem));
-                    output = (ProductionLineSummaryItem) serializer.Deserialize(fs);
+                    // dictionary element
+                    if (line.Contains("="))
+                    {
+                        var indexOfSeparator = line.IndexOf("=");
+                        var binName = line.Substring(0, indexOfSeparator);
+                        var binCountText = line.Substring(indexOfSeparator + 1, line.Length-indexOfSeparator-1);
+                        var binCount = int.Parse(binCountText);
+                        output.BinsAndCounts[binName] = binCount;
+                    }
+                    else if (line.Contains("<>")) // Property
+                    {
+                        var indexOfSeparator = line.IndexOf("<>");
+                        var propName = line.Substring(0, indexOfSeparator);
+                        var content = line.Substring(indexOfSeparator + 2, line.Length-indexOfSeparator-2);
+                        if(propName == nameof(TimeCreated))
+                        {
+                            output.TimeCreated = DateTime.Parse(content);
+                        }
+                        
+                        if(propName == nameof(TimeUpdated))
+                        {
+                            output.TimeUpdated = DateTime.Parse(content);
+                        }
+                    }
                 }
-            }
-            else // Create one
-            {
-                var binsAndCounts = new Dictionary<string, int>();
-                foreach (var binName in binNames)
-                {
-                    binsAndCounts[binName] = 0;
-                }
-
-                output = new ProductionLineSummaryItem()
-                    {SummaryName = name, BinsAndCounts = binsAndCounts, OkKey = okKey};
             }
 
 

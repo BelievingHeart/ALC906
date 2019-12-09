@@ -89,6 +89,7 @@
     <Compile Include="Enums\CameraType.cs" />
     <Compile Include="Enums\MeasurementDecision.cs" />
     <Compile Include="Enums\ProductLevel.cs" />
+    <Compile Include="Enums\ResultStatus.cs" />
     <Compile Include="Enums\SocketType.cs" />
     <Compile Include="Enums\StringMatrixType.cs" />
     <Compile Include="Helpers\FaiItemsHelper.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="Helpers\I40Helper.cs" />
     <Compile Include="Helpers\ObservableCollectionHelper.cs" />
     <Compile Include="Helpers\PlcMessagePackHelper.cs" />
+    <Compile Include="Helpers\ProductLevelHelper.cs" />
     <Compile Include="Helpers\SerializationHelper.cs" />
     <Compile Include="Helpers\SocketTypeHelper.cs" />
     <Compile Include="Helpers\StringMatrixHelper.cs" />
@@ -106,7 +108,6 @@
     <Compile Include="ImageProcessing\FindLineParam.cs" />
     <Compile Include="ImageProcessing\IMeasurementProcedure2D.cs" />
     <Compile Include="IoC\IoC.cs" />
-    <Compile Include="IoC\Loggers\CameraMessageLogger.cs" />
     <Compile Include="IoC\Loggers\Logger.cs" />
     <Compile Include="IoC\Loggers\LaserControllerLibLogger.cs" />
     <Compile Include="IoC\PlcErrorParser\ErrorMessageItem.cs" />
@@ -130,9 +131,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\HKCameraDev\HKCameraDev.Core\HKCameraDev.Core.csproj">
-      <Project>{43275736-8146-432F-9BA0-FDCD1EDCDA8A}</Project>
-      <Name>HKCameraDev.Core</Name>
+    <ProjectReference Include="..\..\HKCamera\HKCamera\HKCamera.csproj">
+      <Project>{ae5de0e5-be76-4753-807f-62384ef1b0de}</Project>
+      <Name>HKCamera</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\LJX8000Dev\LJX8000.Core\LJX8000.Core.csproj">
       <Project>{43275736-8146-432f-9ba0-fdcd1edcda8a}</Project>
@@ -149,6 +150,10 @@
     <ProjectReference Include="..\..\WPFCommon\WPFCommon\WPFCommon.csproj">
       <Project>{7d6be37f-d81b-4a5e-a1a0-a8d4381f0536}</Project>
       <Name>WPFCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PLS\PLS.csproj">
+      <Project>{ea4eb787-d8db-413c-922b-64a3192c006d}</Project>
+      <Name>PLS</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

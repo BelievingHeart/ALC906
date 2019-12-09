@@ -39,10 +39,10 @@
             <TextBlock Text="1234" HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="20" />
         </materialDesign:ColorZone>
              <materialDesign:ColorZone Grid.Column="1" Grid.Row="2" Background="{StaticResource PrimaryHueLightBrush}" Height="60" BorderBrush="Gray" BorderThickness="1">
-            <TextBlock Text="0.0%" HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="20" />
+            <TextBlock x:Name="PART_YieldTextBlock" HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="20" />
         </materialDesign:ColorZone>
              <materialDesign:ColorZone Grid.Column="1" Grid.Row="3" Background="{StaticResource PrimaryHueLightBrush}" Height="60" BorderBrush="Gray" BorderThickness="1">
-                 <TextBlock Text="10000" HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="20" />
+                 <TextBlock x:Name="PART_UphTextBlock" HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="20" />
              </materialDesign:ColorZone>
         
     </Grid>

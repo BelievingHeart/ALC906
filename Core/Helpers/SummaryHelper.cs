@@ -15,7 +15,7 @@ namespace Core.Helpers
                     case ProductLevel.Empty:
                         summary.EmptyCount++;
                         break;
-                    case ProductLevel.Ok:
+                    case ProductLevel.OK:
                         summary.OkCount++;
                         break;
                     case ProductLevel.Ng2:

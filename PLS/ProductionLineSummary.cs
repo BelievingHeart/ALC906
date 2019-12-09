@@ -62,7 +62,7 @@ namespace PLS
         /// </summary>
         public string CurrentHour
         {
-            get { return DateTime.Now.ToString("hh"); }
+            get { return DateTime.Now.ToString("HH"); }
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace PLS
         }
 
 
-        public void UpdateCurrentSummary(Dictionary<string, int> summaryDict)
+        public void UpdateCurrentSummary(string binName)
         {
             // If hour changed
             if (CurrentHourChanged)
@@ -95,8 +95,8 @@ namespace PLS
                 }
             }
 
-            CurrentSummaryItem.IncrementBins(summaryDict);
-            TodaySummaryItem.IncrementBins(summaryDict);
+            CurrentSummaryItem.IncrementBins(binName);
+            TodaySummaryItem.IncrementBins(binName);
 
             OnCurrentSummaryItemUpdated(CurrentSummaryItem);
         }
@@ -139,6 +139,7 @@ namespace PLS
 
         private void CreateAllSummaries()
         {
+            UpdatePreviousHour();
             CreateDirToday();
             CurrentSummaryItem = LoadCurrentSummaryItem();
 
@@ -169,19 +170,15 @@ namespace PLS
         /// <returns></returns>
         private List<ProductionLineSummaryItem> LoadPastSummaryItems()
         {
-            var currentFileName = CurrentHour + ".xml";
+            var fileNameOfCurrentHourItem = CurrentHour + ".summary";
             var output = new List<ProductionLineSummaryItem>();
-            var xmlsInTodaysDir = Directory.GetFiles(SerializationDirToday).Where(file => file.EndsWith("xml"));
-            foreach (var xml in xmlsInTodaysDir)
+            var summaryFileNames = Directory.GetFiles(SerializationDirToday).Where(file => file.EndsWith("summary")).Select(Path.GetFileName);
+            var fileNamesWithoutExt = summaryFileNames.Select(name => name.Substring(0, name.IndexOf(".")));
+            foreach (var fileName in fileNamesWithoutExt)
             {
-                if (xml.Contains(currentFileName)) continue;
+                if (fileName.Contains(fileNameOfCurrentHourItem)) continue;
 
-                ProductionLineSummaryItem item;
-                using (var fs = new FileStream(xml, FileMode.Open, FileAccess.Read))
-                {
-                    var serializer = new XmlSerializer(typeof(ProductionLineSummaryItem));
-                    item = (ProductionLineSummaryItem) serializer.Deserialize(fs);
-                }
+                var item = ProductionLineSummaryItem.LoadFromDisk(SerializationDirToday, fileName, BinNames, _okKey);
 
                 output.Add(item);
             }

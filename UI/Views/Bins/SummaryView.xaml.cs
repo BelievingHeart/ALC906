@@ -115,7 +115,7 @@ namespace UI.Views.Bins
         /// <param name="binsAndCounts"></param>
         private void DisplaySummaryItem(Dictionary<string, int> binsAndCounts)
         {
-            PART_OkCountTextBlock.Text = binsAndCounts[ProductLevel.Ok.ToString()].ToString();
+            PART_OkCountTextBlock.Text = binsAndCounts[ProductLevel.OK.ToString()].ToString();
             PART_Ng2CountLabel.Content = binsAndCounts[ProductLevel.Ng2.ToString()];
             PART_Ng3CountLabel.Content = binsAndCounts[ProductLevel.Ng3.ToString()];
             PART_Ng4CountLabel.Content = binsAndCounts[ProductLevel.Ng4.ToString()];
