@@ -733,7 +733,7 @@ namespace Core.ViewModels.Application
         /// Process 2d images from one socket and queue up the results
         /// </summary>
         /// <param name="images"></param>
-        private void ProcessImages2D(List<HObject> images)
+        private void ProcessImages2D(List<HImage> images)
         {
             LogRoutine($"Received {images.Count} 2d images");
             if (!Server.IsAutoRunning) return;
@@ -755,14 +755,14 @@ namespace Core.ViewModels.Application
 
             LogRoutine($"2D processing starts for {currentArrivedSocket2D}");
             GraphicsPackViewModel result;
-            var hImages = images.ToHImages();
+            
             try
             {
-                result = I40Check.Execute(currentArrivedSocket2D.ToChusIndex(), hImages);
+                result = I40Check.Execute(currentArrivedSocket2D.ToChusIndex(), images);
             }
             catch
             {
-                result = new GraphicsPackViewModel {Images = hImages, FaiResults = GenErrorFaiResults(_names2d)};
+                result = new GraphicsPackViewModel {Images = images, FaiResults = GenErrorFaiResults(_names2d)};
                 LogRoutine($"2D processing for {currentArrivedSocket2D} errored");
             }
 
