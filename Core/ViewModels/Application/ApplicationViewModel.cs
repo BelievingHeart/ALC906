@@ -508,6 +508,8 @@ namespace Core.ViewModels.Application
         private int _config2dDirIndex;
         private GraphicsPackViewModel _graphics2DLeft = new GraphicsPackViewModel();
         private GraphicsPackViewModel _graphics2DRight = new GraphicsPackViewModel();
+        private List<string> _names2d;
+        private List<string> _names3d;
 
         /// <summary>
         /// Left socket finishing scanning indicates
@@ -571,7 +573,7 @@ namespace Core.ViewModels.Application
 
             // To avoid frequent context switching
             // Wrap all the UI-updating code in single Invoke block
-            UiDispatcher.InvokeAsync(() =>
+            UiDispatcher.Invoke(() =>
             {
                 // Update fai item lists using dictionaries from image processing modules
                 UpdateFaiItems(FaiItemsCavity1, faiResultDictLeft, Graphics3DLeft.ItemExists);
@@ -635,20 +637,20 @@ namespace Core.ViewModels.Application
         private void LoadFaiItems()
         {
             // load all fai names 
-            List<string> names2d = Get2DFaiNames();
-            List<string> names3d = ParseFaiNames(DirectoryConstants.FaiNamesDir, NameConstants.FaiNamesFile3D);
+            _names2d = Get2DFaiNames();
+            _names3d = ParseFaiNames(DirectoryConstants.FaiNamesDir, NameConstants.FaiNamesFile3D);
 
             // Load fai items configs
-            FaiItems2DLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(names2d,
+            FaiItems2DLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(_names2d,
                     DirectoryConstants.FaiConfigDir2DLeft)
                 .ToList();
-            FaiItems2DRight = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(names2d,
+            FaiItems2DRight = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(_names2d,
                     DirectoryConstants.FaiConfigDir2DRight)
                 .ToList();
-            FaiItems3DLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(names3d,
+            FaiItems3DLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(_names3d,
                     DirectoryConstants.FaiConfigDir3DLeft)
                 .ToList();
-            FaiItems3DRight = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(names3d,
+            FaiItems3DRight = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(_names3d,
                     DirectoryConstants.FaiConfigDir3DRight)
                 .ToList();
 
@@ -760,8 +762,7 @@ namespace Core.ViewModels.Application
             }
             catch
             {
-                result = GraphicsPackViewModel.Stub;
-                result.Images = hImages;
+                result = new GraphicsPackViewModel {Images = hImages, FaiResults = GenErrorFaiResults(_names2d)};
                 LogRoutine($"2D processing for {currentArrivedSocket2D} errored");
             }
 
@@ -864,7 +865,16 @@ namespace Core.ViewModels.Application
             I40Check = new I40Check(i40ConfigDir2d, "I40");
         }
 
+        private Dictionary<string, double> GenErrorFaiResults(List<string> faiNames)
+        {
+            var output = new Dictionary<string, double>();
+            foreach (var name in faiNames)
+            {
+                output[name] = 999;
+            }
 
+            return output;
+        }
         /// <summary>
         /// Init before any binding taking place can avoid bazaar <see cref="TypeInitializationException"/> exceptions
         /// </summary>
