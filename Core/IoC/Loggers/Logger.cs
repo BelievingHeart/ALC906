@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using Core.Constants;
+using Core.ViewModels.Message;
 using MaterialDesignThemes.Wpf;
 using WPFCommon.ViewModels.Base;
 
@@ -14,8 +16,16 @@ namespace Core.IoC.Loggers
         private string CurrentDate => DateTime.Today.ToShortDateString();
 
         
-        private static Logger _instance = new Logger(Path.Combine(Directory.GetCurrentDirectory(), "Log"));
+        private static Logger _instance = new Logger(DirectoryConstants.ErrorLogDir)
+        {
+            PlcMessageList = new FixedSizeMessageList(DirectoryConstants.ErrorLogDir, "PLC.txt"),
+            RoutineMessageList = new FixedSizeMessageList(DirectoryConstants.ErrorLogDir, "Routine.txt")
+        };
         public static Logger Instance => _instance;
+
+        public FixedSizeMessageList PlcMessageList { get; set; }
+    
+        public FixedSizeMessageList RoutineMessageList { get; set; }
         
         public void LogErrorToFile(string message)
         {
@@ -52,7 +62,16 @@ namespace Core.IoC.Loggers
         /// <summary>
         /// Used to prompt user when the machine state is changed
         /// </summary>
-        public ISnackbarMessageQueue StateChangedMessageQueue { get; set; } 
+        public ISnackbarMessageQueue StateChangedMessageQueue { get; set; }
 
+        public static void LogPlcMessage(string message)
+        {
+            Instance?.PlcMessageList?.LogAsync(message);
+        }
+
+        public static void LogRoutineMessage(string message)
+        {
+            Instance?.RoutineMessageList?.LogAsync(message);
+        }
     }
 }

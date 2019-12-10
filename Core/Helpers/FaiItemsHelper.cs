@@ -20,8 +20,8 @@ namespace Core.Helpers
         public static List<FaiItem> ConcatNew(this IEnumerable<FaiItem> me, IEnumerable<FaiItem> other)
         {
             var output = new List<FaiItem>();
-            output.AddRange(me);
-            output.AddRange(other);
+            if(me!=null) output.AddRange(me);
+            if(other!=null) output.AddRange(other);
             return output;
         }
     }

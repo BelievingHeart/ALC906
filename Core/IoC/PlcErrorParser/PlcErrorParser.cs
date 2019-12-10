@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using PLCCommunication.Core.Interfaces;
 
 namespace Core.IoC.PlcErrorParser
@@ -19,8 +20,7 @@ namespace Core.IoC.PlcErrorParser
         private Dictionary<long, ErrorMessageItem> _errorLookUpTable = new Dictionary<long, ErrorMessageItem>();
         public void ParseErrorCode(long errorCode)
         {
-            // TODO: remove these lines
-            if(errorCode == 0) return;
+       
 
             var errorMessageItem = _errorLookUpTable[errorCode];
             switch (errorMessageItem.Level)
@@ -42,14 +42,14 @@ namespace Core.IoC.PlcErrorParser
 
         public PlcErrorParser(string errorSheetPath)
         {
-            var errorLines = File.ReadAllLines(errorSheetPath);
+            var errorLines = File.ReadAllLines(errorSheetPath, Encoding.GetEncoding("gb2312"));
             var errorLinesSplit = errorLines.Select(line => line.Split(','));
 
             foreach (var errorCodeAndDescription in errorLinesSplit)
             {
-                var errorCode = long.Parse(errorCodeAndDescription[3]);
-                var errorLevel = int.Parse(errorCodeAndDescription[4]);
-                var errorDescription = errorCodeAndDescription[1] + " " + errorCodeAndDescription[2];
+                var errorCode = long.Parse(errorCodeAndDescription[1]);
+                var errorLevel = int.Parse(errorCodeAndDescription[2]);
+                var errorDescription = errorCodeAndDescription[0];
                 _errorLookUpTable[errorCode] = new ErrorMessageItem {Level = errorLevel, Message = errorDescription};
             }
 

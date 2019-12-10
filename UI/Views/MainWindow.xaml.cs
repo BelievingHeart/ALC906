@@ -8,7 +8,6 @@ using System.Windows.Data;
 using System.Windows.Input;
 using Core.ViewModels.Application;
 using Core.ViewModels.MainWindow;
-using Core.ViewModels.Plc;
 
 namespace UI.Views
 {
@@ -25,13 +24,13 @@ namespace UI.Views
 
         private void CleanupApplication(object sender, EventArgs eventArgs)
         {
-            ApplicationViewModel.Instance.Cleanup();
+//            ApplicationViewModel.Instance.Cleanup();
         }
 
         private void OnMainWindowLoaded(object sender, RoutedEventArgs e)
         {
-            ApplicationViewModel.Instance.InitHardWares();
-            ApplicationViewModel.Instance.LoadFiles();
+//            ApplicationViewModel.Instance.InitHardWares();
+            ApplicationViewModel.Instance.LoadConfigs();
         }
 
 

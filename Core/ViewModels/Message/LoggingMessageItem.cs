@@ -2,7 +2,7 @@
 using System.IO;
 using WPFCommon.ViewModels.Base;
 
-namespace Core.ViewModels.Plc
+namespace Core.ViewModels.Message
 {
     public class LoggingMessageItem : ViewModelBase
     {

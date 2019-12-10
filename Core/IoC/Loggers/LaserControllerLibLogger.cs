@@ -10,7 +10,7 @@ namespace Core.IoC.Loggers
     {
         public void LogThreadSafe(string message)
         {
-            ApplicationViewModel.Instance?.LogRoutine(message);
+            Logger.LogRoutineMessage(message);
         }
     }
 }

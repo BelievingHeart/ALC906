@@ -1,110 +1,110 @@
-gErrorARRAY[1],Home Cannot perform Error!,,2001,4
-gErrorARRAY[2],Home overtime Error!,,2002,4
-gErrorARRAY[3],Start Cannot perform Error!,,2003,2
-gErrorARRAY[4],Stop Cannot perform Error!,,2004,2
-gErrorARRAY[5],Puase Cannot perform Error!,,2005,2
-gErrorARRAY[6],Continue Cannot perform Error!,,2006,2
-gErrorARRAY[61],E_Stop!,,2061,4
-gErrorARRAY[62],SafeDoor1 is open!,,2062,2
-gErrorARRAY[63],SafeDoor2 is open!,,2063,2
-gErrorARRAY[64],SafeDoor3 is open!,,2064,2
-gErrorARRAY[65],SafeDoor4 is open!,,2065,2
-gErrorARRAY[70],ALC has been disconnected,,2070,4
-gErrorARRAY[71],Vision has been disconnected !,,2071,4
-gErrorARRAY[300],Left product to convey Error!,,2300,3
-gErrorARRAY[301],Right product to convey Error!,,2301,3
-gErrorARRAY[302],Load module-load loosen product Error!,,2302,3
-gErrorARRAY[303],Load module-load clamp product Error!,,2303,3
-gErrorARRAY[304],Load module-axisX to Wrok Error!,,2304,3
-gErrorARRAY[305],Load module-axisX to Wait Error!,,2305,3
-gErrorARRAY[306],Robot pick product Error!,,2306,3
-gErrorARRAY[307],Product check Error!,,2307,3
-gErrorARRAY[308],Transit pick product Error!,,2308,3
-gErrorARRAY[309],Transit put product Error!,,2309,3
-gErrorARRAY[310],Load module-unload loosen product Error!,,2310,3
-gErrorARRAY[311],Load module-unload clamp product Error!,,2311,3
-gErrorARRAY[400],Left product to convey Error!,,2400,4
-gErrorARRAY[401],Right product to convey Error!,,2401,4
-gErrorARRAY[402],Load module-load loosen product Error!,,2402,4
-gErrorARRAY[403],Load module-load clamp product Error!,,2403,4
-gErrorARRAY[404],Load module-axisX to Wrok Error!,,2404,4
-gErrorARRAY[405],Load module-axisX to Wait Error!,,2405,4
-gErrorARRAY[406],Robot pick product Error!,,2406,4
-gErrorARRAY[407],Product check Error!,,2407,4
-gErrorARRAY[408],Transit pick product Error!,,2408,4
-gErrorARRAY[409],Transit put product Error!,,2409,4
-gErrorARRAY[410],Load module-unload loosen product Error!,,2410,4
-gErrorARRAY[411],Load module-unload clamp product Error!,,2411,4
-gErrorARRAY[801],Load Pos 1 No Product!,,2801,2
-gErrorARRAY[802],Load Pos 2 No Product!,,2802,2
-gErrorARRAY[803],Left Transit put product Error!,,2803,3
-gErrorARRAY[804],Right Transit put product Error!,,2804,3
-gErrorARRAY[100],Load_X_Axis,E_Stop!!!,2100,4
-gErrorARRAY[102],Load_X_Axis,PLimit Switch Error,2102,4
-gErrorARRAY[103],Load_X_Axis,NLimit Switch Error,2103,4
-gErrorARRAY[104],Load_X_Axis,Origin sensor cannot be searched,2104,4
-gErrorARRAY[105],Load_X_Axis,Go Home Failed,2105,4
-gErrorARRAY[106],Load_X_Axis,Absolute Move Error,2106,4
-gErrorARRAY[107],Load_X_Axis,JOG Move Error,2107,4
-gErrorARRAY[108],Load_X_Axis,Modulo Move Error,2108,4
-gErrorARRAY[109],Load_X_Axis,Relative Move Error,2109,4
-gErrorARRAY[110],Load_X_Axis,Set Position Error,2110,4
-gErrorARRAY[111],Load_X_Axis,Axis Stop Error,2111,4
-gErrorARRAY[112],Load_X_Axis,Velocity Move Error,2112,4
-gErrorARRAY[113],Load_X_Axis,mcPower Error,2113,4
-gErrorARRAY[114],Load_X_Axis,mcReset Error,2114,4
-gErrorARRAY[115],Load_X_Axis,axis_Status_Error,2115,4
-gErrorARRAY[120],Unload_X_Axis,E_Stop!!!,2120,4
-gErrorARRAY[122],Unload_X_Axis,PLimit Switch Error,2122,4
-gErrorARRAY[123],Unload_X_Axis,NLimit Switch Error,2123,4
-gErrorARRAY[124],Unload_X_Axis,Origin sensor cannot be searched,2124,4
-gErrorARRAY[125],Unload_X_Axis,Go Home Failed,2125,4
-gErrorARRAY[126],Unload_X_Axis,Absolute Move Error,2126,4
-gErrorARRAY[127],Unload_X_Axis,JOG Move Error,2127,4
-gErrorARRAY[128],Unload_X_Axis,Modulo Move Error,2128,4
-gErrorARRAY[129],Unload_X_Axis,Relative Move Error,2129,4
-gErrorARRAY[130],Unload_X_Axis,Set Position Error,2130,4
-gErrorARRAY[131],Unload_X_Axis,Axis Stop Error,2131,4
-gErrorARRAY[132],Unload_X_Axis,Velocity Move Error,2132,4
-gErrorARRAY[133],Unload_X_Axis,mcPower Error,2133,4
-gErrorARRAY[134],Unload_X_Axis,mcReset Error,2134,4
-gErrorARRAY[135],Unload_X_Axis,axis_Status_Error,2135,4
-gErrorARRAY[140],Left Vacuum 1,Extend Error,2140,3
-gErrorARRAY[141],Left Vacuum 1,Retract Error,2141,3
-gErrorARRAY[150],Left Vacuum 2,Extend Error,2150,3
-gErrorARRAY[151],Left Vacuum 2,Retract Error,2151,3
-gErrorARRAY[160],Right Setting Cylinder,Extend Error,2160,3
-gErrorARRAY[161],Right Setting Cylinder,Retract Error,2161,3
-gErrorARRAY[170],Right Vacuum 1,Extend Error,2170,3
-gErrorARRAY[171],Right Vacuum 1,Retract Error,2171,3
-gErrorARRAY[180],Right Vacuum 2,Extend Error,2180,3
-gErrorARRAY[181],Right Vacuum 2,Retract Error,2181,3
-gErrorARRAY[190],Lifting Cylinder,Extend Error,2190,3
-gErrorARRAY[191],Lifting Cylinder,Retract Error,2191,3
-gErrorARRAY[200],Pick Cylinder,Extend Error,2200,3
-gErrorARRAY[201],Pick Cylinder,Retract Error,2201,3
-gErrorARRAY[210],Pick Vacuum 1,Extend Error,2210,3
-gErrorARRAY[211],Pick Vacuum 1,Retract Error,2211,3
-gErrorARRAY[220],Pick Vacuum 2,Extend Error,2220,3
-gErrorARRAY[221],Pick Vacuum 2,Retract Error,2221,3
-gErrorARRAY[230],Lifting Vacuum 1,Extend Error,2230,3
-gErrorARRAY[231],Lifting Vacuum 1,Retract Error,2231,3
-gErrorARRAY[240],Load_O_Axis,E_Stop!!!,2240,4
-gErrorARRAY[242],Load_O_Axis,PLimit Switch Error,2242,4
-gErrorARRAY[243],Load_O_Axis,NLimit Switch Error,2243,4
-gErrorARRAY[244],Load_O_Axis,Origin sensor cannot be searched,2244,4
-gErrorARRAY[245],Load_O_Axis,Go Home Failed,2245,4
-gErrorARRAY[246],Load_O_Axis,Absolute Move Error,2246,4
-gErrorARRAY[247],Load_O_Axis,JOG Move Error,2247,4
-gErrorARRAY[248],Load_O_Axis,Modulo Move Error,2248,4
-gErrorARRAY[249],Load_O_Axis,Relative Move Error,2249,4
-gErrorARRAY[250],Load_O_Axis,Set Position Error,2250,4
-gErrorARRAY[251],Load_O_Axis,Axis Stop Error,2251,4
-gErrorARRAY[252],Load_O_Axis,Velocity Move Error,2252,4
-gErrorARRAY[253],Load_O_Axis,mcPower Error,2253,4
-gErrorARRAY[254],Load_O_Axis,mcReset Error,2254,4
-gErrorARRAY[255],Load_O_Axis,axis_Status_Error,2255,4
-gErrorARRAY[260],Left Setting Cylinder,Extend Error,2260,3
-gErrorARRAY[261],Left Setting Cylinder,Retract Error,2261,3
-gErrorARRAY[270],Lifting Vacuum 2,Extend Error,2270,3
-gErrorARRAY[271],Lifting Vacuum 2,Retract Error,2271,3
+不能回原点报错,2001,4
+回原点超时报错,2002,4
+不能开始报错,2003,2
+不能停止报错,2004,2
+不能暂停报错,2005,2
+不能继续报错,2006,2
+急停报错,2061,4
+安全门1打开中,2062,2
+安全门2打开中,2063,2
+安全门3打开中,2064,2
+安全门4打开中,2065,2
+ALC断开连接,2070,4
+相机断开连接,2071,4
+左产品到输送线报错,2300,3
+右产品到输送线报错,2301,3
+上料区定位产品报错,2302,3
+上料区松开产品报错,2303,3
+上料X轴运动到工作位报错,2304,3
+上料X轴运动到等待位报错,2305,3
+机械手取料报错,2306,3
+检测产品状态报错,2307,3
+中转取料报错,2308,3
+中转放料报错,2309,3
+下料区定位产品报错,2310,3
+下料区松开产品报错,2311,3
+左产品到输送线报错,2400,4
+右产品到输送线报错,2401,4
+上料区定位产品报错,2402,4
+上料区松开产品报错,2403,4
+上料X轴运动到工作位报错,2404,4
+上料X轴运动到等待位报错,2405,4
+机械手取料报错,2406,4
+检测产品状态报错,2407,4
+中转取料报错,2408,4
+中转放料报错,2409,4
+下料区定位产品报错,2410,4
+下料区松开产品报错,2411,4
+Cavity1无产品,2801,2
+Cavity2无产品,2802,2
+左中转取料失败,2803,3
+右中转取料失败,2804,3
+上料X轴急停,2100,4
+上料X轴左限位报错,2102,4
+上料X轴右限位报错,2103,4
+上料X轴找不到原点,2104,4
+上料X轴回原点失败,2105,4
+上料X轴绝对运行报错,2106,4
+上料X轴手动运行报错,2107,4
+上料X轴,2108,4
+上料X轴相对运行报错,2109,4
+上料X轴设置位置报错,2110,4
+上料X轴停止错误,2111,4
+上料X轴速度运行报错,2112,4
+上料X轴使能报错,2113,4
+上料X轴复位报错,2114,4
+上料X轴状态异常,2115,4
+下料X轴急停,2120,4
+下料X轴左限位报错,2122,4
+下料X轴右限位报错,2123,4
+下料X轴找不到原点,2124,4
+下料X轴回原点失败,2125,4
+下料X轴绝对运行报错,2126,4
+下料X轴手动运行报错,2127,4
+下料X轴,2128,4
+下料X轴相对运行报错,2129,4
+下料X轴设置位置报错,2130,4
+下料X轴停止错误,2131,4
+下料X轴速度运行报错,2132,4
+下料X轴使能报错,2133,4
+下料X轴复位报错,2134,4
+下料X轴状态异常,2135,4
+上料左真空吸报错,2140,3
+上料左真空破报错,2141,3
+上料右真空吸报错,2150,3
+上料右真空破报错,2151,3
+下料定位气缸伸报错,2160,3
+下料定位气缸缩报错,2161,3
+下料左真空吸报错,2170,3
+下料左真空破报错,2171,3
+下料右真空吸报错,2180,3
+下料右真空破报错,2181,3
+中转气缸伸报错,2190,3
+中转气缸缩报错,2191,3
+取料气缸伸报错,2200,3
+取料气缸缩报错,2201,3
+取料左真空吸报错,2210,3
+取料左真空破报错,2211,3
+取料右真空吸报错,2220,3
+取料右真空破报错,2221,3
+中转左真空吸报错,2230,3
+中转左真空破报错,2231,3
+Load_O_Axis E_Stop!!!,2240,4
+Load_O_Axis PLimit Switch Error,2242,4
+Load_O_Axis NLimit Switch Error,2243,4
+Load_O_Axis Origin sensor cannot be searched,2244,4
+Load_O_Axis Go Home Failed,2245,4
+Load_O_Axis Absolute Move Error,2246,4
+Load_O_Axis JOG Move Error,2247,4
+Load_O_Axis Modulo Move Error,2248,4
+Load_O_Axis Relative Move Error,2249,4
+Load_O_Axis Set Position Error,2250,4
+Load_O_Axis Axis Stop Error,2251,4
+Load_O_Axis Velocity Move Error,2252,4
+Load_O_Axis mcPower Error,2253,4
+Load_O_Axis mcReset Error,2254,4
+Load_O_Axis axis_Status_Error,2255,4
+上料定位气缸伸报错,2260,3
+上料定位气缸缩报错,2261,3
+中转右真空吸报错,2270,3
+中转右真空破报错,2271,3

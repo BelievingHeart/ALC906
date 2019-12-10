@@ -17,7 +17,7 @@ using Core.ImageProcessing;
 using Core.IoC.Loggers;
 using Core.IoC.PlcErrorParser;
 using Core.ViewModels.Fai;
-using Core.ViewModels.Plc;
+using Core.ViewModels.Message;
 using Core.ViewModels.Results;
 using Core.ViewModels.Summary;
 using CYG906ALC.ALG;
@@ -115,8 +115,6 @@ namespace Core.ViewModels.Application
         protected ApplicationViewModel()
         {
             CurrentApplicationPage = ApplicationPageType.Home;
-            PlcMessageList = new ObservableCollection<LoggingMessageItem>();
-            EnableSynchronization();
 
             InitTimers();
 
@@ -142,7 +140,8 @@ namespace Core.ViewModels.Application
         /// </summary>
         private void DoSimulation()
         {
-            Summary.UpdateCurrentSummary("Ng4");
+//            Summary.UpdateCurrentSummary("Ng4");
+            Task.Run(() => { Logger.LogRoutineMessage("Hello"); });
         }
 
         private void InitTimers()
@@ -223,7 +222,7 @@ namespace Core.ViewModels.Application
                 Port = 4000
             };
             Server.NewRunStarted += OnNewRunStarted;
-            Server.AutoRunStopRequested += () => LogPlcMessage("Auto-mode-stop requested from plc");
+            Server.AutoRunStopRequested += () => Logger.LogPlcMessage("Auto-mode-stop requested from plc");
             Server.InitRequested += OnPlcInitRequested;
             Server.ClientHooked += OnPlcHooked;
             Server.CustomCommandReceived += PlcCustomCommandHandler;
@@ -249,7 +248,7 @@ namespace Core.ViewModels.Application
 
         private void OnPlcInitRequested()
         {
-            LogPlcMessage("Init requested from plc");
+            Logger.LogPlcMessage("Init requested from plc");
         }
 
 
@@ -258,6 +257,7 @@ namespace Core.ViewModels.Application
         /// </summary>
         private void EnablePlcInit()
         {
+            if(Server.IsAutoRunning) Server.StopCommand.Execute(null);
             Server.IsBusyResetting = false;
             Server.IsAutoRunning = false;
             Server.CurrentMachineState = MachineState.Idle;
@@ -265,20 +265,21 @@ namespace Core.ViewModels.Application
 
         private void LogHighLevelWarning(string s)
         {
-            WaringMessageHighLevel = new LoggingMessageItem()
+            WaringMessageHighLevel = new LoggingMessageItem
                 {Time = DateTime.Now.ToString("hh:mm:ss t z"), Message = s};
         }
 
         private void OnWarningL4Received(string message)
         {
-            Logger.Instance.LogErrorToFile(message);
-            LogHighLevelWarning(message);
             //  Init must be able to execute after L4 warning received
             EnablePlcInit();
+            Logger.Instance.LogErrorToFile(message);
+            LogHighLevelWarning(message);
         }
 
         private void OnWarningL3Received(string message)
         {
+            if(Server.IsAutoRunning) Server.PauseCommand.Execute(null);
             Logger.Instance.LogErrorToFile(message);
             LogHighLevelWarning(message);
         }
@@ -296,12 +297,12 @@ namespace Core.ViewModels.Application
 
         private void OnPlcHooked(Socket socket)
         {
-            LogPlcMessage(socket.RemoteEndPoint + " is hooked");
+            Logger.LogPlcMessage(socket.RemoteEndPoint + " is hooked");
         }
 
         private void OnNewRunStarted()
         {
-            LogPlcMessage("New run starts");
+            Logger.LogPlcMessage("New run starts");
             ClearLaserImagesForNewRound();
             Enqueue2DImagesFromPreviousRound();
             lock (_lockerOfRightSocketIndexSinceReset2D)
@@ -343,7 +344,7 @@ namespace Core.ViewModels.Application
 
         private void OnPlcResetFinished()
         {
-            LogPlcMessage("Plc init done");
+            Logger.LogPlcMessage("Plc init done");
             ResetStates();
         }
 
@@ -369,7 +370,7 @@ namespace Core.ViewModels.Application
                     OnCavity2Arrived2D();
                     break;
                 default:
-                    LogPlcMessage($"Command ID {commandId} received");
+                    Logger.LogPlcMessage($"Command ID {commandId} received");
                     break;
             }
         }
@@ -381,7 +382,7 @@ namespace Core.ViewModels.Application
                 CurrentArrivedSocket2D = CavityType.Cavity1;
             }
 
-            LogPlcMessage("2D left socket arrived");
+            Logger.LogPlcMessage("2D left socket arrived");
         }
 
         private void OnCavity2Arrived2D()
@@ -391,7 +392,7 @@ namespace Core.ViewModels.Application
                 CurrentArrivedSocket2D = CavityType.Cavity2;
             }
 
-            LogPlcMessage("2D right socket arrived");
+            Logger.LogPlcMessage("2D right socket arrived");
             ResultReady2D = ResultStatus.Waiting;
         }
 
@@ -466,7 +467,7 @@ namespace Core.ViewModels.Application
             var enumValue = (CavityType) socketIndex;
 
 
-            LogRoutine($"3D processing starts for {enumValue} socket");
+            Logger.LogRoutineMessage($"3D processing starts for {enumValue} socket");
             // Do processing for one socket and get its result
             var imagesForOneSocket =
                 _laserImageBuffers.Values.Select(list => list[socketIndex]).ToList();
@@ -498,7 +499,7 @@ namespace Core.ViewModels.Application
                 Graphics3DRight = result3D.GetGraphics();
             }
 
-            LogRoutine($"3D processing ends for {enumValue} socket");
+            Logger.LogRoutineMessage($"3D processing ends for {enumValue} socket");
 
 
             // If all reserved places for 3D image buffers are filled,
@@ -647,16 +648,9 @@ namespace Core.ViewModels.Application
         private void LoadFaiItems()
         {
             // load all fai names 
-            _names2d = Get2DFaiNames();
             _names3d = ParseFaiNames(DirectoryConstants.FaiNamesDir, NameConstants.FaiNamesFile3D);
 
             // Load fai items configs
-            FaiItems2DLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(_names2d,
-                    DirectoryConstants.FaiConfigDir2DLeft)
-                .ToList();
-            FaiItems2DRight = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(_names2d,
-                    DirectoryConstants.FaiConfigDir2DRight)
-                .ToList();
             FaiItems3DLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(_names3d,
                     DirectoryConstants.FaiConfigDir3DLeft)
                 .ToList();
@@ -745,7 +739,7 @@ namespace Core.ViewModels.Application
         /// <param name="images"></param>
         private void ProcessImages2D(List<HImage> images)
         {
-            LogRoutine($"Received {images.Count} 2d images");
+            Logger.LogRoutineMessage($"Received {images.Count} 2d images");
             if (!Server.IsAutoRunning) return;
             CavityType currentArrivedSocket2D;
             lock (_lockerOfCurrentArrivedSocket2D)
@@ -763,7 +757,7 @@ namespace Core.ViewModels.Application
             }
 
 
-            LogRoutine($"2D processing starts for {currentArrivedSocket2D}");
+            Logger.LogRoutineMessage($"2D processing starts for {currentArrivedSocket2D}");
             GraphicsPackViewModel result;
             
             try
@@ -773,10 +767,10 @@ namespace Core.ViewModels.Application
             catch
             {
                 result = new GraphicsPackViewModel {Images = images, FaiResults = GenErrorFaiResults(_names2d)};
-                LogRoutine($"2D processing for {currentArrivedSocket2D} errored");
+                Logger.LogRoutineMessage($"2D processing for {currentArrivedSocket2D} errored");
             }
 
-            LogRoutine($"2D processing ends for {currentArrivedSocket2D}");
+            Logger.LogRoutineMessage($"2D processing ends for {currentArrivedSocket2D}");
 
             lock (_lockerOfResultQueues2D)
             {
@@ -786,37 +780,33 @@ namespace Core.ViewModels.Application
                 var all2DProcessingForThisRunIsDone = lastInCavity1 != null && lastInCavity2 != null;
                 if (all2DProcessingForThisRunIsDone)
                 {
-                    LogRoutine("All 2D images have processed");
+                    Logger.LogRoutineMessage("All 2D images have processed");
                     ResultReady2D = ResultStatus.Ready;
                     Server.NotifyPlcReadyToGoNextLoop();
                 }
             }
         }
 
-        public void LogPlcMessage(string message)
-        {
-            UiDispatcher.InvokeAsync(() =>
-            {
-                PlcMessageList.Add(
-                    new LoggingMessageItem {Message = message, Time = DateTime.Now.ToString("T")});
-            });
-        }
+   
 
-        public void LogRoutine(string message)
-        {
-            UiDispatcher.InvokeAsync(() =>
-            {
-                RoutineMessageList.Add(
-                    new LoggingMessageItem {Message = message, Time = DateTime.Now.ToString("T")});
-            });
-        }
+   
 
         /// <summary>
+        /// Open connections to hardware as well as load on-site-only files
         /// This should be executed only after the construction of the instance,
         /// so the logging system can be used to debug
         /// </summary>
         public void InitHardWares()
         {
+            LoadI40CheckConfigs();
+            _names2d = Get2DFaiNames();
+            FaiItems2DLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(_names2d,
+                    DirectoryConstants.FaiConfigDir2DLeft)
+                .ToList();
+            FaiItems2DRight = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(_names2d,
+                    DirectoryConstants.FaiConfigDir2DRight)
+                .ToList();
+
             SetupServer();
 
             SetupCameras();
@@ -824,18 +814,11 @@ namespace Core.ViewModels.Application
             SetupLaserControllers();
         }
 
-        public void EnableSynchronization()
-        {
-            BindingOperations.EnableCollectionSynchronization(RoutineMessageList, _lockerOfRoutineMessageList);
+  
 
-            BindingOperations.EnableCollectionSynchronization(PlcMessageList, _lockerOfPlcMessageList);
-        }
-
-        public void LoadFiles()
+        public void LoadConfigs()
         {
             Scan2DConfigFolders();
-
-            LoadI40CheckConfigs();
 
             LoadShapeModels();
 
@@ -950,19 +933,7 @@ namespace Core.ViewModels.Application
         /// 2D camera object
         /// </summary>
         public HKCameraViewModel TopCamera { get; set; }
-
-
-        /// <summary>
-        /// Message list for routine logging
-        /// </summary>
-        public ObservableCollection<LoggingMessageItem> RoutineMessageList { get; set; } =
-            new ObservableCollection<LoggingMessageItem>();
-
-        /// <summary>
-        /// Message list for plc message logging
-        /// </summary>
-        public ObservableCollection<LoggingMessageItem> PlcMessageList { get; set; }
-
+        
         public AlcServerViewModel Server { get; set; }
 
         public List<FaiItem> FaiItemsCavity1 { get; set; }

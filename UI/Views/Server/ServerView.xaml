@@ -6,6 +6,7 @@
              xmlns:application="clr-namespace:Core.ViewModels.Application;assembly=Core"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:server="clr-namespace:UI.Views.Server"
+             xmlns:loggers="clr-namespace:Core.IoC.Loggers;assembly=Core"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              DataContext="{Binding Source={x:Static application:ApplicationViewModel.Instance}}">
@@ -37,10 +38,12 @@
                 <TextBlock Text="{Binding TopCamera.MaxTimeElapsed}" VerticalAlignment="Center" />
                 <TextBlock Text="Time elapsed: " Margin="20 0 0 0" VerticalAlignment="Center" />
                 <TextBlock Text="{Binding TopCamera.TimeElapse}" VerticalAlignment="Center" />
+                <!-- TODO: remove this line -->
+                <Button Content="Add message" Command="{Binding Path=SimulateCommand}"/>
             </StackPanel>
 
         </Grid>
         <!-- Plc message box -->
-        <server:AutoScrollMessageBox Grid.Row="1" MessageList="{Binding Path=PlcMessageList}" />
+        <server:AutoScrollMessageBox Grid.Row="1" MessageList="{Binding Source={x:Static loggers:Logger.Instance}, Path=PlcMessageList}" />
     </Grid>
 </UserControl>

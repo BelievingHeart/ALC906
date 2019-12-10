@@ -25,7 +25,7 @@
                     </Expander.Header>
 
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <ListBox Name="MessageListBox"
+                        <ListBox Name="PART_MessageListBox"
                             >
                             <ListBox.ItemTemplate>
                                 <DataTemplate>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\ABC\.Rider2019.2\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\ABC\.Rider2019.2\system\resharper-host\local\Transient\ReSharperHost\v192\SolutionCaches\_ALC-906.-332205897.00" t="ExcludeRecursive" />
-    <e p="D:\share\晓进\ALC\ALC-906" t="IncludeFlat">
+    <e p="C:\Users\afterbunny\.Rider2019.2\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\afterbunny\.Rider2019.2\system\resharper-host\local\Transient\ReSharperHost\v192\SolutionCaches\_ALC-906.-148365339.00" t="ExcludeRecursive" />
+    <e p="C:\Users\afterbunny\Desktop\Projects\ALC\ALC-906" t="IncludeFlat">
       <e p="ALC-906.sln" t="IncludeFlat" />
       <e p="Core" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
@@ -91,7 +91,8 @@
           <e p="MainWindow" t="Include">
             <e p="MainWindowViewModel.cs" t="Include" />
           </e>
-          <e p="Plc" t="Include">
+          <e p="Message" t="Include">
+            <e p="FixedSizeMessageList.cs" t="Include" />
             <e p="LoggingMessageItem.cs" t="Include" />
           </e>
           <e p="Results" t="Include">
@@ -257,7 +258,7 @@
         </e>
       </e>
     </e>
-    <e p="D:\share\晓进\ALC\HKCamera\HKCamera" t="IncludeRecursive">
+    <e p="C:\Users\afterbunny\Desktop\Projects\ALC\HKCamera\HKCamera" t="IncludeRecursive">
       <e p="bin" t="ExcludeRecursive" />
       <e p="HKCamera.csproj" t="IncludeRecursive" />
       <e p="HKCameraViewModel.cs" t="Include" />
@@ -266,7 +267,7 @@
         <e p="AssemblyInfo.cs" t="Include" />
       </e>
     </e>
-    <e p="D:\share\晓进\ALC\LJX8000Dev\LJX8000.Core" t="IncludeRecursive">
+    <e p="C:\Users\afterbunny\Desktop\Projects\ALC\LJX8000Dev\LJX8000.Core" t="IncludeRecursive">
       <e p="Attributes" t="Include">
         <e p="AutoSerializeAttribute.cs" t="Include" />
       </e>
@@ -320,8 +321,8 @@
         </e>
       </e>
     </e>
-    <e p="D:\share\晓进\ALC\LJX8000Dev\UI\FodyWeavers.xml" t="Include" />
-    <e p="D:\share\晓进\ALC\PLCCommunication\PLCCommunication.Core" t="IncludeRecursive">
+    <e p="C:\Users\afterbunny\Desktop\Projects\ALC\LJX8000Dev\UI\FodyWeavers.xml" t="Include" />
+    <e p="C:\Users\afterbunny\Desktop\Projects\ALC\PLCCommunication\PLCCommunication.Core" t="IncludeRecursive">
       <e p="bin" t="ExcludeRecursive" />
       <e p="Enums" t="Include">
         <e p="MachineState.cs" t="Include" />
@@ -344,7 +345,7 @@
         <e p="LibraryViewModel.cs" t="Include" />
       </e>
     </e>
-    <e p="D:\share\晓进\ALC\WPFCommon\WPFCommon" t="IncludeRecursive">
+    <e p="C:\Users\afterbunny\Desktop\Projects\ALC\WPFCommon\WPFCommon" t="IncludeRecursive">
       <e p="bin" t="ExcludeRecursive" />
       <e p="Commands" t="Include">
         <e p="ParameterizedCommand.cs" t="Include" />

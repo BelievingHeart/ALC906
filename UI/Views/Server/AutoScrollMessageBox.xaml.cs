@@ -5,7 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Core.Constants;
-using Core.ViewModels.Plc;
+using Core.ViewModels.Message;
 
 namespace UI.Views.Server
 {
@@ -16,43 +16,64 @@ namespace UI.Views.Server
             InitializeComponent();
         }
 
-
         public static readonly DependencyProperty MessageListProperty = DependencyProperty.Register(
-            "MessageList", typeof(ObservableCollection<LoggingMessageItem>), typeof(AutoScrollMessageBox),
-            new PropertyMetadata(default(ObservableCollection<LoggingMessageItem>), OnMessageListBindingChanged));
+            "MessageList", typeof(FixedSizeMessageList), typeof(AutoScrollMessageBox),
+            new PropertyMetadata(default(FixedSizeMessageList), OnMessageListChanged));
 
-        public ObservableCollection<LoggingMessageItem> MessageList
-        {
-            get { return (ObservableCollection<LoggingMessageItem>) GetValue(MessageListProperty); }
-            set { SetValue(MessageListProperty, value); }
-        }
-
-        private static void OnMessageListBindingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnMessageListChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var sender = (AutoScrollMessageBox) d;
-            var newValue = (ObservableCollection<LoggingMessageItem>) e.NewValue;
-            if (newValue == null) return;
-            sender.MessageListBox.ItemsSource = newValue;
+            var newList = (FixedSizeMessageList) e.NewValue;
 
+            if (newList == null) return;
+            // Hook event handlers to new list
+            sender.Hook(newList);
 
-            var oldList = (ObservableCollection<LoggingMessageItem>) e.OldValue;
+            // Unhook event handlers to new list
+            var oldList = (FixedSizeMessageList) e.OldValue;
+            if (oldList == null) return;
+            sender.Unhook(oldList);
+        }
 
-            newValue.CollectionChanged += sender.ScrollToBottom;
+        private void Hook(FixedSizeMessageList newList)
+        {
+            newList.NewMessagePushed += AddMessageItemView;
+            newList.NewMessagePushed += ScrollToBottom;
+            newList.MessageRemoved += RemoveViews;
+        }
 
-            if (oldList != null)
+        private void Unhook(FixedSizeMessageList oldList)
+        {
+            oldList.NewMessagePushed -= AddMessageItemView;
+            oldList.NewMessagePushed -= ScrollToBottom;
+            oldList.MessageRemoved -= RemoveViews;
+        }
+
+        private void RemoveViews(int removeCount)
+        {
+            for (int i = 0; i < removeCount; i++)
             {
-                oldList.CollectionChanged -= sender.ScrollToBottom;
+                PART_MessageListBox.Items.RemoveAt(i);
             }
         }
 
-        private void ScrollToBottom(object sender, NotifyCollectionChangedEventArgs e)
+        private void AddMessageItemView(LoggingMessageItem messageItem)
+        {
+            PART_MessageListBox.Items.Add(messageItem);
+        }
+
+        public FixedSizeMessageList MessageList
+        {
+            get { return (FixedSizeMessageList) GetValue(MessageListProperty); }
+            set { SetValue(MessageListProperty, value); }
+        }
+
+        private void ScrollToBottom(LoggingMessageItem loggingMessageItem)
         {
             if (MessageList.Count == 0) return;
             // Scroll to the last item
-            MessageListBox.SelectedIndex = MessageList.Count - 1;
-            MessageListBox.ScrollIntoView(MessageListBox.SelectedItem);
-            var lastMessage = MessageList.Last();
-            lastMessage.WriteLineToFile(DirectoryConstants.ErrorLogDir, "PLC.txt");
+            PART_MessageListBox.SelectedIndex = MessageList.Count - 1;
+            PART_MessageListBox.ScrollIntoView(PART_MessageListBox.SelectedItem);
         }
     }
 }

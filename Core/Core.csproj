@@ -117,13 +117,14 @@
     <Compile Include="ViewModels\Application\ApplicationViewModel.cs" />
     <Compile Include="ViewModels\Fai\DataRowViewModel.cs" />
     <Compile Include="ViewModels\Fai\FaiTableStackViewModel.cs" />
+    <Compile Include="ViewModels\Message\FixedSizeMessageList.cs" />
     <Compile Include="ViewModels\Results\GraphicsPackViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsViewModel.cs" />
     <Compile Include="ViewModels\Summary\SummaryViewModel.cs" />
     <Compile Include="ViewModels\CameraHost\CameraHostViewModel.cs" />
     <Compile Include="ViewModels\Fai\FaiItem.cs" />
     <Compile Include="ViewModels\Fai\FaiItemUILogic.cs" />
-    <Compile Include="ViewModels\Plc\LoggingMessageItem.cs" />
+    <Compile Include="ViewModels\Message\LoggingMessageItem.cs" />
     <Compile Include="ViewModels\Vision2D\Vision2DViewModel.cs" />
     <Compile Include="ViewModels\MainWindow\MainWindowViewModel.cs" />
   </ItemGroup>
