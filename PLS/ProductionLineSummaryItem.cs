@@ -121,7 +121,7 @@ namespace PLS
         }
 
         public static ProductionLineSummaryItem LoadFromDisk(string dir, string name, List<string> binNames,
-            string okKey = "OK")
+            string okKey)
         {
             if (!binNames.Contains(okKey))
                 throw new ArgumentException($"{okKey} can not be found in {nameof(binNames)}");

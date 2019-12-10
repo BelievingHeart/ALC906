@@ -79,19 +79,19 @@ namespace PLS
             // If hour changed
             if (CurrentHourChanged)
             {
-                UpdatePreviousHour();
+                _previousHour = CurrentHour;
                 // Save current summary
-                CurrentSummaryItem.Serialize(SerializationDirToday);
+                SerializeCurrentSummary();
 
                 // Create new summary for new hour
-                CurrentSummaryItem = CreateNewSummaryItem();
+                CurrentSummaryItem = LoadCurrentSummaryItem(SerializationDirToday, CurrentHour, BinNames, _okKey);
                 AllSummaryItems.Add(CurrentSummaryItem);
 
                 OnHourChanged();
                 if (CurrentDateChanged)
                 {
-                    UpdatePreviousDate();
-                    CreateAllSummaries();
+                    _previousDate = CurrentDate;
+                    CreateSummariesForNewDay(BinNames);
                 }
             }
 
@@ -101,31 +101,16 @@ namespace PLS
             OnCurrentSummaryItemUpdated(CurrentSummaryItem);
         }
 
-        private void UpdatePreviousDate()
+        public void SerializeCurrentSummary()
         {
-            _previousDate = CurrentDate;
+            CurrentSummaryItem.Serialize(SerializationDirToday);
         }
 
         public bool CurrentDateChanged => _previousDate != CurrentDate;
 
-        private void UpdatePreviousHour()
-        {
-            _previousHour = CurrentHour;
-        }
-
         public bool CurrentHourChanged => CurrentHour != _previousHour;
 
-
-        private ProductionLineSummaryItem CreateNewSummaryItem()
-        {
-            var dict = new Dictionary<string, int>();
-            foreach (var name in BinNames)
-            {
-                dict[name] = 0;
-            }
-
-            return new ProductionLineSummaryItem() {BinsAndCounts = dict, OkKey = _okKey, SummaryName = CurrentHour};
-        }
+        
 
 
         public ProductionLineSummary(string serializationBaseDir, List<string> binNames, string okKey = "OK")
@@ -133,34 +118,36 @@ namespace PLS
             SerializationBaseDir = serializationBaseDir;
             BinNames = binNames;
             _okKey = okKey;
+            _previousDate = CurrentDate;
+            _previousHour = CurrentHour;
 
-            CreateAllSummaries();
+            CreateSummariesForNewDay(binNames);
         }
 
-        private void CreateAllSummaries()
+        private void CreateSummariesForNewDay(List<string> binNames)
         {
-            UpdatePreviousHour();
-            CreateDirToday();
-            CurrentSummaryItem = LoadCurrentSummaryItem();
+            Directory.CreateDirectory(SerializationDirToday);
+            CurrentSummaryItem = LoadCurrentSummaryItem(SerializationDirToday, CurrentHour, binNames, _okKey);
 
             // Init today's summary items list
-            var pastSummaryItems = LoadPastSummaryItems();
+            var pastSummaryItems = LoadPastSummaryItems(SerializationDirToday, binNames, _okKey, CurrentHour);
             pastSummaryItems.Add(CurrentSummaryItem);
             AllSummaryItems = pastSummaryItems;
 
-            CreateSummaryItemToday();
+           TodaySummaryItem = CreateSummaryItemToday(AllSummaryItems, binNames);
         }
 
-        private void CreateSummaryItemToday()
+        private static ProductionLineSummaryItem CreateSummaryItemToday(List<ProductionLineSummaryItem> summaryItems, List<string> binNames)
         {
-            TodaySummaryItem = new ProductionLineSummaryItem() {SummaryName = "Today"};
-            foreach (var binName in BinNames)
+            var output = new ProductionLineSummaryItem() {SummaryName = "Today"};
+            foreach (var binName in binNames)
             {
-                TodaySummaryItem.BinsAndCounts[binName] =
-                    AllSummaryItems.Select(pair => pair.BinsAndCounts[binName]).Sum();
+                output.BinsAndCounts[binName] =
+                    summaryItems.Select(pair => pair.BinsAndCounts[binName]).Sum();
             }
-
-            TodaySummaryItem.TimeCreated = AllSummaryItems[0].TimeCreated;
+            output.TimeCreated = summaryItems[0].TimeCreated;
+            output.TimeUpdated = summaryItems.Last().TimeUpdated;
+            return output;
         }
 
 
@@ -168,17 +155,16 @@ namespace PLS
         /// Load summary items in the past of today
         /// </summary>
         /// <returns></returns>
-        private List<ProductionLineSummaryItem> LoadPastSummaryItems()
+        private static List<ProductionLineSummaryItem> LoadPastSummaryItems(string serializationDir, List<string> binNames, string okKey, string currentItemName)
         {
-            var fileNameOfCurrentHourItem = CurrentHour + ".summary";
             var output = new List<ProductionLineSummaryItem>();
-            var summaryFileNames = Directory.GetFiles(SerializationDirToday).Where(file => file.EndsWith("summary")).Select(Path.GetFileName);
+            var summaryFileNames = Directory.GetFiles(serializationDir).Where(file => file.EndsWith("summary")).Select(Path.GetFileName);
             var fileNamesWithoutExt = summaryFileNames.Select(name => name.Substring(0, name.IndexOf(".")));
             foreach (var fileName in fileNamesWithoutExt)
             {
-                if (fileName.Contains(fileNameOfCurrentHourItem)) continue;
+                if (fileName.Contains(currentItemName)) continue;
 
-                var item = ProductionLineSummaryItem.LoadFromDisk(SerializationDirToday, fileName, BinNames, _okKey);
+                var item = ProductionLineSummaryItem.LoadFromDisk(serializationDir, fileName, binNames, okKey);
 
                 output.Add(item);
             }
@@ -187,22 +173,13 @@ namespace PLS
         }
 
         /// <summary>
-        /// Create today's summary dir if not exists
-        /// </summary>
-        /// <returns>directory string</returns>
-        private void CreateDirToday()
-        {
-            Directory.CreateDirectory(SerializationDirToday);
-        }
-
-        /// <summary>
         /// Load summary item of current hour if exists
         /// otherwise create new one
         /// </summary>
         /// <returns></returns>
-        private ProductionLineSummaryItem LoadCurrentSummaryItem()
+        private ProductionLineSummaryItem LoadCurrentSummaryItem(string serializationDirToday, string itemName, List<string> binNames, string okKey)
         {
-            return ProductionLineSummaryItem.LoadFromDisk(SerializationDirToday, CurrentHour, BinNames, _okKey);
+            return ProductionLineSummaryItem.LoadFromDisk(serializationDirToday, itemName, binNames, okKey);
         }
 
         protected virtual void OnCurrentSummaryItemUpdated(ProductionLineSummaryItem obj)

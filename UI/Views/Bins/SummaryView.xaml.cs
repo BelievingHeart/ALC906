@@ -36,6 +36,10 @@ namespace UI.Views.Bins
             var summary = (ProductionLineSummary) e.NewValue;
             if (summary == null) return;
 
+            // Initial display 
+            sender.RefreshSummaryItemList();
+            sender.PART_SummarySelectionComboBox.SelectedIndex = 0;
+
             // Hook event handlers to new summary
             sender.HookEventsToSummary(summary);
 
@@ -47,12 +51,12 @@ namespace UI.Views.Bins
 
         private void UnhookEventsToSummary(ProductionLineSummary oldSummary)
         {
-            oldSummary.HourChanged -= UpdateSummaryItemList;
+            oldSummary.HourChanged -= RefreshSummaryItemList;
         }
 
   
 
-        private void UpdateSummaryItemList()
+        private void RefreshSummaryItemList()
         {
             var options = Summary.AllSummaryItems.Select(items => items.SummaryName).ToList();
             options.Add("Today");
@@ -61,7 +65,7 @@ namespace UI.Views.Bins
 
         private void HookEventsToSummary(ProductionLineSummary summary)
         {
-            summary.HourChanged += UpdateSummaryItemList;
+            summary.HourChanged += RefreshSummaryItemList;
         }
 
 
@@ -88,7 +92,10 @@ namespace UI.Views.Bins
             
             // Initial display
             sender.DisplaySummaryItem(newItem.BinsAndCounts);
-            
+            newItem.OnPropertyChanged(nameof(ProductionLineSummaryItem.NgCount));
+            var propName = nameof(newItem.NgCount);
+            newItem.OnPropertyChanged(propName);
+
             // Hook event handler to new item
             newItem.BinsIncremented += sender.DisplaySummaryItem;
 
@@ -120,6 +127,11 @@ namespace UI.Views.Bins
             PART_Ng3CountLabel.Content = binsAndCounts[ProductLevel.Ng3.ToString()];
             PART_Ng4CountLabel.Content = binsAndCounts[ProductLevel.Ng4.ToString()];
             PART_Ng5Count.Content = binsAndCounts[ProductLevel.Ng5.ToString()];
+            PART_NgCountTextBlock.Text = ItemToDisplay.NgCount.ToString();
+            PART_UphTextBlock.Text = ItemToDisplay.UnitsPerHour.ToString();
+            PART_YieldTextBlock.Text = $"{ItemToDisplay.Yield * 100:N1}%";
         }
+
+        
     }
 }

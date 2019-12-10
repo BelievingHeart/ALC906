@@ -7,119 +7,163 @@
              xmlns:application="clr-namespace:Core.ViewModels.Application;assembly=Core"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-    <!-- Bins -->
-    <Grid>
-        <!-- OK bin -->
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+    <StackPanel>  <!-- Bins -->
+        <!-- Basic info -->
+          <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-
-        <Grid Grid.Column="0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <materialDesign:ColorZone Grid.Column="0" Grid.Row="0" Background="Bisque" Height="60" BorderBrush="Gray" BorderThickness="1">
+            <TextBlock Text="Product type" HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="24" />
+        </materialDesign:ColorZone>
+        <materialDesign:ColorZone  Grid.Column="0" Grid.Row="1" Background="Bisque" Height="60" BorderBrush="Gray" BorderThickness="1">
+            <TextBlock Text="Operator ID" HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="24" />
+        </materialDesign:ColorZone>
+        <materialDesign:ColorZone  Grid.Column="0" Grid.Row="2" Background="Bisque" Height="60" BorderBrush="Gray" BorderThickness="1">
+            <TextBlock Text="Yield" HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="24" />
+        </materialDesign:ColorZone>
+        <materialDesign:ColorZone  Grid.Column="0" Grid.Row="3" Background="Bisque" Height="60" BorderBrush="Gray" BorderThickness="1">
+            <TextBlock Text="UPH" HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="24" />
+        </materialDesign:ColorZone>
+        
+        <materialDesign:ColorZone Grid.Column="1" Grid.Row="0" Background="{StaticResource PrimaryHueLightBrush}" Height="60" BorderBrush="Gray" BorderThickness="1">
+            <TextBlock Text="I40" HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="20" />
+        </materialDesign:ColorZone>
+             <materialDesign:ColorZone Grid.Column="1" Grid.Row="1" Background="{StaticResource PrimaryHueLightBrush}" Height="60" BorderBrush="Gray" BorderThickness="1">
+            <TextBlock Text="1234" HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="20" />
+        </materialDesign:ColorZone>
+             <materialDesign:ColorZone Grid.Column="1" Grid.Row="2" Background="{StaticResource PrimaryHueLightBrush}" Height="60" BorderBrush="Gray" BorderThickness="1">
+            <TextBlock x:Name="PART_YieldTextBlock" HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="20" />
+        </materialDesign:ColorZone>
+             <materialDesign:ColorZone Grid.Column="1" Grid.Row="3" Background="{StaticResource PrimaryHueLightBrush}" Height="60" BorderBrush="Gray" BorderThickness="1">
+                 <TextBlock x:Name="PART_UphTextBlock" HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="20" />
+             </materialDesign:ColorZone>
+        
+    </Grid>
+        
+        <!-- bin info -->
+        <Grid>
+            <!-- OK bin -->
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="2*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Grid Grid.Column="0" Grid.Row="0">
-                <StackPanel>
-                    <materialDesign:ColorZone Background="Tomato" Height="70">
-                        <TextBlock Text="Reject Units" FontSize="24" HorizontalAlignment="Center"
-                                   VerticalAlignment="Center" />
-                    </materialDesign:ColorZone>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0">
-                            <materialDesign:ColorZone Background="Red" Height="50" Margin="10 3">
-                                <TextBlock Text="Bin 2" FontSize="24" HorizontalAlignment="Center"
-                                           VerticalAlignment="Center" />
-                            </materialDesign:ColorZone>
-                            <!-- Ng2 Count -->
-                            <Label x:Name="PART_Ng2CountLabel" HorizontalContentAlignment="Center" BorderBrush="Black"
-                                   BorderThickness="1" />
-                        </StackPanel>
-                        <StackPanel Grid.Column="1">
-                            <materialDesign:ColorZone Background="Firebrick" Height="50" Margin="10 3">
-                                <TextBlock Text="Bin 3" FontSize="24" HorizontalAlignment="Center"
-                                           VerticalAlignment="Center" />
-                            </materialDesign:ColorZone>
-                            <!-- Ng3 Count -->
-                            <Label x:Name="PART_Ng3CountLabel" HorizontalContentAlignment="Center" BorderBrush="Black"
-                                   BorderThickness="1" />
-                        </StackPanel>
-                    </Grid>
+
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0" Grid.Row="0">
+                    <StackPanel>
+                        <materialDesign:ColorZone Background="Tomato" Height="70">
+                            <TextBlock Text="Reject Units" FontSize="24" HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </materialDesign:ColorZone>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <materialDesign:ColorZone Background="Red" Height="50" Margin="10 3">
+                                    <TextBlock Text="Bin 2" FontSize="24" HorizontalAlignment="Center"
+                                               VerticalAlignment="Center" />
+                                </materialDesign:ColorZone>
+                                <!-- Ng2 Count -->
+                                <Label x:Name="PART_Ng2CountLabel" HorizontalContentAlignment="Center"
+                                       BorderBrush="Black"
+                                       BorderThickness="1" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <materialDesign:ColorZone Background="Firebrick" Height="50" Margin="10 3">
+                                    <TextBlock Text="Bin 3" FontSize="24" HorizontalAlignment="Center"
+                                               VerticalAlignment="Center" />
+                                </materialDesign:ColorZone>
+                                <!-- Ng3 Count -->
+                                <Label x:Name="PART_Ng3CountLabel" HorizontalContentAlignment="Center"
+                                       BorderBrush="Black"
+                                       BorderThickness="1" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+
+                <Grid Grid.Column="1" Grid.Row="0">
+                    <StackPanel>
+                        <materialDesign:ColorZone Background="Peru" Height="70">
+                            <!-- Ng Count -->
+                            <TextBlock x:Name="PART_NgCountTextBlock" FontSize="24"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </materialDesign:ColorZone>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <materialDesign:ColorZone Background="Chocolate" Height="50" Margin="10 3">
+                                    <TextBlock Text="Bin 4" FontSize="24" HorizontalAlignment="Center"
+                                               VerticalAlignment="Center" />
+                                </materialDesign:ColorZone>
+                                <!-- Ng4 Count -->
+                                <Label x:Name="PART_Ng4CountLabel" HorizontalContentAlignment="Center"
+                                       BorderBrush="Black"
+                                       BorderThickness="1" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <materialDesign:ColorZone Background="Coral" Height="50" Margin="10 3">
+                                    <TextBlock Text="Bin 5" FontSize="24" HorizontalAlignment="Center"
+                                               VerticalAlignment="Center" />
+                                </materialDesign:ColorZone>
+                                <!-- Ng5 Count -->
+                                <Label x:Name="PART_Ng5Count" HorizontalContentAlignment="Center" BorderBrush="Black"
+                                       BorderThickness="1" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+
+                <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0">
+                    <TextBlock Text="Time of summary" />
+                    <!-- Select summary -->
+                    <ComboBox Width="150" x:Name="PART_SummarySelectionComboBox"
+                              TextElement.Foreground="{DynamicResource PrimaryHueDarkBrush}"
+                              SelectionChanged="OnSummarySelectionChanged" />
                 </StackPanel>
             </Grid>
 
-            <Grid Grid.Column="1" Grid.Row="0">
-                <StackPanel>
-                    <materialDesign:ColorZone Background="Peru" Height="70">
-                        <!-- Ng Count -->
-                        <TextBlock x:Name="PART_NgCountTextBlock" FontSize="24"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center" />
-                    </materialDesign:ColorZone>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0">
-                            <materialDesign:ColorZone Background="Chocolate" Height="50" Margin="10 3">
-                                <TextBlock Text="Bin 4" FontSize="24" HorizontalAlignment="Center"
-                                           VerticalAlignment="Center" />
-                            </materialDesign:ColorZone>
-                            <!-- Ng4 Count -->
-                            <Label x:Name="PART_Ng4CountLabel" HorizontalContentAlignment="Center" BorderBrush="Black"
-                                   BorderThickness="1" />
-                        </StackPanel>
-                        <StackPanel Grid.Column="1">
-                            <materialDesign:ColorZone Background="Coral" Height="50" Margin="10 3">
-                                <TextBlock Text="Bin 5" FontSize="24" HorizontalAlignment="Center"
-                                           VerticalAlignment="Center" />
-                            </materialDesign:ColorZone>
-                            <!-- Ng5 Count -->
-                            <Label x:Name="PART_Ng5Count" HorizontalContentAlignment="Center" BorderBrush="Black"
-                                   BorderThickness="1" />
-                        </StackPanel>
-                    </Grid>
-                </StackPanel>
+            <Grid Grid.Column="1" Grid.Row="0" Grid.RowSpan="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Border Grid.Row="0" Background="ForestGreen">
+                    <TextBlock FontSize="24" Text="Pass Units" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                </Border>
+                <Border Grid.Row="1" Background="LawnGreen">
+                    <!-- Ok Count -->
+                    <TextBlock x:Name="PART_OkCountTextBlock" FontSize="24" VerticalAlignment="Center"
+                               HorizontalAlignment="Center" />
+                </Border>
             </Grid>
 
-            <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0">
-                <TextBlock Text="Time of summary" />
-                <!-- Select summary -->
-                <ComboBox Width="150" x:Name="PART_SummarySelectionComboBox"
-                          TextElement.Foreground="{DynamicResource PrimaryHueDarkBrush}"
-                          SelectionChanged="OnSummarySelectionChanged"/>
-            </StackPanel>
         </Grid>
-
-        <Grid Grid.Column="1" Grid.Row="0" Grid.RowSpan="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Border Grid.Row="0" Background="ForestGreen">
-                <TextBlock FontSize="24" Text="Pass Units" VerticalAlignment="Center" HorizontalAlignment="Center" />
-            </Border>
-            <Border Grid.Row="1" Background="LawnGreen">
-                <!-- Ok Count -->
-                <TextBlock x:Name="PART_OkCountTextBlock" FontSize="24" VerticalAlignment="Center"
-                           HorizontalAlignment="Center" />
-            </Border>
-        </Grid>
-
-    </Grid>
-
+        </StackPanel>
 </UserControl>

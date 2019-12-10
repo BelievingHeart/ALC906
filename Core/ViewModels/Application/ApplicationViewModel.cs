@@ -133,6 +133,16 @@ namespace Core.ViewModels.Application
                 Process.Start(DirectoryConstants.CsvOutputDir);
             });
             OpenImageDirCommand = new RelayCommand(() => { Process.Start(Directory.GetCurrentDirectory()); });
+            
+            SimulateCommand = new RelayCommand(DoSimulation);
+        }
+
+        /// <summary>
+        /// Do temporary simulations
+        /// </summary>
+        private void DoSimulation()
+        {
+            Summary.UpdateCurrentSummary("Ng4");
         }
 
         private void InitTimers()
@@ -533,7 +543,7 @@ namespace Core.ViewModels.Application
                 Combine2D3DResults();
                 SubmitProductLevels();
 
-                UiDispatcher.InvokeAsync(UpdateSummaries);
+                UiDispatcher.Invoke(UpdateSummaries);
                 Task.Run(() => SerializeImagesAndCsv(Graphics2DLeft.Images, Graphics2DRight.Images,
                     _imagesToSerialize3dLeft,
                     _imagesToSerialize3dRight, FaiItemsCavity1, FaiItemsCavity2));
@@ -842,6 +852,7 @@ namespace Core.ViewModels.Application
                 ProductLevel.Ng4.ToString(), ProductLevel.Ng5.ToString()
             };
             Summary = new ProductionLineSummary(DirectoryConstants.ProductionLineRecordDir, binNames);
+            OnPropertyChanged(nameof(Summary));
         }
 
         private void Scan2DConfigFolders()
@@ -897,6 +908,7 @@ namespace Core.ViewModels.Application
             }
 
             Server.Disconnect();
+            Summary.SerializeCurrentSummary();
         }
 
 
@@ -1004,6 +1016,8 @@ namespace Core.ViewModels.Application
         public ProductionLineSummary Summary { get; set; }
 
         public ResultStatus ResultReady2D { get; set; }
+
+        public ICommand SimulateCommand { get; set; }
 
         #endregion
     }

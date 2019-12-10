@@ -79,9 +79,12 @@
                 </StackPanel>
             </Button>
             <!-- Machine state banner -->
-            <materialDesign:ColorZone Grid.Column="5" Background="{Binding CurrentMachineState, Converter={converters:MachineStateToColorConverter}}" Height="70" CornerRadius="10">
+            <Button Grid.Column="5" Background="{Binding CurrentMachineState, Converter={converters:MachineStateToColorConverter}}" 
+                    Height="70" materialDesign:ButtonAssist.CornerRadius="10"
+                    Command="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=SimulateCommand}"
+                    >
                 <TextBlock Text="{Binding CurrentMachineState}" FontSize="35" HorizontalAlignment="Center" VerticalAlignment="Center" />
-            </materialDesign:ColorZone>
+            </Button>
         </Grid>
 
         <Grid Grid.Row="1">
@@ -97,11 +100,9 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-
-                <!-- Basic info view -->
-                <home:BasicInfoView Grid.Row="0" Yield="{Binding ElementName=SummaryView, Path=ItemToDisplay.Yield}" Uph="{Binding ElementName=SummaryView, Path=ItemToDisplay.TotalCount}"/>
+                
                 <!-- Bin views -->
-                <bins:SummaryView Grid.Row="1" x:Name="SummaryView" Summary="{Binding Summary}"/>
+                <bins:SummaryView Grid.Row="0" Summary="{Binding Summary}"/>
             </Grid>
 
             <!-- Left socket preview -->

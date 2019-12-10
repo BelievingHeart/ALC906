@@ -212,8 +212,6 @@
             <e p="HalconScreenView.xaml.cs" t="Include" />
           </e>
           <e p="Home" t="Include">
-            <e p="BasicInfoView.xaml" t="Include" />
-            <e p="BasicInfoView.xaml.cs" t="Include" />
             <e p="HomeView.xaml" t="Include" />
             <e p="HomeView.xaml.cs" t="Include" />
           </e>
