@@ -107,13 +107,13 @@
 
             <!-- Left socket preview -->
             <halconScreen:HalconScreenView Grid.Column="1" ButtonVisibility="Visible"
-                                           LeftGraphics="{Binding Path=Graphics2DLeft}"
-                                           RightGraphics="{Binding Path=Graphics2DRight}" />
+                                           LeftGraphics="{Binding Path=Graphics2DCavity1}"
+                                           RightGraphics="{Binding Path=Graphics2DCavity2}" />
 
             <!-- Right socket preview -->
             <halconScreen:HalconScreenView Grid.Column="2" ButtonVisibility="Visible"
-                                           LeftGraphics="{Binding Path=Graphics3DLeft}"
-                                           RightGraphics="{Binding Path=Graphics3DRight}" />
+                                           LeftGraphics="{Binding Path=Graphics3DCavity1}"
+                                           RightGraphics="{Binding Path=Graphics3DCavity2}" />
 
 
         </Grid>

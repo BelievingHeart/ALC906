@@ -38,8 +38,6 @@
                 <TextBlock Text="{Binding TopCamera.MaxTimeElapsed}" VerticalAlignment="Center" />
                 <TextBlock Text="Time elapsed: " Margin="20 0 0 0" VerticalAlignment="Center" />
                 <TextBlock Text="{Binding TopCamera.TimeElapse}" VerticalAlignment="Center" />
-                <!-- TODO: remove this line -->
-                <Button Content="Add message" Command="{Binding Path=SimulateCommand}"/>
             </StackPanel>
 
         </Grid>

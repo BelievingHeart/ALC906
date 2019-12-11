@@ -89,6 +89,7 @@
     <Compile Include="Enums\CameraType.cs" />
     <Compile Include="Enums\MeasurementDecision.cs" />
     <Compile Include="Enums\ProductLevel.cs" />
+    <Compile Include="Enums\ProductType.cs" />
     <Compile Include="Enums\ResultStatus.cs" />
     <Compile Include="Enums\SocketType.cs" />
     <Compile Include="Enums\StringMatrixType.cs" />

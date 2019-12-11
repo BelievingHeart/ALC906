@@ -49,8 +49,8 @@ namespace PLS
         {
             get
             {
-                var workingSeconds = (TimeUpdated - TimeCreated).Seconds;
-                var unitsPerSecond = TotalCount / (double) workingSeconds;
+                var workingSeconds = (TimeUpdated - TimeCreated).TotalSeconds;
+                var unitsPerSecond = TotalCount / workingSeconds;
                 return (int) unitsPerSecond * 3600;
             }
         }

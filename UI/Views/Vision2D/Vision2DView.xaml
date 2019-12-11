@@ -19,8 +19,8 @@
         </Grid.ColumnDefinitions>
         <!-- Halcon window -->
         <halconScreen:HalconScreenView Grid.Column="0"
-                                       LeftGraphics="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Graphics2DLeft}"
-                                       RightGraphics="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Graphics2DRight}" />
+                                       LeftGraphics="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Graphics2DCavity1}"
+                                       RightGraphics="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Graphics2DCavity2}" />
 
 
     

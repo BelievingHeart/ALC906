@@ -1,2 +1,3 @@
 1. Separate region of loop-related variables
-2. Separate Logging from application view model
+2. Display result-ready of both 2d cavities
+3. Improve fai setting view

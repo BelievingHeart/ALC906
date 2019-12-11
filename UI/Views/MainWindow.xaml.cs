@@ -24,13 +24,13 @@ namespace UI.Views
 
         private void CleanupApplication(object sender, EventArgs eventArgs)
         {
-//            ApplicationViewModel.Instance.Cleanup();
+            ApplicationViewModel.Instance.Cleanup();
         }
 
         private void OnMainWindowLoaded(object sender, RoutedEventArgs e)
         {
-//            ApplicationViewModel.Instance.InitHardWares();
             ApplicationViewModel.Instance.LoadConfigs();
+            ApplicationViewModel.Instance.InitHardWares();
         }
 
 

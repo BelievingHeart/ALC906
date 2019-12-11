@@ -34,7 +34,17 @@
         </materialDesign:ColorZone>
         
         <materialDesign:ColorZone Grid.Column="1" Grid.Row="0" Background="{StaticResource PrimaryHueLightBrush}" Height="60" BorderBrush="Gray" BorderThickness="1">
-            <TextBlock Text="I40" HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="20" />
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="I40 " VerticalAlignment="Center" FontSize="20"/>
+                <ComboBox>
+                    <ComboBoxItem>
+                        <Button Content="MTM" Command="{Binding SwitchMtmCommand, Source={x:Static application:ApplicationViewModel.Instance}}"></Button>
+                    </ComboBoxItem>   
+                    <ComboBoxItem>
+                        <Button Content="MTM" Command="{Binding SwitchAlpsCommand, Source={x:Static application:ApplicationViewModel.Instance}}"></Button>
+                    </ComboBoxItem>
+                </ComboBox>
+            </StackPanel>
         </materialDesign:ColorZone>
              <materialDesign:ColorZone Grid.Column="1" Grid.Row="1" Background="{StaticResource PrimaryHueLightBrush}" Height="60" BorderBrush="Gray" BorderThickness="1">
             <TextBlock Text="1234" HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="20" />

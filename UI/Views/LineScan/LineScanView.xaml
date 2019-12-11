@@ -16,8 +16,8 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <!-- Halcon window -->
-        <halconScreen:HalconScreenView x:Name="HalconScreen" LeftGraphics="{Binding Path=Graphics3DLeft}"
-                                       RightGraphics="{Binding Path=Graphics3DRight}"
+        <halconScreen:HalconScreenView x:Name="HalconScreen" LeftGraphics="{Binding Path=Graphics3DCavity1}"
+                                       RightGraphics="{Binding Path=Graphics3DCavity2}"
                                        SocketToDisplay="{Binding RelativeSource={RelativeSource AncestorType=local:LineScanView}, Path=SocketToDisplay}" />
 
 
