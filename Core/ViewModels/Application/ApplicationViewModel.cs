@@ -92,7 +92,7 @@ namespace Core.ViewModels.Application
         private readonly CsvSerializer.CsvSerializer _serializerRight =
             new CsvSerializer.CsvSerializer(Path.Combine(DirectoryConstants.CsvOutputDir, "Cavity2"));
 
-        private readonly IMeasurementProcedure3D _procedure3D = new I40_3D_Output();
+        private IMeasurementProcedure3D _procedure3D = new I40_3D_Output();
 
         private readonly object _lockerOfRoutineMessageList = new object();
 
@@ -133,6 +133,9 @@ namespace Core.ViewModels.Application
             OpenImageDirCommand = new RelayCommand(() => { Process.Start(Directory.GetCurrentDirectory()); });
             
             SimulateCommand = new RelayCommand(DoSimulation);
+            
+            SwitchMtmCommand = new SimpleCommand(o => { CurrentProductType = ProductType.Mtm;}, o=>CurrentProductType!=ProductType.Mtm);
+            SwitchAlpsCommand = new SimpleCommand(o => { CurrentProductType = ProductType.Alps;}, o=>CurrentProductType!=ProductType.Alps);
         }
 
         /// <summary>
@@ -807,9 +810,6 @@ namespace Core.ViewModels.Application
         /// </summary>
         public void InitHardWares()
         {
-          
-           
-
             SetupServer();
 
             SetupCameras();
@@ -845,7 +845,7 @@ namespace Core.ViewModels.Application
 
         private void Scan2DConfigFolders()
         {
-            var dirNamesInConfigDir = Directory.GetDirectories(DirectoryConstants.Config2DDir).Select(Path.GetFileName)
+            var dirNamesInConfigDir = Directory.GetDirectories(DirectoryConstants.ConfigDir2D).Select(Path.GetFileName)
                 .ToList();
             Config2dDirList = dirNamesInConfigDir;
         }
@@ -860,7 +860,7 @@ namespace Core.ViewModels.Application
 
         private void LoadI40CheckConfigs()
         {
-            var i40ConfigDir2d = Path.Combine(DirectoryConstants.Config2DDir, Config2dDirList[Config2dDirIndex]);
+            var i40ConfigDir2d = Path.Combine(DirectoryConstants.ConfigDir2D, Config2dDirList[Config2dDirIndex]);
             I40Check = new I40Check(i40ConfigDir2d, "I40");
         }
 
@@ -1013,10 +1013,50 @@ namespace Core.ViewModels.Application
 
         private void SwitchProductType(ProductType currentProductType)
         {
-            if (currentProductType == ProductType.Mtm)
-            {
-                
-            }
+            SwitchProductType2D(currentProductType);
+            SwitchProductType3D(currentProductType);
+            
+            FaiItemsCavity1 = FaiItems2DLeft.ConcatNew(FaiItems3DLeft);
+            FaiItemsCavity2 = FaiItems2DRight.ConcatNew(FaiItems3DRight);
+        }
+
+        private void SwitchProductType3D(ProductType currentProductType)
+        {
+            _procedure3D = currentProductType == ProductType.Mtm
+                ? new I40_3D_Output()
+                : throw new NotImplementedException();
+            
+            // TODO: get fai names from 3d procedure
+            var faiNames = new List<string>();
+            
+            // Load fai items configs
+            FaiItems3DLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(faiNames,
+                    DirectoryConstants.FaiConfigDirs3DCavity1[currentProductType])
+                .ToList();
+            FaiItems3DRight = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(faiNames,
+                    DirectoryConstants.FaiConfigDirs3DCavity2[currentProductType])
+                .ToList();
+       
+        }
+
+        private void SwitchProductType2D(ProductType currentProductType)
+        {
+            var i40ConfigDir2d = DirectoryConstants.ConfigDirs2D[currentProductType];
+            I40Check = new I40Check(i40ConfigDir2d, "I40");
+
+            FaiItems2DLeft = Gen2DFaiItems(I40Check, CavityType.Cavity1);
+            FaiItems2DRight = Gen2DFaiItems(I40Check, CavityType.Cavity2);
+        }
+
+        private List<FaiItem> Gen2DFaiItems(I40Check i40Check, CavityType cavityType)
+        {
+            // TODO: read fai item names from I40Check
+            _names2d = Get2DFaiNames();
+            throw new NotImplementedException();
+            
+            // TODO: read tolerances from I40Check
+
+            // TODO: set ShouldAutoSerialize to false
         }
 
         #endregion

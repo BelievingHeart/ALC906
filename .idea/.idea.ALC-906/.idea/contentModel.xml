@@ -29,6 +29,7 @@
           <e p="CameraType.cs" t="Include" />
           <e p="MeasurementDecision.cs" t="Include" />
           <e p="ProductLevel.cs" t="Include" />
+          <e p="ProductType.cs" t="Include" />
           <e p="ResultStatus.cs" t="Include" />
           <e p="SocketType.cs" t="Include" />
           <e p="StringMatrixType.cs" t="Include" />

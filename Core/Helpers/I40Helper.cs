@@ -41,7 +41,7 @@ namespace Core.Helpers
             for (int index = startIndex; index < endIndex; index++)
             {
                 var result = procedure.myResult[index];
-                output[result.nameStr] = result.measureValue;
+                output[result.nameStr] = FloorDouble(result.measureValue, 4);
             }
 
             return output;
@@ -66,14 +66,19 @@ namespace Core.Helpers
             output.Images = result3D.CompositeImage;
             output.ErrorMessage = result3D.ErrorMessage;
             output.ItemExists = result3D.ItemExists;
-            output.FaiResults = result3D.ItemExists? result3D.FaiResults : new Dictionary<string, double>();
+            var dict = new Dictionary<string, double>();
+            if (result3D.ItemExists)
+            {
+                foreach (var key in result3D.FaiResults.Keys)
+                {
+                    dict[key] = FloorDouble(result3D.FaiResults[key], 4);
+                }
+            }
+
+            output.FaiResults = dict;
             return output;
         }
-
-        public static List<HImage> ToHImages(this IEnumerable<HObject> objects)
-        {
-            return objects.Select(HobjectToHimage).ToList();
-        }
+        
         
         private static HImage HobjectToHimage(HObject hobject)
         {
@@ -81,8 +86,27 @@ namespace Core.Helpers
             HImage output = new HImage();
             HOperatorSet.GetImagePointer1(hobject, out pointer, out type, out width, out height);
             output.GenImage1(type, width, height, pointer);
-
+            
             return output;
+        }
+
+        /// <summary>
+        /// Floor double number to the specified precision
+        /// </summary>
+        /// <param name="value">value to floor</param>
+        /// <param name="numDecimalToPreserve"></param>
+        /// <returns></returns>
+        public static double FloorDouble(double value, int numDecimalToPreserve)
+        {
+            var mulFactor = 1;
+            for (int i = 0; i < numDecimalToPreserve; i++)
+            {
+                mulFactor *= 10;
+            }
+
+            var temp = (int) (value * mulFactor);
+
+            return temp / (double) mulFactor;
         }
     }
 }
