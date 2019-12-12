@@ -9,7 +9,7 @@ namespace Core.Helpers
     {
         public static string SerializeImagesWith2D3DMatched(List<HImage> images2d, List<HImage> images3d, bool shouldSerialize2d, bool shouldSerialize3d, string serializationDir)
         {
-            var currentTime = DateTime.Now.ToString("hh-mm-ss-ffff");
+            var currentTime = DateTime.Now.ToString("HH-mm-ss-ffff");
             if (shouldSerialize2d)
             {
                 var imageDir2d = Path.Combine(serializationDir, "2D");

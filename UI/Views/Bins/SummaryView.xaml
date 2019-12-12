@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:application="clr-namespace:Core.ViewModels.Application;assembly=Core"
+             xmlns:converters="clr-namespace:UI.Converters"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <StackPanel>  <!-- Bins -->
@@ -34,15 +35,11 @@
         </materialDesign:ColorZone>
         
         <materialDesign:ColorZone Grid.Column="1" Grid.Row="0" Background="{StaticResource PrimaryHueLightBrush}" Height="60" BorderBrush="Gray" BorderThickness="1">
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <TextBlock Text="I40 " VerticalAlignment="Center" FontSize="20"/>
-                <ComboBox>
-                    <ComboBoxItem>
-                        <Button Content="MTM" Command="{Binding SwitchMtmCommand, Source={x:Static application:ApplicationViewModel.Instance}}"></Button>
-                    </ComboBoxItem>   
-                    <ComboBoxItem>
-                        <Button Content="MTM" Command="{Binding SwitchAlpsCommand, Source={x:Static application:ApplicationViewModel.Instance}}"></Button>
-                    </ComboBoxItem>
+                <ComboBox HorizontalContentAlignment="Center" MinWidth="100" SelectedIndex="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=CurrentProductType, Converter={converters:ProductTypeToIndexConverter}}">
+                    <ComboBoxItem Content="MTM" HorizontalAlignment="Center"/>   
+                    <ComboBoxItem Content="ALPS" HorizontalAlignment="Center"/>
                 </ComboBox>
             </StackPanel>
         </materialDesign:ColorZone>

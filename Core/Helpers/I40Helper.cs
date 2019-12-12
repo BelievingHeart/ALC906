@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Core.Enums;
+using Core.ImageProcessing._2D;
+using Core.ViewModels.Fai;
 using Core.ViewModels.Results;
 using CYG906ALC.ALG;
 using HalconDotNet;
@@ -41,7 +44,7 @@ namespace Core.Helpers
             for (int index = startIndex; index < endIndex; index++)
             {
                 var result = procedure.myResult[index];
-                output[result.nameStr] = FloorDouble(result.measureValue, 4);
+                output[result.nameStr] = FloorDouble(result.measureValue, 3);
             }
 
             return output;
@@ -59,6 +62,28 @@ namespace Core.Helpers
             return result;
         }
 
+        public static List<FaiItem> GetFaiItems(this I40Check procedure)
+        {
+            var numValidFai = I40Check.YouXiaoFAINum;
+            var names = procedure.GetFaiNames();
+            var uppers = procedure.myResult.Take(numValidFai).Select(ele => ele.upper).ToList();
+            var lowers = procedure.myResult.Take(numValidFai).Select(ele => ele.lower).ToList();
+
+            var output = new List<FaiItem>();
+            for (int i = 0; i < numValidFai; i++)
+            {
+                output.Add(new FaiItem(){Name = names[i], MaxBoundary = uppers[i], MinBoundary = lowers[i], ShouldAutoSerialize = false});
+            }
+
+            return output;
+        }
+
+        public static List<string> GetFaiNames(this I40Check procedure)
+        {
+            var numValidFai = I40Check.YouXiaoFAINum;
+            return procedure.OnGetResultDefNameStr().Take(numValidFai).ToList();
+        }
+
         public static GraphicsPackViewModel GetGraphics(this MeasurementResult3D result3D)
         {
             var output = new GraphicsPackViewModel();
@@ -71,7 +96,7 @@ namespace Core.Helpers
             {
                 foreach (var key in result3D.FaiResults.Keys)
                 {
-                    dict[key] = FloorDouble(result3D.FaiResults[key], 4);
+                    dict[key] = FloorDouble(result3D.FaiResults[key], 3);
                 }
             }
 

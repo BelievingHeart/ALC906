@@ -19,11 +19,13 @@ namespace Core.IoC.Loggers
         private static Logger _instance = new Logger(DirectoryConstants.ErrorLogDir)
         {
             PlcMessageList = new FixedSizeMessageList(DirectoryConstants.ErrorLogDir, "PLC.txt"),
+            UnhandledPlcMessageList = new FixedSizeMessageList(DirectoryConstants.ErrorLogDir, "PLC-Unhandled.txt"),
             RoutineMessageList = new FixedSizeMessageList(DirectoryConstants.ErrorLogDir, "Routine.txt")
         };
         public static Logger Instance => _instance;
 
         public FixedSizeMessageList PlcMessageList { get; set; }
+        public FixedSizeMessageList UnhandledPlcMessageList { get; set; }
     
         public FixedSizeMessageList RoutineMessageList { get; set; }
         
@@ -68,7 +70,10 @@ namespace Core.IoC.Loggers
         {
             Instance?.PlcMessageList?.LogAsync(message);
         }
-
+        public static void LogUnhandledPlcMessage(string message)
+        {
+            Instance?.UnhandledPlcMessageList?.LogAsync(message);
+        }
         public static void LogRoutineMessage(string message)
         {
             Instance?.RoutineMessageList?.LogAsync(message);

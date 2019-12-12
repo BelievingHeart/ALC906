@@ -10,7 +10,7 @@
              d:DesignHeight="300" d:DesignWidth="300">
 
        <!-- Plc message box -->
-       <GroupBox Header="Plc messages" >
+       <GroupBox Header="{Binding RelativeSource={RelativeSource AncestorType=server:AutoScrollMessageBox}, Path=Header}" >
            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0 0 50 0">
                <ListBox x:Name="PART_MessageListBox">
                    <ListBox.ItemTemplate>

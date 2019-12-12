@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -355,7 +356,7 @@ namespace Core.ViewModels.Application
             }
 
             RoundCountSinceReset = 0;
-            
+
             Server.NotifyPlcReadyToGoNextLoop();
         }
 
@@ -370,7 +371,7 @@ namespace Core.ViewModels.Application
                     OnCavity2Arrived2D();
                     break;
                 default:
-                    Logger.LogPlcMessage($"Command ID {commandId} received");
+                    Logger.LogUnhandledPlcMessage($"Command ID {commandId} received");
                     break;
             }
         }
@@ -519,7 +520,6 @@ namespace Core.ViewModels.Application
         private int _config2dDirIndex;
         private GraphicsPackViewModel _graphics2DCavity1 = new GraphicsPackViewModel();
         private GraphicsPackViewModel _graphics2DCavity2 = new GraphicsPackViewModel();
-        private List<string> _names2d;
         private List<string> _names3d;
         private ProductType _currentProductType;
 
@@ -648,13 +648,8 @@ namespace Core.ViewModels.Application
 
         private void LoadFaiItems()
         {
-            _names2d = Get2DFaiNames();
-            FaiItems2DLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(_names2d,
-                    DirectoryConstants.FaiConfigDir2DLeft)
-                .ToList();
-            FaiItems2DRight = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(_names2d,
-                    DirectoryConstants.FaiConfigDir2DRight)
-                .ToList();
+            FaiItems2DLeft = I40Check.GetFaiItems();
+            FaiItems2DRight = I40Check.GetFaiItems();
             // load all fai names 
             _names3d = ParseFaiNames(DirectoryConstants.FaiNamesDir, NameConstants.FaiNamesFile3D);
 
@@ -670,10 +665,7 @@ namespace Core.ViewModels.Application
             FaiItemsCavity2 = FaiItems2DRight.ConcatNew(FaiItems3DRight);
         }
 
-        private List<string> Get2DFaiNames()
-        {
-            return I40Check.OnGetResultDefNameStr().Take(I40Check.YouXiaoFAINum).ToList();
-        }
+  
 
         private void LoadShapeModels()
         {
@@ -774,7 +766,7 @@ namespace Core.ViewModels.Application
             }
             catch
             {
-                result = new GraphicsPackViewModel {Images = images, FaiResults = GenErrorFaiResults(_names2d)};
+                result = new GraphicsPackViewModel {Images = images, FaiResults = GenErrorFaiResults(I40Check.GetFaiNames())};
                 Logger.LogRoutineMessage($"2D processing for {currentArrivedSocket2D} errored");
             }
 
@@ -1023,8 +1015,7 @@ namespace Core.ViewModels.Application
         private void SwitchProductType3D(ProductType currentProductType)
         {
             _procedure3D = currentProductType == ProductType.Mtm
-                ? new I40_3D_Output()
-                : throw new NotImplementedException();
+                ? new I40_3D_Output() : new I40_3D_Output();
             
             // TODO: get fai names from 3d procedure
             var faiNames = new List<string>();
@@ -1044,20 +1035,11 @@ namespace Core.ViewModels.Application
             var i40ConfigDir2d = DirectoryConstants.ConfigDirs2D[currentProductType];
             I40Check = new I40Check(i40ConfigDir2d, "I40");
 
-            FaiItems2DLeft = Gen2DFaiItems(I40Check, CavityType.Cavity1);
-            FaiItems2DRight = Gen2DFaiItems(I40Check, CavityType.Cavity2);
+            FaiItems2DLeft = I40Check.GetFaiItems();
+            FaiItems2DRight = I40Check.GetFaiItems();
         }
 
-        private List<FaiItem> Gen2DFaiItems(I40Check i40Check, CavityType cavityType)
-        {
-            // TODO: read fai item names from I40Check
-            _names2d = Get2DFaiNames();
-            throw new NotImplementedException();
-            
-            // TODO: read tolerances from I40Check
-
-            // TODO: set ShouldAutoSerialize to false
-        }
+     
 
         #endregion
     }

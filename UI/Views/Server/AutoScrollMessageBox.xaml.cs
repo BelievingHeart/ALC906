@@ -75,5 +75,15 @@ namespace UI.Views.Server
             PART_MessageListBox.SelectedIndex = MessageList.Count - 1;
             PART_MessageListBox.ScrollIntoView(PART_MessageListBox.SelectedItem);
         }
+
+
+        public static readonly DependencyProperty HeaderProperty = DependencyProperty.Register(
+            "Header", typeof(string), typeof(AutoScrollMessageBox), new PropertyMetadata(default(string)));
+
+        public string Header
+        {
+            get { return (string) GetValue(HeaderProperty); }
+            set { SetValue(HeaderProperty, value); }
+        }
     }
 }

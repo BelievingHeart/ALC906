@@ -2,6 +2,6 @@
 {
     public enum ProductType
     {
-        Mtm, Alps
+        Mtm = 0, Alps = 1
     }
 }

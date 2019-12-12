@@ -42,6 +42,13 @@
 
         </Grid>
         <!-- Plc message box -->
-        <server:AutoScrollMessageBox Grid.Row="1" MessageList="{Binding Source={x:Static loggers:Logger.Instance}, Path=PlcMessageList}" />
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <server:AutoScrollMessageBox Grid.Column="0" MessageList="{Binding Source={x:Static loggers:Logger.Instance}, Path=PlcMessageList}" Header="Plc messages" />
+            <server:AutoScrollMessageBox Grid.Column="1" MessageList="{Binding Source={x:Static loggers:Logger.Instance}, Path=UnhandledPlcMessageList}" Header="Unhandled plc messages"/>
+            </Grid>
     </Grid>
 </UserControl>
