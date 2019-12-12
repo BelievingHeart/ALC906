@@ -7,6 +7,9 @@
       <e p="ALC-906.sln" t="IncludeFlat" />
       <e p="Core" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
+        <e p="Commands" t="Include">
+          <e p="CloseDialogAttachedCommand.cs" t="Include" />
+        </e>
         <e p="Constants" t="Include">
           <e p="DirectoryConstants.cs" t="Include" />
           <e p="NameConstants.cs" t="Include" />
@@ -40,6 +43,7 @@
           <e p="I40Helper.cs" t="Include" />
           <e p="ObservableCollectionHelper.cs" t="Include" />
           <e p="PlcMessagePackHelper.cs" t="Include" />
+          <e p="PopupHelper.cs" t="Include" />
           <e p="ProductLevelHelper.cs" t="Include" />
           <e p="SerializationHelper.cs" t="Include" />
           <e p="SocketTypeHelper.cs" t="Include" />
@@ -95,6 +99,10 @@
           <e p="Message" t="Include">
             <e p="FixedSizeMessageList.cs" t="Include" />
             <e p="LoggingMessageItem.cs" t="Include" />
+          </e>
+          <e p="Popup" t="Include">
+            <e p="PopupQueue.cs" t="Include" />
+            <e p="PopupViewModel.cs" t="Include" />
           </e>
           <e p="Results" t="Include">
             <e p="GraphicsPackViewModel.cs" t="Include" />

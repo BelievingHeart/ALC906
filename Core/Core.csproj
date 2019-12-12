@@ -75,6 +75,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\CloseDialogAttachedCommand.cs" />
     <Compile Include="Constants\DirectoryConstants.cs" />
     <Compile Include="Constants\NameConstants.cs" />
     <Compile Include="Constants\PathConstants.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="Helpers\I40Helper.cs" />
     <Compile Include="Helpers\ObservableCollectionHelper.cs" />
     <Compile Include="Helpers\PlcMessagePackHelper.cs" />
+    <Compile Include="Helpers\PopupHelper.cs" />
     <Compile Include="Helpers\ProductLevelHelper.cs" />
     <Compile Include="Helpers\SerializationHelper.cs" />
     <Compile Include="Helpers\SocketTypeHelper.cs" />
@@ -119,6 +121,8 @@
     <Compile Include="ViewModels\Fai\DataRowViewModel.cs" />
     <Compile Include="ViewModels\Fai\FaiTableStackViewModel.cs" />
     <Compile Include="ViewModels\Message\FixedSizeMessageList.cs" />
+    <Compile Include="ViewModels\Popup\PopupQueue.cs" />
+    <Compile Include="ViewModels\Popup\PopupViewModel.cs" />
     <Compile Include="ViewModels\Results\GraphicsPackViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsViewModel.cs" />
     <Compile Include="ViewModels\Summary\SummaryViewModel.cs" />

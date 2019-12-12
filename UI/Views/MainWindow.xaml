@@ -112,22 +112,35 @@
             </ToolBarTray>
 
 
-            <materialDesign:DialogHost Grid.Row="1"
-                                       DataContext="{Binding Source={x:Static applicationViewModel:ApplicationViewModel.Instance}}"
-                                       IsOpen="{Binding Path=ShouldMessageBoxPopup}">
+            <materialDesign:DialogHost Grid.Row="1" x:Name="DialogHost"
+                                       DataContext="{Binding Source={x:Static loggers:Logger.Instance}, Path=PopupViewModel}"
+                                       IsOpen="{Binding Path=ShouldMessageBoxPopup, Source={x:Static loggers:Logger.Instance}}">
                 <Grid>   <!-- Pages here -->
                     <ContentControl
-                        Content="{Binding Path=CurrentApplicationPage, Converter={converters:EnumToApplicationPageConverter}}" />
-                    <materialDesign:Snackbar Panel.ZIndex="10"  HorizontalAlignment="Center" VerticalAlignment="Center" MessageQueue="{Binding Source={x:Static loggers:Logger.Instance}, Path=StateChangedMessageQueue}"></materialDesign:Snackbar>
-                    </Grid>
+                        Content="{Binding Path=CurrentApplicationPage, Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Converter={converters:EnumToApplicationPageConverter}}" />
+                    <materialDesign:Snackbar Panel.ZIndex="10" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                             MessageQueue="{Binding Source={x:Static loggers:Logger.Instance}, Path=StateChangedMessageQueue}" />
+                </Grid>
                 <!-- Message dialog -->
                 <materialDesign:DialogHost.DialogContent>
-                    <GroupBox Header="{Binding WaringMessageHighLevel.Time}" Width="300" Height="200">
+                    <GroupBox Header="{Binding MessageItem.Time}" Width="300" Height="200">
                         <DockPanel>
                             <StackPanel DockPanel.Dock="Top" Margin="10">
-                                <TextBlock Text="{Binding WaringMessageHighLevel.Message}"  TextWrapping="Wrap" />
+                                <TextBlock Text="{Binding MessageItem.Message}" TextWrapping="Wrap"
+                                           HorizontalAlignment="Center" />
                             </StackPanel>
-                            <Button HorizontalAlignment="Center" VerticalAlignment="Bottom" Content="OK" IsCancel="True" IsDefault="True" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" DockPanel.Dock="Bottom" />
+                            <Grid DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
+                                <Button HorizontalAlignment="Left" VerticalAlignment="Center"
+                                        Content="{Binding OkButtonText}" IsDefault="True"
+                                        Command="{Binding OkCommand}"
+                                        CommandParameter="{Binding ElementName=DialogHost}"
+                                        Margin="10 2" Width="100" />
+                                <Button HorizontalAlignment="Right" VerticalAlignment="Center"
+                                        Content="{Binding CancelButtonText}" IsCancel="True"
+                                        Command="{Binding CancelCommand}"
+                                        CommandParameter="{Binding ElementName=DialogHost}"
+                                        Margin="10 2" Width="100" />
+                            </Grid>
                         </DockPanel>
                     </GroupBox>
                 </materialDesign:DialogHost.DialogContent>

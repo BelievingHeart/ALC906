@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
 using Core.Constants;
+using Core.Helpers;
 using Core.ViewModels.Message;
+using Core.ViewModels.Popup;
 using MaterialDesignThemes.Wpf;
 using WPFCommon.ViewModels.Base;
 
@@ -12,6 +14,7 @@ namespace Core.IoC.Loggers
         private string _logDir;
         private string _previousDate;
         private readonly string _logFileName = "PlcErrors.txt";
+        private PopupViewModel _popupViewModel;
         private string LogFilePath => Path.Combine(_logDir, _logFileName);
         private string CurrentDate => DateTime.Today.ToShortDateString();
 
@@ -20,8 +23,23 @@ namespace Core.IoC.Loggers
         {
             PlcMessageList = new FixedSizeMessageList(DirectoryConstants.ErrorLogDir, "PLC.txt"),
             UnhandledPlcMessageList = new FixedSizeMessageList(DirectoryConstants.ErrorLogDir, "PLC-Unhandled.txt"),
-            RoutineMessageList = new FixedSizeMessageList(DirectoryConstants.ErrorLogDir, "Routine.txt")
+            RoutineMessageList = new FixedSizeMessageList(DirectoryConstants.ErrorLogDir, "Routine.txt"),
         };
+        
+        /// <summary>
+        /// Start queuing up popup windows
+        /// </summary>
+        public void StartPopupQueue()
+        {
+            _popupQueue = new PopupQueue(o=>!ShouldMessageBoxPopup);
+            _popupQueue.NewPopupDequeued += UpdatePopupViewModel;
+        }
+
+        private void UpdatePopupViewModel(PopupViewModel obj)
+        {
+            PopupViewModel = obj;
+        }
+
         public static Logger Instance => _instance;
 
         public FixedSizeMessageList PlcMessageList { get; set; }
@@ -60,7 +78,7 @@ namespace Core.IoC.Loggers
             // State changed logging
             StateChangedMessageQueue = new SnackbarMessageQueue(TimeSpan.FromSeconds(3));
         }
-
+        
         /// <summary>
         /// Used to prompt user when the machine state is changed
         /// </summary>
@@ -77,6 +95,32 @@ namespace Core.IoC.Loggers
         public static void LogRoutineMessage(string message)
         {
             Instance?.RoutineMessageList?.LogAsync(message);
+        }
+        
+        
+        public bool ShouldMessageBoxPopup { get; set; }
+
+        public PopupViewModel PopupViewModel
+        {
+            get { return _popupViewModel; }
+            set
+            {
+                _popupViewModel = value;
+                if(_popupViewModel!=null)ShouldMessageBoxPopup = true;
+            }
+        }
+
+        public PopupQueue _popupQueue;
+
+        public static void LogHighLevelWarningSpecial(PopupViewModel popupViewModel)
+        {
+            Instance._popupQueue.EnqueuePopupThreadSafe(popupViewModel);
+        }
+        
+        public static void LogHighLevelWarningNormal(string s)
+        {
+            var popupViewModel = PopupHelper.CreateNormalPopup(s);
+            Instance._popupQueue.EnqueuePopupThreadSafe(popupViewModel);
         }
     }
 }

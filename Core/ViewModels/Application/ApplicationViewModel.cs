@@ -95,7 +95,6 @@ namespace Core.ViewModels.Application
 
         private IMeasurementProcedure3D _procedure3D = new I40_3D_Output();
 
-        private readonly object _lockerOfRoutineMessageList = new object();
 
         private readonly Dictionary<CavityType, Queue<GraphicsPackViewModel>> _resultQueues2D =
             new Dictionary<CavityType, Queue<GraphicsPackViewModel>>
@@ -109,16 +108,13 @@ namespace Core.ViewModels.Application
         private int _rightSocketIndexSinceReset2D;
         private readonly object _lockerOfRightSocketIndexSinceReset2D = new object();
         private readonly object _lockerOfCurrentArrivedSocket2D = new object();
-        private readonly DispatcherTimer _lazyTimer = new DispatcherTimer(DispatcherPriority.Background);
-        private readonly object _lockerOfPlcMessageList = new object();
-        private LoggingMessageItem _waringMessageHighLevel;
 
         protected ApplicationViewModel()
         {
             CurrentApplicationPage = ApplicationPageType.Home;
-
-            InitTimers();
-
+            
+            Logger.Instance.StartPopupQueue();
+            
             InitCommands();
 
             ClearLaserImagesForNewRound();
@@ -144,50 +140,8 @@ namespace Core.ViewModels.Application
         /// </summary>
         private void DoSimulation()
         {
-//            Summary.UpdateCurrentSummary("Ng4");
-//            Task.Run(() => { Logger.LogRoutineMessage("Hello"); });
+            Logger.LogHighLevelWarningNormal("Hello");
         }
-
-        private void InitTimers()
-        {
-            _lazyTimer.Interval = TimeSpan.FromSeconds(5);
-            _lazyTimer.Tick += OnLazyTimerClicked;
-
-            _lazyTimer.Start();
-        }
-
-        private void OnLazyTimerClicked(object sender, EventArgs e)
-        {
-            // Clear messages if overflows
-//            lock (_lockerOfPlcMessageList)
-//            {
-//                ClearMessagesIfOverflows(PlcMessageList, 100);
-//            }
-//
-//            lock (_lockerOfRoutineMessageList)
-//            {
-//                ClearMessagesIfOverflows(RoutineMessageList, 100);
-//            }
-        }
-
-
-        private void ClearMessagesIfOverflows(ObservableCollection<LoggingMessageItem> messageList, int maxCount)
-        {
-            if (messageList.Count < maxCount) return;
-            try
-            {
-                int numToRemove = (int) (maxCount * 0.3);
-                for (int i = 0; i < numToRemove; i++)
-                {
-                    messageList.RemoveAt(i);
-                }
-            }
-            catch
-            {
-                // it's fine to remove it later
-            }
-        }
-
 
         private void ClearLaserImagesForNewRound()
         {
@@ -226,8 +180,8 @@ namespace Core.ViewModels.Application
                 Port = 4000
             };
             Server.NewRunStarted += OnNewRunStarted;
-            Server.AutoRunStopRequested += () => Logger.LogPlcMessage("Auto-mode-stop requested from plc");
-            Server.InitRequested += OnPlcInitRequested;
+            Server.PlcStopRequested += () => Logger.LogPlcMessage("Auto-mode-stop requested from plc");
+            Server.PlcResetRequestd += OnPlcInitRequested;
             Server.ClientHooked += OnPlcHooked;
             Server.CustomCommandReceived += PlcCustomCommandHandler;
             Server.PlcResetFinished += OnPlcResetFinished;
@@ -263,34 +217,40 @@ namespace Core.ViewModels.Application
             Server.CurrentMachineState = MachineState.Idle;
         }
 
-        private void LogHighLevelWarning(string s)
-        {
-            WaringMessageHighLevel = new LoggingMessageItem
-                {Time = DateTime.Now.ToString("hh:mm:ss t z"), Message = s};
-        }
+      
 
-        private void OnWarningL4Received(string message)
+        private void OnWarningL4Received(string message, long l)
         {
             //  Init must be able to execute after L4 warning received
             EnablePlcInit();
             Logger.Instance.LogErrorToFile(message);
-            LogHighLevelWarning(message);
+            Logger.LogHighLevelWarningNormal(message);
         }
 
-        private void OnWarningL3Received(string message)
+        private void OnWarningL3Received(string message, long errorCode)
         {
             if(Server.IsAutoRunning) Server.PauseCommand.Execute(null);
             Logger.Instance.LogErrorToFile(message);
-            LogHighLevelWarning(message);
+            
+            if (PlcErrorParser.IsSpecialErrorCode(errorCode))
+            {
+                Logger.LogUnhandledPlcMessage($"Received special error code {errorCode} from plc");
+                var popupViewModel = PopupHelper.CreateClearProductPopup(message, errorCode, Server);
+                Logger.LogHighLevelWarningSpecial(popupViewModel);
+            }
+            else
+            {
+                Logger.LogHighLevelWarningNormal(message);
+            }
         }
 
-        private void OnWarningL2Received(string message)
+        private void OnWarningL2Received(string message, long l)
         {
             Logger.Instance.LogErrorToFile(message);
-            LogHighLevelWarning(message);
+            Logger.LogHighLevelWarningNormal(message);
         }
 
-        private void OnWarningL1Received(string message)
+        private void OnWarningL1Received(string message, long l)
         {
             Logger.Instance.LogErrorToFile(message);
         }
@@ -468,7 +428,7 @@ namespace Core.ViewModels.Application
             var enumValue = (CavityType) socketIndex;
 
 
-            Logger.LogRoutineMessage($"3D processing starts for {enumValue}");
+            Logger.LogRoutineMessage($"3D processing starts for {enumValue} cavity");
             // Do processing for one socket and get its result
             var imagesForOneSocket =
                 _laserImageBuffers.Values.Select(list => list[socketIndex]).ToList();
@@ -500,7 +460,7 @@ namespace Core.ViewModels.Application
                 Graphics3DCavity2 = result3D.GetGraphics();
             }
 
-            Logger.LogRoutineMessage($"3D processing ends for {enumValue} socket");
+            Logger.LogRoutineMessage($"3D processing ends for {enumValue} cavity");
 
 
             // If all reserved places for 3D image buffers are filled,
@@ -944,19 +904,6 @@ namespace Core.ViewModels.Application
 
         public I40Check I40Check { get; set; }
 
-
-        public bool ShouldMessageBoxPopup { get; set; }
-
-        public LoggingMessageItem WaringMessageHighLevel
-        {
-            get { return _waringMessageHighLevel; }
-            set
-            {
-                _waringMessageHighLevel = value;
-                ShouldMessageBoxPopup = true;
-            }
-        }
-
         public ICommand OpenCSVDirCommand { get; set; }
         public ICommand OpenImageDirCommand { get; set; }
 
@@ -1038,9 +985,7 @@ namespace Core.ViewModels.Application
             FaiItems2DLeft = I40Check.GetFaiItems();
             FaiItems2DRight = I40Check.GetFaiItems();
         }
-
-     
-
+        
         #endregion
     }
 }

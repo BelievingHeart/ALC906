@@ -9,10 +9,10 @@ namespace Core.IoC.PlcErrorParser
 {
     public class PlcErrorParser : IPlcErrorParser
     {
-        public event Action<string> WarningL1Emit;
-        public event Action<string> WarningL2Emit;
-        public event Action<string> WarningL3Emit;
-        public event Action<string> WarningL4Emit;
+        public event Action<string,long> WarningL1Emit;
+        public event Action<string,long> WarningL2Emit;
+        public event Action<string,long> WarningL3Emit;
+        public event Action<string,long> WarningL4Emit;
 
         /// <summary>
         /// Key = ErrorCode, Value = Message + Level
@@ -26,16 +26,16 @@ namespace Core.IoC.PlcErrorParser
             switch (errorMessageItem.Level)
             {
                 case 1:
-                    OnWarningL1Emit(errorMessageItem.Message);
+                    OnWarningL1Emit(errorMessageItem.Message, errorCode);
                     break;
                 case 2:
-                    OnWarningL2Emit(errorMessageItem.Message);
+                    OnWarningL2Emit(errorMessageItem.Message, errorCode);
                     break;
                 case 3:
-                    OnWarningL3Emit(errorMessageItem.Message);
+                    OnWarningL3Emit(errorMessageItem.Message, errorCode);
                     break;
                 case 4:
-                    OnWarningL4Emit(errorMessageItem.Message);
+                    OnWarningL4Emit(errorMessageItem.Message, errorCode);
                     break;
             }
         }
@@ -55,24 +55,31 @@ namespace Core.IoC.PlcErrorParser
 
         }
 
-        protected virtual void OnWarningL1Emit(string obj)
+        protected virtual void OnWarningL1Emit(string obj, long errorCode)
         {
-            WarningL1Emit?.Invoke(obj);
+            WarningL1Emit?.Invoke(obj, errorCode);
         }
 
-        protected virtual void OnWarningL2Emit(string obj)
+        protected virtual void OnWarningL2Emit(string obj, long errorCode)
         {
-            WarningL2Emit?.Invoke(obj);
+            WarningL2Emit?.Invoke(obj, errorCode);
         }
 
-        protected virtual void OnWarningL3Emit(string obj)
+        protected virtual void OnWarningL3Emit(string obj, long errorCode)
         {
-            WarningL3Emit?.Invoke(obj);
+            WarningL3Emit?.Invoke(obj, errorCode);
         }
 
-        protected virtual void OnWarningL4Emit(string obj)
+        protected virtual void OnWarningL4Emit(string obj, long errorCode)
         {
-            WarningL4Emit?.Invoke(obj);
+            WarningL4Emit?.Invoke(obj, errorCode);
+        }
+        
+        private static List<long> _specialCode = new List<long>(){2080, 2081, 2082, 2083, 2084, 2085, 2086, 2087};
+
+        public static bool IsSpecialErrorCode(long errorCode)
+        {
+            return _specialCode.Contains(errorCode);
         }
     }
 }
