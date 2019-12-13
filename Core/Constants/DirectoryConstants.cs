@@ -38,8 +38,8 @@ namespace Core.Constants
 
 
         public static string ConfigDir2D => Path.Combine(Directory.GetCurrentDirectory(), "2DConfigs");
-        private static string ConfigDir2DMtm => Path.Combine(ConfigDir2D, "Mtm");
-        private static string ConfigDir2DAlps => Path.Combine(ConfigDir2D, "Alps");
+        private static string ConfigDir2DMtm => Path.Combine(ConfigDir2D, "I40MTMConfig");
+        private static string ConfigDir2DAlps => Path.Combine(ConfigDir2D, "I40ALPSConfig");
 
 
         public static Dictionary<ProductType, string> ConfigDirs2D { get; } = new Dictionary<ProductType, string>()
