@@ -12,4 +12,5 @@
     <BitmapImage x:Key="Start" UriSource="../Icons/icon_start.png"/>
     <BitmapImage x:Key="Stop" UriSource="../Icons/icon_stop.png"/>
     <BitmapImage x:Key="Restore" UriSource="../Icons/icon_restore.png"/>
+    <BitmapImage x:Key="Icon" UriSource="../Icons/IA.ico"/>
 </ResourceDictionary>

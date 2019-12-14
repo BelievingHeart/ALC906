@@ -12,5 +12,8 @@ namespace Core.ViewModels.Popup
         public string OkButtonText { get; set; }
         public string CancelButtonText { get; set; }
         public LoggingMessageItem MessageItem { get; set; }
+        public string Content { get; set; }
+
+        public bool IsSpecialPopup { get; set; }
     }
 }

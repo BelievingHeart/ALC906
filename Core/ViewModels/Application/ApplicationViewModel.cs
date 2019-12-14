@@ -18,6 +18,7 @@ using Core.ImageProcessing;
 using Core.IoC.Loggers;
 using Core.IoC.PlcErrorParser;
 using Core.ViewModels.Fai;
+using Core.ViewModels.Login;
 using Core.ViewModels.Message;
 using Core.ViewModels.Results;
 using Core.ViewModels.Summary;
@@ -132,6 +133,8 @@ namespace Core.ViewModels.Application
                 o => CurrentProductType != ProductType.Mtm);
             SwitchAlpsCommand = new SimpleCommand(o => { CurrentProductType = ProductType.Alps; },
                 o => CurrentProductType != ProductType.Alps);
+            
+            ClearProductErrorStatesCommand = new SimpleCommand(o=> Server.SendMessagePack(PlcMessagePackConstants.ClearProductErrorStateMessagePack), o=>!Server.IsAutoRunning);
         }
 
         /// <summary>
@@ -139,7 +142,6 @@ namespace Core.ViewModels.Application
         /// </summary>
         private void DoSimulation()
         {
-            Logger.LogHighLevelWarningNormal("Hello");
         }
 
         private void ClearLaserImagesForNewRound()
@@ -301,7 +303,7 @@ namespace Core.ViewModels.Application
 
         private void OnPlcResetFinished()
         {
-            Logger.Instance.LogStateChanged("Plc init done");
+            Logger.LogStateChanged("Plc init done");
         }
 
         private void ResetStates()
@@ -440,12 +442,13 @@ namespace Core.ViewModels.Application
                 result3D = _procedure3D.Execute(imagesForOneSocket, _shapeModel3D,
                     enumValue == CavityType.Cavity1 ? 1 : 2);
             }
-            catch
+            catch(Exception e)
             {
                 result3D = new MeasurementResult3D()
                 {
                     FaiResults = new Dictionary<string, double>(),
                     CompositeImage = imagesForOneSocket,
+                    ErrorMessage = e.Message
                 };
             }
 
@@ -603,25 +606,7 @@ namespace Core.ViewModels.Application
             Table.AddRow(FaiItemsCavity1, Cavity1ProductLevel, timestampCavity1);
         }
 
-
-        private void LoadFaiItems()
-        {
-            FaiItems2DLeft = I40Check.GetFaiItems();
-            FaiItems2DRight = I40Check.GetFaiItems();
-            // load all fai names 
-            _names3d = ParseFaiNames(DirectoryConstants.FaiNamesDir, NameConstants.FaiNamesFile3D);
-
-            // Load fai items configs
-            FaiItems3DLeft = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(_names3d,
-                    DirectoryConstants.FaiConfigDir3DLeft)
-                .ToList();
-            FaiItems3DRight = AutoSerializableHelper.LoadAutoSerializables<FaiItem>(_names3d,
-                    DirectoryConstants.FaiConfigDir3DRight)
-                .ToList();
-
-            FaiItemsCavity1 = FaiItems2DLeft.ConcatNew(FaiItems3DLeft);
-            FaiItemsCavity2 = FaiItems2DRight.ConcatNew(FaiItems3DRight);
-        }
+        
 
 
         private void LoadShapeModels()
@@ -721,10 +706,13 @@ namespace Core.ViewModels.Application
             {
                 result = I40Check.Execute(currentArrivedSocket2D.ToChusIndex(), images);
             }
-            catch
+            catch(Exception e)
             {
                 result = new GraphicsPackViewModel
-                    {Images = images, FaiResults = GenErrorFaiResults(I40Check.GetFaiNames())};
+                {
+                    Images = images, FaiResults = GenErrorFaiResults(I40Check.GetFaiNames()),
+                    ErrorMessage = e.Message
+                };
                 Logger.LogRoutineMessage($"2D processing for {currentArrivedSocket2D} errored");
             }
 
@@ -767,15 +755,19 @@ namespace Core.ViewModels.Application
         public void LoadConfigs()
         {
             CurrentProductType = ProductType.Alps;
-//            Scan2DConfigFolders();
-//            
-//            LoadI40CheckConfigs();
 
+            LoadPasswordModule();
+            
             LoadShapeModels();
 
-//            LoadFaiItems();
-
             LoadProductionLineSummaries();
+        }
+
+        private void LoadPasswordModule()
+        {
+            LoginViewModel =
+                AutoSerializableHelper.LoadAutoSerializable<LoginViewModel>(DirectoryHelper.ConfigDirectory, "PD");
+            LoginViewModel.ShouldAutoSerialize = true;
         }
 
         private void LoadProductionLineSummaries()
@@ -787,27 +779,6 @@ namespace Core.ViewModels.Application
             };
             Summary = new ProductionLineSummary(DirectoryConstants.ProductionLineRecordDir, binNames);
             OnPropertyChanged(nameof(Summary));
-        }
-
-        private void Scan2DConfigFolders()
-        {
-            var dirNamesInConfigDir = Directory.GetDirectories(DirectoryConstants.ConfigDir2D).Select(Path.GetFileName)
-                .ToList();
-            Config2dDirList = dirNamesInConfigDir;
-        }
-
-
-        private List<string> ParseFaiNames(string dir, string fileName)
-        {
-            var filePath = Path.Combine(dir, fileName);
-            var names = File.ReadAllText(filePath).Split(',').Select(ele => ele.Trim());
-            return names.ToList();
-        }
-
-        private void LoadI40CheckConfigs()
-        {
-            var i40ConfigDir2d = Path.Combine(DirectoryConstants.ConfigDir2D, Config2dDirList[Config2dDirIndex]);
-            I40Check = new I40Check(i40ConfigDir2d, "I40");
         }
 
         private Dictionary<string, double> GenErrorFaiResults(List<string> faiNames)
@@ -864,11 +835,6 @@ namespace Core.ViewModels.Application
             }
         }
 
-        /// <summary>
-        /// 2D fai items from left or right socket
-        /// </summary>
-        public List<FaiItem> FaiItems2D { get; set; }
-
 
         public CavityType CurrentArrivedSocket2D { get; set; }
         public ProductLevel Cavity1ProductLevel { get; set; }
@@ -906,18 +872,8 @@ namespace Core.ViewModels.Application
         public bool ShouldSave2DImagesRight { get; set; }
         public bool ShouldSave3DImagesLeft { get; set; }
         public bool ShouldSave3DImagesRight { get; set; }
-
-        public List<string> Config2dDirList { get; set; }
-
-        public int Config2dDirIndex
-        {
-            get { return _config2dDirIndex; }
-            set
-            {
-                _config2dDirIndex = value;
-                LoadI40CheckConfigs();
-            }
-        }
+        
+  
 
         public FaiTableStackViewModel Table { get; set; }
 
@@ -945,6 +901,10 @@ namespace Core.ViewModels.Application
             }
         }
 
+        public ICommand ClearProductErrorStatesCommand { get; private set; }
+
+        public LoginViewModel LoginViewModel { get; set; }
+
         private void SwitchProductType(ProductType currentProductType)
         {
             SwitchProductType2D(currentProductType);
@@ -958,7 +918,7 @@ namespace Core.ViewModels.Application
 
             if (Server == null) return;
             EnablePlcInit();
-            Logger.Instance.LogStateChanged("Switch success, please reset machine!");
+            Logger.LogStateChanged("Switch success, please reset machine!");
         }
 
         private void InitTables()

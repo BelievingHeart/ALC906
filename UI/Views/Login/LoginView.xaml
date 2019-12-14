@@ -5,19 +5,78 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:UI.Views.Login"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:login="clr-namespace:Core.ViewModels.Login;assembly=Core"
+             xmlns:application="clr-namespace:Core.ViewModels.Application;assembly=Core"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300">
-    <materialDesign:Card UniformCornerRadius="10" Width="400" Height="300" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <StackPanel>
-            
-            
-            <PasswordBox
-                materialDesign:HintAssist.Hint="Password"
-                materialDesign:HintAssist.Foreground="Green"
-                materialDesign:TextFieldAssist.UnderlineBrush="Green"
-                Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" />
-            
-            <Button></Button>
-        </StackPanel>
-    </materialDesign:Card>
+             d:DesignHeight="300" d:DesignWidth="300"
+             DataContext="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=LoginViewModel}">
+
+
+    <materialDesign:Flipper Style="{StaticResource MaterialDesignCardFlipper}" HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+        <!-- Login view -->
+        <materialDesign:Flipper.FrontContent>
+            <Border Width="400" Height="400">
+                <StackPanel VerticalAlignment="Center">
+                
+                        <materialDesign:PackIcon
+                            Kind="AccountCircle"
+                            Height="128"
+                            Width="128"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"/>
+                    
+                    <PasswordBox Width="200" x:Name="InputPasswordBox"
+                                 PasswordChanged="InputPasswordBoxPasswordChanged"
+                                 materialDesign:HintAssist.Hint="Password"
+                                 materialDesign:HintAssist.Foreground="Green"
+                                 materialDesign:TextFieldAssist.UnderlineBrush="Green"
+                                 Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" />
+                    <Button Content="Login" Margin="10" Width="150" Height="40" FontSize="24"
+                            Command="{Binding LoginCommand}" IsDefault="True"/>
+                    <Button Content="Log out" Margin="10" Width="150" Height="40" FontSize="24" Click="ClearInputPasswordBox"
+                            Command="{Binding LogoutCommand}"/>
+                    <Button Content="Change password" Margin="20" VerticalAlignment="Center"
+                            HorizontalAlignment="Center" Command="{x:Static materialDesign:Flipper.FlipCommand}"
+                            BorderBrush="Transparent" BorderThickness="0" Background="Transparent" />
+                </StackPanel>
+            </Border>
+        </materialDesign:Flipper.FrontContent>
+
+        <!-- Change password view -->
+        <materialDesign:Flipper.BackContent>
+            <Border Width="400" Height="400">
+                <StackPanel VerticalAlignment="Center">
+                    <materialDesign:ColorZone>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Command="{x:Static materialDesign:Flipper.FlipCommand}">
+                                <materialDesign:PackIcon Kind="ArrowLeft" />
+                            </Button>
+                            <TextBlock Text="Change password" VerticalAlignment="Center" Margin="20 0" />
+                        </StackPanel>
+                    </materialDesign:ColorZone>
+                    <PasswordBox Width="200" Margin="10" x:Name="OldPasswordBox"
+                                 PasswordChanged="OldPasswordBoxPasswordChanged"
+                                 materialDesign:HintAssist.Hint="Old password"
+                                 materialDesign:HintAssist.Foreground="Green"
+                                 materialDesign:TextFieldAssist.UnderlineBrush="Green"
+                                 Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" />
+                    <PasswordBox Width="200" Margin="10 20 10 0" x:Name="NewPasswordBox"
+                                 PasswordChanged="NewPasswordBoxPasswordChanged"
+                                 materialDesign:HintAssist.Hint="New password"
+                                 materialDesign:HintAssist.Foreground="Green"
+                                 materialDesign:TextFieldAssist.UnderlineBrush="Green"
+                                 Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" />
+                    <PasswordBox Width="200" Margin="10" x:Name="NewPasswordBoxDoubleCheck"
+                                 PasswordChanged="NewPasswordBoxDoubleCheckPasswordChanged"
+                                 materialDesign:HintAssist.Hint="New password again"
+                                 materialDesign:HintAssist.Foreground="Green"
+                                 materialDesign:TextFieldAssist.UnderlineBrush="Green"
+                                 Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" />
+                    <Button Content="OK" Margin="10" Width="100" Height="40" FontSize="24"
+                            Command="{Binding ChangePasswordCommand}" IsDefault="True" />
+                </StackPanel>
+            </Border>
+        </materialDesign:Flipper.BackContent>
+    </materialDesign:Flipper>
 </UserControl>

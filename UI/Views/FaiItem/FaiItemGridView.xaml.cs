@@ -79,6 +79,26 @@ namespace UI.Views.FaiItem
 
         #endregion
 
+
+        public static readonly DependencyProperty IsEditableProperty = DependencyProperty.Register(
+            "IsEditable", typeof(bool), typeof(FaiItemGridView), new PropertyMetadata(true, OnIsEditableChanged));
+
+        private static void OnIsEditableChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var sender = (FaiItemGridView) d;
+            var value = (bool) e.NewValue;
+            sender.PART_bias.IsReadOnly = !value;
+            sender.PART_weight.IsReadOnly = !value;
+            sender.PART_max.IsReadOnly = !value;
+            sender.PART_min.IsReadOnly = !value;
+        }
+
+
+        public bool IsEditable
+        {
+            get { return (bool) GetValue(IsEditableProperty); }
+            set { SetValue(IsEditableProperty, value); }
+        }
         
     }
 }

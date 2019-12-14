@@ -63,9 +63,9 @@ namespace Core.IoC.Loggers
             }
         }
         
-        public void LogStateChanged(string message)
+        public static void LogStateChanged(string message)
         {
-            StateChangedMessageQueue.Enqueue(message);
+           Instance.StateChangedMessageQueue.Enqueue(message);
         }
 
         public Logger(string logDir)
@@ -122,5 +122,6 @@ namespace Core.IoC.Loggers
             var popupViewModel = PopupHelper.CreateNormalPopup(s);
             Instance._popupQueue.EnqueuePopupThreadSafe(popupViewModel);
         }
+        
     }
 }

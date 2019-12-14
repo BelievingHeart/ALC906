@@ -19,6 +19,8 @@ namespace Core.ViewModels.MainWindow
 
         public ICommand SwitchDatabaseHostView { get; }
 
+        public ICommand SwitchLoginViewCommand { get; }
+
         #endregion
 
         #region Command Implemtations
@@ -70,9 +72,14 @@ namespace Core.ViewModels.MainWindow
                 o => ApplicationViewModel.Instance.CurrentApplicationPage != ApplicationPageType.SettingsPage);
             SwitchDatabaseHostView = new SimpleCommand(o => SwitchDatabaseHostPage(),
                 o => ApplicationViewModel.Instance.CurrentApplicationPage != ApplicationPageType.DatabaseHostPage);
-
+             SwitchLoginViewCommand = new SimpleCommand(o => SwitchLoginPage(),
+                o => ApplicationViewModel.Instance.CurrentApplicationPage != ApplicationPageType.DatabaseHostPage);
+            
         }
 
- 
+        private void SwitchLoginPage()
+        {
+            ApplicationViewModel.Instance.CurrentApplicationPage = ApplicationPageType.LoginPage;
+        }
     }
 }

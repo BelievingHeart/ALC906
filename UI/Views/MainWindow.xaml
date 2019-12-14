@@ -10,6 +10,7 @@
         xmlns:applicationViewModel="clr-namespace:Core.ViewModels.Application;assembly=Core"
         xmlns:sideLogger="clr-namespace:UI.Views.SideLogger"
         xmlns:loggers="clr-namespace:Core.IoC.Loggers;assembly=Core"
+        xmlns:popup="clr-namespace:UI.Views.Popup"
         mc:Ignorable="d"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
@@ -20,7 +21,7 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
         MinHeight="300" MinWidth="1000" Closed="CleanupApplication" Loaded="OnMainWindowLoaded"
-        Title="CYGIA ALC-906" WindowStyle="None">
+        Title="CYGIA ALC-906" WindowStyle="None" Icon="{StaticResource Icon}">
     <DockPanel>
         <!-- Drag border -->
         <materialDesign:ColorZone Height="30" DockPanel.Dock="Top" MouseDown="DragWindow"
@@ -34,6 +35,8 @@
                 <StackPanel Orientation="Horizontal">
                     <Image Source="{StaticResource Logo}" Width="100" />
                     <TextBlock Text="Assembly Line Controller" Margin="20 0" FontSize="24" />
+                    <ContentControl Margin="20 0 0 0" VerticalAlignment="Center"
+                                    Content="{Binding Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Path=LoginViewModel.Authorized, Converter={converters:BooleanToLoginStateConverter}}"/>
                 </StackPanel>
 
                 <!-- System buttons -->
@@ -66,11 +69,11 @@
                     <ToolBar.DataContext>
                         <mainWindow:MainWindowViewModel />
                     </ToolBar.DataContext>
-                    <Button Command="{Binding SwitchHomePageCommand}" Margin="10 0">
+                    <Button Command="{Binding SwitchLoginViewCommand}" Margin="10 0">
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="{StaticResource Login}" Height="30" />
-                            <TextBlock Text=" Login" VerticalAlignment="Center" />
-                        </StackPanel>
+                                <Image Source="{StaticResource Login}" Height="30" />
+                                <TextBlock Text=" Login" VerticalAlignment="Center" />
+                            </StackPanel>
                     </Button>
                     <Button Command="{Binding SwitchHomePageCommand}" Margin="10 0">
                         <StackPanel Orientation="Horizontal">
@@ -112,7 +115,7 @@
             </ToolBarTray>
 
 
-            <materialDesign:DialogHost Grid.Row="1" x:Name="DialogHost"
+            <materialDesign:DialogHost Grid.Row="1"
                                        DataContext="{Binding Source={x:Static loggers:Logger.Instance}, Path=PopupViewModel}"
                                        IsOpen="{Binding Path=ShouldMessageBoxPopup, Source={x:Static loggers:Logger.Instance}}">
                 <Grid>   <!-- Pages here -->
@@ -123,26 +126,7 @@
                 </Grid>
                 <!-- Message dialog -->
                 <materialDesign:DialogHost.DialogContent>
-                    <GroupBox Header="{Binding MessageItem.Time}" Width="300" Height="200">
-                        <DockPanel>
-                            <StackPanel DockPanel.Dock="Top" Margin="10">
-                                <TextBlock Text="{Binding MessageItem.Message}" TextWrapping="Wrap"
-                                           HorizontalAlignment="Center" />
-                            </StackPanel>
-                            <Grid DockPanel.Dock="Bottom" VerticalAlignment="Bottom">
-                                <Button HorizontalAlignment="Left" VerticalAlignment="Center"
-                                        Content="{Binding OkButtonText}" IsDefault="True"
-                                        Command="{Binding OkCommand}"
-                                        CommandParameter="{Binding ElementName=DialogHost}"
-                                        Margin="10 2" Width="100" />
-                                <Button HorizontalAlignment="Right" VerticalAlignment="Center"
-                                        Content="{Binding CancelButtonText}" IsCancel="True"
-                                        Command="{Binding CancelCommand}"
-                                        CommandParameter="{Binding ElementName=DialogHost}"
-                                        Margin="10 2" Width="100" />
-                            </Grid>
-                        </DockPanel>
-                    </GroupBox>
+                  <popup:PopupView/>
                 </materialDesign:DialogHost.DialogContent>
             </materialDesign:DialogHost>
         </Grid>

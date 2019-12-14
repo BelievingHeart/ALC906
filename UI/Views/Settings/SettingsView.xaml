@@ -38,10 +38,9 @@
         </GroupBox>
         
         <GroupBox Grid.Row="1" Grid.Column="0" Header="Misc Settings">
-            <ComboBox ItemsSource="{Binding Config2dDirList}" SelectedIndex="{Binding Config2dDirIndex}" 
-                      materialDesign:HintAssist.Hint="2D Config Dir"
-                      Style="{StaticResource MaterialDesignFloatingHintComboBox}"
-                      ></ComboBox>
+        <Grid>
+            <Button Content="清料" Command="{Binding ClearProductErrorStatesCommand}"></Button>
+        </Grid>
         </GroupBox>
 
 

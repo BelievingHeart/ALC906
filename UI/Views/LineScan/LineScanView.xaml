@@ -17,8 +17,7 @@
         </Grid.ColumnDefinitions>
         <!-- Halcon window -->
         <halconScreen:HalconScreenView x:Name="HalconScreen" LeftGraphics="{Binding Path=Graphics3DCavity1}"
-                                       RightGraphics="{Binding Path=Graphics3DCavity2}"
-                                       SocketToDisplay="{Binding RelativeSource={RelativeSource AncestorType=local:LineScanView}, Path=SocketToDisplay}" />
+                                       RightGraphics="{Binding Path=Graphics3DCavity2}"/>
 
 
         <GroupBox Grid.Column="1" Header="Fai Items">
@@ -26,6 +25,7 @@
                                      RightFaiItems="{Binding FaiItems3DRight}"
                                      SocketType="{Binding ElementName=HalconScreen, Path=SocketToDisplay}"
                                      Margin="0 10 50 0"
+                                     IsEditable="{Binding LoginViewModel.Authorized}"
                                      />
         </GroupBox>
 

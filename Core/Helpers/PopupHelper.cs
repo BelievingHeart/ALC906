@@ -19,7 +19,8 @@ namespace Core.Helpers
                 CancelButtonText = "Cancel",
                 OkCommand = new CloseDialogAttachedCommand(o => true, () => {}),
                 CancelCommand = new CloseDialogAttachedCommand(o => true, () => {}),
-                MessageItem = LoggingMessageItem.CreateMessage(message)
+                MessageItem = LoggingMessageItem.CreateMessage(message),
+                IsSpecialPopup = false
             };
         }
 
@@ -28,13 +29,17 @@ namespace Core.Helpers
             var continueMessagePack = PlcMessagePackConstants.PlcWarningHandler2080Series[errorCode][0];
             var quitMessagePack = PlcMessagePackConstants.PlcWarningHandler2080Series[errorCode][1];
             
+            var content = errorCode == 2088? "请清除所有产品后点Continue，或者点Quit退出自动" : "请清料后点击Continue，或者点Quit再清料";
+            
             return  new PopupViewModel()
             {
                 OkButtonText = "Continue",
-                CancelButtonText = "Exit",
-                OkCommand = new CloseDialogAttachedCommand(o => true, () => {alcServer.SendMessagePack(continueMessagePack);}),
+                CancelButtonText = "Quit",
+                OkCommand = new CloseDialogAttachedCommand(o => true, execution: () => alcServer.SendMessagePack(continueMessagePack)),
                 CancelCommand = new CloseDialogAttachedCommand(o => true, () => {alcServer.SendMessagePack(quitMessagePack);}),
-                MessageItem = LoggingMessageItem.CreateMessage(message)
+                MessageItem = LoggingMessageItem.CreateMessage(message),
+                Content = content,
+                IsSpecialPopup = true
             };
         }
     }

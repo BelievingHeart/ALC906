@@ -200,6 +200,25 @@ namespace Core.Constants
         /// <summary>
         /// See communication table for more details
         /// </summary>
+        private static readonly PlcMessagePack MessagePack2088Continue = new PlcMessagePack()
+        {
+            CommandId = 24,
+            MsgType = PlcMessagePack.RequestIndicator
+        };
+        
+        /// <summary>
+        /// See communication table for more details
+        /// </summary>
+        private static readonly PlcMessagePack MessagePack2088Quit = new PlcMessagePack()
+        {
+            CommandId = 24,
+            Param1 = 1,
+            MsgType = PlcMessagePack.RequestIndicator
+        };
+        
+        /// <summary>
+        /// See communication table for more details
+        /// </summary>
         public static Dictionary<long, List<PlcMessagePack>> PlcWarningHandler2080Series { get; } = new Dictionary<long, List<PlcMessagePack>>()
         {
             [2080] = new List<PlcMessagePack>(){MessagePack2080Continue, MessagePack2080Quit},
@@ -210,6 +229,7 @@ namespace Core.Constants
             [2085] = new List<PlcMessagePack>(){MessagePack2085Continue, MessagePack2085Quit},
             [2086] = new List<PlcMessagePack>(){MessagePack2086Continue, MessagePack2086Quit},
             [2087] = new List<PlcMessagePack>(){MessagePack2087Continue, MessagePack2087Quit},
+            [2088] = new List<PlcMessagePack>(){MessagePack2088Continue, MessagePack2088Quit},
         };
     }
 }

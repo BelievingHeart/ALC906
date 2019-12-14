@@ -9,7 +9,7 @@ namespace Core.ViewModels.Message
         public string Message { get; set; }
 
         public string Time { get; set; }
-
+        
         public void WriteLineToFile(string dir, string name)
         {
             Directory.CreateDirectory(dir);

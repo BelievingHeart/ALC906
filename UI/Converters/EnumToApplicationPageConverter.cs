@@ -8,6 +8,7 @@ using Core.Enums;
 using UI.Views.Database;
 using UI.Views.Home;
 using UI.Views.LineScan;
+using UI.Views.Login;
 using UI.Views.Server;
 using UI.Views.Settings;
 using UI.Views.Vision2D;
@@ -44,7 +45,8 @@ namespace UI.Converters
                                 ? ApplicationPages.First(ele => ele is ServerView)
                                 : pageEnum == ApplicationPageType.SettingsPage
                                     ? ApplicationPages.First(ele => ele is SettingsView)
-                                    : ApplicationPages.First(ele => ele is DatabaseHostView);
+                                    : pageEnum== ApplicationPageType.DatabaseHostPage? 
+                                     ApplicationPages.First(ele => ele is DatabaseHostView) : ApplicationPages.First(ele => ele is LoginView);
             }
             // If the list not contain an instance of such type
             // Add one and return it
@@ -55,7 +57,8 @@ namespace UI.Converters
                     pageEnum == ApplicationPageType.LineScanHostPage ? new LineScanHostView() :
                     pageEnum == ApplicationPageType.ServerPage? new ServerView():
                     pageEnum == ApplicationPageType.SettingsPage ? new SettingsView() :
-                   new DatabaseHostView() as UserControl;
+                    pageEnum == ApplicationPageType.DatabaseHostPage ? new DatabaseHostView() :
+                   new LoginView() as UserControl;
 
 
                 ApplicationPages.Add(output);

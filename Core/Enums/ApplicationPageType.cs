@@ -27,6 +27,8 @@
         /// </summary>
         SettingsPage,
         
-        DatabaseHostPage
+        DatabaseHostPage,
+        
+        LoginPage
     }
 }

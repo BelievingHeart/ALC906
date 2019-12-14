@@ -26,7 +26,7 @@
     
 
         <!-- 2D data view -->
-            <vision2D:CameraDataView Grid.Column="1"/>
+            <vision2D:CameraDataView Grid.Column="1" IsEditable="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=LoginViewModel.Authorized}"/>
         
 
     </Grid>

@@ -87,5 +87,27 @@ namespace UI.Views.Vision2D
 
             _isFirstLoaded = false;
         }
+
+        #region IsEditable
+
+        public static readonly DependencyProperty IsEditableProperty = DependencyProperty.Register(
+            "IsEditable", typeof(bool), typeof(CameraDataView), new PropertyMetadata(true, OnIsEditableChanged));
+
+        private static void OnIsEditableChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var sender = (CameraDataView) d;
+            var isEnable = (bool) e.NewValue;
+            sender.PART_saveButton.IsEnabled = isEnable;
+            sender.PART_saveResultConfigButton.IsEnabled = isEnable;
+            sender.PART_saveFindLineConfigButton.IsEnabled = isEnable;
+        }
+
+        public bool IsEditable
+        {
+            get { return (bool) GetValue(IsEditableProperty); }
+            set { SetValue(IsEditableProperty, value); }
+        }
+
+        #endregion
     }
 }

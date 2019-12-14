@@ -75,7 +75,7 @@ namespace Core.IoC.PlcErrorParser
             WarningL4Emit?.Invoke(obj, errorCode);
         }
         
-        private static List<long> _specialCode = new List<long>(){2080, 2081, 2082, 2083, 2084, 2085, 2086, 2087};
+        private static List<long> _specialCode = new List<long>(){2080, 2081, 2082, 2083, 2084, 2085, 2086, 2087, 2088};
 
         public static bool IsSpecialErrorCode(long errorCode)
         {

@@ -153,13 +153,16 @@ namespace UI.Views.HalconScreen
         
         private void RefreshHalconScreen()
         {
+            if (_windowHandle == null) return;
             var result2D = SocketToDisplay == SocketType.Cavity1 ? LeftGraphics : RightGraphics;
             UpdateImageIndexList(result2D);
             if(result2D.Images == null || result2D.Images.Count ==0) return;
             var image = result2D.Images[ImageIndexToDisplay];
             var graphics = result2D.Graphics;
-            _windowHandle?.DispImage(image);
-            if(graphics!=null) _windowHandle?.DispObj(graphics);
+            _windowHandle.DispImage(image);
+            if(graphics!=null) _windowHandle.DispObj(graphics);
+            var errorMessage = result2D.ErrorMessage;
+            if(errorMessage != null) _windowHandle.DispText(errorMessage, "window", 20, 20, "red", "border_radius", 2);
         }
 
     }

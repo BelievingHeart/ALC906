@@ -93,6 +93,9 @@
             <e p="FaiItemUILogic.cs" t="Include" />
             <e p="FaiTableStackViewModel.cs" t="Include" />
           </e>
+          <e p="Login" t="Include">
+            <e p="LoginViewModel.cs" t="Include" />
+          </e>
           <e p="MainWindow" t="Include">
             <e p="MainWindowViewModel.cs" t="Include" />
           </e>
@@ -141,6 +144,9 @@
         </e>
         <e p="bin" t="ExcludeRecursive" />
         <e p="Converters" t="Include">
+          <e p="BooleanToLoginStateConverter.cs" t="Include" />
+          <e p="BooleanToPopupButtonTypeConverter.cs" t="Include" />
+          <e p="BooleanToSpecialBackgroundConverter.cs" t="Include" />
           <e p="EnumToApplicationPageConverter.cs" t="Include" />
           <e p="EventToCommandBehaviour.cs" t="Include" />
           <e p="MachineStateToColorConverter.cs" t="Include" />
@@ -160,6 +166,7 @@
           <e p="grayPoint.png" t="Include" />
           <e p="greenPoint.png" t="Include" />
           <e p="home.png" t="Include" />
+          <e p="IA.ico" t="Include" />
           <e p="icon_init.png" t="Include" />
           <e p="icon_restore.png" t="Include" />
           <e p="icon_start.png" t="Include" />
@@ -168,7 +175,6 @@
           <e p="kchart.png" t="Include" />
           <e p="Login Manager.png" t="Include" />
           <e p="logo.png" t="Include" />
-          <e p="logo1_48X48.ico" t="Include" />
           <e p="OutputWindow.ico" t="Include" />
           <e p="redPoint.png" t="Include" />
           <e p="smserver.png" t="Include" />
@@ -238,6 +244,14 @@
           </e>
           <e p="MainWindow.xaml" t="Include" />
           <e p="MainWindow.xaml.cs" t="Include" />
+          <e p="Popup" t="Include">
+            <e p="PopupButtonsNormal.xaml" t="Include" />
+            <e p="PopupButtonsNormal.xaml.cs" t="Include" />
+            <e p="PopupButtonsSpecial.xaml" t="Include" />
+            <e p="PopupButtonsSpecial.xaml.cs" t="Include" />
+            <e p="PopupView.xaml" t="Include" />
+            <e p="PopupView.xaml.cs" t="Include" />
+          </e>
           <e p="Server" t="Include">
             <e p="AutoScrollMessageBox.xaml" t="Include" />
             <e p="AutoScrollMessageBox.xaml.cs" t="Include" />

@@ -34,6 +34,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>IA.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="halcondotnet, Version=18.11.0.0, Culture=neutral, PublicKeyToken=4973bed59ddbf2b8">
       <HintPath>..\..\..\..\..\Program Files\MVTec\HALCON-18.11-Progress\bin\dotnet35\halcondotnet.dll</HintPath>
@@ -82,6 +85,9 @@
     </Compile>
     <Compile Include="AttachedProperties\AttachedPropertyOwnerBase.cs" />
     <Compile Include="Behaviours\ListBoxBehavior.cs" />
+    <Compile Include="Converters\BooleanToLoginStateConverter.cs" />
+    <Compile Include="Converters\BooleanToPopupButtonTypeConverter.cs" />
+    <Compile Include="Converters\BooleanToSpecialBackgroundConverter.cs" />
     <Compile Include="Converters\EnumToApplicationPageConverter.cs" />
     <Compile Include="Converters\EventToCommandBehaviour.cs" />
     <Compile Include="Converters\MachineStateToColorConverter.cs" />
@@ -122,6 +128,15 @@
     </Compile>
     <Compile Include="Views\Login\LoginView.xaml.cs">
       <DependentUpon>LoginView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popup\PopupButtonsNormal.xaml.cs">
+      <DependentUpon>PopupButtonsNormal.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popup\PopupButtonsSpecial.xaml.cs">
+      <DependentUpon>PopupButtonsSpecial.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Popup\PopupView.xaml.cs">
+      <DependentUpon>PopupView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Server\ServerView.xaml.cs">
       <DependentUpon>ServerView.xaml</DependentUpon>
@@ -210,6 +225,9 @@
     <Resource Include="Icons\icon_suspended.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Icons\IA.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Content Include="Icons\kchart.png" />
     <Resource Include="Icons\Login Manager.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -217,7 +235,6 @@
     <Resource Include="Icons\logo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Content Include="Icons\logo1_48X48.ico" />
     <Content Include="Icons\OutputWindow.ico" />
     <Content Include="Icons\redPoint.png" />
     <Content Include="Icons\smserver.png" />
@@ -246,6 +263,9 @@
     <Page Include="Views\LineScan\LineScanHostView.xaml" />
     <Page Include="Views\LineScan\LineScanView.xaml" />
     <Page Include="Views\Login\LoginView.xaml" />
+    <Page Include="Views\Popup\PopupButtonsNormal.xaml" />
+    <Page Include="Views\Popup\PopupButtonsSpecial.xaml" />
+    <Page Include="Views\Popup\PopupView.xaml" />
     <Page Include="Views\Server\ServerView.xaml" />
     <Page Include="Views\Settings\SettingsView.xaml" />
     <Page Include="Views\SideLogger\SideLoggerView.xaml" />
