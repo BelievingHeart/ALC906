@@ -9,11 +9,11 @@ namespace UI.Converters
     {
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var loginedIn = (bool) value;
+            var loggedIn = (bool) value;
             var size = 25;
-            return loginedIn
-                ? new PackIcon() {Kind = PackIconKind.LockOpen, Foreground = Brushes.Green, Width = size, Height = size}
-                : new PackIcon() {Kind = PackIconKind.Lock, Foreground = Brushes.Red, Width = size, Height = size};
+            return loggedIn
+                ? new PackIcon() {Kind = PackIconKind.LockOpen, Foreground = Brushes.Green, Width = size, Height = size, ToolTip = "Logged in"}
+                : new PackIcon() {Kind = PackIconKind.Lock, Foreground = Brushes.Red, Width = size, Height = size, ToolTip = "Logged out"};
         }
 
         public override object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

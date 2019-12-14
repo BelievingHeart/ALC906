@@ -93,7 +93,7 @@ namespace Core.ViewModels.Login
             }
 
             Authorized = true;
-            Logger.LogStateChanged("Login successful");
+            Logger.LogStateChanged("Login success");
         }
     }
 }

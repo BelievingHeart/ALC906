@@ -21,20 +21,14 @@ namespace Core.Constants
         /// </summary>
         public static string ProductionLineRecordDir => Path.Combine(OutputDir, "General");
 
+        
 
-        public static string FaiConfigDir2DLeft => Path.Combine(FaiConfigDir2D, "Cavity1");
-        public static string FaiConfigDir2DRight => Path.Combine(FaiConfigDir2D, "Cavity2");
-
-        public static string FaiConfigDir3DLeft => Path.Combine(FaiConfigDir3D, "Cavity1");
-        public static string FaiConfigDir3DRight => Path.Combine(FaiConfigDir3D, "Cavity2");
-
-        public static string FaiNamesDir => Path.Combine(FaiConfigDir, "FaiNames");
         public static string ErrorLogDir => Path.Combine(Directory.GetCurrentDirectory(), "Log");
 
 
         //TODO: remove the following dirs
-        public static string ImageDirRight => Path.Combine(Directory.GetCurrentDirectory(), "Cavity2");
-        public static string ImageDirLeft => Path.Combine(Directory.GetCurrentDirectory(), "Cavity1");
+        public static string ImageDir2D => Path.Combine(Directory.GetCurrentDirectory(), "2DImages");
+        public static string ImageDir3D => Path.Combine(Directory.GetCurrentDirectory(), "3DImages");
 
 
         public static string ConfigDir2D => Path.Combine(Directory.GetCurrentDirectory(), "2DConfigs");
@@ -49,19 +43,7 @@ namespace Core.Constants
         };
 
         private static string FaiConfigDir => Path.Combine(DirectoryHelper.ConfigDirectory, "Fai");
-        private static string FaiConfigDir2D => Path.Combine(FaiConfigDir, "2D");
-
-        /// <summary>
-        /// Fai items config dir for Cavity1 and Cavity2
-        /// Some tolerances may differ from type to type
-        /// but not from cavity to cavity
-        /// </summary>
-        public static Dictionary<ProductType, string> FaiConfigDirs2D { get; } = new Dictionary<ProductType, string>()
-        {
-            [ProductType.Mtm] = Path.Combine(FaiConfigDir2D, ProductType.Mtm.ToString()),
-            [ProductType.Alps] = Path.Combine(FaiConfigDir2D, ProductType.Alps.ToString())
-        };
-
+        
 
         private static string FaiConfigDir3D => Path.Combine(FaiConfigDir, "3D");
         private static string FaiConfigDir3DCavity1 => Path.Combine(FaiConfigDir3D, "Cavity1");

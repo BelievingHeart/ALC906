@@ -4,13 +4,13 @@ namespace Core.Helpers
 {
     public static class SocketTypeHelper
     {
-        public static int ToChusIndex(this SocketType socketType)
+        public static int ToChusIndex(this CavityType socketType)
         {
             switch (socketType)
             {
-                case SocketType.Cavity1:
+                case CavityType.Cavity1:
                     return 0;
-                case SocketType.Cavity2:
+                case CavityType.Cavity2:
                     return 1;
             }
 

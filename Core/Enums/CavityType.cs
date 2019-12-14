@@ -1,6 +1,6 @@
 ﻿namespace Core.Enums
 {
-    public enum SocketType
+    public enum CavityType
     {
         Cavity1 = 1,
         Cavity2 = 0

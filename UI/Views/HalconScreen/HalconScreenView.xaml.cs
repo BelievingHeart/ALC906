@@ -20,7 +20,7 @@ namespace UI.Views.HalconScreen
         private void OnHalconWindowLoaded(object sender, RoutedEventArgs e)
         {
             ChangeSocketViewCommand = new RelayCommand(SwitchSocketView);
-            SocketToDisplay = SocketType.Cavity1;
+            SocketToDisplay = CavityType.Cavity1;
             _windowHandle = HalconScreen.HalconWindow;
             _windowHandle.SetColored(3);
             _windowHandle.SetPart(0,0,-2,-2);
@@ -47,7 +47,7 @@ namespace UI.Views.HalconScreen
         
         private void SwitchSocketView()
         {
-            SocketToDisplay = SocketToDisplay == SocketType.Cavity1 ? SocketType.Cavity2 : SocketType.Cavity1;
+            SocketToDisplay = SocketToDisplay == CavityType.Cavity1 ? CavityType.Cavity2 : CavityType.Cavity1;
         }
 
         public static readonly DependencyProperty ImageIndexToDisplayProperty = DependencyProperty.Register(
@@ -85,7 +85,7 @@ namespace UI.Views.HalconScreen
 
 
         public static readonly DependencyProperty SocketToDisplayProperty = DependencyProperty.Register(
-            "SocketToDisplay", typeof(SocketType), typeof(HalconScreenView), new PropertyMetadata(default(SocketType), OnSocketToDisplayChanged));
+            "SocketToDisplay", typeof(CavityType), typeof(HalconScreenView), new PropertyMetadata(default(CavityType), OnSocketToDisplayChanged));
 
         private static void OnSocketToDisplayChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -93,9 +93,9 @@ namespace UI.Views.HalconScreen
             sender.RefreshHalconScreen();
         }
 
-        public SocketType SocketToDisplay
+        public CavityType SocketToDisplay
         {
-            get { return (SocketType) GetValue(SocketToDisplayProperty); }
+            get { return (CavityType) GetValue(SocketToDisplayProperty); }
             set { SetValue(SocketToDisplayProperty, value); }
         }
 
@@ -107,7 +107,7 @@ namespace UI.Views.HalconScreen
         private static void OnLeftResult2DChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var sender = d as HalconScreenView;
-            if (sender.SocketToDisplay == SocketType.Cavity1) sender.RefreshHalconScreen();
+            if (sender.SocketToDisplay == CavityType.Cavity1) sender.RefreshHalconScreen();
         }
 
 
@@ -125,7 +125,7 @@ namespace UI.Views.HalconScreen
         private static void OnRightResult2DChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var sender = d as HalconScreenView;
-            if (sender.SocketToDisplay == SocketType.Cavity2) sender.RefreshHalconScreen();
+            if (sender.SocketToDisplay == CavityType.Cavity2) sender.RefreshHalconScreen();
         }
 
         public GraphicsPackViewModel RightGraphics
@@ -154,7 +154,7 @@ namespace UI.Views.HalconScreen
         private void RefreshHalconScreen()
         {
             if (_windowHandle == null) return;
-            var result2D = SocketToDisplay == SocketType.Cavity1 ? LeftGraphics : RightGraphics;
+            var result2D = SocketToDisplay == CavityType.Cavity1 ? LeftGraphics : RightGraphics;
             UpdateImageIndexList(result2D);
             if(result2D.Images == null || result2D.Images.Count ==0) return;
             var image = result2D.Images[ImageIndexToDisplay];

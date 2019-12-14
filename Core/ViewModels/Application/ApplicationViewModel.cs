@@ -33,7 +33,6 @@ using PLS;
 using WPFCommon.Commands;
 using WPFCommon.Helpers;
 using WPFCommon.ViewModels.Base;
-using CavityType = Core.Enums.SocketType;
 
 namespace Core.ViewModels.Application
 {
@@ -573,7 +572,7 @@ namespace Core.ViewModels.Application
             // Cavity 2
             var timestampCavity2 = SerializationHelper.SerializeImagesWith2D3DMatched(images2dCavity2, images3dCavity2,
                 ShouldSave2DImagesRight,
-                ShouldSave3DImagesRight, DirectoryConstants.ImageDirRight);
+                ShouldSave3DImagesRight, CavityType.Cavity2);
             _serializerRight.Serialize(faiItemsCavity2, timestampCavity2, Cavity2ProductLevel.GetResultText());
             _serializerAll.Serialize(faiItemsCavity2, timestampCavity2, Cavity2ProductLevel.GetResultText());
 
@@ -581,7 +580,7 @@ namespace Core.ViewModels.Application
             // Cavity 1
             var timestampCavity1 = SerializationHelper.SerializeImagesWith2D3DMatched(images2dCavity1, images3dCavity1,
                 ShouldSave2DImagesLeft,
-                ShouldSave3DImagesLeft, DirectoryConstants.ImageDirLeft);
+                ShouldSave3DImagesLeft, CavityType.Cavity1);
             _serializerLeft.Serialize(faiItemsCavity1, timestampCavity1, Cavity1ProductLevel.GetResultText());
             _serializerAll.Serialize(faiItemsCavity1, timestampCavity1, Cavity1ProductLevel.GetResultText());
 

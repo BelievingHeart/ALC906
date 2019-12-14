@@ -29,7 +29,7 @@ namespace UI.Views.FaiItem
         {
             var sender = (FaiItemGridView) d;
             var newValue = (IEnumerable<Core.ViewModels.Fai.FaiItem>) e.NewValue;
-            if (newValue != null && sender.SocketType == SocketType.Cavity1) sender.PART_DataGrid.ItemsSource = newValue;
+            if (newValue != null && sender.SocketType == CavityType.Cavity1) sender.PART_DataGrid.ItemsSource = newValue;
         }
 
         #endregion
@@ -50,7 +50,7 @@ namespace UI.Views.FaiItem
         {
             var sender = (FaiItemGridView) d;
             var newValue = (IEnumerable<Core.ViewModels.Fai.FaiItem>) e.NewValue;
-            if (newValue != null && sender.SocketType == SocketType.Cavity2) sender.PART_DataGrid.ItemsSource = newValue;
+            if (newValue != null && sender.SocketType == CavityType.Cavity2) sender.PART_DataGrid.ItemsSource = newValue;
         }
         
 
@@ -60,20 +60,20 @@ namespace UI.Views.FaiItem
         #region SocketToDisplay
 
         public static readonly DependencyProperty SocketTypeProperty = DependencyProperty.Register(
-            "SocketType", typeof(SocketType), typeof(FaiItemGridView), new PropertyMetadata(default(SocketType), OnSocketTypeChanged));
+            "SocketType", typeof(CavityType), typeof(FaiItemGridView), new PropertyMetadata(default(CavityType), OnSocketTypeChanged));
 
   
-        public SocketType SocketType
+        public CavityType SocketType
         {
-            get { return (SocketType) GetValue(SocketTypeProperty); }
+            get { return (CavityType) GetValue(SocketTypeProperty); }
             set { SetValue(SocketTypeProperty, value); }
         }
         
         private static void OnSocketTypeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var sender = (FaiItemGridView) d;
-            var newSocketType = (SocketType) e.NewValue;
-            var itemsSource = newSocketType == SocketType.Cavity1 ? sender.LeftFaiItems : sender.RightFaiItems;
+            var newSocketType = (CavityType) e.NewValue;
+            var itemsSource = newSocketType == CavityType.Cavity1 ? sender.LeftFaiItems : sender.RightFaiItems;
             sender.PART_DataGrid.ItemsSource = itemsSource;
         }
 
