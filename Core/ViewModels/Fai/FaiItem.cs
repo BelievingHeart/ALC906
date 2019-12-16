@@ -71,6 +71,19 @@ namespace Core.ViewModels.Fai
         {
 
         }
+        
+        public FaiItem Clone()
+        {
+            return new FaiItem()
+            {
+                Name = Name,
+                MinBoundary = MinBoundary,
+                MaxBoundary = MaxBoundary,
+                ValueUnbiased = ValueUnbiased,
+                Weight = Weight,
+                Bias = Bias,
+            };
+        }
 
     }
 }

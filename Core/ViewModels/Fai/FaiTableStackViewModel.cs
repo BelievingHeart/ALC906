@@ -67,7 +67,7 @@ namespace Core.ViewModels.Fai
            
             foreach (var faiName in _header)
             {
-                values.Add(faiItems.First(item=>item.Name == faiName));
+                values.Add(faiItems.First(item=>item.Name == faiName).Clone());
             }
 
             var row = new DataRowViewModel() {Values = values, RowName = rowName, ProductLevel = productLevel};

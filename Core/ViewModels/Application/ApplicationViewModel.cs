@@ -597,6 +597,7 @@ namespace Core.ViewModels.Application
                 {
                     Header = FaiItemsCavity1.Select(item => item.Name).ToList(),
                     MaxRows = 50,
+                    PortionToRemoveWhenOverflows = 0.3
                 };
             }
 
