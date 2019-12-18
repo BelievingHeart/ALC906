@@ -189,6 +189,7 @@ namespace Core.ViewModels.Application
             {
                 if (isAutoRunning) ResetStates();
             };
+            Server.MessageSendFailed += () => { Logger.LogHighLevelWarningNormal("Failed to send message to plc");};
 
             var errorParser = new PlcErrorParser(Path.Combine(DirectoryHelper.ConfigDirectory, "ErrorSheet.csv"));
             errorParser.WarningL1Emit += OnWarningL1Received;
@@ -205,22 +206,14 @@ namespace Core.ViewModels.Application
         }
 
 
-        /// <summary>
-        /// Enable plc init command
-        /// </summary>
-        private void EnablePlcInit()
-        {
-            if (Server.IsAutoRunning) Server.StopCommand.Execute(null);
-            Server.IsBusyResetting = false;
-            Server.IsAutoRunning = false;
-            Server.CurrentMachineState = MachineState.Idle;
-        }
-
-
         private void OnWarningL4Received(string message, long l)
         {
             //  Init must be able to execute after L4 warning received
-            EnablePlcInit();
+            Server.IsAutoRunning = false;
+            Server.IsBusyResetting = false;
+            Server.IsStopping = false;
+            Server.IsPausing = false;
+            
             Logger.Instance.LogErrorToFile(message);
             Logger.LogHighLevelWarningNormal(message);
         }
@@ -917,7 +910,9 @@ namespace Core.ViewModels.Application
             InitTables();
 
             if (Server == null) return;
-            EnablePlcInit();
+            if (Server.IsAutoRunning) Server.StopCommand.Execute(null);
+            else Server.CurrentMachineState = MachineState.Idle;
+            Server.IsBusyResetting = false;
             Logger.LogStateChanged("Switch success, please reset machine!");
         }
 

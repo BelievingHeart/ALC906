@@ -9,25 +9,23 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     
-    <ListView ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=faiItem:FaiItemListWarpView}, Path=FaiItems}">
-            <ListView.ItemsPanel>
+    <ListBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=faiItem:FaiItemListWarpView}, Path=FaiItems}" Margin="10">
+            <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel/>
                 </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
+            </ListBox.ItemsPanel>
         
-        <ListView.ItemTemplate>
+        <ListBox.ItemTemplate>
             <DataTemplate>
                 <Border>
-                    <materialDesign:DialogHost>
-                        <Button Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}" Height="80" Width="120">
+                        <Button  Height="40" Width="80" Margin="-8" BorderBrush="Black" BorderThickness="1" Background="{StaticResource PrimaryHueLightBrush}">
                             <StackPanel>
-                             
                                 <TextBlock Text="{Binding Name}" HorizontalAlignment="Left" FontSize="10" />
-                                <TextBlock Text="{Binding Value}" FontSize="24" />
+                                <TextBlock Text="{Binding Value}" FontSize="16" />
                             </StackPanel>
                            <Button.Style>
-                               <Style TargetType="{x:Type Button}" BasedOn="{StaticResource MaterialDesignRaisedAccentButton}">
+                               <Style TargetType="{x:Type Button}">
                                    <Style.Triggers>
                                        <!-- Value too large -->
                                        <DataTrigger Binding="{Binding TooLarge}" Value="True">
@@ -49,40 +47,10 @@
                         </Button>
 
 
-                        <!-- Dialog -->
-                        <materialDesign:DialogHost.DialogContent>
-                            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="50" />
-                                        <RowDefinition Height="50"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="50"/>
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="80"/>
-                                        <ColumnDefinition Width="80" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBox Grid.Row="0" Grid.Column="0" Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                             materialDesign:HintAssist.Hint="Min" Text="{Binding MinBoundary}" />
-                                    <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                             materialDesign:HintAssist.Hint="Max" Text="{Binding MaxBoundary}" />
-                                    <TextBox Grid.Row="1" Grid.Column="0" Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                             materialDesign:HintAssist.Hint="Weight" Text="{Binding Weight}" />
-                                    <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                             materialDesign:HintAssist.Hint="Bias" Text="{Binding Bias}" />
-                                    <Separator Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"/>
-                                    <Button Grid.Row="3" Grid.Column="1" Content="OK" Width="50" Margin="3" HorizontalAlignment="Right"
-                                            Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
-                                            IsDefault="True" IsCancel="True" />
-                                </Grid>
-                            </ScrollViewer>
-                        </materialDesign:DialogHost.DialogContent>
-
-                    </materialDesign:DialogHost>
+                     
 
                 </Border>
             </DataTemplate>
-        </ListView.ItemTemplate>
-    </ListView>
+        </ListBox.ItemTemplate>
+    </ListBox>
 </UserControl>

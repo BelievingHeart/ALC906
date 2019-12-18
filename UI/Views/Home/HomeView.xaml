@@ -17,9 +17,8 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <!-- PLC buttons -->
@@ -53,7 +52,7 @@
                     <Image Height="35" Source="{StaticResource Start}" />
                     <TextBlock HorizontalAlignment="Center" Text="Start" />
                 </StackPanel>
-            </Button>   
+            </Button>
             <!-- Stop button -->
             <Button Grid.Column="2" Height="60" Margin="3" Width="150"
                     Background="{StaticResource PrimaryHueLightBrush}" Command="{Binding StopCommand}">
@@ -79,11 +78,12 @@
                 </StackPanel>
             </Button>
             <!-- Machine state banner -->
-            <Button Grid.Column="5" Background="{Binding CurrentMachineState, Converter={converters:MachineStateToColorConverter}}" 
+            <Button Grid.Column="5"
+                    Background="{Binding CurrentMachineState, Converter={converters:MachineStateToColorConverter}}"
                     Height="70" materialDesign:ButtonAssist.CornerRadius="10"
-                    Command="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=SimulateCommand}"
-                    >
-                <TextBlock Text="{Binding CurrentMachineState}" FontSize="35" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    Command="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=SimulateCommand}">
+                <TextBlock Text="{Binding CurrentMachineState}" FontSize="35" HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
             </Button>
         </Grid>
 
@@ -95,31 +95,32 @@
             </Grid.ColumnDefinitions>
 
             <!-- Basic product info -->
-            <Grid Grid.Column="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                
+  
+
                 <!-- Bin views -->
-                <bins:SummaryView Grid.Row="0" Summary="{Binding Summary}"/>
-            </Grid>
+                <bins:SummaryView Grid.Column="0" Summary="{Binding Summary}" x:Name="SummaryView"/>
 
             <!-- Left socket preview -->
-            <halconScreen:HalconScreenView Grid.Column="1" ButtonVisibility="Visible"
+            <halconScreen:HalconScreenView Grid.Column="1" ButtonVisibility="Visible" Height="421"
                                            LeftGraphics="{Binding Path=Graphics2DCavity1}"
-                                           RightGraphics="{Binding Path=Graphics2DCavity2}" />
+                                           RightGraphics="{Binding Path=Graphics2DCavity2}" VerticalAlignment="Top"/>
 
             <!-- Right socket preview -->
-            <halconScreen:HalconScreenView Grid.Column="2" ButtonVisibility="Visible"
+            <halconScreen:HalconScreenView Grid.Column="2" ButtonVisibility="Visible" Height="421"
                                            LeftGraphics="{Binding Path=Graphics3DCavity1}"
-                                           RightGraphics="{Binding Path=Graphics3DCavity2}" />
+                                           RightGraphics="{Binding Path=Graphics3DCavity2}" VerticalAlignment="Top"/>
 
 
         </Grid>
 
-        <faiItem:FaiItemListStackView Grid.Row="2" FaiItems="{Binding FaiItemsCavity1}" Header="Cavity1" />
-        <faiItem:FaiItemListStackView Grid.Row="3" FaiItems="{Binding FaiItemsCavity2}" Header="Cavity2" />
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <faiItem:FaiItemListWarpView Grid.Column="0" FaiItems="{Binding FaiItemsCavity1}" />
+            <faiItem:FaiItemListWarpView Grid.Column="1" FaiItems="{Binding FaiItemsCavity2}"/>
+        </Grid>
 
     </Grid>
 </UserControl>

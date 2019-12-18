@@ -8,37 +8,34 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
 
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Background="Beige" x:Name="HeaderField" Grid.Column="0" FontSize="20" FontWeight="Bold" VerticalAlignment="Top">
-                <TextBlock.LayoutTransform>
-                    <RotateTransform Angle="90"/>
-                </TextBlock.LayoutTransform>
-            </TextBlock>
-            <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Hidden">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Background="Beige" x:Name="HeaderField" Grid.Column="0" FontSize="20" FontWeight="Bold"
+                   VerticalAlignment="Top">
+            <TextBlock.LayoutTransform>
+                <RotateTransform Angle="90" />
+            </TextBlock.LayoutTransform>
+        </TextBlock>
+        <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Hidden">
             <ListView x:Name="FaiList">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" />
+                        <WrapPanel />
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
 
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <Border>
-                            <materialDesign:DialogHost>
+                     
                                 <!-- Name and value -->
-                                <Button Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}" Width="60"
-                                        Height="40" Margin="-10">
-                                    <StackPanel>
-                                        <StackPanel Orientation="Horizontal">
-                                            <TextBlock Text="{Binding Name}" HorizontalAlignment="Left" />
-                                        </StackPanel>
-                                        <Separator BorderThickness="2" BorderBrush="Black">
-                                        </Separator>
+                                <Button Width="80" Height="20" materialDesign:ButtonAssist.CornerRadius="3">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding Name}" HorizontalAlignment="Left" />
+                                            <Separator BorderThickness="2" BorderBrush="Black" />
                                         <TextBlock Text="{Binding Value, StringFormat=N3}" HorizontalAlignment="Center" />
                                     </StackPanel>
                                     <Button.Style>
@@ -64,50 +61,14 @@
                                 </Button>
 
 
-                                <!-- Dialog -->
-                                <materialDesign:DialogHost.DialogContent>
-                                    <ScrollViewer HorizontalScrollBarVisibility="Disabled"
-                                                  VerticalScrollBarVisibility="Auto">
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="50" />
-                                                <RowDefinition Height="50" />
-                                                <RowDefinition Height="Auto" />
-                                                <RowDefinition Height="50" />
-                                            </Grid.RowDefinitions>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="80" />
-                                                <ColumnDefinition Width="80" />
-                                            </Grid.ColumnDefinitions>
-                                            <TextBox Grid.Row="0" Grid.Column="0"
-                                                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                                     materialDesign:HintAssist.Hint="Min" Text="{Binding MinBoundary}" />
-                                            <TextBox Grid.Row="0" Grid.Column="1"
-                                                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                                     materialDesign:HintAssist.Hint="Max" Text="{Binding MaxBoundary}" />
-                                            <TextBox Grid.Row="1" Grid.Column="0"
-                                                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                                     materialDesign:HintAssist.Hint="Weight" Text="{Binding Weight}" />
-                                            <TextBox Grid.Row="1" Grid.Column="1"
-                                                     Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                                     materialDesign:HintAssist.Hint="Bias" Text="{Binding Bias}" />
-                                            <Separator Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" />
-                                            <Button Grid.Row="3" Grid.Column="1" Content="OK" Width="50" Margin="3"
-                                                    HorizontalAlignment="Right"
-                                                    Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
-                                                    IsDefault="True" IsCancel="True" />
-                                        </Grid>
-                                    </ScrollViewer>
-                                </materialDesign:DialogHost.DialogContent>
-
-                            </materialDesign:DialogHost>
+                  
 
                         </Border>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-    </ScrollViewer>
-        </Grid>
- 
+        </ScrollViewer>
+    </Grid>
+
 
 </UserControl>
