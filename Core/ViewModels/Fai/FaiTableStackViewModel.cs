@@ -16,6 +16,8 @@ namespace Core.ViewModels.Fai
         private List<DataRowViewModel> _valueMatrix = new List<DataRowViewModel>();
         private int _maxRows;
         private double _portionToRemoveWhenOverflows = 0.3;
+        private List<double> _max;
+        private List<double> _min;
 
         public List<string> Header
         {
@@ -23,8 +25,19 @@ namespace Core.ViewModels.Fai
             set
             {
                 _header = value;
-                OnPropertyChanged(nameof(Header));
             }
+        }
+
+        public List<double> Max
+        {
+            get { return _max; }
+            set { _max = value; }
+        }
+
+        public List<double> Min
+        {
+            get { return _min; }
+            set { _min = value; }
         }
 
         public List<DataRowViewModel> ValueMatrix

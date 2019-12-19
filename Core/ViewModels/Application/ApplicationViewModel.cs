@@ -213,6 +213,7 @@ namespace Core.ViewModels.Application
             Server.IsBusyResetting = false;
             Server.IsStopping = false;
             Server.IsPausing = false;
+            Server.CurrentMachineState = MachineState.Idle;
             
             Logger.Instance.LogErrorToFile(message);
             Logger.LogHighLevelWarningNormal(message);
@@ -589,6 +590,8 @@ namespace Core.ViewModels.Application
                 Table = new FaiTableStackViewModel()
                 {
                     Header = FaiItemsCavity1.Select(item => item.Name).ToList(),
+                    Max = FaiItemsCavity1.Select(item=>item.MaxBoundary).ToList(),
+                    Min = FaiItemsCavity1.Select(item=>item.MinBoundary).ToList(),
                     MaxRows = 50,
                     PortionToRemoveWhenOverflows = 0.3
                 };

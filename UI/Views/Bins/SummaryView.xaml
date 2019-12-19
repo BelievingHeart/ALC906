@@ -89,7 +89,7 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0">
-                                <materialDesign:ColorZone Background="Red" Height="50" Margin="10 3">
+                                <materialDesign:ColorZone Background="Red" Height="50" >
                                     <TextBlock Text="Bin 2" FontSize="24" HorizontalAlignment="Center"
                                                VerticalAlignment="Center" />
                                 </materialDesign:ColorZone>
@@ -99,7 +99,7 @@
                                        BorderThickness="1" />
                             </StackPanel>
                             <StackPanel Grid.Column="1">
-                                <materialDesign:ColorZone Background="Firebrick" Height="50" Margin="10 3">
+                                <materialDesign:ColorZone Background="Firebrick" Height="50" >
                                     <TextBlock Text="Bin 3" FontSize="24" HorizontalAlignment="Center"
                                                VerticalAlignment="Center" />
                                 </materialDesign:ColorZone>
@@ -127,7 +127,7 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0">
-                                <materialDesign:ColorZone Background="Chocolate" Height="50" Margin="10 3">
+                                <materialDesign:ColorZone Background="Chocolate" Height="50" >
                                     <TextBlock Text="Bin 4" FontSize="24" HorizontalAlignment="Center"
                                                VerticalAlignment="Center" />
                                 </materialDesign:ColorZone>
@@ -137,7 +137,7 @@
                                        BorderThickness="1" />
                             </StackPanel>
                             <StackPanel Grid.Column="1">
-                                <materialDesign:ColorZone Background="Coral" Height="50" Margin="10 3">
+                                <materialDesign:ColorZone Background="Coral" Height="50" >
                                     <TextBlock Text="Bin 5" FontSize="24" HorizontalAlignment="Center"
                                                VerticalAlignment="Center" />
                                 </materialDesign:ColorZone>

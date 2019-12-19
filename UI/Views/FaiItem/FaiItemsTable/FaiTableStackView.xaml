@@ -32,11 +32,15 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <faiItemsTable:HeaderRowView x:Name="PART_HeaderRow" Grid.Row="0" Background="{DynamicResource PrimaryHueDarkBrush}" Foreground="White"/>
+                <faiItemsTable:HeaderRowView x:Name="PART_HeaderRow" Grid.Row="0" Height="20" Background="{DynamicResource PrimaryHueDarkBrush}" Foreground="White"/>
+                <faiItemsTable:HeaderRowView x:Name="PART_MaxRow" Grid.Row="1" Height="20" Background="{DynamicResource PrimaryHueDarkBrush}" Foreground="White"/>
+                <faiItemsTable:HeaderRowView x:Name="PART_MinRow" Grid.Row="2" Height="20" Background="{DynamicResource PrimaryHueDarkBrush}" Foreground="White"/>
                 <!-- Values -->
-                <ScrollViewer VerticalScrollBarVisibility="Visible" Grid.Row="1">
+                <ScrollViewer VerticalScrollBarVisibility="Visible" Grid.Row="3">
                     <StackPanel x:Name="PART_ItemsStack" />
                 </ScrollViewer>
             </Grid>

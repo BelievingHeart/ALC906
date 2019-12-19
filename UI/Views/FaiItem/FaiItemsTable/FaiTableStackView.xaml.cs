@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -25,6 +26,11 @@ namespace UI.Views.FaiItem.FaiItemsTable
                 // Add header
                 var headerContent = viewModel.Header;
                 PART_HeaderRow.TextData = headerContent;
+                PART_MaxRow.TextData = viewModel.Max.Select(num => num.ToString("N3")).ToList();
+                PART_MinRow.TextData = viewModel.Min.Select(num => num.ToString("N3")).ToList();
+
+                PART_MaxRow.RowName = "Tolerance+";
+                PART_MinRow.RowName = "Tolerance-";
 
                 // Add remaining rows
                 foreach (var rowViewModel in viewModel.ValueMatrix)
@@ -63,6 +69,8 @@ namespace UI.Views.FaiItem.FaiItemsTable
                     Source = newRow.PART_NameCell
                 };
                 PART_HeaderRow.PART_NameCell.SetBinding(WidthProperty, binding);
+                PART_MaxRow.PART_NameCell.SetBinding(WidthProperty, binding);
+                PART_MinRow.PART_NameCell.SetBinding(WidthProperty, binding);
             
                 // Add separator
                 PART_ItemsStack.Children.Add(new Separator());
@@ -125,6 +133,8 @@ namespace UI.Views.FaiItem.FaiItemsTable
             var width = (double) e.NewValue;
 
             sender.PART_HeaderRow.CellWidth = new GridLength(width);
+            sender.PART_MaxRow.CellWidth = new GridLength(width);
+            sender.PART_MinRow.CellWidth = new GridLength(width);
         }
 
         public double DataCellWidth
