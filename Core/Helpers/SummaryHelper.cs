@@ -33,8 +33,6 @@ namespace Core.Helpers
                 }
 
                 if (productLevel == ProductLevel.Empty) continue;
-                summary.TotalCount++;
-                if (productLevel.ToString().Contains("Ng")) summary.NgCount++;
             }
         }
     }

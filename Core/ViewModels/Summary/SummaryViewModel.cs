@@ -1,17 +1,109 @@
-﻿using System.Xml.Serialization;
+﻿using System;
+using System.Diagnostics.Contracts;
+using System.Windows.Input;
+using System.Xml.Serialization;
+using WPFCommon.Commands;
 using WPFCommon.ViewModels.Base;
 
 namespace Core.ViewModels.Summary
 {
-    public class SummaryViewModel : AutoSerializableBase<SummaryViewModel>
+    public class SummaryViewModel : ViewModelBase
     {
-        [XmlAttribute] public int OkCount { get; set; }
-        [XmlAttribute] public int Ng2Count { get; set; }
-        [XmlAttribute] public int Ng3Count { get; set; }
-        [XmlAttribute] public int Ng4Count { get; set; }
-        [XmlAttribute] public int Ng5Count { get; set; }
-        [XmlAttribute] public int TotalCount { get; set; }
-        [XmlAttribute] public int EmptyCount { get; set; }
-        [XmlAttribute] public int NgCount { get; set; }
+        private int _ng2Count;
+        private int _ng3Count;
+        private int _ng4Count;
+        private int _ng5Count;
+        private int _okCount;
+
+        public SummaryViewModel()
+        {
+            ClearCommand = new RelayCommand(ClearSummary);
+        }
+
+        private void ClearSummary()
+        {
+            OkCount = 0;
+            Ng2Count = 0;
+            Ng3Count = 0;
+            Ng4Count = 0;
+            Ng5Count = 0;
+        }
+
+        public int OkCount
+        {
+            get { return _okCount; }
+            set
+            {
+                _okCount = value; 
+                OnPropertyChanged(nameof(TotalCount));
+                OnPropertyChanged(nameof(YieldText));
+                OnPropertyChanged(nameof(Uph));
+            }
+        }
+
+        public int Ng2Count
+        {
+            get { return _ng2Count; }
+            set
+            {
+                _ng2Count = value;
+                OnPropertyChanged(nameof(NgCount));
+                OnPropertyChanged(nameof(TotalCount));
+                OnPropertyChanged(nameof(YieldText));
+                OnPropertyChanged(nameof(Uph));
+            }
+        }
+
+        public int Ng3Count
+        {
+            get { return _ng3Count; }
+            set
+            {
+                _ng3Count = value;
+                OnPropertyChanged(nameof(NgCount));
+                OnPropertyChanged(nameof(TotalCount));
+                OnPropertyChanged(nameof(YieldText));
+                OnPropertyChanged(nameof(Uph));
+            }
+        }
+
+        public int Ng4Count
+        {
+            get { return _ng4Count; }
+            set
+            {
+                _ng4Count = value;
+                OnPropertyChanged(nameof(NgCount));
+                OnPropertyChanged(nameof(TotalCount));
+                OnPropertyChanged(nameof(YieldText));
+                OnPropertyChanged(nameof(Uph));
+            }
+        }
+
+        public int Ng5Count
+        {
+            get { return _ng5Count; }
+            set
+            {
+                _ng5Count = value;
+                OnPropertyChanged(nameof(NgCount));
+                OnPropertyChanged(nameof(TotalCount));
+                OnPropertyChanged(nameof(YieldText));
+                OnPropertyChanged(nameof(Uph));
+            }
+        }
+
+        public int TotalCount => NgCount + OkCount;
+        public int EmptyCount { get; set; }
+        public int NgCount => Ng2Count + Ng3Count + Ng4Count + Ng5Count;
+
+        public string YieldText => (OkCount / (double) TotalCount*100).ToString("N1") + "%";
+
+
+        public DateTime StartTime { get; set; }
+        public double Uph => TotalCount / (DateTime.Now - StartTime).TotalHours;
+
+        public ICommand ClearCommand { get; set; }
+
     }
 }

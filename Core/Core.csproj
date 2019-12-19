@@ -158,10 +158,6 @@
       <Project>{7d6be37f-d81b-4a5e-a1a0-a8d4381f0536}</Project>
       <Name>WPFCommon</Name>
     </ProjectReference>
-    <ProjectReference Include="..\PLS\PLS.csproj">
-      <Project>{ea4eb787-d8db-413c-922b-64a3192c006d}</Project>
-      <Name>PLS</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ImageProcessing\3D\" />

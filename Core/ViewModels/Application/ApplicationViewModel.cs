@@ -29,7 +29,6 @@ using I40_3D_Test;
 using LJX8000.Core.ViewModels.Controller;
 using PLCCommunication.Core.Enums;
 using PLCCommunication.Core.ViewModels;
-using PLS;
 using WPFCommon.Commands;
 using WPFCommon.Helpers;
 using WPFCommon.ViewModels.Base;
@@ -511,8 +510,7 @@ namespace Core.ViewModels.Application
 
         private void UpdateSummaries()
         {
-            if (Cavity1ProductLevel != ProductLevel.Empty) Summary.UpdateCurrentSummary(Cavity1ProductLevel.ToString());
-            if (Cavity2ProductLevel != ProductLevel.Empty) Summary.UpdateCurrentSummary(Cavity2ProductLevel.ToString());
+            if (Cavity1ProductLevel != ProductLevel.Empty) Summary.Update(Cavity1ProductLevel, Cavity2ProductLevel);
         }
 
         /// <summary>
@@ -756,7 +754,6 @@ namespace Core.ViewModels.Application
             
             LoadShapeModels();
 
-            LoadProductionLineSummaries();
         }
 
         private void LoadPasswordModule()
@@ -765,17 +762,7 @@ namespace Core.ViewModels.Application
                 AutoSerializableHelper.LoadAutoSerializable<LoginViewModel>(DirectoryHelper.ConfigDirectory, "PD");
             LoginViewModel.ShouldAutoSerialize = true;
         }
-
-        private void LoadProductionLineSummaries()
-        {
-            var binNames = new List<string>
-            {
-                ProductLevel.OK.ToString(), ProductLevel.Ng2.ToString(), ProductLevel.Ng3.ToString(),
-                ProductLevel.Ng4.ToString(), ProductLevel.Ng5.ToString()
-            };
-            Summary = new ProductionLineSummary(DirectoryConstants.ProductionLineRecordDir, binNames);
-            OnPropertyChanged(nameof(Summary));
-        }
+        
 
         private Dictionary<string, double> GenErrorFaiResults(List<string> faiNames)
         {
@@ -810,7 +797,6 @@ namespace Core.ViewModels.Application
             }
 
             Server.Disconnect();
-            Summary.SerializeCurrentSummary();
         }
 
 
@@ -878,7 +864,7 @@ namespace Core.ViewModels.Application
             get { return System.Windows.Application.Current.Dispatcher; }
         }
 
-        public ProductionLineSummary Summary { get; set; }
+        public SummaryViewModel Summary { get; set; } = new SummaryViewModel(){StartTime = DateTime.Now};
 
         public ResultStatus ResultReady2D { get; set; }
 
