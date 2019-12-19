@@ -3,7 +3,7 @@ using System.Globalization;
 using Core.Enums;
 using WPFCommon.Converters;
 
-namespace UI.Converters
+namespace DatabaseQuery.Converters
 {
     public class ProductTypeToIndexConverter : ValueConverterBase<ProductTypeToIndexConverter>
     {

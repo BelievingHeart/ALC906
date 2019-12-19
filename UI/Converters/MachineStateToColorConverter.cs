@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Windows.Media;
 using PLCCommunication.Core.Enums;
+using WPFCommon.Converters;
 
 namespace UI.Converters
 {

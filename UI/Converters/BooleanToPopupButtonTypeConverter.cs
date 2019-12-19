@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Windows.Controls;
 using UI.Views.Popup;
+using WPFCommon.Converters;
 
 namespace UI.Converters
 {

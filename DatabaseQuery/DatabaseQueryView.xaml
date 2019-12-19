@@ -1,0 +1,54 @@
+﻿<Window x:Class="DatabaseQuery.DatabaseQueryView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:database="clr-namespace:Core.ViewModels.Database;assembly=Core"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:converters="clr-namespace:DatabaseQuery.Converters"
+        mc:Ignorable="d"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        
+        Title="Database Query" Height="350" Width="525">
+    <Window.DataContext>
+        <database:DatabaseQueryViewModel/>
+    </Window.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <materialDesign:Card  Grid.Row="0" Width="100" HorizontalAlignment="Left">
+            <StackPanel Orientation="Vertical">
+                <!-- Select product type -->
+                <ComboBox
+                    materialDesign:HintAssist.Hint="Product type"
+                    SelectedIndex="{Binding ProductType, Converter={converters:ProductTypeToIndexConverter}}"
+                    materialDesign:HintAssist.HintOpacity=".26">
+                    <ComboBoxItem>
+                        Mtm
+                    </ComboBoxItem>
+                    <ComboBoxItem>
+                        Alps
+                    </ComboBoxItem>
+                </ComboBox>
+
+                <DatePicker
+                    Width="100"
+                    materialDesign:HintAssist.Hint="Date"
+                    Style="{StaticResource MaterialDesignFloatingHintDatePicker}" SelectedDate="{Binding Date}" />
+                <TextBox Text="{Binding Hour}" materialDesign:HintAssist.Hint="Hour"
+                         Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+                <Button Content="Query" Command="{Binding QueryByHourCommand}" />
+            </StackPanel></materialDesign:Card>
+        <!-- Data list -->
+        <DataGrid Grid.Row="1" ItemsSource="{Binding TableToShow}" IsReadOnly="True"/>
+    </Grid>
+</Window>

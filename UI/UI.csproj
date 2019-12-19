@@ -93,7 +93,6 @@
     <Compile Include="Converters\LogicNotConverter.cs" />
     <Compile Include="Converters\MachineStateToColorConverter.cs" />
     <Compile Include="Converters\ProductTypeToIndexConverter.cs" />
-    <Compile Include="Converters\ValueConverterBase.cs" />
     <Compile Include="Views\Bins\SummaryView.xaml.cs">
       <DependentUpon>SummaryView.xaml</DependentUpon>
     </Compile>

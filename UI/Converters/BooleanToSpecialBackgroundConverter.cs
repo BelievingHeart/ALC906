@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Media;
+using WPFCommon.Converters;
 
 namespace UI.Converters
 {

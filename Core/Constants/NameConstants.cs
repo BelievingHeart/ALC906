@@ -36,5 +36,10 @@ namespace Core.Constants
         };
 
         public static string TopCameraName = "Hikvision MV-CH250-20TM-F-NF (00D46076741)";
+
+        public static string SqlConnectionString =
+            "Server=(LocalDb)\\Product;Database=I40;Trusted_Connection=True;";
+
+
     }
 }

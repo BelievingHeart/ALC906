@@ -47,6 +47,7 @@ namespace Core.Helpers
         /// <param name="expireDays"></param>
         public static void RemoveOutdatedFiles(string dir, int expireDays)
         {
+            Directory.CreateDirectory(dir);
             foreach (string path in Directory.EnumerateFiles(dir, "*.*", SearchOption.AllDirectories))
             {
                 var timeSpan = (DateTime.Now - new FileInfo(path).LastWriteTime).Days;

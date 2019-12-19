@@ -38,6 +38,7 @@
           <e p="StringMatrixType.cs" t="Include" />
         </e>
         <e p="Helpers" t="Include">
+          <e p="FaiCollectionHelper.cs" t="Include" />
           <e p="FaiItemsHelper.cs" t="Include" />
           <e p="FindLineParamHelper.cs" t="Include" />
           <e p="I40Helper.cs" t="Include" />
@@ -87,6 +88,14 @@
           <e p="CameraHost" t="Include">
             <e p="CameraHostViewModel.cs" t="Include" />
           </e>
+          <e p="Database" t="Include">
+            <e p="DatabaseQueryViewModel.cs" t="Include" />
+            <e p="FaiCollection" t="Include">
+              <e p="FaiCollectionAlps.cs" t="Include" />
+              <e p="FaiCollectionMtm.cs" t="Include" />
+              <e p="IFaiCollection.cs" t="Include" />
+            </e>
+          </e>
           <e p="Fai" t="Include">
             <e p="DataRowViewModel.cs" t="Include" />
             <e p="FaiItem.cs" t="Include" />
@@ -126,8 +135,11 @@
         <e p="App.xaml" t="Include" />
         <e p="App.xaml.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
+        <e p="Converters" t="Include">
+          <e p="ProductTypeToIndexConverter.cs" t="Include" />
+        </e>
         <e p="DatabaseQuery.csproj" t="IncludeRecursive" />
-        <e p="MainWindow.xaml" t="Include" />
+        <e p="DatabaseQueryView.xaml" t="Include" />
         <e p="MainWindow.xaml.cs" t="Include" />
         <e p="obj" t="ExcludeRecursive" />
         <e p="packages.config" t="Include" />
@@ -155,9 +167,9 @@
           <e p="BooleanToSpecialBackgroundConverter.cs" t="Include" />
           <e p="EnumToApplicationPageConverter.cs" t="Include" />
           <e p="EventToCommandBehaviour.cs" t="Include" />
+          <e p="LogicNotConverter.cs" t="Include" />
           <e p="MachineStateToColorConverter.cs" t="Include" />
           <e p="ProductTypeToIndexConverter.cs" t="Include" />
-          <e p="ValueConverterBase.cs" t="Include" />
         </e>
         <e p="DataAccess" t="Include" />
         <e p="FodyWeavers.xml" t="Include" />
@@ -381,6 +393,9 @@
         <e p="ParameterizedCommand.cs" t="Include" />
         <e p="RelayCommand.cs" t="Include" />
         <e p="SimpleCommand.cs" t="Include" />
+      </e>
+      <e p="Converters" t="Include">
+        <e p="ValueConverterBase.cs" t="Include" />
       </e>
       <e p="Helpers" t="Include">
         <e p="AutoSerializableHelper.cs" t="Include" />

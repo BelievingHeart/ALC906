@@ -12,6 +12,7 @@ using UI.Views.Login;
 using UI.Views.Server;
 using UI.Views.Settings;
 using UI.Views.Vision2D;
+using WPFCommon.Converters;
 
 namespace UI.Converters
 {

@@ -98,6 +98,7 @@
     <Compile Include="Enums\ResultStatus.cs" />
     <Compile Include="Enums\CavityType.cs" />
     <Compile Include="Enums\StringMatrixType.cs" />
+    <Compile Include="Helpers\FaiCollectionHelper.cs" />
     <Compile Include="Helpers\FaiItemsHelper.cs" />
     <Compile Include="Helpers\FindLineParamHelper.cs" />
     <Compile Include="Helpers\I40Helper.cs" />
@@ -122,6 +123,10 @@
     <Compile Include="Models\FixedSizeQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\Application\ApplicationViewModel.cs" />
+    <Compile Include="ViewModels\Database\DatabaseQueryViewModel.cs" />
+    <Compile Include="ViewModels\Database\FaiCollection\FaiCollectionAlps.cs" />
+    <Compile Include="ViewModels\Database\FaiCollection\FaiCollectionMtm.cs" />
+    <Compile Include="ViewModels\Database\FaiCollection\IFaiCollection.cs" />
     <Compile Include="ViewModels\Fai\DataRowViewModel.cs" />
     <Compile Include="ViewModels\Fai\FaiTableStackViewModel.cs" />
     <Compile Include="ViewModels\Login\LoginViewModel.cs" />
