@@ -32,7 +32,6 @@ namespace Core.Helpers
                         break;
                 }
 
-                if (productLevel == ProductLevel.Empty) continue;
             }
         }
     }

@@ -7,15 +7,19 @@
              xmlns:halconDotNet="clr-namespace:HalconDotNet;assembly=halcondotnet"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300" Loaded="OnHalconWindowLoaded">
+             d:DesignHeight="300" d:DesignWidth="300" Loaded="OnHalconWindowLoaded" x:Name="Window">
     <Grid>
         <halconDotNet:HSmartWindowControlWPF Grid.Column="0" x:Name="HalconScreen" />
         <!-- Switch cavity view -->
-        <Button x:Name="PART_SwitchViewButton" Command="{Binding RelativeSource={RelativeSource AncestorType=local:HalconScreenView}, Path=ChangeSocketViewCommand}" Margin="20" MinHeight="80" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+        <Button x:Name="PART_SwitchViewButton"
+                Command="{Binding RelativeSource={RelativeSource AncestorType=local:HalconScreenView}, Path=ChangeSocketViewCommand}"
+                Margin="20" MinHeight="80" HorizontalAlignment="Left" VerticalAlignment="Bottom">
             <StackPanel>
-                <TextBlock Text="Switch cavity" HorizontalAlignment="Left" FontSize="10"/>
-                <Separator/>
-                <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=local:HalconScreenView}, Path=SocketToDisplay}" FontSize="24" VerticalAlignment="Center" Margin="3"/>
+                <TextBlock Text="Switch cavity" HorizontalAlignment="Left" FontSize="10" />
+                <Separator />
+                <TextBlock
+                    Text="{Binding RelativeSource={RelativeSource AncestorType=local:HalconScreenView}, Path=SocketToDisplay}"
+                    FontSize="24" VerticalAlignment="Center" Margin="3" />
             </StackPanel>
         </Button>
         <!-- Switch image of which index to display -->

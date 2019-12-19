@@ -154,6 +154,7 @@ namespace UI.Views.HalconScreen
         private void RefreshHalconScreen()
         {
             if (_windowHandle == null) return;
+            _windowHandle.ClearWindow();
             var result2D = SocketToDisplay == CavityType.Cavity1 ? LeftGraphics : RightGraphics;
             UpdateImageIndexList(result2D);
             if(result2D.Images == null || result2D.Images.Count ==0) return;

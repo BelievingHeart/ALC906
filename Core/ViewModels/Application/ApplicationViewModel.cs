@@ -438,10 +438,17 @@ namespace Core.ViewModels.Application
             {
                 result3D = new MeasurementResult3D()
                 {
-                    FaiResults = new Dictionary<string, double>(),
+                    FaiResults = GenErrorFaiResults(_procedure3D.FaiNames),
                     CompositeImage = imagesForOneSocket,
                     ErrorMessage = e.Message
                 };
+                // Log error images
+                var logDir = Path.Combine(DirectoryConstants.ImageDir3D,
+                    "Error/" + DateTime.Now.ToString("yyyy-MM-dd-HHmmss"));
+                Task.Run(() =>
+                {
+                    Logger.Instance.RecordErrorImages(imagesForOneSocket, logDir, logDir);
+                });
             }
 
             if (socketIndex == (int) CavityType.Cavity1)
@@ -510,7 +517,7 @@ namespace Core.ViewModels.Application
 
         private void UpdateSummaries()
         {
-            if (Cavity1ProductLevel != ProductLevel.Empty) Summary.Update(Cavity1ProductLevel, Cavity2ProductLevel);
+            if (ProductLevelCavity1 != ProductLevel.Empty) Summary.Update(ProductLevelCavity1, ProductLevelCavity2);
         }
 
         /// <summary>
@@ -518,9 +525,13 @@ namespace Core.ViewModels.Application
         /// </summary>
         private void SubmitProductLevels()
         {
-            Cavity1ProductLevel = GetProductLevel(Graphics3DCavity1.ItemExists, FaiItemsCavity1);
-            Cavity2ProductLevel = GetProductLevel(Graphics3DCavity2.ItemExists, FaiItemsCavity2);
-            Server.SendProductLevels(Cavity1ProductLevel, Cavity2ProductLevel);
+            var cavity1Errored = Graphics2DCavity1.ErrorMessage != null || Graphics3DCavity1.ErrorMessage != null;
+            ProductLevelCavity1 = GetProductLevel(Graphics3DCavity1.ItemExists, cavity1Errored,FaiItemsCavity1);
+            
+            var cavity2Errored = Graphics2DCavity2.ErrorMessage != null || Graphics3DCavity2.ErrorMessage != null;
+            ProductLevelCavity2 = GetProductLevel(Graphics3DCavity2.ItemExists, cavity2Errored,FaiItemsCavity2);
+            
+            Server.SendProductLevels(ProductLevelCavity1, ProductLevelCavity2);
         }
 
 
@@ -562,23 +573,33 @@ namespace Core.ViewModels.Application
             List<FaiItem> faiItemsCavity2)
         {
             // Cavity 2
-            var timestampCavity2 = SerializationHelper.SerializeImagesWith2D3DMatched(images2dCavity2, images3dCavity2,
-                ShouldSave2DImagesRight,
-                ShouldSave3DImagesRight, CavityType.Cavity2);
-            _serializerRight.Serialize(faiItemsCavity2, timestampCavity2, Cavity2ProductLevel.GetResultText());
-            _serializerAll.Serialize(faiItemsCavity2, timestampCavity2, Cavity2ProductLevel.GetResultText());
+            if (ProductLevelCavity2!=ProductLevel.Empty)
+            {
+                TimestampCavity2 = SerializationHelper.SerializeImagesWith2D3DMatched(images2dCavity2, images3dCavity2,
+                    ShouldSave2DImagesRight,
+                    ShouldSave3DImagesRight, CavityType.Cavity2);
+                _serializerRight.Serialize(faiItemsCavity2, TimestampCavity2.ToString("HH-mm-ss-ffff"), ProductLevelCavity2.GetResultText());
+                _serializerAll.Serialize(faiItemsCavity2, TimestampCavity2.ToString("HH-mm-ss-ffff"), ProductLevelCavity2.GetResultText());
+            }
 
 
             // Cavity 1
-            var timestampCavity1 = SerializationHelper.SerializeImagesWith2D3DMatched(images2dCavity1, images3dCavity1,
-                ShouldSave2DImagesLeft,
-                ShouldSave3DImagesLeft, CavityType.Cavity1);
-            _serializerLeft.Serialize(faiItemsCavity1, timestampCavity1, Cavity1ProductLevel.GetResultText());
-            _serializerAll.Serialize(faiItemsCavity1, timestampCavity1, Cavity1ProductLevel.GetResultText());
+            if (ProductLevelCavity1!=ProductLevel.Empty)
+            {
+                TimestampCavity1 = SerializationHelper.SerializeImagesWith2D3DMatched(images2dCavity1, images3dCavity1,
+                    ShouldSave2DImagesLeft,
+                    ShouldSave3DImagesLeft, CavityType.Cavity1);
+                _serializerLeft.Serialize(faiItemsCavity1, TimestampCavity1.ToString("HH-mm-ss-ffff"), ProductLevelCavity1.GetResultText());
+                _serializerAll.Serialize(faiItemsCavity1, TimestampCavity1.ToString("HH-mm-ss-ffff"), ProductLevelCavity1.GetResultText());
+            }
 
             // Update tables
-            UiDispatcher.InvokeAsync(() => UpdateTables(timestampCavity1, timestampCavity2));
+            UiDispatcher.InvokeAsync(() => UpdateTables(TimestampCavity1.ToString("HH-mm-ss-ffff"), TimestampCavity2.ToString("HH-mm-ss-ffff")));
         }
+
+        public DateTime TimestampCavity1 { get; set; }
+
+        public DateTime TimestampCavity2 { get; set; }
 
         private void UpdateTables(string timestampCavity1, string timestampCavity2)
         {
@@ -596,8 +617,11 @@ namespace Core.ViewModels.Application
             }
 
             // Add rows
-            Table.AddRow(FaiItemsCavity2, Cavity2ProductLevel, timestampCavity2);
-            Table.AddRow(FaiItemsCavity1, Cavity1ProductLevel, timestampCavity1);
+            var shouldAddRowCavity2 = ProductLevelCavity2 != ProductLevel.Empty;
+            if(shouldAddRowCavity2) Table.AddRow(FaiItemsCavity2, ProductLevelCavity2, timestampCavity2);
+
+            var shouldAddRowCavity1 = ProductLevelCavity1 != ProductLevel.Empty;
+            if(shouldAddRowCavity1) Table.AddRow(FaiItemsCavity1, ProductLevelCavity1, timestampCavity1);
         }
 
         
@@ -614,11 +638,13 @@ namespace Core.ViewModels.Application
         /// Decide whether the item is missing, passed or rejected
         /// </summary>
         /// <param name="itemExists"></param>
+        /// <param name="errored"></param>
         /// <param name="faiItems"></param>
         /// <returns></returns>
-        private ProductLevel GetProductLevel(bool itemExists, IEnumerable<FaiItem> faiItems)
+        private ProductLevel GetProductLevel(bool itemExists, bool errored, IEnumerable<FaiItem> faiItems)
         {
             if (!itemExists) return ProductLevel.Empty;
+            if (errored) return ProductLevel.Ng5;
             return faiItems.Any(item => item.Rejected) ? ProductLevel.Ng2 : ProductLevel.OK;
         }
 
@@ -704,10 +730,20 @@ namespace Core.ViewModels.Application
             {
                 result = new GraphicsPackViewModel
                 {
-                    Images = images, FaiResults = GenErrorFaiResults(I40Check.GetFaiNames()),
+                    Images = images, FaiResults = I40Check.GetFaiDict(currentArrivedSocket2D.ToChusIndex()),
                     ErrorMessage = e.Message
                 };
                 Logger.LogRoutineMessage($"2D processing for {currentArrivedSocket2D} errored");
+                // If error is unexpected
+                if(!e.Message.Contains("[Vision 2D]"))
+                {
+                    var logDir = Path.Combine(DirectoryConstants.ImageDir2D,
+                        "Error/" + DateTime.Now.ToString("yyyy-MM-dd-HHmmss"));
+                    Task.Run(() =>
+                    {
+                        Logger.Instance.RecordErrorImages(images, logDir, "bmp");
+                    });
+                }
             }
 
             Logger.LogRoutineMessage($"2D processing ends for {currentArrivedSocket2D}");
@@ -748,7 +784,8 @@ namespace Core.ViewModels.Application
 
         public void LoadConfigs()
         {
-            CurrentProductType = ProductType.Alps;
+            // Load product-type-specific configs by switching product type
+            OnPropertyChanged(nameof(CurrentProductType));
 
             LoadPasswordModule();
             
@@ -819,8 +856,8 @@ namespace Core.ViewModels.Application
 
 
         public CavityType CurrentArrivedSocket2D { get; set; }
-        public ProductLevel Cavity1ProductLevel { get; set; }
-        public ProductLevel Cavity2ProductLevel { get; set; }
+        public ProductLevel ProductLevelCavity1 { get; set; }
+        public ProductLevel ProductLevelCavity2 { get; set; }
 
 
         /// <summary>

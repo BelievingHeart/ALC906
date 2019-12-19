@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Core.Constants;
 using Core.Helpers;
 using Core.ViewModels.Message;
 using Core.ViewModels.Popup;
+using HalconDotNet;
 using MaterialDesignThemes.Wpf;
 using WPFCommon.ViewModels.Base;
 
@@ -35,6 +38,20 @@ namespace Core.IoC.Loggers
             _popupQueue.NewPopupDequeued += UpdatePopupViewModel;
         }
 
+        public void RecordErrorImages(List<HImage> images, string message, string recordDir, string format="tiff")
+        {
+            Directory.CreateDirectory(recordDir);
+            // Record images
+            for (int i = 0; i < images.Count; i++)
+            {
+                var path = System.IO.Path.Combine(recordDir, i.ToString("D2") + "." + format);
+                images[i].WriteImage(format, 0, path);
+            }
+            // Record error
+            var errorTextPath = Path.Combine(recordDir, "error.txt");
+            File.WriteAllLines(errorTextPath, new []{message});
+        }
+
         private void UpdatePopupViewModel(PopupViewModel obj)
         {
             PopupViewModel = obj;
@@ -46,7 +63,19 @@ namespace Core.IoC.Loggers
         public FixedSizeMessageList UnhandledPlcMessageList { get; set; }
     
         public FixedSizeMessageList RoutineMessageList { get; set; }
-        
+
+        public int ErrorCount
+        {
+            get { return _errorCount; }
+            set
+            {
+                _errorCount = value;
+                if (_errorCount > 0) HasError = true;
+            }
+        }
+
+        public bool HasError { get; set; }
+
         public void LogErrorToFile(string message)
         {
             try
@@ -111,6 +140,7 @@ namespace Core.IoC.Loggers
         }
 
         public PopupQueue _popupQueue;
+        private int _errorCount;
 
         public static void LogHighLevelWarningSpecial(PopupViewModel popupViewModel)
         {
@@ -122,6 +152,7 @@ namespace Core.IoC.Loggers
             var popupViewModel = PopupHelper.CreateNormalPopup(s);
             Instance._popupQueue.EnqueuePopupThreadSafe(popupViewModel);
         }
+        
         
     }
 }

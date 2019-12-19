@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PLCCommunication.Core", "..
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HKCamera", "..\HKCamera\HKCamera\HKCamera.csproj", "{AE5DE0E5-BE76-4753-807F-62384EF1B0DE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseQuery", "DatabaseQuery\DatabaseQuery.csproj", "{7FC1D42A-8C8D-4CF2-84A4-99B0C315FD8D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{AE5DE0E5-BE76-4753-807F-62384EF1B0DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE5DE0E5-BE76-4753-807F-62384EF1B0DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE5DE0E5-BE76-4753-807F-62384EF1B0DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FC1D42A-8C8D-4CF2-84A4-99B0C315FD8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FC1D42A-8C8D-4CF2-84A4-99B0C315FD8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FC1D42A-8C8D-4CF2-84A4-99B0C315FD8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FC1D42A-8C8D-4CF2-84A4-99B0C315FD8D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
