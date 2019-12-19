@@ -39,6 +39,20 @@ namespace Core.Helpers
                 images[i].WriteImage(extension, 0, Path.Combine(serializationDir, imageName));
             }
         }
+
+        /// <summary>
+        /// Remove outdated files recursively if outdated
+        /// </summary>
+        /// <param name="dir"></param>
+        /// <param name="expireDays"></param>
+        public static void RemoveOutdatedFiles(string dir, int expireDays)
+        {
+            foreach (string path in Directory.EnumerateFiles(dir, "*.*", SearchOption.AllDirectories))
+            {
+                var timeSpan = (DateTime.Now - new FileInfo(path).LastWriteTime).Days;
+                if(timeSpan > expireDays) File.Delete(path);
+            }
+        }
         
     }
 }

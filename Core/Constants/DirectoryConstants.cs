@@ -26,7 +26,6 @@ namespace Core.Constants
         public static string ErrorLogDir => Path.Combine(Directory.GetCurrentDirectory(), "Log");
 
 
-        //TODO: remove the following dirs
         public static string ImageDir2D => Path.Combine(Directory.GetCurrentDirectory(), "2DImages");
         public static string ImageDir3D => Path.Combine(Directory.GetCurrentDirectory(), "3DImages");
 

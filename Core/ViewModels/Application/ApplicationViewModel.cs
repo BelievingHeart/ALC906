@@ -834,6 +834,11 @@ namespace Core.ViewModels.Application
             }
 
             Server.Disconnect();
+            
+            // Remove outdated files if any
+            SerializationHelper.RemoveOutdatedFiles(DirectoryConstants.ImageDir2D, 5);
+            SerializationHelper.RemoveOutdatedFiles(DirectoryConstants.ImageDir3D, 5);
+            SerializationHelper.RemoveOutdatedFiles(DirectoryConstants.CsvOutputDir, 30);
         }
 
 
@@ -934,12 +939,6 @@ namespace Core.ViewModels.Application
 
             InitSerializer();
             InitTables();
-
-            if (Server == null) return;
-            if (Server.IsAutoRunning) Server.StopCommand.Execute(null);
-            else Server.CurrentMachineState = MachineState.Idle;
-            Server.IsBusyResetting = false;
-            Logger.LogStateChanged("Switch success, please reset machine!");
         }
 
         private void InitTables()

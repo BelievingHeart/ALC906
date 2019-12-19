@@ -90,6 +90,7 @@
     <Compile Include="Converters\BooleanToSpecialBackgroundConverter.cs" />
     <Compile Include="Converters\EnumToApplicationPageConverter.cs" />
     <Compile Include="Converters\EventToCommandBehaviour.cs" />
+    <Compile Include="Converters\LogicNotConverter.cs" />
     <Compile Include="Converters\MachineStateToColorConverter.cs" />
     <Compile Include="Converters\ProductTypeToIndexConverter.cs" />
     <Compile Include="Converters\ValueConverterBase.cs" />
