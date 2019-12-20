@@ -71,7 +71,10 @@ namespace Core.ViewModels.Fai
             }
         }
 
-        public int Rows => ValueMatrix.Count;
+        public int Rows
+        {
+            get { return ValueMatrix.Count; }
+        }
 
         public void AddRow(List<FaiItem> faiItems, ProductLevel productLevel, string rowName)
         {

@@ -53,7 +53,10 @@ namespace Core.ViewModels.Message
 
         public int MaxCount { get; set; } = 100;
 
-        public int Count => _messageList.Count;
+        public int Count
+        {
+            get { return _messageList.Count; }
+        }
 
         protected virtual void OnNewMessagePushed(LoggingMessageItem obj)
         {

@@ -93,15 +93,28 @@ namespace Core.ViewModels.Summary
             }
         }
 
-        public int TotalCount => NgCount + OkCount;
-        public int EmptyCount { get; set; }
-        public int NgCount => Ng2Count + Ng3Count + Ng4Count + Ng5Count;
+        public int TotalCount
+        {
+            get { return NgCount + OkCount; }
+        }
 
-        public string YieldText => (OkCount / (double) TotalCount*100).ToString("N1") + "%";
+        public int EmptyCount { get; set; }
+        public int NgCount
+        {
+            get { return Ng2Count + Ng3Count + Ng4Count + Ng5Count; }
+        }
+
+        public string YieldText
+        {
+            get { return (OkCount / (double) TotalCount * 100).ToString("N1") + "%"; }
+        }
 
 
         public DateTime StartTime { get; set; }
-        public double Uph => TotalCount / (DateTime.Now - StartTime).TotalHours;
+        public double Uph
+        {
+            get { return TotalCount / (DateTime.Now - StartTime).TotalHours; }
+        }
 
         public ICommand ClearCommand { get; set; }
 

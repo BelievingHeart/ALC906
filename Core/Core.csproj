@@ -125,7 +125,9 @@
     <Compile Include="ViewModels\Application\ApplicationViewModel.cs" />
     <Compile Include="ViewModels\Database\DatabaseQueryViewModel.cs" />
     <Compile Include="ViewModels\Database\FaiCollection\FaiCollectionAlps.cs" />
+    <Compile Include="ViewModels\Database\FaiCollection\FaiCollectionList.cs" />
     <Compile Include="ViewModels\Database\FaiCollection\FaiCollectionMtm.cs" />
+    <Compile Include="ViewModels\Database\FaiCollection\FaiCollectionTest.cs" />
     <Compile Include="ViewModels\Database\FaiCollection\IFaiCollection.cs" />
     <Compile Include="ViewModels\Fai\DataRowViewModel.cs" />
     <Compile Include="ViewModels\Fai\FaiTableStackViewModel.cs" />

@@ -2,8 +2,14 @@
 {
     public partial class FaiItem
     {
-        public bool TooLarge => Value > MaxBoundary;
+        public bool TooLarge
+        {
+            get { return Value > MaxBoundary; }
+        }
 
-        public bool TooSmall => Value < MinBoundary;
+        public bool TooSmall
+        {
+            get { return Value < MinBoundary; }
+        }
     }
 }

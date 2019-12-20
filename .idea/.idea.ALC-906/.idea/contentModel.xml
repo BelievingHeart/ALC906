@@ -92,7 +92,9 @@
             <e p="DatabaseQueryViewModel.cs" t="Include" />
             <e p="FaiCollection" t="Include">
               <e p="FaiCollectionAlps.cs" t="Include" />
+              <e p="FaiCollectionList.cs" t="Include" />
               <e p="FaiCollectionMtm.cs" t="Include" />
+              <e p="FaiCollectionTest.cs" t="Include" />
               <e p="IFaiCollection.cs" t="Include" />
             </e>
           </e>

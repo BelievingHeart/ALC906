@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Core.Constants;
 using Core.Enums;
@@ -16,21 +18,29 @@ namespace Core.ViewModels.Database
         private DateTime _date = DateTime.Today;
         private int _year;
         private ProductType _productType;
-        public List<FaiCollectionMtm> TableToShow { get; set; }
+        private IList<IFaiCollection> _tableToShow;
+
+        public IList<IFaiCollection> TableToShow
+        {
+            get { return _tableToShow; }
+            set { _tableToShow = value as FaiCollectionList ?? new FaiCollectionList(value); }
+        }
 
         public int Year
         {
-            get => _year;
-            set => _year = value;
+            get { return _year; }
+            set { _year = value; }
         }
 
         public int Month { get; set; }
         public int Day { get; set; }
         public int Hour { get; set; }
 
+        public bool IsBusyQuerying { get; set; }
+
         public ProductType ProductType
         {
-            get => _productType;
+            get { return _productType; }
             set
             {
                 _productType = value;
@@ -49,6 +59,10 @@ namespace Core.ViewModels.Database
         }
 
         public ICommand QueryByHourCommand { get; }
+        /// <summary>
+        /// Do temporary tests 
+        /// </summary>
+        public ICommand DoSimulationCommand { get; }
 
         private void ParseDate(DateTime date)
         {
@@ -60,16 +74,27 @@ namespace Core.ViewModels.Database
 
         public DatabaseQueryViewModel()
         {
-            QueryByHourCommand = new RelayCommand(QueryByHour);
+            QueryByHourCommand = new RelayCommand(()=>RunOnlySingleFireIsAllowedEachTimeCommand(()=>IsBusyQuerying, QueryByHourAsync));
+            DoSimulationCommand = new RelayCommand(DoSimulation);
         }
 
-        private void QueryByHour()
+        private void DoSimulation()
+        {
+            TableToShow = new List<IFaiCollection>()
+            {
+                new FaiCollectionTest(){Cavity = 1, InspectionTime = "SomeTime", Result = "SomeResult", Test = "Hello"}
+            };
+        }
+
+        private  async Task QueryByHourAsync()
         {
             ParseDate(Date);
-            var output = FaiCollectionHelper.SelectByHour(ProductType, NameConstants.SqlConnectionString, Year, Month,
-                Day, Hour);
-            TableToShow = new List<FaiCollectionMtm>(output.Cast<FaiCollectionMtm>());
 
+            TableToShow = await Task.Run(() => FaiCollectionHelper.SelectByHour(ProductType,
+                NameConstants.SqlConnectionString, Year, Month,
+                Day, Hour));
         }
+        
+        
     }
 }

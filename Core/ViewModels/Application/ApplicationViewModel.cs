@@ -9,6 +9,7 @@ using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Threading;
 using Core.Constants;
@@ -447,7 +448,7 @@ namespace Core.ViewModels.Application
                     "Error/" + DateTime.Now.ToString("yyyy-MM-dd-HHmmss"));
                 Task.Run(() =>
                 {
-                    Logger.Instance.RecordErrorImages(imagesForOneSocket, logDir, logDir);
+                    Logger.Instance.RecordErrorImages(imagesForOneSocket, e.Message, logDir);
                 });
             }
 
@@ -735,13 +736,13 @@ namespace Core.ViewModels.Application
                 };
                 Logger.LogRoutineMessage($"2D processing for {currentArrivedSocket2D} errored");
                 // If error is unexpected
-                if(!e.Message.Contains("[Vision 2D]"))
+                if(!e.Message.Contains("[2D Vision]"))
                 {
                     var logDir = Path.Combine(DirectoryConstants.ImageDir2D,
                         "Error/" + DateTime.Now.ToString("yyyy-MM-dd-HHmmss"));
                     Task.Run(() =>
                     {
-                        Logger.Instance.RecordErrorImages(images, logDir, "bmp");
+                        Logger.Instance.RecordErrorImages(images, e.Message, logDir );
                     });
                 }
             }
@@ -785,7 +786,7 @@ namespace Core.ViewModels.Application
         public void LoadConfigs()
         {
             // Load product-type-specific configs by switching product type
-            OnPropertyChanged(nameof(CurrentProductType));
+            CurrentProductType = ProductType.Alps;
 
             LoadPasswordModule();
             

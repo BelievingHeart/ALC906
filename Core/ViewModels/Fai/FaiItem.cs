@@ -59,8 +59,11 @@ namespace Core.ViewModels.Fai
 
         
         [XmlIgnore]
-        public bool Passed => !Rejected;
-    
+        public bool Passed
+        {
+            get { return !Rejected; }
+        }
+
 
         public FaiItem(string name)
         {

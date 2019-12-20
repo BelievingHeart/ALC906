@@ -2,7 +2,7 @@
 
 namespace Core.ViewModels.Database.FaiCollection
 {
-    public class FaiCollectionMtm : ViewModelBase, IFaiCollection
+    public class FaiCollectionMtm :  IFaiCollection
     {
         public double FAI1__1A { get; set; }
         public double FAI1__1B { get; set; }

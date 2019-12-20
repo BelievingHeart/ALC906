@@ -18,10 +18,17 @@ namespace Core.IoC.Loggers
         private string _previousDate;
         private readonly string _logFileName = "PlcErrors.txt";
         private PopupViewModel _popupViewModel;
-        private string LogFilePath => Path.Combine(_logDir, _logFileName);
-        private string CurrentDate => DateTime.Today.ToShortDateString();
+        private string LogFilePath
+        {
+            get { return Path.Combine(_logDir, _logFileName); }
+        }
 
-        
+        private string CurrentDate
+        {
+            get { return DateTime.Today.ToShortDateString(); }
+        }
+
+
         private static Logger _instance = new Logger(DirectoryConstants.ErrorLogDir)
         {
             PlcMessageList = new FixedSizeMessageList(DirectoryConstants.ErrorLogDir, "PLC.txt"),
@@ -57,7 +64,10 @@ namespace Core.IoC.Loggers
             PopupViewModel = obj;
         }
 
-        public static Logger Instance => _instance;
+        public static Logger Instance
+        {
+            get { return _instance; }
+        }
 
         public FixedSizeMessageList PlcMessageList { get; set; }
         public FixedSizeMessageList UnhandledPlcMessageList { get; set; }

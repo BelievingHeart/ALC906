@@ -47,6 +47,7 @@
                 <TextBox Text="{Binding Hour}" materialDesign:HintAssist.Hint="Hour"
                          Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
                 <Button Content="Query" Command="{Binding QueryByHourCommand}" />
+                <Button Content="Test" Command="{Binding DoSimulationCommand}"/>
             </StackPanel></materialDesign:Card>
         <!-- Data list -->
         <DataGrid Grid.Row="1" ItemsSource="{Binding TableToShow}" IsReadOnly="True"/>
