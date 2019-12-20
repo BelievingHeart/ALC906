@@ -1,1 +1,2 @@
 1. Separate region of loop-related variables
+2. Calculate uph yield in query

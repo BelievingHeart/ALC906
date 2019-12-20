@@ -23,113 +23,169 @@
         <database:DatabaseQueryViewModel />
     </Window.DataContext>
     <materialDesign:DialogHost IsOpen="{Binding ShouldDisplayPieChart}">
-        <DockPanel>
-            <ToolBarTray Orientation="Vertical" DockPanel.Dock="Left">
-                <ToolBar>
-                    <!-- Product type -->
-                    <ComboBox
-                        SelectedIndex="{Binding ProductType, Converter={converters:ProductTypeToIndexConverter}}">
-                        <ComboBoxItem>
-                            Mtm
-                        </ComboBoxItem>
-                        <ComboBoxItem>
-                            Alps
-                        </ComboBoxItem>
-                    </ComboBox>
+        <Grid>
+            <materialDesign:Snackbar HorizontalAlignment="Center" VerticalAlignment="Center" MessageQueue="{Binding SnackbarMessageQueue}" Panel.ZIndex="10"/>
+            <DockPanel>
+                <ToolBarTray Orientation="Vertical" DockPanel.Dock="Left">
+                    <ToolBar>
+                        <!-- Product type -->
+                        <ComboBox
+                            SelectedIndex="{Binding ProductType, Converter={converters:ProductTypeToIndexConverter}}">
+                            <ComboBoxItem>
+                                Mtm
+                            </ComboBoxItem>
+                            <ComboBoxItem>
+                                Alps
+                            </ComboBoxItem>
+                        </ComboBox>
 
-                    <Button Command="{Binding SwitchTablesViewCommand}">
-                        <materialDesign:PackIcon Kind="DatabaseSearch" />
-                    </Button>
-                    <Button Command="{Binding SwitchSettingViewCommand}">
-                        <materialDesign:PackIcon Kind="CogOutline"/>
-                    </Button>
+                        <Button Command="{Binding SwitchTablesViewCommand}">
+                            <materialDesign:PackIcon Kind="DatabaseSearch" />
+                        </Button>
+                        <Button Command="{Binding SwitchSettingViewCommand}">
+                            <materialDesign:PackIcon Kind="CogOutline" />
+                        </Button>
 
-                    <Separator Margin="0 100 0 10" />
-                    <Button Command="{Binding GenPieChartCommand}"
-                            materialDesign:ButtonProgressAssist.IsIndicatorVisible="True"
-                            materialDesign:ButtonProgressAssist.Value="-1"
-                            materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding IsBusyGeneratingPieChart}">
-                        <materialDesign:PackIcon Kind="ChartPie" />
-                    </Button>
-                </ToolBar>
-            </ToolBarTray>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <!-- Query conditions -->
+                        <Separator Margin="0 100 0 10" />
+                        <Button Command="{Binding GenPieChartCommand}"
+                                materialDesign:ButtonProgressAssist.IsIndicatorVisible="True"
+                                materialDesign:ButtonProgressAssist.Value="-1"
+                                materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding IsBusyGeneratingPieChart}">
+                            <materialDesign:PackIcon Kind="ChartPie" />
+                        </Button>
+                    </ToolBar>
+                </ToolBarTray>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <!-- Query conditions -->
 
-                <!-- Year -->
-                <StackPanel Orientation="Horizontal">
-                    <TextBox materialDesign:HintAssist.Hint="Year" Width="60"
-                             materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
-                             Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                             materialDesign:HintAssist.FloatingScale="1" Margin="3 0">
-                        <TextBox.Text>
-                            <Binding Path="Year" UpdateSourceTrigger="PropertyChanged">
-                                <Binding.ValidationRules>
-                                    <validations:IntegerValidationRule Max="2030" Min="2019" />
-                                </Binding.ValidationRules>
-                            </Binding>
-                        </TextBox.Text>
-                    </TextBox>
-                    <!-- Month -->
-                    <TextBox materialDesign:HintAssist.Hint="Month" Width="60"
-                             materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
-                             Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                             materialDesign:HintAssist.FloatingScale="1" Margin="3 0">
-                        <TextBox.Text>
-                            <Binding Path="Month" UpdateSourceTrigger="PropertyChanged">
-                                <Binding.ValidationRules>
-                                    <validations:IntegerValidationRule Max="12" Min="1" />
-                                </Binding.ValidationRules>
-                            </Binding>
-                        </TextBox.Text>
-                    </TextBox>
-                    <!-- Day -->
-                    <CheckBox Margin="3 0 0 0" IsChecked="{Binding IsDayEnable}" />
-                    <TextBox materialDesign:HintAssist.Hint="Day" Width="60" IsEnabled="{Binding IsDayEnable}"
-                             materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
-                             Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                             materialDesign:HintAssist.FloatingScale="1" Margin="3 0">
-                        <TextBox.Text>
-                            <Binding Path="Day" UpdateSourceTrigger="PropertyChanged">
-                                <Binding.ValidationRules>
-                                    <validations:IntegerValidationRule Max="31" Min="1" />
-                                </Binding.ValidationRules>
-                            </Binding>
-                        </TextBox.Text>
-                    </TextBox>
-                    <!-- Hour -->
-                    <CheckBox Margin="3 0 0 0" IsChecked="{Binding IsHourEnable}" IsEnabled="{Binding IsDayEnable}" />
-                    <TextBox Margin="3 0" Width="60" IsEnabled="{Binding IsHourEnable}"
-                             materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
-                             Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                             materialDesign:HintAssist.FloatingScale="1" materialDesign:HintAssist.Hint="Hour">
-                        <TextBox.Text>
-                            <Binding Path="Hour" UpdateSourceTrigger="PropertyChanged">
-                                <Binding.ValidationRules>
-                                    <validations:IntegerValidationRule Max="23" Min="0" />
-                                </Binding.ValidationRules>
-                            </Binding>
-                        </TextBox.Text>
-                    </TextBox>
-                    <!-- Query button -->
-                    <Button Content="Query" Command="{Binding QueryByHourCommand}" IsDefault="True" />
-                </StackPanel>
+                    <!-- Year start-->
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox materialDesign:HintAssist.Hint="Year" Width="60"
+                                 materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                 materialDesign:HintAssist.FloatingScale="1" Margin="3 0">
+                            <TextBox.Text>
+                                <Binding Path="YearStart" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <validations:IntegerValidationRule Max="2030" Min="2019" />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <!-- Month start-->
+                        <TextBox materialDesign:HintAssist.Hint="Month" Width="60"
+                                 materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                 materialDesign:HintAssist.FloatingScale="1" Margin="3 0">
+                            <TextBox.Text>
+                                <Binding Path="MonthStart" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <validations:IntegerValidationRule Max="12" Min="1" />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <!-- Day start-->
+                        <TextBox materialDesign:HintAssist.Hint="Day" Width="60"
+                                 materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                 materialDesign:HintAssist.FloatingScale="1" Margin="3 0">
+                            <TextBox.Text>
+                                <Binding Path="DayStart" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <validations:IntegerValidationRule Max="31" Min="1" />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <!-- Hour start-->
+                        <TextBox Margin="3 0" Width="60"
+                                 materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                 materialDesign:HintAssist.FloatingScale="1" materialDesign:HintAssist.Hint="Hour">
+                            <TextBox.Text>
+                                <Binding Path="HourStart" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <validations:IntegerValidationRule Max="23" Min="0" />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <materialDesign:PackIcon Kind="ArrowRightThick" Margin="30 0" Width="40" Height="40"
+                                                 Padding="0 20 0 0" />
+                        <!-- Year end -->
+                        <TextBox materialDesign:HintAssist.Hint="Year" Width="60"
+                                 materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                 materialDesign:HintAssist.FloatingScale="1" Margin="3 0">
+                            <TextBox.Text>
+                                <Binding Path="YearEnd" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <validations:IntegerValidationRule Max="2030" Min="2019" />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <!-- Month end -->
+                        <TextBox materialDesign:HintAssist.Hint="Month" Width="60"
+                                 materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                 materialDesign:HintAssist.FloatingScale="1" Margin="3 0">
+                            <TextBox.Text>
+                                <Binding Path="MonthEnd" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <validations:IntegerValidationRule Max="12" Min="1" />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <!-- Day end -->
+                        <TextBox materialDesign:HintAssist.Hint="Day" Width="60"
+                                 materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                 materialDesign:HintAssist.FloatingScale="1" Margin="3 0">
+                            <TextBox.Text>
+                                <Binding Path="DayEnd" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <validations:IntegerValidationRule Max="31" Min="1" />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <!-- Hour end -->
+                        <TextBox Margin="3 0" Width="60"
+                                 materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                 materialDesign:HintAssist.FloatingScale="1" materialDesign:HintAssist.Hint="Hour">
+                            <TextBox.Text>
+                                <Binding Path="HourEnd" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <validations:IntegerValidationRule Max="23" Min="0" />
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
 
-                <!-- Content page -->
-                <ContentControl Grid.Row="1"
-                                Content="{Binding CurrentDatabaseContentPage, Converter={converters:EnumToDatabaseContentPageConverter}}" />
-            </Grid>
-        </DockPanel>
+                        <!-- Query button -->
+                        <Button Content="Query" Command="{Binding QueryByIntervalCommand}" IsDefault="True" />
+                    </StackPanel>
+                    <!-- Content page -->
+                    <ContentControl Grid.Row="1"
+                                    Content="{Binding CurrentDatabaseContentPage, Converter={converters:EnumToDatabaseContentPageConverter}}" />
+                </Grid>
+            </DockPanel>
+        </Grid>
 
         <!-- PieChart view -->
         <materialDesign:DialogHost.DialogContent>
             <StackPanel>
-                <views:PieChartView Width="400" Height="400" PieChartData="{Binding PieChartData}"/>
-                <Button HorizontalAlignment="Center" Margin="10" Content="OK" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"/>
+                <views:PieChartView Width="400" Height="400" PieChartData="{Binding PieChartData}" />
+                <Button HorizontalAlignment="Center" Margin="10" Content="OK"
+                        Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
             </StackPanel>
         </materialDesign:DialogHost.DialogContent>
     </materialDesign:DialogHost>

@@ -39,6 +39,7 @@
           <e p="StringMatrixType.cs" t="Include" />
         </e>
         <e p="Helpers" t="Include">
+          <e p="DateTimeHelper.cs" t="Include" />
           <e p="FaiCollectionHelper.cs" t="Include" />
           <e p="FaiItemsHelper.cs" t="Include" />
           <e p="FindLineParamHelper.cs" t="Include" />

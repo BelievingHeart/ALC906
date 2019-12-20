@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using Core.Constants;
 using Core.Enums;
 using Core.Helpers;
 using Core.ViewModels.Database.FaiCollection;
+using MaterialDesignThemes.Wpf;
 using WPFCommon.Commands;
 using WPFCommon.Helpers;
 using WPFCommon.ViewModels.Base;
@@ -19,7 +21,6 @@ namespace Core.ViewModels.Database
         #region private fields
 
         private ProductType _productType;
-        private bool _isHourEnable;
         private DatabaseContentPageType _currentDatabaseContentPage;
         private Dictionary<string, int> _pieChartData;
 
@@ -48,11 +49,17 @@ namespace Core.ViewModels.Database
 
         public DatabaseBufferViewModel DatabaseBuffer { get; set; }
 
-        public int Year { get; set; } = int.Parse(DateTime.Now.ToString("yyyy"));
+        public int YearStart { get; set; } = int.Parse(DateTime.Now.ToString("yyyy"));
 
-        public int Month { get; set; } = int.Parse(DateTime.Now.ToString("MM"));
-        public int Day { get; set; } = int.Parse(DateTime.Now.ToString("dd"));
-        public int Hour { get; set; } = int.Parse(DateTime.Now.ToString("HH"));
+        public int MonthStart { get; set; } = int.Parse(DateTime.Now.ToString("MM"));
+        public int DayStart { get; set; } = int.Parse(DateTime.Now.ToString("dd"));
+        public int HourStart { get; set; } = int.Parse(DateTime.Now.ToString("HH"));
+        
+        public int YearEnd { get; set; } = int.Parse(DateTime.Now.ToString("yyyy"));
+
+        public int MonthEnd { get; set; } = int.Parse(DateTime.Now.ToString("MM"));
+        public int DayEnd { get; set; } = int.Parse(DateTime.Now.ToString("dd"));
+        public int HourEnd { get; set; } = int.Parse(DateTime.Now.ToString("HH"));
 
         public bool IsBusyQuerying { get; set; }
 
@@ -70,20 +77,12 @@ namespace Core.ViewModels.Database
         public List<FaiLimitViewModel> FaiLimits { get; set; }
 
 
-        public ICommand QueryByHourCommand { get; }
+        public ICommand QueryByIntervalCommand { get; }
 
         /// <summary>
         /// Do temporary tests 
         /// </summary>
         public ICommand DoSimulationCommand { get; }
-
-        public bool IsDayEnable { get; set; }
-
-        public bool IsHourEnable
-        {
-            get { return IsDayEnable && _isHourEnable; }
-            set { _isHourEnable = value; }
-        }
 
         public DatabaseContentPageType CurrentDatabaseContentPage
         {
@@ -107,6 +106,8 @@ namespace Core.ViewModels.Database
 
         public ICommand GenPieChartCommand { get; }
 
+        public ISnackbarMessageQueue SnackbarMessageQueue { get; } = new SnackbarMessageQueue(TimeSpan.FromSeconds(3));
+
         #endregion
 
 
@@ -114,8 +115,8 @@ namespace Core.ViewModels.Database
 
         public DatabaseQueryViewModel()
         {
-            QueryByHourCommand = new RelayCommand(() =>
-                RunOnlySingleFireIsAllowedEachTimeCommand(() => IsBusyQuerying, QueryByHourAsync));
+            QueryByIntervalCommand = new RelayCommand(() =>
+                RunOnlySingleFireIsAllowedEachTimeCommand(() => IsBusyQuerying, QueryByIntervalAsync));
             SwitchSettingViewCommand =
                 new SimpleCommand(o => CurrentDatabaseContentPage = DatabaseContentPageType.SettingPage,
                     o => CurrentDatabaseContentPage != DatabaseContentPageType.SettingPage);
@@ -190,11 +191,31 @@ namespace Core.ViewModels.Database
             };
         }
 
-        private async Task QueryByHourAsync()
+        private async Task QueryByIntervalAsync()
         {
-            DatabaseBuffer.FaiCollectionBuffers = await Task.Run(() => FaiCollectionHelper.SelectByHour(ProductType,
-                NameConstants.SqlConnectionString, Year, Month,
-                Day, Hour));
+            var dateStart = ParseDateTime(YearStart, MonthStart, DayStart, HourStart);
+            var dateEnd = ParseDateTime(YearEnd, MonthEnd, DayEnd, HourEnd);
+            if (dateEnd <= dateStart)
+            {
+                PromptUser("Datetime end should greater than datetime start.");
+                return;
+            }
+            
+            DatabaseBuffer.FaiCollectionBuffers = await Task.Run(() => FaiCollectionHelper.SelectByInterval(ProductType,
+                NameConstants.SqlConnectionString, dateStart, dateEnd));
+        }
+
+        private void PromptUser(string message)
+        {
+            SnackbarMessageQueue.Enqueue(message);
+        }
+
+        private DateTime ParseDateTime(int year, int month, int day, int hour)
+        {
+            var dateText = $"{year}-{month:D2}-{day:D2} {hour:D2}:00";
+            var date = dateText.ToDate("yyyy-MM-dd HH:mm");
+//            return DateTime.ParseExact("yyyy-MM-dd HH:mm", dateText, CultureInfo.InvariantCulture);
+           return (DateTime) date;
         }
 
         private void LoadFaiLimits(ProductType productType)

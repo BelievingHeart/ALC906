@@ -99,6 +99,7 @@
     <Compile Include="Enums\ResultStatus.cs" />
     <Compile Include="Enums\CavityType.cs" />
     <Compile Include="Enums\StringMatrixType.cs" />
+    <Compile Include="Helpers\DateTimeHelper.cs" />
     <Compile Include="Helpers\FaiCollectionHelper.cs" />
     <Compile Include="Helpers\FaiItemsHelper.cs" />
     <Compile Include="Helpers\FindLineParamHelper.cs" />

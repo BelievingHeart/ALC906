@@ -43,6 +43,25 @@ namespace Core.Helpers
             }
         }
 
+        public static IList<IFaiCollection> SelectByInterval(ProductType productType, string connectionString,
+            DateTime timeStart, DateTime timeEnd)
+        {
+            var query = SelectByIntervalQueries[productType];
+            var timeStartText = timeStart.ToString("yyyy-MM-dd HH:mm:ss.fff");
+            var timeEndText = timeEnd.ToString("yyyy-MM-dd HH:mm:ss.fff");
+            using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(connectionString))
+            {
+
+                var output = productType == ProductType.Mtm
+                    ? connection
+                        .Query<FaiCollectionMtm>(query, new {TimeStart=timeStartText, TimeEnd=timeEndText})
+                        .ToList()
+                    : new List<FaiCollectionMtm>();
+
+                return new List<IFaiCollection>(output);
+            }
+        }
+
         public static List<IFaiCollection> SelectByHour(ProductType productType, string connectionString, int year, int month, int day, int hour)
         {
             var query = productType == ProductType.Mtm ? SelectByHourQueryMtm : SelectByHourQueryAlps;
@@ -58,6 +77,12 @@ namespace Core.Helpers
                 return new List<IFaiCollection>(output);
             }
         }
+        
+        private static Dictionary<ProductType, string> SelectByIntervalQueries = new Dictionary<ProductType, string>()
+        {
+            [ProductType.Mtm] = "dbo.spSelectFaiCollectionByIntervalMtm @TimeStart, @TimeEnd",
+            [ProductType.Alps] ="dbo.spSelectFaiCollectionByIntervalAlps @TimeStart, @TimeEnd",
+        };
 
         private static string SelectByHourQueryMtm = "dbo.spGetFaiCollectionsByHour @Year,@Month,@Day,@Hour";
         private static string SelectByHourQueryAlps;
