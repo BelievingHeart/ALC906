@@ -92,6 +92,7 @@
     <Compile Include="Enums\CameraTriggerModeType.cs" />
     <Compile Include="Enums\CameraTriggerSourceType.cs" />
     <Compile Include="Enums\CameraType.cs" />
+    <Compile Include="Enums\DatabaseContentPageType.cs" />
     <Compile Include="Enums\MeasurementDecision.cs" />
     <Compile Include="Enums\ProductLevel.cs" />
     <Compile Include="Enums\ProductType.cs" />
@@ -123,11 +124,13 @@
     <Compile Include="Models\FixedSizeQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\Application\ApplicationViewModel.cs" />
+    <Compile Include="ViewModels\Database\DatabaseBufferViewModel.cs" />
     <Compile Include="ViewModels\Database\DatabaseQueryViewModel.cs" />
     <Compile Include="ViewModels\Database\FaiCollection\FaiCollectionAlps.cs" />
     <Compile Include="ViewModels\Database\FaiCollection\FaiCollectionList.cs" />
     <Compile Include="ViewModels\Database\FaiCollection\FaiCollectionMtm.cs" />
     <Compile Include="ViewModels\Database\FaiCollection\FaiCollectionTest.cs" />
+    <Compile Include="ViewModels\Database\FaiCollection\FaiLimitViewModel.cs" />
     <Compile Include="ViewModels\Database\FaiCollection\IFaiCollection.cs" />
     <Compile Include="ViewModels\Fai\DataRowViewModel.cs" />
     <Compile Include="ViewModels\Fai\FaiTableStackViewModel.cs" />
@@ -136,7 +139,6 @@
     <Compile Include="ViewModels\Popup\PopupQueue.cs" />
     <Compile Include="ViewModels\Popup\PopupViewModel.cs" />
     <Compile Include="ViewModels\Results\GraphicsPackViewModel.cs" />
-    <Compile Include="ViewModels\Settings\SettingsViewModel.cs" />
     <Compile Include="ViewModels\Summary\SummaryViewModel.cs" />
     <Compile Include="ViewModels\CameraHost\CameraHostViewModel.cs" />
     <Compile Include="ViewModels\Fai\FaiItem.cs" />

@@ -35,6 +35,7 @@ namespace Core.Constants
             get { return Path.Combine(Directory.GetCurrentDirectory(), "Log"); }
         }
 
+        
 
         public static string ImageDir2D
         {
@@ -73,7 +74,18 @@ namespace Core.Constants
         {
             get { return Path.Combine(DirectoryHelper.ConfigDirectory, "Fai"); }
         }
-
+        
+        private static string DatabaseLimitsDir
+        {
+            get { return Path.Combine(DirectoryHelper.ConfigDirectory, "DatabaseLimits"); }
+        }
+        
+        
+        public static Dictionary<ProductType, string> DatabaseLimitsDirs { get; } = new Dictionary<ProductType, string>()
+        {
+            [ProductType.Mtm] = Path.Combine(DatabaseLimitsDir, ProductType.Mtm.ToString()),
+            [ProductType.Alps] = Path.Combine(DatabaseLimitsDir, ProductType.Alps.ToString())
+        };
 
         private static string FaiConfigDir3D
         {

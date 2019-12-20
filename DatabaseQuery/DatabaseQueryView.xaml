@@ -6,6 +6,7 @@
         xmlns:database="clr-namespace:Core.ViewModels.Database;assembly=Core"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:converters="clr-namespace:DatabaseQuery.Converters"
+        xmlns:validations="clr-namespace:WPFCommon.Validations;assembly=WPFCommon"
         mc:Ignorable="d"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
@@ -15,23 +16,17 @@
         TextOptions.TextRenderingMode="Auto"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
-        
-        Title="Database Query" Height="350" Width="525">
+
+        Title="Database Query" Height="1000" Width="1400">
     <Window.DataContext>
-        <database:DatabaseQueryViewModel/>
+        <database:DatabaseQueryViewModel />
     </Window.DataContext>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <materialDesign:Card  Grid.Row="0" Width="100" HorizontalAlignment="Left">
-            <StackPanel Orientation="Vertical">
-                <!-- Select product type -->
+    <DockPanel>
+        <ToolBarTray Orientation="Vertical" DockPanel.Dock="Left">
+            <ToolBar>
+                <!-- Product type -->
                 <ComboBox
-                    materialDesign:HintAssist.Hint="Product type"
-                    SelectedIndex="{Binding ProductType, Converter={converters:ProductTypeToIndexConverter}}"
-                    materialDesign:HintAssist.HintOpacity=".26">
+                    SelectedIndex="{Binding ProductType, Converter={converters:ProductTypeToIndexConverter}}">
                     <ComboBoxItem>
                         Mtm
                     </ComboBoxItem>
@@ -40,16 +35,82 @@
                     </ComboBoxItem>
                 </ComboBox>
 
-                <DatePicker
-                    Width="100"
-                    materialDesign:HintAssist.Hint="Date"
-                    Style="{StaticResource MaterialDesignFloatingHintDatePicker}" SelectedDate="{Binding Date}" />
-                <TextBox Text="{Binding Hour}" materialDesign:HintAssist.Hint="Hour"
-                         Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
-                <Button Content="Query" Command="{Binding QueryByHourCommand}" />
-                <Button Content="Test" Command="{Binding DoSimulationCommand}"/>
-            </StackPanel></materialDesign:Card>
-        <!-- Data list -->
-        <DataGrid Grid.Row="1" ItemsSource="{Binding TableToShow}" IsReadOnly="True"/>
-    </Grid>
+                <Button Command="{Binding SwitchTablesViewCommand}">
+                    <materialDesign:PackIcon Kind="DatabaseSearch" />
+                </Button>
+                <Button Command="{Binding SwitchSettingViewCommand}">
+                    <materialDesign:PackIcon Kind="CogOutline" />
+                </Button>
+            </ToolBar>
+        </ToolBarTray>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <!-- Query conditions -->
+          
+                <!-- Year -->
+                <StackPanel Orientation="Horizontal">
+                    <TextBox materialDesign:HintAssist.Hint="Year" Width="60"
+                             materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
+                             Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                             materialDesign:HintAssist.FloatingScale="1" Margin="3 0">
+                        <TextBox.Text>
+                            <Binding Path="Year" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <validations:IntegerValidationRule Max="2030" Min="2019" />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <!-- Month -->
+                    <TextBox materialDesign:HintAssist.Hint="Month" Width="60"
+                             materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
+                             Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                             materialDesign:HintAssist.FloatingScale="1" Margin="3 0">
+                        <TextBox.Text>
+                            <Binding Path="Month" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <validations:IntegerValidationRule Max="12" Min="1" />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <!-- Day -->
+                    <CheckBox Margin="3 0 0 0" IsChecked="{Binding IsDayEnable}" />
+                    <TextBox materialDesign:HintAssist.Hint="Day" Width="60" IsEnabled="{Binding IsDayEnable}"
+                             materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
+                             Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                             materialDesign:HintAssist.FloatingScale="1" Margin="3 0">
+                        <TextBox.Text>
+                            <Binding Path="Day" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <validations:IntegerValidationRule Max="31" Min="1" />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <!-- Hour -->
+                    <CheckBox Margin="3 0 0 0" IsChecked="{Binding IsHourEnable}" IsEnabled="{Binding IsDayEnable}" />
+                    <TextBox Margin="3 0" Width="60" IsEnabled="{Binding IsHourEnable}"
+                             materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
+                             Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                             materialDesign:HintAssist.FloatingScale="1" materialDesign:HintAssist.Hint="Hour">
+                        <TextBox.Text>
+                            <Binding Path="Hour" UpdateSourceTrigger="PropertyChanged">
+                                <Binding.ValidationRules>
+                                    <validations:IntegerValidationRule Max="23" Min="0" />
+                                </Binding.ValidationRules>
+                            </Binding>
+                        </TextBox.Text>
+                    </TextBox>
+                    <!-- Query button -->
+                    <Button Content="Query" Command="{Binding QueryByHourCommand}" IsDefault="True" />
+                </StackPanel>
+
+            <!-- Content page -->
+            <ContentControl Grid.Row="1" Content="{Binding CurrentDatabaseContentPage, Converter={converters:EnumToDatabaseContentPageConverter}}"/>
+        </Grid>
+    </DockPanel>
 </Window>

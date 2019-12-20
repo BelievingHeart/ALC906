@@ -31,6 +31,7 @@
           <e p="CameraTriggerSourceType.cs" t="Include" />
           <e p="CameraType.cs" t="Include" />
           <e p="CavityType.cs" t="Include" />
+          <e p="DatabaseContentPageType.cs" t="Include" />
           <e p="MeasurementDecision.cs" t="Include" />
           <e p="ProductLevel.cs" t="Include" />
           <e p="ProductType.cs" t="Include" />
@@ -89,12 +90,14 @@
             <e p="CameraHostViewModel.cs" t="Include" />
           </e>
           <e p="Database" t="Include">
+            <e p="DatabaseBufferViewModel.cs" t="Include" />
             <e p="DatabaseQueryViewModel.cs" t="Include" />
             <e p="FaiCollection" t="Include">
               <e p="FaiCollectionAlps.cs" t="Include" />
               <e p="FaiCollectionList.cs" t="Include" />
               <e p="FaiCollectionMtm.cs" t="Include" />
               <e p="FaiCollectionTest.cs" t="Include" />
+              <e p="FaiLimitViewModel.cs" t="Include" />
               <e p="IFaiCollection.cs" t="Include" />
             </e>
           </e>
@@ -121,9 +124,6 @@
           <e p="Results" t="Include">
             <e p="GraphicsPackViewModel.cs" t="Include" />
           </e>
-          <e p="Settings" t="Include">
-            <e p="SettingsViewModel.cs" t="Include" />
-          </e>
           <e p="Summary" t="Include">
             <e p="SummaryViewModel.cs" t="Include" />
           </e>
@@ -138,6 +138,9 @@
         <e p="App.xaml.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="Converters" t="Include">
+          <e p="EnumToDatabaseContentPageConverter.cs" t="Include" />
+          <e p="IntegerToComboBoxItemConverter.cs" t="Include" />
+          <e p="Plus1Converter.cs" t="Include" />
           <e p="ProductTypeToIndexConverter.cs" t="Include" />
         </e>
         <e p="DatabaseQuery.csproj" t="IncludeRecursive" />
@@ -149,6 +152,12 @@
           <e p="AssemblyInfo.cs" t="Include" />
           <e p="Resources.Designer.cs" t="Include" />
           <e p="Resources.resx" t="Include" />
+        </e>
+        <e p="Views" t="Include">
+          <e p="SettingView.xaml" t="Include" />
+          <e p="SettingView.xaml.cs" t="Include" />
+          <e p="TableView.xaml" t="Include" />
+          <e p="TableView.xaml.cs" t="Include" />
         </e>
       </e>
       <e p="packages" t="ExcludeRecursive" />
@@ -408,6 +417,9 @@
       <e p="packages.config" t="Include" />
       <e p="Properties" t="Include">
         <e p="AssemblyInfo.cs" t="Include" />
+      </e>
+      <e p="Validations" t="Include">
+        <e p="IntegerValidationRule.cs" t="Include" />
       </e>
       <e p="ViewModels" t="Include">
         <e p="Base" t="Include">
