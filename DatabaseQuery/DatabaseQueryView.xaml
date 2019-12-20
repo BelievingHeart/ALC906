@@ -7,6 +7,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:converters="clr-namespace:DatabaseQuery.Converters"
         xmlns:validations="clr-namespace:WPFCommon.Validations;assembly=WPFCommon"
+        xmlns:views="clr-namespace:DatabaseQuery.Views"
         mc:Ignorable="d"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
@@ -21,35 +22,44 @@
     <Window.DataContext>
         <database:DatabaseQueryViewModel />
     </Window.DataContext>
-    <DockPanel>
-        <ToolBarTray Orientation="Vertical" DockPanel.Dock="Left">
-            <ToolBar>
-                <!-- Product type -->
-                <ComboBox
-                    SelectedIndex="{Binding ProductType, Converter={converters:ProductTypeToIndexConverter}}">
-                    <ComboBoxItem>
-                        Mtm
-                    </ComboBoxItem>
-                    <ComboBoxItem>
-                        Alps
-                    </ComboBoxItem>
-                </ComboBox>
+    <materialDesign:DialogHost IsOpen="{Binding ShouldDisplayPieChart}">
+        <DockPanel>
+            <ToolBarTray Orientation="Vertical" DockPanel.Dock="Left">
+                <ToolBar>
+                    <!-- Product type -->
+                    <ComboBox
+                        SelectedIndex="{Binding ProductType, Converter={converters:ProductTypeToIndexConverter}}">
+                        <ComboBoxItem>
+                            Mtm
+                        </ComboBoxItem>
+                        <ComboBoxItem>
+                            Alps
+                        </ComboBoxItem>
+                    </ComboBox>
 
-                <Button Command="{Binding SwitchTablesViewCommand}">
-                    <materialDesign:PackIcon Kind="DatabaseSearch" />
-                </Button>
-                <Button Command="{Binding SwitchSettingViewCommand}">
-                    <materialDesign:PackIcon Kind="CogOutline" />
-                </Button>
-            </ToolBar>
-        </ToolBarTray>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <!-- Query conditions -->
-          
+                    <Button Command="{Binding SwitchTablesViewCommand}">
+                        <materialDesign:PackIcon Kind="DatabaseSearch" />
+                    </Button>
+                    <Button Command="{Binding SwitchSettingViewCommand}">
+                        <materialDesign:PackIcon Kind="CogOutline"/>
+                    </Button>
+
+                    <Separator Margin="0 100 0 10" />
+                    <Button Command="{Binding GenPieChartCommand}"
+                            materialDesign:ButtonProgressAssist.IsIndicatorVisible="True"
+                            materialDesign:ButtonProgressAssist.Value="-1"
+                            materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding IsBusyGeneratingPieChart}">
+                        <materialDesign:PackIcon Kind="ChartPie" />
+                    </Button>
+                </ToolBar>
+            </ToolBarTray>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <!-- Query conditions -->
+
                 <!-- Year -->
                 <StackPanel Orientation="Horizontal">
                     <TextBox materialDesign:HintAssist.Hint="Year" Width="60"
@@ -109,8 +119,18 @@
                     <Button Content="Query" Command="{Binding QueryByHourCommand}" IsDefault="True" />
                 </StackPanel>
 
-            <!-- Content page -->
-            <ContentControl Grid.Row="1" Content="{Binding CurrentDatabaseContentPage, Converter={converters:EnumToDatabaseContentPageConverter}}"/>
-        </Grid>
-    </DockPanel>
+                <!-- Content page -->
+                <ContentControl Grid.Row="1"
+                                Content="{Binding CurrentDatabaseContentPage, Converter={converters:EnumToDatabaseContentPageConverter}}" />
+            </Grid>
+        </DockPanel>
+
+        <!-- PieChart view -->
+        <materialDesign:DialogHost.DialogContent>
+            <StackPanel>
+                <views:PieChartView Width="400" Height="400" PieChartData="{Binding PieChartData}"/>
+                <Button HorizontalAlignment="Center" Margin="10" Content="OK" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"/>
+            </StackPanel>
+        </materialDesign:DialogHost.DialogContent>
+    </materialDesign:DialogHost>
 </Window>

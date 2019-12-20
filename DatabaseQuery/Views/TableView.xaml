@@ -19,11 +19,11 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal">
             <!-- Previous page -->
-            <Button Command="{Binding DatabaseBuffer.PreviousPageCommand}">
-                <materialDesign:PackIcon Kind="ArrowLeftDropCircle"/>
+            <Button Command="{Binding DatabaseBuffer.PreviousPageCommand}" Height="40" Background="Transparent" BorderBrush="Transparent" ToolTip="Previous page" Margin="0 0 -20 0">
+                <materialDesign:PackIcon Kind="ArrowLeftDropCircle" Width="30" Height="30"/>
             </Button> 
-            <Button Command="{Binding DatabaseBuffer.NextPageCommand}">
-                <materialDesign:PackIcon Kind="ArrowRightDropCircle"/>
+            <Button Command="{Binding DatabaseBuffer.NextPageCommand}" Height="40" Background="Transparent" BorderBrush="Transparent" ToolTip="Next page">
+                <materialDesign:PackIcon Kind="ArrowRightDropCircle" Width="30" Height="30"/>
             </Button>
             <!-- Current page and total pages -->
             <TextBlock Margin="10 0 0 0" Text="{Binding DatabaseBuffer.CurrentPageIndex, Converter={converters:Plus1Converter}, Mode=OneWay}" VerticalAlignment="Center"/>

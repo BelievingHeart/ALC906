@@ -154,6 +154,8 @@
           <e p="Resources.resx" t="Include" />
         </e>
         <e p="Views" t="Include">
+          <e p="PieChartView.xaml" t="Include" />
+          <e p="PieChartView.xaml.cs" t="Include" />
           <e p="SettingView.xaml" t="Include" />
           <e p="SettingView.xaml.cs" t="Include" />
           <e p="TableView.xaml" t="Include" />

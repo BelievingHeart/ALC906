@@ -1,0 +1,2 @@
+<?xml version="1.0"?>
+<FaiLimitViewModel xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="FAI16__2" Upper="0.03" Lower="0" />
