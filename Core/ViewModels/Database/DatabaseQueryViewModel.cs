@@ -34,7 +34,7 @@ namespace Core.ViewModels.Database
 
         public Dictionary<string, int> PieChartData
         {
-            get => _pieChartData;
+            get { return _pieChartData; }
             set
             {
                 _pieChartData = value;
@@ -195,14 +195,39 @@ namespace Core.ViewModels.Database
         {
             var dateStart = ParseDateTime(YearStart, MonthStart, DayStart, HourStart);
             var dateEnd = ParseDateTime(YearEnd, MonthEnd, DayEnd, HourEnd);
-            if (dateEnd <= dateStart)
+
+            if (!dateStart.HasValue || !dateEnd.HasValue)
+            {
+                PromptUser("Invalid date");
+                return;
+            }
+            
+            if (dateEnd.Value <= dateStart.Value)
             {
                 PromptUser("Datetime end should greater than datetime start.");
                 return;
             }
-            
-            DatabaseBuffer.FaiCollectionBuffers = await Task.Run(() => FaiCollectionHelper.SelectByInterval(ProductType,
-                NameConstants.SqlConnectionString, dateStart, dateEnd));
+
+            if ((dateEnd.Value - dateStart.Value).TotalDays > 31)
+            {
+                PromptUser("Can not query more than 31 days");
+                return;
+            }
+
+
+            if (ProductType == ProductType.Mtm)
+            {
+                var output = await  FaiCollectionHelper.SelectByIntervalAsync<FaiCollectionMtm>(ProductType,
+                    NameConstants.SqlConnectionString, dateStart.Value, dateEnd.Value);
+                DatabaseBuffer.FaiCollectionBuffers = new List<IFaiCollection>(output);
+            }
+            else
+            {
+                var output = await  FaiCollectionHelper.SelectByIntervalAsync<FaiCollectionAlps>(ProductType,
+                    NameConstants.SqlConnectionString, dateStart.Value, dateEnd.Value);
+                DatabaseBuffer.FaiCollectionBuffers = new List<IFaiCollection>(output);
+            }
+                
         }
 
         private void PromptUser(string message)
@@ -210,12 +235,12 @@ namespace Core.ViewModels.Database
             SnackbarMessageQueue.Enqueue(message);
         }
 
-        private DateTime ParseDateTime(int year, int month, int day, int hour)
+        private DateTime? ParseDateTime(int year, int month, int day, int hour)
         {
             var dateText = $"{year}-{month:D2}-{day:D2} {hour:D2}:00";
             var date = dateText.ToDate("yyyy-MM-dd HH:mm");
 //            return DateTime.ParseExact("yyyy-MM-dd HH:mm", dateText, CultureInfo.InvariantCulture);
-           return (DateTime) date;
+           return date;
         }
 
         private void LoadFaiLimits(ProductType productType)

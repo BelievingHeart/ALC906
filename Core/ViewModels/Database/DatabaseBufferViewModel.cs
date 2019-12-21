@@ -31,7 +31,7 @@ namespace Core.ViewModels.Database
         
         public IList<IFaiCollection> FaiCollectionBuffers
         {
-            get => _faiCollectionBuffers;
+            get { return _faiCollectionBuffers; }
             set
             {
                 _faiCollectionBuffers = value;
@@ -44,7 +44,7 @@ namespace Core.ViewModels.Database
 
         public int RowsPerPage
         {
-            get => _rowsPerPage;
+            get { return _rowsPerPage; }
             set
             {
                 _rowsPerPage = value;
@@ -58,7 +58,7 @@ namespace Core.ViewModels.Database
 
         public int CurrentPageIndex
         {
-            get => _currentPageIndex;
+            get { return _currentPageIndex; }
             set
             {
                 _currentPageIndex = value;

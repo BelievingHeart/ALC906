@@ -157,7 +157,7 @@
                                                VerticalAlignment="Center" />
                                 </materialDesign:ColorZone>
                                 <!-- Ng5 Count -->
-                                <Label Content="{Binding Ng5Count}" HorizontalContentAlignment="Center"
+                                <Label Content="{Binding Ng5Count, FallbackValue=0}" HorizontalContentAlignment="Center"
                                        BorderBrush="Black"
                                        BorderThickness="1" Height="15" />
                             </StackPanel>

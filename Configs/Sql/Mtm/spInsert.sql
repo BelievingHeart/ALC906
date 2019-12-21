@@ -18,7 +18,7 @@ GO
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-CREATE PROCEDURE spInsert
+CREATE PROCEDURE spInsertMtm
 -- Add the parameters for the stored procedure here
 	@InspectionTime datetime,
 	@Cavity int,

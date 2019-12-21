@@ -24,8 +24,9 @@ namespace Core.Helpers
             // if (DateTime.TryParseExact(dateTimeStr, dateFmt,
             //    CultureInfo.InvariantCulture, style, out dt)) result = dt;
             // In C#7 and above, we can simply write:
+            System.DateTime dt;
             var result = DateTime.TryParseExact(dateTimeStr, dateFmt, CultureInfo.InvariantCulture,
-                style, out var dt) ? dt : null as DateTime?;
+                style, out dt) ? dt : null as DateTime?;
             return result;
         }
     }

@@ -277,10 +277,14 @@ namespace Core.ViewModels.Application
                 var lastInRight = _resultQueues2D[CavityType.Cavity2].LastOrDefault();
                 if (lastInLeft == null && lastInRight != null || lastInLeft != null && lastInRight == null)
                     throw new InvalidOperationException("Result of one cavity is missing");
-                var isFirstRoundAfterReset = lastInLeft == null;
-                if (isFirstRoundAfterReset)
+                var isFirstRoundAfterResetOrImageAcquisitionFail = lastInLeft == null;
+                if (isFirstRoundAfterResetOrImageAcquisitionFail)
                 {
-                    return;
+                    //If it is the first round ...
+                    if(RoundCountSinceReset == 0) return;
+                    // Else image acquisition failed
+                    Server.Disconnect();
+                    Logger.LogHighLevelWarningNormal("2D image acquisition failed please restart ALC");
                 }
 
                 lock (_lockerOfResultQueues2D)
