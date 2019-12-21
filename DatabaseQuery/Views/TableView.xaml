@@ -7,6 +7,7 @@
              xmlns:database="clr-namespace:Core.ViewModels.Database;assembly=Core"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:converters="clr-namespace:DatabaseQuery.Converters"
+             xmlns:validations="clr-namespace:WPFCommon.Validations;assembly=WPFCommon"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <!-- <UserControl.DataContext> -->
@@ -14,44 +15,166 @@
     <!-- </UserControl.DataContext> -->
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Horizontal">
-            <!-- Previous page -->
-            <Button Command="{Binding DatabaseBuffer.PreviousPageCommand}" Height="40" Background="Transparent" BorderBrush="Transparent" ToolTip="Previous page" Margin="0 0 -20 0">
-                <materialDesign:PackIcon Kind="ArrowLeftDropCircle" Width="30" Height="30"/>
-            </Button> 
-            <Button Command="{Binding DatabaseBuffer.NextPageCommand}" Height="40" Background="Transparent" BorderBrush="Transparent" ToolTip="Next page">
-                <materialDesign:PackIcon Kind="ArrowRightDropCircle" Width="30" Height="30"/>
-            </Button>
-            <!-- Current page and total pages -->
-            <TextBlock Margin="10 0 0 0" Text="{Binding DatabaseBuffer.CurrentPageIndex, Converter={converters:Plus1Converter}, Mode=OneWay}" VerticalAlignment="Center"/>
-            <TextBlock Text=" / " VerticalAlignment="Center"/>
-            <TextBlock Text="{Binding DatabaseBuffer.TotalPages}" VerticalAlignment="Center"/>
-            
-            <!-- Rows per page -->
-            <ComboBox SelectedItem="{Binding DatabaseBuffer.RowsPerPage, Converter={converters:IntegerToComboBoxItemConverter}, Mode=OneWayToSource}" Margin="10 0 0 0"
-                materialDesign:HintAssist.Hint="Rows per page"
-                materialDesign:HintAssist.HintOpacity=".26">
-                <ComboBoxItem>
-                    20
-                </ComboBoxItem>
-                <ComboBoxItem>
-                    50
-                </ComboBoxItem>
-                <ComboBoxItem>
-                    100
-                </ComboBoxItem>
-            </ComboBox>
-        </StackPanel>
+
+        <DockPanel Grid.Row="0">               <!-- Query conditions -->
+
+            <!-- Year start-->
+            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Margin="10">
+                <TextBox materialDesign:HintAssist.Hint="Year" Width="60"
+                         materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
+                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                         materialDesign:HintAssist.FloatingScale="1" Margin="3 0">
+                    <TextBox.Text>
+                        <Binding Path="YearStart" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <validations:IntegerValidationRule Max="2030" Min="2019" />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+                <!-- Month start-->
+                <TextBox materialDesign:HintAssist.Hint="Month" Width="60"
+                         materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
+                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                         materialDesign:HintAssist.FloatingScale="1" Margin="3 0">
+                    <TextBox.Text>
+                        <Binding Path="MonthStart" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <validations:IntegerValidationRule Max="12" Min="1" />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+                <!-- Day start-->
+                <TextBox materialDesign:HintAssist.Hint="Day" Width="60"
+                         materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
+                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                         materialDesign:HintAssist.FloatingScale="1" Margin="3 0">
+                    <TextBox.Text>
+                        <Binding Path="DayStart" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <validations:IntegerValidationRule Max="31" Min="1" />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+                <!-- Hour start-->
+                <TextBox Margin="3 0" Width="60"
+                         materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
+                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                         materialDesign:HintAssist.FloatingScale="1" materialDesign:HintAssist.Hint="Hour">
+                    <TextBox.Text>
+                        <Binding Path="HourStart" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <validations:IntegerValidationRule Max="23" Min="0" />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+                <materialDesign:PackIcon Kind="ArrowRightThick" Margin="30 0" Width="40" Height="40"
+                                         Padding="0 20 0 0" />
+                <!-- Year end -->
+                <TextBox materialDesign:HintAssist.Hint="Year" Width="60"
+                         materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
+                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                         materialDesign:HintAssist.FloatingScale="1" Margin="3 0">
+                    <TextBox.Text>
+                        <Binding Path="YearEnd" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <validations:IntegerValidationRule Max="2030" Min="2019" />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+                <!-- Month end -->
+                <TextBox materialDesign:HintAssist.Hint="Month" Width="60"
+                         materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
+                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                         materialDesign:HintAssist.FloatingScale="1" Margin="3 0">
+                    <TextBox.Text>
+                        <Binding Path="MonthEnd" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <validations:IntegerValidationRule Max="12" Min="1" />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+                <!-- Day end -->
+                <TextBox materialDesign:HintAssist.Hint="Day" Width="60"
+                         materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
+                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                         materialDesign:HintAssist.FloatingScale="1" Margin="3 0">
+                    <TextBox.Text>
+                        <Binding Path="DayEnd" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <validations:IntegerValidationRule Max="31" Min="1" />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+                <!-- Hour end -->
+                <TextBox Margin="3 0" Width="60"
+                         materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
+                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                         materialDesign:HintAssist.FloatingScale="1" materialDesign:HintAssist.Hint="Hour">
+                    <TextBox.Text>
+                        <Binding Path="HourEnd" UpdateSourceTrigger="PropertyChanged">
+                            <Binding.ValidationRules>
+                                <validations:IntegerValidationRule Max="23" Min="0" />
+                            </Binding.ValidationRules>
+                        </Binding>
+                    </TextBox.Text>
+                </TextBox>
+
+                <!-- Query button -->
+                <Button Content="Query" Command="{Binding QueryByIntervalCommand}" IsDefault="True" />
+            </StackPanel>
+
+            <StackPanel HorizontalAlignment="Right" DockPanel.Dock="Right" Orientation="Horizontal" Margin="10">
+                <!-- Previous page -->
+                <Button Command="{Binding DatabaseBuffer.PreviousPageCommand}" Height="40" Background="Transparent"
+                        BorderBrush="Transparent" ToolTip="Previous page" Margin="0 0 -20 0">
+                    <materialDesign:PackIcon Kind="ArrowLeftDropCircle" Width="30" Height="30" />
+                </Button>
+                <Button Command="{Binding DatabaseBuffer.NextPageCommand}" Height="40" Background="Transparent"
+                        BorderBrush="Transparent" ToolTip="Next page">
+                    <materialDesign:PackIcon Kind="ArrowRightDropCircle" Width="30" Height="30" />
+                </Button>
+                <!-- Current page and total pages -->
+                <TextBlock Margin="10 0 0 0"
+                           Text="{Binding DatabaseBuffer.CurrentPageIndex, Converter={converters:Plus1Converter}, Mode=OneWay}"
+                           VerticalAlignment="Center" />
+                <TextBlock Text=" / " VerticalAlignment="Center" />
+                <TextBlock Text="{Binding DatabaseBuffer.TotalPages}" VerticalAlignment="Center" />
+
+                <!-- Rows per page -->
+                <ComboBox
+                    SelectedItem="{Binding DatabaseBuffer.RowsPerPage, Converter={converters:IntegerToComboBoxItemConverter}, Mode=OneWayToSource}"
+                    Margin="10 0 0 0"
+                    materialDesign:HintAssist.Hint="Rows per page"
+                    materialDesign:HintAssist.HintOpacity=".26">
+                    <ComboBoxItem>
+                        20
+                    </ComboBoxItem>
+                    <ComboBoxItem>
+                        50
+                    </ComboBoxItem>
+                    <ComboBoxItem>
+                        100
+                    </ComboBoxItem>
+                </ComboBox>
+            </StackPanel>
+        </DockPanel>
         <DataGrid Grid.Row="1" ItemsSource="{Binding DatabaseBuffer.TableToShow}" IsReadOnly="True">
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding Result}" Value="NG">
-                            <Setter Property="Background" Value="Red"/>
-                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="Background" Value="Red" />
+                            <Setter Property="Foreground" Value="White" />
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
