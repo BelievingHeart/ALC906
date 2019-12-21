@@ -29,8 +29,7 @@ namespace UI.Views.FaiItem.FaiItemsTable
                 PART_MaxRow.TextData = viewModel.Max.Select(num => num.ToString("N3")).ToList();
                 PART_MinRow.TextData = viewModel.Min.Select(num => num.ToString("N3")).ToList();
 
-                PART_MaxRow.RowName = "Tolerance+";
-                PART_MinRow.RowName = "Tolerance-";
+    
 
                 // Add remaining rows
                 foreach (var rowViewModel in viewModel.ValueMatrix)

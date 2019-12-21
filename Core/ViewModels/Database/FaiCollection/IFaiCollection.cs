@@ -1,8 +1,10 @@
-﻿﻿namespace Core.ViewModels.Database.FaiCollection
+﻿﻿using System;
+
+ namespace Core.ViewModels.Database.FaiCollection
 {
     public interface IFaiCollection
     {
-         string InspectionTime { get; set; }
+         DateTime InspectionTime { get; set; }
 
          int Cavity { get; set; }
          

@@ -1,4 +1,5 @@
-﻿using WPFCommon.ViewModels.Base;
+﻿using System;
+using WPFCommon.ViewModels.Base;
 
 namespace Core.ViewModels.Database.FaiCollection
 {
@@ -70,7 +71,7 @@ namespace Core.ViewModels.Database.FaiCollection
         public double FAI20__4 { get; set; }
         public double FAI21 { get; set; }
         public double FAI22 { get; set; }
-        public string InspectionTime { get; set; }
+        public DateTime InspectionTime { get; set; }
         public int Cavity { get; set; }
         public string Result { get; set; }
     }

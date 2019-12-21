@@ -187,7 +187,7 @@ namespace Core.ViewModels.Database
         {
             DatabaseBuffer.FaiCollectionBuffers = new List<IFaiCollection>()
             {
-                new FaiCollectionTest() {Cavity = 1, InspectionTime = "SomeTime", Result = "SomeResult", Test = "Hello"}
+                new FaiCollectionTest() {Cavity = 1, InspectionTime = DateTime.Now, Result = "SomeResult", Test = "Hello"}
             };
         }
 

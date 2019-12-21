@@ -13,13 +13,16 @@ namespace Core.Helpers
     {
         public static void SetFaiValues(this IFaiCollection faiCollection, IDictionary<string, double> values, DateTime inspectionTime, int cavityNo, string result)
         {
+            if (result == "Empty") return;
             // Assign meta data
             faiCollection.Result = result;
             faiCollection.Cavity = cavityNo;
-            faiCollection.InspectionTime = inspectionTime.ToString("yyyy-MM-dd HH:mm:ss.fff");
+            faiCollection.InspectionTime = inspectionTime;
             
             // Assign fai values
-            var faiProps = faiCollection.GetType().GetProperties().Where(prop => prop.Name.Contains("Fai"));
+            var collectionType = faiCollection.GetType();
+            var allProps = collectionType.GetProperties();
+            var faiProps = allProps.Where(prop => prop.Name.Contains("FAI")).ToList();
 
             foreach (var faiProp in faiProps)
             {
@@ -52,15 +55,20 @@ namespace Core.Helpers
         /// <summary>
         /// Insert into local database
         /// </summary>
-        /// <param name="collection"></param>
         /// <param name="connectionString"></param>
-        public static void Insert(this IFaiCollection collection, string connectionString)
+        /// <param name="collections"></param>
+        public static void Insert(string connectionString, params IFaiCollection[] collections)
         {
+            var productType = collections[0] is FaiCollectionMtm ? ProductType.Mtm : ProductType.Alps;
+            var insertQuery = InsertQueries[productType];
+
+
             using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(connectionString))
             {
-                var productType = collection is FaiCollectionMtm ? ProductType.Mtm : ProductType.Alps;
-                var insertQuery = InsertQueries[productType];
-                connection.Execute(insertQuery, collection);
+                foreach (var faiCollection in collections)
+                {
+                    if(faiCollection.Result!=null) connection.Execute(insertQuery, faiCollection);
+                }
             }
         }
         
