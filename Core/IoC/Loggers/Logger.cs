@@ -14,14 +14,14 @@ namespace Core.IoC.Loggers
 {
     public class Logger : ViewModelBase
     {
-        private string _logDir;
+        public static string LogDir { get; set; }
         private string _previousDate;
-        private readonly string _logFileName = "PlcErrors.txt";
         private PopupViewModel _popupViewModel;
-        private string LogFilePath
-        {
-            get { return Path.Combine(_logDir, _logFileName); }
-        }
+        public static string HighLevelWarningFilePath => Path.Combine(LogDir, "PlcErrors.txt");
+        public static string AllCommandIdsFromPlcFilePath => Path.Combine(LogDir, "AllCommandIdsFromPlc.txt");
+        public static string AllCommandIdsToPlcFilePath => Path.Combine(LogDir, "AllCommandIdsToPlc.txt");
+
+        
 
         private string CurrentDate
         {
@@ -86,15 +86,15 @@ namespace Core.IoC.Loggers
 
         public bool HasError { get; set; }
 
-        public void LogErrorToFile(string message)
+        public void LogMessageToFile(string message, string path)
         {
             try
             {
                 // Create new file if not exists or date changes
-                if (!File.Exists(LogFilePath) || CurrentDate != _previousDate) File.Create(LogFilePath);
+                if (!File.Exists(path) || CurrentDate != _previousDate) File.Create(path);
 
                 var line = $"{DateTime.Now:h:mm:ss tt zz}> {message}";
-                File.AppendAllLines(LogFilePath, new []{line});
+                File.AppendAllLines(path, new []{line});
             }
             catch (Exception e)
             {
@@ -110,8 +110,8 @@ namespace Core.IoC.Loggers
         public Logger(string logDir)
         {
             // Error logging
-            _logDir = logDir;
-            Directory.CreateDirectory(_logDir);
+            LogDir = logDir;
+            Directory.CreateDirectory(LogDir);
             _previousDate = CurrentDate;
             
             // State changed logging

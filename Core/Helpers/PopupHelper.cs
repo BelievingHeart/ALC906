@@ -35,8 +35,8 @@ namespace Core.Helpers
             {
                 OkButtonText = "Continue",
                 CancelButtonText = "Quit",
-                OkCommand = new CloseDialogAttachedCommand(o => true, execution: () => alcServer.SendMessagePack(continueMessagePack)),
-                CancelCommand = new CloseDialogAttachedCommand(o => true, () => {alcServer.SendMessagePack(quitMessagePack);}),
+                OkCommand = new CloseDialogAttachedCommand(o => true, execution: () => alcServer.SentToPlc(continueMessagePack,PlcMessageType.Request)),
+                CancelCommand = new CloseDialogAttachedCommand(o => true, () => {alcServer.SentToPlc(quitMessagePack, PlcMessageType.Request);}),
                 MessageItem = LoggingMessageItem.CreateMessage(message),
                 Content = content,
                 IsSpecialPopup = true

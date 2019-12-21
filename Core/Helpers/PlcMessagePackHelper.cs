@@ -11,7 +11,7 @@ namespace Core.Helpers
         public static void SendProductLevels(this AlcServerViewModel server, ProductLevel leftSocketLevel,
             ProductLevel rightSocketLevel)
         {
-            server.SendMessagePack(new PlcMessagePack
+            server.SentToPlc(new PlcMessagePack
             {
                 ChannelId = 0,
                 MsgType = 0,

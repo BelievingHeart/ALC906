@@ -135,7 +135,7 @@ namespace Core.ViewModels.Application
                 o => CurrentProductType != ProductType.Alps);
 
             ClearProductErrorStatesCommand = new SimpleCommand(
-                o => Server.SendMessagePack(PlcMessagePackConstants.ClearProductErrorStateMessagePack),
+                o => Server.SentToPlc(PlcMessagePackConstants.ClearProductErrorStateMessagePack, PlcMessageType.Request),
                 o => !Server.IsAutoRunning);
         }
 
@@ -193,6 +193,21 @@ namespace Core.ViewModels.Application
                 if (isAutoRunning) ResetStates();
             };
             Server.MessageSendFailed += () => { Logger.LogHighLevelWarningNormal("Failed to send message to plc"); };
+            Server.MessagePackReceived += messagePack =>
+            {
+                Task.Run(() =>
+                    Logger.Instance.LogMessageToFile($"Received command id:{messagePack.CommandId} from plc.",
+                        Logger.AllCommandIdsFromPlcFilePath));
+                
+            };
+            
+            Server.MessagePackSent += messagePack =>
+            {
+                Task.Run(() =>
+                    Logger.Instance.LogMessageToFile($"Sent command id:{messagePack.CommandId} to plc.",
+                        Logger.AllCommandIdsToPlcFilePath));
+                
+            };
 
             var errorParser = new PlcErrorParser(Path.Combine(DirectoryHelper.ConfigDirectory, "ErrorSheet.csv"));
             errorParser.WarningL1Emit += OnWarningL1Received;
@@ -218,14 +233,14 @@ namespace Core.ViewModels.Application
             Server.IsPausing = false;
             Server.CurrentMachineState = MachineState.Idle;
 
-            Logger.Instance.LogErrorToFile(message);
+            Logger.Instance.LogMessageToFile(message, Logger.HighLevelWarningFilePath);
             Logger.LogHighLevelWarningNormal(message);
         }
 
         private void OnWarningL3Received(string message, long errorCode)
         {
             if (Server.IsAutoRunning) Server.PauseCommand.Execute(null);
-            Logger.Instance.LogErrorToFile(message);
+            Logger.Instance.LogMessageToFile(message, Logger.HighLevelWarningFilePath);
 
             if (PlcErrorParser.IsSpecialErrorCode(errorCode))
             {
@@ -241,13 +256,13 @@ namespace Core.ViewModels.Application
 
         private void OnWarningL2Received(string message, long l)
         {
-            Logger.Instance.LogErrorToFile(message);
+            Logger.Instance.LogMessageToFile(message, Logger.HighLevelWarningFilePath);
             Logger.LogHighLevelWarningNormal(message);
         }
 
         private void OnWarningL1Received(string message, long l)
         {
-            Logger.Instance.LogErrorToFile(message);
+            Logger.Instance.LogMessageToFile(message, Logger.HighLevelWarningFilePath);
         }
 
         private void OnPlcHooked(Socket socket)
@@ -859,6 +874,7 @@ namespace Core.ViewModels.Application
             }
             
             // Remove outdated files if any
+            SerializationHelper.RemoveOutdatedFiles(Logger.LogDir, 1);
             SerializationHelper.RemoveOutdatedFiles(DirectoryConstants.ImageDir2D, 5);
             SerializationHelper.RemoveOutdatedFiles(DirectoryConstants.ImageDir3D, 5);
             SerializationHelper.RemoveOutdatedFiles(DirectoryConstants.CsvOutputDir, 30);
