@@ -93,6 +93,8 @@
     <Compile Include="Enums\CameraTriggerSourceType.cs" />
     <Compile Include="Enums\CameraType.cs" />
     <Compile Include="Enums\DatabaseContentPageType.cs" />
+    <Compile Include="Enums\DatabaseViewDialogType.cs" />
+    <Compile Include="Enums\LineChartUnitType.cs" />
     <Compile Include="Enums\MeasurementDecision.cs" />
     <Compile Include="Enums\ProductLevel.cs" />
     <Compile Include="Enums\ProductType.cs" />

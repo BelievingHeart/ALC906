@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -30,6 +31,11 @@ namespace DatabaseQuery.Views
         }
 
 
+        /// <summary>
+        /// Push out the selected pie part
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="chartpoint"></param>
         private void Chart_OnDataClick(object sender, ChartPoint chartpoint)
         {
             var chart = (PieChart) chartpoint.ChartView;
@@ -64,11 +70,16 @@ namespace DatabaseQuery.Views
         private void GenPieChart(Dictionary<string,int> pieChartData)
         {
             PART_PieChartControl.Series.Clear();
+            var sum = pieChartData.Values.Sum();
             
             var pointLabelBinding = new Binding(nameof(PointLabel)){Source = this};
             foreach (var key in pieChartData.Keys)
             {
-                var series = new PieSeries() {Title = key, Values = new ChartValues<int>(new[] {pieChartData[key]})};
+                // Calculate proportion
+                var proportion = pieChartData[key] / (double) sum;
+                var proportionText = $"{proportion * 100 :F1}%";
+                
+                var series = new PieSeries() {Title = key, Values = new ChartValues<int>(new[] {pieChartData[key]}), ToolTip = proportionText};
                 series.SetBinding(PointLabelProperty, pointLabelBinding);
                 PART_PieChartControl.Series.Add(series);
             }

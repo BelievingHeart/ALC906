@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using Core.Constants;
 using Core.Enums;
@@ -23,10 +25,32 @@ namespace Core.ViewModels.Database
         private ProductType _productType;
         private DatabaseContentPageType _currentDatabaseContentPage;
         private Dictionary<string, int> _pieChartData;
+        private bool _shouldDisplayDialog;
+        private IList<IFaiCollection> _selectedCollections;
+        private DatabaseViewDialogType _currentDialogType;
 
         #endregion
 
         #region prop
+
+        public int SelectionCount
+        {
+            get { return SelectedCollections.Count; }
+        }
+
+        public IList<IFaiCollection> SelectedCollections
+        {
+            get { return _selectedCollections; }
+            set
+            {
+                _selectedCollections = value;
+                OnPropertyChanged(nameof(SelectionCount));
+            }
+        }
+
+        public bool IsBusyDeleting { get; set; }
+        
+        public LineChartUnitType LineChartUnitType { get; set; }
 
         public bool IsBusyGeneratingPieChart { get; set; }
 
@@ -38,11 +62,21 @@ namespace Core.ViewModels.Database
             set
             {
                 _pieChartData = value;
-                if (value != null) ShouldDisplayPieChart = true;
+                if (_pieChartData == null) return;
+                CurrentDialogType = DatabaseViewDialogType.PieChartDialog;
             }
         }
 
-        public bool ShouldDisplayPieChart { get; set; }
+        public bool ShouldDisplayDialog
+        {
+            get { return _shouldDisplayDialog; }
+            set
+            {
+                _shouldDisplayDialog = value;
+                // Allow CurrentDialogType to notify next time
+                if (!value) CurrentDialogType = DatabaseViewDialogType.None;
+            }
+        }
 
         public Dictionary<string, double> DictionaryUpper { get; set; }
         public Dictionary<string, double> DictionaryLower { get; set; }
@@ -83,6 +117,10 @@ namespace Core.ViewModels.Database
         /// Do temporary tests 
         /// </summary>
         public ICommand DoSimulationCommand { get; }
+        
+        public ICommand OpenDeleteDialogCommand { get; }
+
+        public ICommand OpenSaveDialogCommand { get;  }
 
         public DatabaseContentPageType CurrentDatabaseContentPage
         {
@@ -108,10 +146,29 @@ namespace Core.ViewModels.Database
 
         public ISnackbarMessageQueue SnackbarMessageQueue { get; } = new SnackbarMessageQueue(TimeSpan.FromSeconds(3));
 
+        public bool IsBusyGeneratingLineCharts { get; private set; }
+
+        public ICommand GenLineChartsCommand { get; }
+
+        public DatabaseViewDialogType CurrentDialogType
+        {
+            get { return _currentDialogType; }
+            private set
+            {
+                _currentDialogType = value;
+                if (value == DatabaseViewDialogType.None) return;
+                ShouldDisplayDialog = true;
+            }
+        }
+
+        public ICommand DeleteAllCommand { get; }
+
+        public ICommand DeleteSelectionCommand { get; }
+
         #endregion
 
 
-        #region Constructor
+        #region ctor
 
         public DatabaseQueryViewModel()
         {
@@ -125,13 +182,92 @@ namespace Core.ViewModels.Database
                     o => CurrentDatabaseContentPage != DatabaseContentPageType.TablePage);
             GenPieChartCommand = new SimpleCommand(o=>RunOnlySingleFireIsAllowedEachTimeCommand(()=>IsBusyGeneratingPieChart, GenPieChartDataAsync),
                 o => DatabaseBuffer.FaiCollectionBuffers != null && DatabaseBuffer.FaiCollectionBuffers.Count > 0);
+            
+            GenLineChartsCommand = new SimpleCommand(o=>RunOnlySingleFireIsAllowedEachTimeCommand(()=>IsBusyGeneratingLineCharts, GenLineChartsDataAsync),
+                o => DatabaseBuffer.FaiCollectionBuffers != null && DatabaseBuffer.FaiCollectionBuffers.Count > 0);
+            
+            OpenDeleteDialogCommand = new SimpleCommand(OpenDeleteDialog, o=>CurrentDatabaseContentPage == DatabaseContentPageType.TablePage && DatabaseBuffer.CollectionCount > 0);
 
+            //TODO: add delete ui elements logic after database deletions
+            DeleteAllCommand = new SimpleCommand(o=>RunOnlySingleFireIsAllowedEachTimeCommand(()=>IsBusyDeleting,DeleteAll),
+                o => DatabaseBuffer.FaiCollectionBuffers != null && DatabaseBuffer.FaiCollectionBuffers.Count > 0);
+            
+            DeleteSelectionCommand = new SimpleCommand(o=>RunOnlySingleFireIsAllowedEachTimeCommand(()=>IsBusyDeleting,DeleteSelection),
+                o => SelectedCollections != null && SelectedCollections.Count > 0);
+            
             DatabaseBuffer = new DatabaseBufferViewModel();
 
             DoSimulationCommand = new RelayCommand(DoSimulation);
 
             LoadFaiLimits(_productType);
             GenerateLimitDictionaries();
+        }
+
+        /// <summary>
+        /// Delete all local buffer data from database
+        /// and query agian
+        /// </summary>
+        /// <returns></returns>
+        private async Task DeleteAll()
+        {
+            CurrentDialogType = DatabaseViewDialogType.WaitingDialog;
+            await FaiCollectionHelper.DeleteByDateTimeAsync(DatabaseBuffer.FaiCollectionBuffers,
+                NameConstants.SqlConnectionString);
+            await QueryByIntervalAsync();
+            ShouldDisplayDialog = false;
+        }
+
+        private async Task DeleteSelection()
+        {
+            CurrentDialogType = DatabaseViewDialogType.WaitingDialog;
+            
+            // Delete in database
+            await FaiCollectionHelper.DeleteByDateTimeAsync(SelectedCollections, NameConstants.SqlConnectionString);
+            
+            // Get last index in buffer before selections
+            var indexOfFirstSelectedCollections = DatabaseBuffer.FaiCollectionBuffers.IndexOf(SelectedCollections[0]);
+            var lastIndexBeforeSelections = indexOfFirstSelectedCollections == 0 ? 0 : indexOfFirstSelectedCollections - 1;
+            // Calculate the page index of lastIndexBeforeSelection
+            var pageIndex = (int)Math.Floor(lastIndexBeforeSelections / (double) DatabaseBuffer.RowsPerPage);
+            // Remove selections from buffer
+            DatabaseBuffer.Remove(SelectedCollections);
+            // Navigate to page where the first selection is deleted
+            DatabaseBuffer.NavigateToPage(pageIndex);
+            
+            ShouldDisplayDialog = false;
+        }
+
+
+        /// <summary>
+        /// Open delete dialog to ask whether delete all or delete selection
+        /// </summary>
+        private void OpenDeleteDialog(object o)
+        {
+            var items = (IList) o;
+            SelectedCollections = items.Cast<IFaiCollection>().ToList();
+            CurrentDialogType = DatabaseViewDialogType.DeleteDialog;
+        }
+
+        private async Task GenLineChartsDataAsync()
+        {
+            // Determine unit type of line chart
+            LineChartUnitType = DatabaseBuffer.TotalDays > 1 ? LineChartUnitType.Day : LineChartUnitType.Hour;
+            
+            // Gen line chart data measured by day
+            if (LineChartUnitType == LineChartUnitType.Day)
+            {
+                var firstDay = DatabaseBuffer.MinDate.Date;
+                var lastDay = (DatabaseBuffer.MaxDate + TimeSpan.FromDays(1)).Date;
+                var dateList = new List<DateTime>();
+                var countList = new List<int>();
+          
+                // TODO: finish this
+            }
+            else
+            // Gen line chart data measured by hour
+            {
+                
+            }
         }
 
         /// <summary>
@@ -214,7 +350,6 @@ namespace Core.ViewModels.Database
                 return;
             }
 
-
             if (ProductType == ProductType.Mtm)
             {
                 var output = await  FaiCollectionHelper.SelectByIntervalAsync<FaiCollectionMtm>(ProductType,
@@ -227,7 +362,8 @@ namespace Core.ViewModels.Database
                     NameConstants.SqlConnectionString, dateStart.Value, dateEnd.Value);
                 DatabaseBuffer.FaiCollectionBuffers = new List<IFaiCollection>(output);
             }
-                
+            
+            DatabaseBuffer.NavigateToPage(0);
         }
 
         private void PromptUser(string message)

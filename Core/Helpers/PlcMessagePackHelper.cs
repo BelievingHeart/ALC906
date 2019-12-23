@@ -2,6 +2,7 @@
 using Core.IoC.Loggers;
 using Core.ViewModels.Application;
 using PLCCommunication.Core;
+using PLCCommunication.Core.Enums;
 using PLCCommunication.Core.ViewModels;
 
 namespace Core.Helpers
@@ -18,7 +19,7 @@ namespace Core.Helpers
                 CommandId = 16,
                 Param1 = leftSocketLevel.GetProductLevelValue(),
                 Param2 = rightSocketLevel.GetProductLevelValue()
-            });
+            }, PlcMessageType.Request);
             
            Logger.LogPlcMessage($"Sent {leftSocketLevel} and {rightSocketLevel} to plc");
 

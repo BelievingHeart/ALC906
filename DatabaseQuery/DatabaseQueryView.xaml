@@ -22,7 +22,7 @@
     <Window.DataContext>
         <database:DatabaseQueryViewModel />
     </Window.DataContext>
-    <materialDesign:DialogHost IsOpen="{Binding ShouldDisplayPieChart}">
+    <materialDesign:DialogHost IsOpen="{Binding ShouldDisplayDialog}" CloseOnClickAway="True">
         <Grid>
             <materialDesign:Snackbar HorizontalAlignment="Center" VerticalAlignment="Center" MessageQueue="{Binding SnackbarMessageQueue}" Panel.ZIndex="10"/>
             <DockPanel>
@@ -53,6 +53,13 @@
                                 materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding IsBusyGeneratingPieChart}">
                             <materialDesign:PackIcon Kind="ChartPie" />
                         </Button>
+                        <Button  Command="{Binding GenLineChartsCommand}"
+                            materialDesign:ButtonProgressAssist.IsIndicatorVisible="True"
+                                 materialDesign:ButtonProgressAssist.Value="-1"
+                                 materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding IsBusyGeneratingLineCharts}">
+                            <materialDesign:PackIcon Kind="ChartAreaspline" />
+                        </Button>
+              
                     </ToolBar>
                 </ToolBarTray>
              
@@ -65,11 +72,7 @@
 
         <!-- PieChart view -->
         <materialDesign:DialogHost.DialogContent>
-            <StackPanel>
-                <views:PieChartView Width="400" Height="400" PieChartData="{Binding PieChartData}" />
-                <Button HorizontalAlignment="Center" Margin="10" Content="OK"
-                        Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
-            </StackPanel>
+        <ContentControl Content="{Binding CurrentDialogType, Converter={converters:EnumToDatabaseViewDialogConverter}}"/>
         </materialDesign:DialogHost.DialogContent>
     </materialDesign:DialogHost>
 </Window>

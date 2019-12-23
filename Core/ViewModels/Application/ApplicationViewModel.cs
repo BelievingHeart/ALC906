@@ -66,22 +66,7 @@ namespace Core.ViewModels.Application
         /// </summary>
         private readonly Dictionary<string, List<HImage>> _laserImageBuffers = new Dictionary<string, List<HImage>>();
 
-        public GraphicsPackViewModel Graphics2DCavity1
-        {
-            get { return _graphics2DCavity1; }
-            set { _graphics2DCavity1 = value; }
-        }
-
-        public GraphicsPackViewModel Graphics2DCavity2
-        {
-            get { return _graphics2DCavity2; }
-            set { _graphics2DCavity2 = value; }
-        }
-
-        public GraphicsPackViewModel Graphics3DCavity1 { get; set; } = new GraphicsPackViewModel();
-        public GraphicsPackViewModel Graphics3DCavity2 { get; set; } = new GraphicsPackViewModel();
-
-
+   
         private HTuple _shapeModel2D, _shapeModel3D;
 
         private CsvSerializer.CsvSerializer _serializerAll;
@@ -326,6 +311,11 @@ namespace Core.ViewModels.Application
             }
 
             RoundCountSinceReset = 0;
+
+            foreach (var controller in ControllerManager.AttachedControllers)
+            {
+                controller.ClearBuffer();
+            }
 
             Server.NotifyPlcReadyToGoNextLoop();
         }
@@ -600,7 +590,7 @@ namespace Core.ViewModels.Application
             {
                 TimestampCavity2 = SerializationHelper.SerializeImagesWith2D3DMatched(images2dCavity2, images3dCavity2,
                     ShouldSave2DImagesRight,
-                    ShouldSave3DImagesRight, CavityType.Cavity2);
+                    ShouldSave3DImagesRight, CavityType.Cavity2, SaveNgImagesOnly, ProductLevelCavity2);
                 _serializerRight.Serialize(faiItemsCavity2, TimestampCavity2.ToString("HH-mm-ss-ffff"),
                     ProductLevelCavity2.GetResultText());
                 _serializerAll.Serialize(faiItemsCavity2, TimestampCavity2.ToString("HH-mm-ss-ffff"),
@@ -613,7 +603,7 @@ namespace Core.ViewModels.Application
             {
                 TimestampCavity1 = SerializationHelper.SerializeImagesWith2D3DMatched(images2dCavity1, images3dCavity1,
                     ShouldSave2DImagesLeft,
-                    ShouldSave3DImagesLeft, CavityType.Cavity1);
+                    ShouldSave3DImagesLeft, CavityType.Cavity1, SaveNgImagesOnly, ProductLevelCavity1);
                 _serializerLeft.Serialize(faiItemsCavity1, TimestampCavity1.ToString("HH-mm-ss-ffff"),
                     ProductLevelCavity1.GetResultText());
                 _serializerAll.Serialize(faiItemsCavity1, TimestampCavity1.ToString("HH-mm-ss-ffff"),
@@ -881,8 +871,25 @@ namespace Core.ViewModels.Application
         }
 
 
-        #region Properties
+        #region prop
 
+        public GraphicsPackViewModel Graphics2DCavity1
+        {
+            get { return _graphics2DCavity1; }
+            set { _graphics2DCavity1 = value; }
+        }
+
+        public GraphicsPackViewModel Graphics2DCavity2
+        {
+            get { return _graphics2DCavity2; }
+            set { _graphics2DCavity2 = value; }
+        }
+
+        public GraphicsPackViewModel Graphics3DCavity1 { get; set; } = new GraphicsPackViewModel();
+        public GraphicsPackViewModel Graphics3DCavity2 { get; set; } = new GraphicsPackViewModel();
+
+        public bool SaveNgImagesOnly { get; set; }
+        
         public int RoundCountSinceReset { get; set; }
 
         public bool IsAllControllersHighSpeedConnected

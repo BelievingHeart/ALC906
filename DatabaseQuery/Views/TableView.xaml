@@ -11,10 +11,11 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <!-- <UserControl.DataContext> -->
-    <!--     <database:DatabaseQueryViewModel/> -->
+    <!--     <database:DatabaseQueryViewModel /> -->
     <!-- </UserControl.DataContext> -->
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
@@ -168,7 +169,29 @@
                 </ComboBox>
             </StackPanel>
         </DockPanel>
-        <DataGrid Grid.Row="1" ItemsSource="{Binding DatabaseBuffer.TableToShow}" IsReadOnly="True">
+
+        <!-- Total, total yield , total days, total hours-->
+        <StatusBar Grid.Row="1">
+            <TextBlock Text="Total: " />
+            <TextBlock Text="{Binding DatabaseBuffer.CollectionCount}" Margin="0 0 10 0" />
+            <TextBlock Text="Yield: " />
+            <TextBlock Text="{Binding DatabaseBuffer.TotalYield}" Margin="0 0 10 0" />
+            <TextBlock Text="Days: " />
+            <TextBlock Text="{Binding DatabaseBuffer.TotalDays, StringFormat=N1}" Margin="0 0 10 0" />
+            <TextBlock Text="Hours: " />
+            <TextBlock Text="{Binding DatabaseBuffer.TotalHours, StringFormat=N1}" Margin="0 0 10 0" />
+            
+            <Separator/>
+            <Button ToolTip="Delete selected rows" CommandParameter="{Binding ElementName=PART_DataGrid, Path=SelectedItems}"
+                    Command="{Binding OpenDeleteDialogCommand}" Background="Transparent" BorderBrush="Transparent">
+                <materialDesign:PackIcon Kind="Delete" />
+            </Button>
+            <Button ToolTip="Save as csv" CommandParameter="{Binding ElementName=PART_DataGrid, Path=SelectedItems}"
+                    Command="{Binding OpenSaveDialogCommand}" Background="Transparent" BorderBrush="Transparent">
+                <materialDesign:PackIcon Kind="ContentSave" />
+            </Button>
+        </StatusBar>
+        <DataGrid Grid.Row="2" ItemsSource="{Binding DatabaseBuffer.TableToShow}" IsReadOnly="True" x:Name="PART_DataGrid" CanUserSortColumns="False">
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <Style.Triggers>

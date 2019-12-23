@@ -10,37 +10,42 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid DataContext="{Binding Source={x:Static application:ApplicationViewModel.Instance}}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        
-        <GroupBox Header="Images Settings" Grid.Column="0" Grid.Row="0">
-            <StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="CameraOutline" />
-                    <CheckBox Content="2D Cavity1" IsChecked="{Binding ShouldSave2DImagesLeft}" />
-                    <CheckBox Content="2D Cavity2" IsChecked="{Binding ShouldSave2DImagesRight}" />
 
-                    <materialDesign:PackIcon Kind="SecurityCamera" Margin="15 0 0 0" />
-                    <CheckBox Content="3D Cavity1" IsChecked="{Binding ShouldSave3DImagesLeft}" />
-                    <CheckBox Content="3D Cavity2" IsChecked="{Binding ShouldSave3DImagesRight}" />
+        <GroupBox Header="Images Settings" Grid.Column="0" Grid.Row="0">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Left">
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="CameraOutline" />
+                        <CheckBox Content="2D Cavity1" IsChecked="{Binding ShouldSave2DImagesLeft}" />
+                        <CheckBox Content="2D Cavity2" IsChecked="{Binding ShouldSave2DImagesRight}" />
+
+                        <materialDesign:PackIcon Kind="SecurityCamera" Margin="15 0 0 0" />
+                        <CheckBox Content="3D Cavity1" IsChecked="{Binding ShouldSave3DImagesLeft}" />
+                        <CheckBox Content="3D Cavity2" IsChecked="{Binding ShouldSave3DImagesRight}" />
+                    </StackPanel>
+                    <Button HorizontalAlignment="Left" Content="Open Image Directory"
+                            Command="{Binding OpenImageDirCommand}" />
                 </StackPanel>
-                <Button HorizontalAlignment="Left" Content="Open Image Directory" Command="{Binding OpenImageDirCommand}"/>
-            </StackPanel>
+                <CheckBox DockPanel.Dock="Right" VerticalAlignment="Top" HorizontalAlignment="Right" Content="NG Only" IsChecked="{Binding SaveNgImagesOnly}"/>
+            </DockPanel>
         </GroupBox>
-        
+
         <GroupBox Grid.Column="1" Grid.Row="0" Header="Csv Settings">
-            <Button Content="Open Csv Directory" Command="{Binding OpenCSVDirCommand}" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            <Button Content="Open Csv Directory" Command="{Binding OpenCSVDirCommand}" HorizontalAlignment="Left"
+                    VerticalAlignment="Top" />
         </GroupBox>
-        
+
         <GroupBox Grid.Row="1" Grid.Column="0" Header="Misc Settings">
-        <Grid>
-            <Button Content="清料" Command="{Binding ClearProductErrorStatesCommand}"></Button>
-        </Grid>
+            <Grid>
+                <Button Content="清料" Command="{Binding ClearProductErrorStatesCommand}" />
+            </Grid>
         </GroupBox>
 
 

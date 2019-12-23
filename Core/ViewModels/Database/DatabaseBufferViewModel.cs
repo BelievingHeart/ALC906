@@ -25,6 +25,19 @@ namespace Core.ViewModels.Database
 
 
         #region prop
+        
+        public DateTime MinDate { get; set; }
+
+        public DateTime MaxDate { get; set; }
+
+        /// <summary>
+        /// The max timespan among all FaiCollectionBuffers in days
+        /// </summary>
+        public double TotalDays { get; set; }
+        /// <summary>
+        /// The max timespan among all FaiCollectionBuffers in hours
+        /// </summary>
+        public double TotalHours { get; set; }
 
         public ICommand NextPageCommand { get; set; }
         public ICommand PreviousPageCommand { get; set; }
@@ -35,11 +48,14 @@ namespace Core.ViewModels.Database
             set
             {
                 _faiCollectionBuffers = value;
+                OnPropertyChanged(nameof(CollectionCount));
+                GenerateTotalYield();
+                GenerateTotalDayAndTotalHours();
                 CalculateTotalPages();
-                CurrentPageIndex = 0;
-                NavigateToPage(CurrentPageIndex);
             }
         }
+
+  
 
 
         public int RowsPerPage
@@ -49,8 +65,7 @@ namespace Core.ViewModels.Database
             {
                 _rowsPerPage = value;
                 CalculateTotalPages();
-                CurrentPageIndex = 0;
-                NavigateToPage(CurrentPageIndex);
+                NavigateToPage(0);
             }
         }
 
@@ -71,14 +86,42 @@ namespace Core.ViewModels.Database
             get { return _tableToShow; }
             set { _tableToShow = value as FaiCollectionList ?? new FaiCollectionList(value); }
         }
+
+        public int CollectionCount => FaiCollectionBuffers?.Count ?? 0;
+
+        public string TotalYield { get; private set; }
+
+        public IEnumerable<IFaiCollection> SelectedCollections { get; set; }
+
+  
+
         #endregion
 
 
         #region impl
-
-        private void NavigateToPage(int pageIndex)
+        
+        private void GenerateTotalDayAndTotalHours()
         {
-            
+            var dates = FaiCollectionBuffers.Select(c => c.InspectionTime).ToArray();
+             MaxDate = dates.Max();
+             MinDate = dates.Min();
+            var timeSpan = MaxDate - MinDate;
+            TotalDays = timeSpan.TotalDays;
+            TotalHours = timeSpan.TotalHours;
+        }
+
+    
+
+        private void GenerateTotalYield()
+        {
+            var yield = FaiCollectionBuffers.Count(collection => collection.Result == "OK") / (double) CollectionCount;
+            TotalYield = $"{yield * 100 :F1}%";
+        }
+
+
+        public void NavigateToPage(int pageIndex)
+        {
+            CurrentPageIndex = pageIndex;
             if (FaiCollectionBuffers == null || FaiCollectionBuffers.Count == 0) return;
             // If it is the first page ...
             if (pageIndex == 0)
@@ -121,10 +164,26 @@ namespace Core.ViewModels.Database
 
         public DatabaseBufferViewModel()
         {
-            NextPageCommand = new SimpleCommand(o=> CurrentPageIndex++, o=>TotalPages>0&&CurrentPageIndex<TotalPages-1);
-            PreviousPageCommand = new SimpleCommand(o=> CurrentPageIndex--, o=>CurrentPageIndex>0);
+            NextPageCommand = new SimpleCommand(o=> NavigateToPage(CurrentPageIndex+1), o=>TotalPages>0&&CurrentPageIndex<TotalPages-1);
+            PreviousPageCommand = new SimpleCommand(o=> NavigateToPage(CurrentPageIndex-1), o=>CurrentPageIndex>0);
         }
 
         #endregion
+
+        /// <summary>
+        /// Remove a list of collection from FaiCollectionBuffers
+        /// </summary>
+        /// <param name="selectedCollections"></param>
+        public void Remove(IList<IFaiCollection> selectedCollections)
+        {
+            foreach (var collection in selectedCollections)
+            {
+                FaiCollectionBuffers.Remove(collection);
+            }
+            OnPropertyChanged(nameof(CollectionCount));
+            GenerateTotalYield();
+            GenerateTotalDayAndTotalHours();
+            CalculateTotalPages();
+        }
     }
 }

@@ -53,6 +53,30 @@ namespace Core.Helpers
         }
 
         /// <summary>
+        /// Delete a list of fai collections by their InspectionTime
+        /// </summary>
+        /// <param name="collectionsToDelete"></param>
+        /// <param name="connectionString"></param>
+        /// <returns></returns>
+        public static async Task DeleteByDateTimeAsync(IList<IFaiCollection> collectionsToDelete, string connectionString)
+        {
+            var collectionType = collectionsToDelete[0].GetType();
+            var productType = collectionType == typeof(FaiCollectionMtm) ? ProductType.Mtm : ProductType.Alps;
+            var query = DeleteByDateTimeQueries[productType];
+            var datesToDelete = collectionsToDelete.Select(c => c.InspectionTime).ToArray();
+            await Task.Run(() =>
+            {
+                using (IDbConnection connection = new System.Data.SqlClient.SqlConnection(connectionString))
+                {
+                    foreach (var date in datesToDelete)
+                    {
+                        connection.Execute(query, new {DateToDelete=date});
+                    }
+                }
+            });
+        }
+
+        /// <summary>
         /// Insert into local database
         /// </summary>
         /// <param name="connectionString"></param>
@@ -72,6 +96,11 @@ namespace Core.Helpers
             }
         }
         
+        private static readonly Dictionary<ProductType, string> DeleteByDateTimeQueries = new Dictionary<ProductType, string>()
+        {
+            [ProductType.Mtm] = "dbo.spDeleteByDateTimeMtm @DateToDelete",
+            [ProductType.Alps] ="dbo.spDeleteByDateTimeAlps @DateToDelete",
+        };
         
         private static readonly Dictionary<ProductType, string> SelectByIntervalQueries = new Dictionary<ProductType, string>()
         {

@@ -9,21 +9,26 @@ namespace Core.Helpers
 {
     public static class SerializationHelper
     {
-        public static DateTime SerializeImagesWith2D3DMatched(List<HImage> images2d, List<HImage> images3d, bool shouldSerialize2d, bool shouldSerialize3d, CavityType cavityType)
+        public static DateTime SerializeImagesWith2D3DMatched(List<HImage> images2d, List<HImage> images3d, bool shouldSerialize2d, bool shouldSerialize3d, CavityType cavityType, bool saveNgImagesOnly, ProductLevel productLevel)
         {
             var currentTime = DateTime.Now;
             var currentTimeText = currentTime.ToString("HH-mm-ss-ffff");
             var dirName = cavityType.ToString();
-            if (shouldSerialize2d)
+            if ((saveNgImagesOnly && productLevel != ProductLevel.OK) || !saveNgImagesOnly)
             {
-                var imageDir2d = Path.Combine(DirectoryConstants.ImageDir2D, dirName);
-                SerializeImages(images2d, imageDir2d, currentTimeText);
-            }
+                if (shouldSerialize2d)
+                {
 
-            if (shouldSerialize3d)
-            {
-                var imageDir3d = Path.Combine(DirectoryConstants.ImageDir3D, dirName);
-                SerializeImages(images3d, imageDir3d, currentTimeText, "tiff");
+                    var imageDir2d = Path.Combine(DirectoryConstants.ImageDir2D, dirName);
+                    SerializeImages(images2d, imageDir2d, currentTimeText);
+
+                }
+
+                if (shouldSerialize3d)
+                {
+                    var imageDir3d = Path.Combine(DirectoryConstants.ImageDir3D, dirName);
+                    SerializeImages(images3d, imageDir3d, currentTimeText, "tiff");
+                }
             }
 
             return currentTime;

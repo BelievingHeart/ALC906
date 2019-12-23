@@ -1,4 +1,6 @@
 1. Separate region of loop-related variables
 2. Calculate uph yield in query
-3. Laser half-way bugs
 4. Start not allow on startup
+6. L4 popup during resetting上料x轴使能报错
+7. Cells in DataGrid find their header
+8. new client socket when connected

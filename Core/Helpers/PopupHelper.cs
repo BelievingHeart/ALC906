@@ -1,4 +1,5 @@
 ﻿using System.Net.Sockets;
+using System.Windows.Input;
 using Core.Commands;
 using Core.Constants;
 using Core.ViewModels.Message;
@@ -36,7 +37,11 @@ namespace Core.Helpers
                 OkButtonText = "Continue",
                 CancelButtonText = "Quit",
                 OkCommand = new CloseDialogAttachedCommand(o => true, execution: () => alcServer.SentToPlc(continueMessagePack,PlcMessageType.Request)),
-                CancelCommand = new CloseDialogAttachedCommand(o => true, () => {alcServer.SentToPlc(quitMessagePack, PlcMessageType.Request);}),
+                CancelCommand = new CloseDialogAttachedCommand(o => true, () =>
+                {
+                    alcServer.SentToPlc(quitMessagePack, PlcMessageType.Request);
+                    alcServer.IsAutoRunning = false;
+                }),
                 MessageItem = LoggingMessageItem.CreateMessage(message),
                 Content = content,
                 IsSpecialPopup = true
