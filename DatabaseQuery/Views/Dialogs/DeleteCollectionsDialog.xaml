@@ -17,25 +17,26 @@
                 <!-- Delete all button -->
                 <Button Command="{Binding DeleteAllCommand}" Width="120" Height="80">
                     <StackPanel>
-                        <TextBlock Text="All" HorizontalAlignment="Center"/>
+                        <TextBlock Text="All" HorizontalAlignment="Center" />
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <TextBlock Text="{Binding DatabaseBuffer.CollectionCount}" />
-                            <TextBlock Text=" PCS"/>
+                            <TextBlock Text=" PCS" />
                         </StackPanel>
                     </StackPanel>
                 </Button>
-                <Border Width="30" Height="80" Background="Transparent" BorderBrush="Transparent"/>
+                <Border Width="30" Height="80" Background="Transparent" BorderBrush="Transparent" />
                 <Button Command="{Binding DeleteSelectionCommand}" Width="120" Height="80">
                     <StackPanel>
-                        <TextBlock Text="Selection"  HorizontalAlignment="Center"/>
+                        <TextBlock Text="Selection" HorizontalAlignment="Center" />
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <TextBlock Text="{Binding SelectionCount}" />
-                            <TextBlock Text=" PCS"/>
+                            <TextBlock Text=" PCS" />
                         </StackPanel>
                     </StackPanel>
                 </Button>
             </StackPanel>
-            <Button Content="Close" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="10"/>
+            <Button Content="Close" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                    VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="10" />
         </StackPanel>
     </GroupBox>
 </UserControl>

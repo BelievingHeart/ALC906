@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace DatabaseQuery.Views
 {
@@ -8,5 +9,11 @@ namespace DatabaseQuery.Views
         {
             InitializeComponent();
         }
+
+        private void OnDataGridSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            PART_SelectedRowsTextBlock.Text = PART_DataGrid.SelectedItems.Count.ToString();
+        }
+        
     }
 }

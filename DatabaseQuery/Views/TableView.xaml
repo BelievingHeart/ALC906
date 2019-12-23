@@ -8,11 +8,9 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:converters="clr-namespace:DatabaseQuery.Converters"
              xmlns:validations="clr-namespace:WPFCommon.Validations;assembly=WPFCommon"
+
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-    <!-- <UserControl.DataContext> -->
-    <!--     <database:DatabaseQueryViewModel /> -->
-    <!-- </UserControl.DataContext> -->
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -180,24 +178,32 @@
             <TextBlock Text="{Binding DatabaseBuffer.TotalDays, StringFormat=N1}" Margin="0 0 10 0" />
             <TextBlock Text="Hours: " />
             <TextBlock Text="{Binding DatabaseBuffer.TotalHours, StringFormat=N1}" Margin="0 0 10 0" />
-            
-            <Separator/>
-            <Button ToolTip="Delete selected rows" CommandParameter="{Binding ElementName=PART_DataGrid, Path=SelectedItems}"
-                    Command="{Binding OpenDeleteDialogCommand}" Background="Transparent" BorderBrush="Transparent">
-                <materialDesign:PackIcon Kind="Delete" />
-            </Button>
-            <Button ToolTip="Save as csv" CommandParameter="{Binding ElementName=PART_DataGrid, Path=SelectedItems}"
-                    Command="{Binding OpenSaveDialogCommand}" Background="Transparent" BorderBrush="Transparent">
-                <materialDesign:PackIcon Kind="ContentSave" />
-            </Button>
+
+            <TextBlock Text="Selected rows: " />
+            <TextBlock x:Name="PART_SelectedRowsTextBlock" Margin="0 0 10 0" />
+            <Separator />
+
+                    <Button ToolTip="Delete selected rows"
+                            CommandParameter="{Binding ElementName=PART_DataGrid, Path=SelectedItems}"
+                            Command="{Binding OpenDeleteDialogCommand}" Background="Transparent"
+                            BorderBrush="Transparent">
+                        <materialDesign:PackIcon Kind="Delete" />
+                    </Button>
+                    <Button ToolTip="Save as csv"
+                            CommandParameter="{Binding ElementName=PART_DataGrid, Path=SelectedItems}"
+                            Command="{Binding OpenSaveDialogCommand}" Background="Transparent"
+                            BorderBrush="Transparent">
+                        <materialDesign:PackIcon Kind="ContentSave" />
+                    </Button>
         </StatusBar>
-        <DataGrid Grid.Row="2" ItemsSource="{Binding DatabaseBuffer.TableToShow}" IsReadOnly="True" x:Name="PART_DataGrid" CanUserSortColumns="False">
+        <DataGrid Grid.Row="2" ItemsSource="{Binding DatabaseBuffer.TableToShow}" IsReadOnly="True"
+                  x:Name="PART_DataGrid" CanUserSortColumns="False" SelectionChanged="OnDataGridSelectionChanged">
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding Result}" Value="NG">
-                            <Setter Property="Background" Value="Red" />
-                            <Setter Property="Foreground" Value="White" />
+                            <Setter Property="Background" Value="White" />
+                            <Setter Property="Foreground" Value="Black" />
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>

@@ -102,6 +102,13 @@ namespace Core.ViewModels.Database
         
         private void GenerateTotalDayAndTotalHours()
         {
+            if (FaiCollectionBuffers == null || FaiCollectionBuffers.Count == 0)
+            {
+                TotalDays = 0;
+                TotalHours = 0;
+                return;
+            }
+            
             var dates = FaiCollectionBuffers.Select(c => c.InspectionTime).ToArray();
              MaxDate = dates.Max();
              MinDate = dates.Min();
@@ -122,7 +129,11 @@ namespace Core.ViewModels.Database
         public void NavigateToPage(int pageIndex)
         {
             CurrentPageIndex = pageIndex;
-            if (FaiCollectionBuffers == null || FaiCollectionBuffers.Count == 0) return;
+            if (FaiCollectionBuffers == null || FaiCollectionBuffers.Count == 0)
+            {
+                TableToShow = new List<IFaiCollection>();
+                return;
+            }
             // If it is the first page ...
             if (pageIndex == 0)
                 TableToShow = FaiCollectionBuffers

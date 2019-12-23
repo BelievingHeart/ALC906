@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -49,7 +51,7 @@ namespace Core.ViewModels.Database
         }
 
         public bool IsBusyDeleting { get; set; }
-        
+
         public LineChartUnitType LineChartUnitType { get; set; }
 
         public bool IsBusyGeneratingPieChart { get; set; }
@@ -88,7 +90,7 @@ namespace Core.ViewModels.Database
         public int MonthStart { get; set; } = int.Parse(DateTime.Now.ToString("MM"));
         public int DayStart { get; set; } = int.Parse(DateTime.Now.ToString("dd"));
         public int HourStart { get; set; } = int.Parse(DateTime.Now.ToString("HH"));
-        
+
         public int YearEnd { get; set; } = int.Parse(DateTime.Now.ToString("yyyy"));
 
         public int MonthEnd { get; set; } = int.Parse(DateTime.Now.ToString("MM"));
@@ -105,6 +107,8 @@ namespace Core.ViewModels.Database
                 _productType = value;
                 LoadFaiLimits(value);
                 OnPropertyChanged(nameof(ProductType));
+                DatabaseBuffer.FaiCollectionBuffers = new List<IFaiCollection>();
+                DatabaseBuffer.NavigateToPage(0);
             }
         }
 
@@ -117,10 +121,10 @@ namespace Core.ViewModels.Database
         /// Do temporary tests 
         /// </summary>
         public ICommand DoSimulationCommand { get; }
-        
+
         public ICommand OpenDeleteDialogCommand { get; }
 
-        public ICommand OpenSaveDialogCommand { get;  }
+        public ICommand OpenSaveDialogCommand { get; }
 
         public DatabaseContentPageType CurrentDatabaseContentPage
         {
@@ -165,6 +169,12 @@ namespace Core.ViewModels.Database
 
         public ICommand DeleteSelectionCommand { get; }
 
+        public string CsvDir { get; set; }
+
+        public ICommand SaveAllCommand { get; }
+
+        public ICommand SaveSelectionCommand { get; }
+
         #endregion
 
 
@@ -180,20 +190,29 @@ namespace Core.ViewModels.Database
             SwitchTablesViewCommand =
                 new SimpleCommand(o => CurrentDatabaseContentPage = DatabaseContentPageType.TablePage,
                     o => CurrentDatabaseContentPage != DatabaseContentPageType.TablePage);
-            GenPieChartCommand = new SimpleCommand(o=>RunOnlySingleFireIsAllowedEachTimeCommand(()=>IsBusyGeneratingPieChart, GenPieChartDataAsync),
-                o => DatabaseBuffer.FaiCollectionBuffers != null && DatabaseBuffer.FaiCollectionBuffers.Count > 0);
-            
-            GenLineChartsCommand = new SimpleCommand(o=>RunOnlySingleFireIsAllowedEachTimeCommand(()=>IsBusyGeneratingLineCharts, GenLineChartsDataAsync),
-                o => DatabaseBuffer.FaiCollectionBuffers != null && DatabaseBuffer.FaiCollectionBuffers.Count > 0);
-            
-            OpenDeleteDialogCommand = new SimpleCommand(OpenDeleteDialog, o=>CurrentDatabaseContentPage == DatabaseContentPageType.TablePage && DatabaseBuffer.CollectionCount > 0);
+            GenPieChartCommand = new SimpleCommand(
+                o => RunOnlySingleFireIsAllowedEachTimeCommand(() => IsBusyGeneratingPieChart, GenPieChartDataAsync),
+                o => DatabaseBuffer.CollectionCount > 0);
 
-            //TODO: add delete ui elements logic after database deletions
-            DeleteAllCommand = new SimpleCommand(o=>RunOnlySingleFireIsAllowedEachTimeCommand(()=>IsBusyDeleting,DeleteAll),
-                o => DatabaseBuffer.FaiCollectionBuffers != null && DatabaseBuffer.FaiCollectionBuffers.Count > 0);
-            
-            DeleteSelectionCommand = new SimpleCommand(o=>RunOnlySingleFireIsAllowedEachTimeCommand(()=>IsBusyDeleting,DeleteSelection),
+            GenLineChartsCommand = new SimpleCommand(
+                o => RunOnlySingleFireIsAllowedEachTimeCommand(() => IsBusyGeneratingLineCharts,
+                    GenLineChartsDataAsync),
+                o => DatabaseBuffer.CollectionCount > 0);
+
+            // Delete commands
+            OpenDeleteDialogCommand = new SimpleCommand(OpenDeleteDialog, o => DatabaseBuffer.CollectionCount > 0);
+            DeleteAllCommand = new SimpleCommand(
+                o => RunOnlySingleFireIsAllowedEachTimeCommand(() => IsBusyDeleting, DeleteAll),
+                o => DatabaseBuffer.CollectionCount > 0);
+            DeleteSelectionCommand = new SimpleCommand(
+                o => RunOnlySingleFireIsAllowedEachTimeCommand(() => IsBusyDeleting, DeleteSelection),
                 o => SelectedCollections != null && SelectedCollections.Count > 0);
+
+            // Save as csv commands
+            OpenSaveDialogCommand = new SimpleCommand(OpenSaveDialog, o => DatabaseBuffer.CollectionCount > 0);
+            SaveAllCommand = new SimpleCommand(o=>SaveCollectionsToCsv(DatabaseBuffer.FaiCollectionBuffers), o=>DatabaseBuffer.CollectionCount > 0 && Directory.Exists(CsvDir));
+            SaveSelectionCommand = new SimpleCommand(o=>SaveCollectionsToCsv(SelectedCollections), o=>SelectedCollections != null && SelectedCollections.Count > 0 && Directory.Exists(CsvDir));
+            
             
             DatabaseBuffer = new DatabaseBufferViewModel();
 
@@ -201,6 +220,44 @@ namespace Core.ViewModels.Database
 
             LoadFaiLimits(_productType);
             GenerateLimitDictionaries();
+        }
+
+        private void SaveCollectionsToCsv(IList<IFaiCollection> faiCollections)
+        {
+            ShouldDisplayDialog = false;
+            // Gen header
+            var properties = faiCollections[0].GetType().GetProperties();
+            var headerRow = new List<string>();
+            foreach (var property in properties)
+            {
+                headerRow.Add(property.Name);
+            }
+            
+            // Gen contents row
+            var contentsRows = new List<string>();
+            foreach (var faiCollection in faiCollections)
+            {
+                var contentRow = new List<string>();
+                foreach (var property in properties)
+                {
+                    contentRow.Add(property.GetValue(faiCollection).ToString());
+                }
+                contentsRows.Add(string.Join(",",contentRow));
+            }
+            
+            // combine header and contents
+            contentsRows.Insert(0, string.Join(",",headerRow));
+
+            var csvPath = Path.Combine(CsvDir, ProductType + $"-{faiCollections.Count}PCS.csv");
+            File.WriteAllLines(csvPath, contentsRows);
+            Process.Start(CsvDir);
+        }
+
+        private void OpenSaveDialog(object obj)
+        {
+            var items = (IList) obj;
+            SelectedCollections = items.Cast<IFaiCollection>().ToList();
+            CurrentDialogType = DatabaseViewDialogType.SaveDialog;
         }
 
         /// <summary>
@@ -220,20 +277,21 @@ namespace Core.ViewModels.Database
         private async Task DeleteSelection()
         {
             CurrentDialogType = DatabaseViewDialogType.WaitingDialog;
-            
+
             // Delete in database
             await FaiCollectionHelper.DeleteByDateTimeAsync(SelectedCollections, NameConstants.SqlConnectionString);
-            
+
             // Get last index in buffer before selections
             var indexOfFirstSelectedCollections = DatabaseBuffer.FaiCollectionBuffers.IndexOf(SelectedCollections[0]);
-            var lastIndexBeforeSelections = indexOfFirstSelectedCollections == 0 ? 0 : indexOfFirstSelectedCollections - 1;
+            var lastIndexBeforeSelections =
+                indexOfFirstSelectedCollections == 0 ? 0 : indexOfFirstSelectedCollections - 1;
             // Calculate the page index of lastIndexBeforeSelection
-            var pageIndex = (int)Math.Floor(lastIndexBeforeSelections / (double) DatabaseBuffer.RowsPerPage);
+            var pageIndex = (int) Math.Floor(lastIndexBeforeSelections / (double) DatabaseBuffer.RowsPerPage);
             // Remove selections from buffer
             DatabaseBuffer.Remove(SelectedCollections);
             // Navigate to page where the first selection is deleted
             DatabaseBuffer.NavigateToPage(pageIndex);
-            
+
             ShouldDisplayDialog = false;
         }
 
@@ -252,7 +310,7 @@ namespace Core.ViewModels.Database
         {
             // Determine unit type of line chart
             LineChartUnitType = DatabaseBuffer.TotalDays > 1 ? LineChartUnitType.Day : LineChartUnitType.Hour;
-            
+
             // Gen line chart data measured by day
             if (LineChartUnitType == LineChartUnitType.Day)
             {
@@ -260,13 +318,12 @@ namespace Core.ViewModels.Database
                 var lastDay = (DatabaseBuffer.MaxDate + TimeSpan.FromDays(1)).Date;
                 var dateList = new List<DateTime>();
                 var countList = new List<int>();
-          
+
                 // TODO: finish this
             }
             else
-            // Gen line chart data measured by hour
+                // Gen line chart data measured by hour
             {
-                
             }
         }
 
@@ -306,7 +363,7 @@ namespace Core.ViewModels.Database
                     output.Remove(item.Key);
                 }
             });
-            
+
             PieChartData = output;
         }
 
@@ -323,7 +380,8 @@ namespace Core.ViewModels.Database
         {
             DatabaseBuffer.FaiCollectionBuffers = new List<IFaiCollection>()
             {
-                new FaiCollectionTest() {Cavity = 1, InspectionTime = DateTime.Now, Result = "SomeResult", Test = "Hello"}
+                new FaiCollectionTest()
+                    {Cavity = 1, InspectionTime = DateTime.Now, Result = "SomeResult", Test = "Hello"}
             };
         }
 
@@ -337,7 +395,7 @@ namespace Core.ViewModels.Database
                 PromptUser("Invalid date");
                 return;
             }
-            
+
             if (dateEnd.Value <= dateStart.Value)
             {
                 PromptUser("Datetime end should greater than datetime start.");
@@ -352,17 +410,17 @@ namespace Core.ViewModels.Database
 
             if (ProductType == ProductType.Mtm)
             {
-                var output = await  FaiCollectionHelper.SelectByIntervalAsync<FaiCollectionMtm>(ProductType,
+                var output = await FaiCollectionHelper.SelectByIntervalAsync<FaiCollectionMtm>(ProductType,
                     NameConstants.SqlConnectionString, dateStart.Value, dateEnd.Value);
                 DatabaseBuffer.FaiCollectionBuffers = new List<IFaiCollection>(output);
             }
             else
             {
-                var output = await  FaiCollectionHelper.SelectByIntervalAsync<FaiCollectionAlps>(ProductType,
+                var output = await FaiCollectionHelper.SelectByIntervalAsync<FaiCollectionAlps>(ProductType,
                     NameConstants.SqlConnectionString, dateStart.Value, dateEnd.Value);
                 DatabaseBuffer.FaiCollectionBuffers = new List<IFaiCollection>(output);
             }
-            
+
             DatabaseBuffer.NavigateToPage(0);
         }
 
@@ -376,7 +434,7 @@ namespace Core.ViewModels.Database
             var dateText = $"{year}-{month:D2}-{day:D2} {hour:D2}:00";
             var date = dateText.ToDate("yyyy-MM-dd HH:mm");
 //            return DateTime.ParseExact("yyyy-MM-dd HH:mm", dateText, CultureInfo.InvariantCulture);
-           return date;
+            return date;
         }
 
         private void LoadFaiLimits(ProductType productType)
