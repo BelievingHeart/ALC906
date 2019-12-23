@@ -4,9 +4,17 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:DatabaseQuery.Views.Dialogs"
+             xmlns:database="clr-namespace:Core.ViewModels.Database;assembly=Core"
+             xmlns:wpf="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             xmlns:converters="clr-namespace:DatabaseQuery.Converters"
+             xmlns:views="clr-namespace:DatabaseQuery.Views"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
-        
+    
+    <!-- <UserControl.DataContext> -->
+    <!--     <database:DatabaseQueryViewModel/> -->
+    <!-- </UserControl.DataContext> -->
+    <Grid Width="800" Height="800">
+        <views:LineChartView ProductivityData="{Binding ProductionSeriesData}" YieldData="{Binding YieldSeriesData}"/>
     </Grid>
 </UserControl>

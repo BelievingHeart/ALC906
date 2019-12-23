@@ -12,8 +12,8 @@
     <!--     <database:DatabaseQueryViewModel/> -->
     <!-- </UserControl.DataContext> -->
     <StackPanel>
-        <views:PieChartView Width="400" Height="400" PieChartData="{Binding PieChartData}" />
+        <views:PieChartView Width="800" Height="800" PieChartData="{Binding PieChartData}" />
         <Button HorizontalAlignment="Center" Margin="10" Content="OK"
-                Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" />
+                Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" IsDefault="True" IsCancel="True"/>
     </StackPanel>
 </UserControl>

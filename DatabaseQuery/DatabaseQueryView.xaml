@@ -19,10 +19,11 @@
         FontFamily="{DynamicResource MaterialDesignFont}"
 
         Title="Database Query" Height="1000" Width="1400">
+    
     <Window.DataContext>
         <database:DatabaseQueryViewModel />
     </Window.DataContext>
-    <materialDesign:DialogHost IsOpen="{Binding ShouldDisplayDialog}" CloseOnClickAway="True">
+    <materialDesign:DialogHost IsOpen="{Binding ShouldDisplayDialog}">
         <Grid>
             <materialDesign:Snackbar HorizontalAlignment="Center" VerticalAlignment="Center" MessageQueue="{Binding SnackbarMessageQueue}" Panel.ZIndex="10"/>
             <DockPanel>

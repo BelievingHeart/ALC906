@@ -79,7 +79,7 @@ namespace DatabaseQuery.Views
                 var proportion = pieChartData[key] / (double) sum;
                 var proportionText = $"{proportion * 100 :F1}%";
                 
-                var series = new PieSeries() {Title = key, Values = new ChartValues<int>(new[] {pieChartData[key]}), ToolTip = proportionText};
+                var series = new PieSeries() {Title = key, Values = new ChartValues<int>(new[] {pieChartData[key]}), ToolTip = proportionText, DataLabels = true};
                 series.SetBinding(PointLabelProperty, pointLabelBinding);
                 PART_PieChartControl.Series.Add(series);
             }

@@ -12,7 +12,9 @@ using System.Windows.Input;
 using Core.Constants;
 using Core.Enums;
 using Core.Helpers;
+using Core.Models;
 using Core.ViewModels.Database.FaiCollection;
+using LiveCharts;
 using MaterialDesignThemes.Wpf;
 using WPFCommon.Commands;
 using WPFCommon.Helpers;
@@ -35,6 +37,9 @@ namespace Core.ViewModels.Database
 
         #region prop
 
+        public LineChartData ProductionSeriesData { get; set; }
+        public LineChartData YieldSeriesData { get; set; }
+
         public int SelectionCount
         {
             get { return SelectedCollections.Count; }
@@ -52,7 +57,6 @@ namespace Core.ViewModels.Database
 
         public bool IsBusyDeleting { get; set; }
 
-        public LineChartUnitType LineChartUnitType { get; set; }
 
         public bool IsBusyGeneratingPieChart { get; set; }
 
@@ -210,10 +214,12 @@ namespace Core.ViewModels.Database
 
             // Save as csv commands
             OpenSaveDialogCommand = new SimpleCommand(OpenSaveDialog, o => DatabaseBuffer.CollectionCount > 0);
-            SaveAllCommand = new SimpleCommand(o=>SaveCollectionsToCsv(DatabaseBuffer.FaiCollectionBuffers), o=>DatabaseBuffer.CollectionCount > 0 && Directory.Exists(CsvDir));
-            SaveSelectionCommand = new SimpleCommand(o=>SaveCollectionsToCsv(SelectedCollections), o=>SelectedCollections != null && SelectedCollections.Count > 0 && Directory.Exists(CsvDir));
-            
-            
+            SaveAllCommand = new SimpleCommand(o => SaveCollectionsToCsv(DatabaseBuffer.FaiCollectionBuffers),
+                o => DatabaseBuffer.CollectionCount > 0 && Directory.Exists(CsvDir));
+            SaveSelectionCommand = new SimpleCommand(o => SaveCollectionsToCsv(SelectedCollections),
+                o => SelectedCollections != null && SelectedCollections.Count > 0 && Directory.Exists(CsvDir));
+
+
             DatabaseBuffer = new DatabaseBufferViewModel();
 
             DoSimulationCommand = new RelayCommand(DoSimulation);
@@ -232,7 +238,7 @@ namespace Core.ViewModels.Database
             {
                 headerRow.Add(property.Name);
             }
-            
+
             // Gen contents row
             var contentsRows = new List<string>();
             foreach (var faiCollection in faiCollections)
@@ -242,11 +248,12 @@ namespace Core.ViewModels.Database
                 {
                     contentRow.Add(property.GetValue(faiCollection).ToString());
                 }
-                contentsRows.Add(string.Join(",",contentRow));
+
+                contentsRows.Add(string.Join(",", contentRow));
             }
-            
+
             // combine header and contents
-            contentsRows.Insert(0, string.Join(",",headerRow));
+            contentsRows.Insert(0, string.Join(",", headerRow));
 
             var csvPath = Path.Combine(CsvDir, ProductType + $"-{faiCollections.Count}PCS.csv");
             File.WriteAllLines(csvPath, contentsRows);
@@ -262,7 +269,7 @@ namespace Core.ViewModels.Database
 
         /// <summary>
         /// Delete all local buffer data from database
-        /// and query agian
+        /// and query again
         /// </summary>
         /// <returns></returns>
         private async Task DeleteAll()
@@ -308,23 +315,107 @@ namespace Core.ViewModels.Database
 
         private async Task GenLineChartsDataAsync()
         {
-            // Determine unit type of line chart
-            LineChartUnitType = DatabaseBuffer.TotalDays > 1 ? LineChartUnitType.Day : LineChartUnitType.Hour;
-
-            // Gen line chart data measured by day
-            if (LineChartUnitType == LineChartUnitType.Day)
+            await Task.Run(() =>
             {
-                var firstDay = DatabaseBuffer.MinDate.Date;
-                var lastDay = (DatabaseBuffer.MaxDate + TimeSpan.FromDays(1)).Date;
-                var dateList = new List<DateTime>();
-                var countList = new List<int>();
+                var lineChartUnitType = GenProductivityData();
+                GenYieldData(lineChartUnitType);
+            });
+            CurrentDialogType = DatabaseViewDialogType.LineChartDialog;
+        }
 
-                // TODO: finish this
+        private void GenYieldData(LineChartUnitType lineChartUnitType)
+        {
+            
+            var okCounts = new Dictionary<string, int>();
+            List<DateTimePair> dateTimePairs;
+            var dateFormat = lineChartUnitType == LineChartUnitType.Day ? "yy-MM-dd" : "MM-dd-HH";
+              // Gen line chart data measured by day
+            if (lineChartUnitType == LineChartUnitType.Day)
+            {
+                // Partition timespan into bins by day
+                var firstDay = DatabaseBuffer.MinDate.Date;
+                var lastDay = (DatabaseBuffer.MaxDate.Date + TimeSpan.FromDays(1)).Date;
+                var totalDays = (lastDay - firstDay).Days;
+                dateTimePairs = DateTimeHelper.GetDateTimePairs(firstDay, lastDay, totalDays);
             }
             else
-                // Gen line chart data measured by hour
             {
+                var firstHour = DatabaseBuffer.MinDate.Date + TimeSpan.FromHours(DatabaseBuffer.MinDate.Hour);
+                var lastHour = DatabaseBuffer.MaxDate.Date + TimeSpan.FromHours(DatabaseBuffer.MaxDate.Hour + 1);
+                var totalHours = (lastHour - firstHour).Hours;
+                dateTimePairs = DateTimeHelper.GetDateTimePairs(firstHour, lastHour, totalHours);
+                
             }
+            
+            foreach (var dateTimePair in dateTimePairs)
+            {
+                okCounts[dateTimePair.FromDateTime.ToString(dateFormat)] = 0;
+            }
+
+            foreach (var collection in DatabaseBuffer.FaiCollectionBuffers)
+            {
+                if(collection.Result == "OK") okCounts[collection.InspectionTime.ToString(dateFormat)]++;
+            }
+            
+            var yieldData = new Dictionary<string, double>();
+            foreach (var key in okCounts.Keys)
+            {
+                var yieldNumber = okCounts[key] / ProductionSeriesData.Data[key] * 100;
+                yieldData[key] = yieldNumber;
+            }
+            
+            YieldSeriesData = new LineChartData()
+            {
+                Data = yieldData,
+                UnitType = lineChartUnitType
+            };
+
+        }
+
+        private LineChartUnitType GenProductivityData()
+        {
+// Determine unit type of line chart
+            var lineChartUnitType = DatabaseBuffer.TotalDays >= 1 ? LineChartUnitType.Day : LineChartUnitType.Hour;
+            List<DateTimePair> dateTimePairs;
+            var dateFormat = lineChartUnitType == LineChartUnitType.Day ? "yy-MM-dd" : "MM-dd-HH";
+            var bins = new Dictionary<string, double>();
+
+
+            // Gen line chart data measured by day
+            if (lineChartUnitType == LineChartUnitType.Day)
+            {
+                // Partition timespan into bins by day
+                var firstDay = DatabaseBuffer.MinDate.Date;
+                var lastDay = (DatabaseBuffer.MaxDate.Date + TimeSpan.FromDays(1)).Date;
+                var totalDays = (lastDay - firstDay).Days;
+                dateTimePairs = DateTimeHelper.GetDateTimePairs(firstDay, lastDay, totalDays);
+      
+            }
+            else
+            {
+                var firstHour = DatabaseBuffer.MinDate.Date + TimeSpan.FromHours(DatabaseBuffer.MinDate.Hour);
+                var lastHour = DatabaseBuffer.MaxDate.Date + TimeSpan.FromHours(DatabaseBuffer.MaxDate.Hour + 1);
+                var totalHours = (lastHour - firstHour).Hours;
+                dateTimePairs = DateTimeHelper.GetDateTimePairs(firstHour, lastHour, totalHours);
+            }
+            
+            foreach (var dateTimePair in dateTimePairs)
+            {
+                bins[dateTimePair.FromDateTime.ToString(dateFormat)] = 0;
+            }
+
+            foreach (var collection in DatabaseBuffer.FaiCollectionBuffers)
+            {
+                bins[collection.InspectionTime.ToString(dateFormat)]++;
+            }
+
+            ProductionSeriesData = new LineChartData()
+            {
+                Data = bins,
+                UnitType = lineChartUnitType
+            };
+
+            return lineChartUnitType;
         }
 
         /// <summary>

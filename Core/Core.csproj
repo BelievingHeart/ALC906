@@ -45,6 +45,10 @@
     <Reference Include="I40_3D_Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>bin\Debug\I40_3D_Test.dll</HintPath>
     </Reference>
+    <Reference Include="LiveCharts, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df">
+      <HintPath>..\packages\LiveCharts.0.9.7\lib\net45\LiveCharts.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="MaterialDesignColors, Version=1.2.0.325, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MaterialDesignColors.1.2.0\lib\net45\MaterialDesignColors.dll</HintPath>
     </Reference>
@@ -104,9 +108,7 @@
     <Compile Include="Helpers\DateTimeHelper.cs" />
     <Compile Include="Helpers\FaiCollectionHelper.cs" />
     <Compile Include="Helpers\FaiItemsHelper.cs" />
-    <Compile Include="Helpers\FindLineParamHelper.cs" />
     <Compile Include="Helpers\I40Helper.cs" />
-    <Compile Include="Helpers\ObservableCollectionHelper.cs" />
     <Compile Include="Helpers\PlcMessagePackHelper.cs" />
     <Compile Include="Helpers\PopupHelper.cs" />
     <Compile Include="Helpers\ProductLevelHelper.cs" />
@@ -114,7 +116,6 @@
     <Compile Include="Helpers\SocketTypeHelper.cs" />
     <Compile Include="Helpers\StringMatrixHelper.cs" />
     <Compile Include="Helpers\SummaryHelper.cs" />
-    <Compile Include="Helpers\TimeHelper.cs" />
     <Compile Include="ImageProcessing\2D\I40_CheckDemo.cs" />
     <Compile Include="ImageProcessing\2D\ResultValueClass.cs" />
     <Compile Include="ImageProcessing\FindLineParam.cs" />
@@ -124,7 +125,9 @@
     <Compile Include="IoC\Loggers\LaserControllerLibLogger.cs" />
     <Compile Include="IoC\PlcErrorParser\ErrorMessageItem.cs" />
     <Compile Include="IoC\PlcErrorParser\PlcErrorParser.cs" />
+    <Compile Include="Models\DateTimePair.cs" />
     <Compile Include="Models\FixedSizeQueue.cs" />
+    <Compile Include="Models\LineChartData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\Application\ApplicationViewModel.cs" />
     <Compile Include="ViewModels\Database\DatabaseBufferViewModel.cs" />

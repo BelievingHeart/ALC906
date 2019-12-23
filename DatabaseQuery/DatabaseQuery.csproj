@@ -75,6 +75,7 @@
     </ApplicationDefinition>
     <Compile Include="Converters\EnumToDatabaseViewDialogConverter.cs" />
     <Compile Include="Converters\IntegerToComboBoxItemConverter.cs" />
+    <Compile Include="Converters\LineChartUnitTypeToTitleConverter.cs" />
     <Compile Include="Converters\Plus1Converter.cs" />
     <Compile Include="Views\Dialogs\DeleteCollectionsDialog.xaml.cs">
       <DependentUpon>DeleteCollectionsDialog.xaml</DependentUpon>
@@ -87,6 +88,9 @@
     </Compile>
     <Compile Include="Views\Dialogs\SaveCollectionsDialog.xaml.cs">
       <DependentUpon>SaveCollectionsDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LineChartView.xaml.cs">
+      <DependentUpon>LineChartView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\LineChart\LineChartHostView.xaml.cs">
       <DependentUpon>LineChartHostView.xaml</DependentUpon>
@@ -119,6 +123,7 @@
     <Page Include="Views\Dialogs\PieChartDialog.xaml" />
     <Page Include="Views\Dialogs\SaveCollectionsDialog.xaml" />
     <Page Include="Views\Dialogs\WaitingDialog.xaml" />
+    <Page Include="Views\LineChartView.xaml" />
     <Page Include="Views\LineChart\LineChartHostView.xaml" />
     <Page Include="Views\PieChartView.xaml" />
     <Page Include="Views\SettingView.xaml" />
