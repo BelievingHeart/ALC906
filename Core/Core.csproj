@@ -84,6 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\CloseDialogAttachedCommand.cs" />
+    <Compile Include="Constants\ColorConstants.cs" />
     <Compile Include="Constants\DirectoryConstants.cs" />
     <Compile Include="Constants\NameConstants.cs" />
     <Compile Include="Constants\PathConstants.cs" />

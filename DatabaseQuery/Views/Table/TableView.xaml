@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="DatabaseQuery.Views.TableView"
+﻿<UserControl x:Class="DatabaseQuery.Views.Table.TableView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -8,9 +8,14 @@
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:converters="clr-namespace:DatabaseQuery.Converters"
              xmlns:validations="clr-namespace:WPFCommon.Validations;assembly=WPFCommon"
+             xmlns:table="clr-namespace:DatabaseQuery.Views.Table"
 
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
+    
+    <!-- <UserControl.DataContext> -->
+    <!--     <database:DatabaseQueryViewModel/> -->
+    <!-- </UserControl.DataContext> -->
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -180,7 +185,7 @@
             <TextBlock Text="{Binding DatabaseBuffer.TotalHours, StringFormat=N1}" Margin="0 0 10 0" />
 
             <TextBlock Text="Selected rows: " />
-            <TextBlock x:Name="PART_SelectedRowsTextBlock" Margin="0 0 10 0" />
+            <TextBlock Text="{Binding ElementName=FaiCollectionGridView, Path=SelectionCount}" Margin="0 0 10 0" />
             <Separator />
 
                     <Button ToolTip="Delete selected rows"
@@ -196,18 +201,6 @@
                         <materialDesign:PackIcon Kind="ContentSave" />
                     </Button>
         </StatusBar>
-        <DataGrid Grid.Row="2" ItemsSource="{Binding DatabaseBuffer.TableToShow}" IsReadOnly="True"
-                  x:Name="PART_DataGrid" CanUserSortColumns="False" SelectionChanged="OnDataGridSelectionChanged">
-            <DataGrid.RowStyle>
-                <Style TargetType="DataGridRow">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding Result}" Value="NG">
-                            <Setter Property="Background" Value="White" />
-                            <Setter Property="Foreground" Value="Black" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </DataGrid.RowStyle>
-        </DataGrid>
+        <table:FaiCollectionGridView Grid.Row="2" x:Name="FaiCollectionGridView" FaiCollections="{Binding DatabaseBuffer.TableToShow}" DictionaryLower="{Binding DictionaryLower}" DictionaryUpper="{Binding DictionaryUpper}"/>
     </Grid>
 </UserControl>

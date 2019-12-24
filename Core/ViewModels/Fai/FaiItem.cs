@@ -36,7 +36,7 @@ namespace Core.ViewModels.Fai
         [XmlIgnore]
          public double Value
         {
-            get { return Math.Abs(ValueUnbiased * Weight + Bias); }
+            get { return Math.Abs(ValueUnbiased) * Weight + Bias; }
             set { throw new NotImplementedException(); }
         }
 

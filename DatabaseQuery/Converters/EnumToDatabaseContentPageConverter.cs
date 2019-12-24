@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Windows.Controls;
 using Core.Enums;
 using DatabaseQuery.Views;
+using DatabaseQuery.Views.Table;
 using WPFCommon.Converters;
 
 namespace DatabaseQuery.Converters

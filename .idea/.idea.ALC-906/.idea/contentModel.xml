@@ -11,6 +11,7 @@
           <e p="CloseDialogAttachedCommand.cs" t="Include" />
         </e>
         <e p="Constants" t="Include">
+          <e p="ColorConstants.cs" t="Include" />
           <e p="DirectoryConstants.cs" t="Include" />
           <e p="NameConstants.cs" t="Include" />
           <e p="PathConstants.cs" t="Include" />
@@ -179,8 +180,18 @@
           <e p="PieChartView.xaml.cs" t="Include" />
           <e p="SettingView.xaml" t="Include" />
           <e p="SettingView.xaml.cs" t="Include" />
-          <e p="TableView.xaml" t="Include" />
-          <e p="TableView.xaml.cs" t="Include" />
+          <e p="Table" t="Include">
+            <e p="FaiCollectionGridView.xaml" t="Include" />
+            <e p="FaiCollectionGridView.xaml.cs" t="Include" />
+            <e p="FaiCollectionHeaderRowView.xaml" t="Include" />
+            <e p="FaiCollectionHeaderRowView.xaml.cs" t="Include" />
+            <e p="FaiCollectionItemView.xaml" t="Include" />
+            <e p="FaiCollectionItemView.xaml.cs" t="Include" />
+            <e p="FaiCollectionListView.xaml" t="Include" />
+            <e p="FaiCollectionListView.xaml.cs" t="Include" />
+            <e p="TableView.xaml" t="Include" />
+            <e p="TableView.xaml.cs" t="Include" />
+          </e>
         </e>
       </e>
       <e p="packages" t="ExcludeRecursive" />

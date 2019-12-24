@@ -101,7 +101,19 @@
     <Compile Include="Views\SettingView.xaml.cs">
       <DependentUpon>SettingView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\TableView.xaml.cs">
+    <Compile Include="Views\Table\FaiCollectionGridView.xaml.cs">
+      <DependentUpon>FaiCollectionGridView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Table\FaiCollectionHeaderRowView.xaml.cs">
+      <DependentUpon>FaiCollectionHeaderRowView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Table\FaiCollectionItemView.xaml.cs">
+      <DependentUpon>FaiCollectionItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Table\FaiCollectionListView.xaml.cs">
+      <DependentUpon>FaiCollectionListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Table\TableView.xaml.cs">
       <DependentUpon>TableView.xaml</DependentUpon>
     </Compile>
     <Page Include="DatabaseQueryView.xaml">
@@ -127,7 +139,11 @@
     <Page Include="Views\LineChart\LineChartHostView.xaml" />
     <Page Include="Views\PieChartView.xaml" />
     <Page Include="Views\SettingView.xaml" />
-    <Page Include="Views\TableView.xaml" />
+    <Page Include="Views\Table\FaiCollectionGridView.xaml" />
+    <Page Include="Views\Table\FaiCollectionHeaderRowView.xaml" />
+    <Page Include="Views\Table\FaiCollectionItemView.xaml" />
+    <Page Include="Views\Table\FaiCollectionListView.xaml" />
+    <Page Include="Views\Table\TableView.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
