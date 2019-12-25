@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Core.Constants;
 using Core.Enums;
+using Core.IoC.Loggers;
 using HalconDotNet;
 
 namespace Core.Helpers
@@ -12,23 +13,31 @@ namespace Core.Helpers
         public static DateTime SerializeImagesWith2D3DMatched(List<HImage> images2d, List<HImage> images3d, bool shouldSerialize2d, bool shouldSerialize3d, CavityType cavityType, bool saveNgImagesOnly, ProductLevel productLevel)
         {
             var currentTime = DateTime.Now;
-            var currentTimeText = currentTime.ToString("HH-mm-ss-ffff");
+            var currentTimeText = currentTime.ToString(NameConstants.DateTimeFormat);
             var dirName = cavityType.ToString();
-            if ((saveNgImagesOnly && productLevel != ProductLevel.OK) || !saveNgImagesOnly)
+            try
             {
-                if (shouldSerialize2d)
+                if ((saveNgImagesOnly && productLevel != ProductLevel.OK) || !saveNgImagesOnly)
                 {
+                    if (shouldSerialize2d)
+                    {
 
-                    var imageDir2d = Path.Combine(DirectoryConstants.ImageDir2D, dirName);
-                    SerializeImages(images2d, imageDir2d, currentTimeText);
+                        var imageDir2d = Path.Combine(DirectoryConstants.ImageDir2D, dirName);
+                        SerializeImages(images2d, imageDir2d, currentTimeText);
 
+                    }
+
+                    if (shouldSerialize3d)
+                    {
+                        var imageDir3d = Path.Combine(DirectoryConstants.ImageDir3D, dirName);
+                        SerializeImages(images3d, imageDir3d, currentTimeText, "tiff");
+                    }
                 }
-
-                if (shouldSerialize3d)
-                {
-                    var imageDir3d = Path.Combine(DirectoryConstants.ImageDir3D, dirName);
-                    SerializeImages(images3d, imageDir3d, currentTimeText, "tiff");
-                }
+            }
+            catch (HOperatorException e)
+            {
+                if (e.Message.Contains("#5566")) Logger.LogHighLevelWarningNormal("磁盘已满, 请立即清理磁盘");
+                else throw;
             }
 
             return currentTime;

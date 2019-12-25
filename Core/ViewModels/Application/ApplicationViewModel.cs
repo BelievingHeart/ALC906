@@ -460,7 +460,7 @@ namespace Core.ViewModels.Application
                 };
                 // Log error images
                 var logDir = Path.Combine(DirectoryConstants.ImageDir3D,
-                    "Error/" + DateTime.Now.ToString("yyyy-MM-dd-HHmmss"));
+                    "Error/" + DateTime.Now.ToString(NameConstants.DateTimeFormat));
                 Task.Run(() => { Logger.Instance.RecordErrorImages(imagesForOneSocket, e.Message, logDir); });
             }
 
@@ -591,9 +591,9 @@ namespace Core.ViewModels.Application
                 TimestampCavity2 = SerializationHelper.SerializeImagesWith2D3DMatched(images2dCavity2, images3dCavity2,
                     ShouldSave2DImagesRight,
                     ShouldSave3DImagesRight, CavityType.Cavity2, SaveNgImagesOnly, ProductLevelCavity2);
-                _serializerRight.Serialize(faiItemsCavity2, TimestampCavity2.ToString("HH-mm-ss-ffff"),
+                _serializerRight.Serialize(faiItemsCavity2, TimestampCavity2.ToString(NameConstants.DateTimeFormat),
                     ProductLevelCavity2.GetResultText());
-                _serializerAll.Serialize(faiItemsCavity2, TimestampCavity2.ToString("HH-mm-ss-ffff"),
+                _serializerAll.Serialize(faiItemsCavity2, TimestampCavity2.ToString(NameConstants.DateTimeFormat),
                     ProductLevelCavity2.GetResultText());
             }
 
@@ -604,9 +604,9 @@ namespace Core.ViewModels.Application
                 TimestampCavity1 = SerializationHelper.SerializeImagesWith2D3DMatched(images2dCavity1, images3dCavity1,
                     ShouldSave2DImagesLeft,
                     ShouldSave3DImagesLeft, CavityType.Cavity1, SaveNgImagesOnly, ProductLevelCavity1);
-                _serializerLeft.Serialize(faiItemsCavity1, TimestampCavity1.ToString("HH-mm-ss-ffff"),
+                _serializerLeft.Serialize(faiItemsCavity1, TimestampCavity1.ToString(NameConstants.DateTimeFormat),
                     ProductLevelCavity1.GetResultText());
-                _serializerAll.Serialize(faiItemsCavity1, TimestampCavity1.ToString("HH-mm-ss-ffff"),
+                _serializerAll.Serialize(faiItemsCavity1, TimestampCavity1.ToString(NameConstants.DateTimeFormat),
                     ProductLevelCavity1.GetResultText());
             }
 
@@ -628,7 +628,7 @@ namespace Core.ViewModels.Application
 
             // Update tables
             UiDispatcher.InvokeAsync(() =>
-                UpdateTables(TimestampCavity1.ToString("HH-mm-ss-ffff"), TimestampCavity2.ToString("HH-mm-ss-ffff")));
+                UpdateTables(TimestampCavity1.ToString(NameConstants.DateTimeFormat), TimestampCavity2.ToString(NameConstants.DateTimeFormat)));
         }
 
         public DateTime TimestampCavity1 { get; set; }
@@ -770,7 +770,7 @@ namespace Core.ViewModels.Application
                 if (!e.Message.Contains("[2D Vision]"))
                 {
                     var logDir = Path.Combine(DirectoryConstants.ImageDir2D,
-                        "Error/" + DateTime.Now.ToString("yyyy-MM-dd-HHmmss"));
+                        "Error/" + DateTime.Now.ToString(NameConstants.DateTimeFormat));
                     Task.Run(() => { Logger.Instance.RecordErrorImages(images, e.Message, logDir); });
                 }
             }
@@ -805,7 +805,14 @@ namespace Core.ViewModels.Application
         {
             SetupServer();
 
-            SetupCameras();
+            try
+            {
+                SetupCameras();
+            }
+            catch
+            {
+               Logger.LogHighLevelWarningNormal("相机连接失败，请解除相机占用稍候并重启ALC");
+            }
 
             SetupLaserControllers();
         }
@@ -854,9 +861,16 @@ namespace Core.ViewModels.Application
         public void Cleanup()
         {
             Server.Disconnect();
-            
-            TopCamera.StopGrabbing();
-            TopCamera.Close();
+
+            try
+            {
+                TopCamera.StopGrabbing();
+                TopCamera.Close();
+            }
+            catch 
+            {
+                // I don't care
+            }
 
             foreach (var controller in ControllerManager.AttachedControllers)
             {

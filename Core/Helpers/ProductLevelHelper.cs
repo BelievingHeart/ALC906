@@ -8,6 +8,7 @@ namespace Core.Helpers
         {
             if (productLevel == ProductLevel.OK) return "OK";
             if (productLevel == ProductLevel.Empty) return "Empty";
+            if (productLevel == ProductLevel.Ng5) return "Error";
             return "NG";
         }
     }

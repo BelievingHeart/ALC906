@@ -26,7 +26,7 @@ namespace DatabaseQuery.Views.Table
             PART_Grid.ColumnDefinitions.Add(new ColumnDefinition(){Width = new GridLength(DateBlockWidth)});
             var inspectionTimeBlock = new TextBlock()
             {
-                Width = DateBlockWidth, Text = collection.InspectionTime.ToString("G"),
+                Width = DateBlockWidth, Text = collection.InspectionTime.ToString(NameConstants.DateTimeFormat),
                 TextAlignment = TextAlignment.Center
                 , HorizontalAlignment = HorizontalAlignment.Center};
             Grid.SetColumn(inspectionTimeBlock, 0);

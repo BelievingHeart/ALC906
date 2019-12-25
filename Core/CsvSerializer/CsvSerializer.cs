@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Core.Constants;
 
 namespace Core.CsvSerializer
 {
@@ -58,7 +59,7 @@ namespace Core.CsvSerializer
 
         private string UpdateSerializePath()
         {
-            return Path.Combine(OutputDir, DateTime.Now.ToString("MMdd-HHmmss-ffff")) + ".csv";
+            return Path.Combine(OutputDir, DateTime.Now.ToString(NameConstants.DateTimeFormat) + ".csv");
         }
 
 

@@ -265,7 +265,7 @@ namespace Core.ViewModels.Database
                 {
                     var propValue = property.GetValue(faiCollection);
                     var cellContent = property.PropertyType == typeof(DateTime)
-                        ? ((DateTime)propValue).ToString("yy-MM-dd-HH:mm:ss-fff")
+                        ? ((DateTime)propValue).ToString(NameConstants.DateTimeFormat)
                         : propValue.ToString();
                     contentRow.Add(cellContent);
                 }

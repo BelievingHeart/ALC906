@@ -15,8 +15,11 @@ namespace Core.Constants
 
         public static string TopCameraName = "Hikvision MV-CH250-20TM-F-NF (00D46076741)";
 
-        public static string SqlConnectionString =
+        public static readonly string SqlConnectionString =
             "Server=(LocalDb)\\Product;Database=I40;Trusted_Connection=True;";
+
+        public static readonly string DateTimeFormat =
+            "yy-MM-dd_HH-mm-ss_fff";
 
 
     }
