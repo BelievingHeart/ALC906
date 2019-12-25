@@ -82,11 +82,11 @@
                 <ColumnDefinition Width="2*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-
+            
+            <!-- bin 2-5 -->
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -151,20 +151,11 @@
                                        BorderBrush="Black"
                                        BorderThickness="1" />
                             </StackPanel>
-                            <StackPanel Grid.Column="1">
-                                <materialDesign:ColorZone Background="Coral" Height="50">
-                                    <TextBlock Text="Bin 5" FontSize="24" HorizontalAlignment="Center"
-                                               VerticalAlignment="Center" />
-                                </materialDesign:ColorZone>
-                                <!-- Ng5 Count -->
-                                <Label Content="{Binding Ng5Count, FallbackValue=0}" HorizontalContentAlignment="Center"
-                                       BorderBrush="Black"
-                                       BorderThickness="1" Height="15" />
-                            </StackPanel>
+                            <Button Grid.Column="1" Content="清空" Command="{Binding ClearCommand}"/>
+
                         </Grid>
                     </StackPanel>
                 </Grid>
-                <Button Grid.Row="1" Grid.Column="0" Content="Clear" Command="{Binding ClearCommand}"/>
             </Grid>
 
             <Grid Grid.Column="1" Grid.Row="0" Grid.RowSpan="2">

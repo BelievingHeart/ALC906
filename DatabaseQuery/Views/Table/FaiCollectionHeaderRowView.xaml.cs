@@ -11,6 +11,7 @@ namespace DatabaseQuery.Views.Table
             InitializeComponent();
         }
 
+        
 
         public static readonly DependencyProperty CollectionTypeProperty = DependencyProperty.Register(
             "CollectionType", typeof(Type), typeof(FaiCollectionHeaderRowView), new PropertyMetadata(default(Type), OnCollectionTypeChanged));
@@ -20,6 +21,7 @@ namespace DatabaseQuery.Views.Table
             var view = (FaiCollectionHeaderRowView) d;
             var collectionType = (Type)e.NewValue;
             if (collectionType == null) return;
+            view.PART_StackPanel.Children.Clear();
             
             // Add date block
             view.PART_StackPanel.Children.Add(new TextBlock()
