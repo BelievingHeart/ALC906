@@ -1,5 +1,8 @@
-﻿using System.Windows;
+﻿using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using Core.Constants;
 using Core.ViewModels.Database.FaiCollection;
 
 namespace DatabaseQuery.Views.Table
@@ -15,50 +18,63 @@ namespace DatabaseQuery.Views.Table
         private void OnFaiCollectionChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
            
-            var collection = (IFaiCollection) e.NewValue;
+            var viewModel = (FaiCollectionItemViewModel) e.NewValue;
+            var collection = viewModel.FaiCollection;
             if (collection == null) return;
 
             // Add date block
-            PART_StackPanel.Children.Add(new TextBlock()
-                {Width = DateBlockWidth, Text = collection.InspectionTime.ToString("G"),TextAlignment = TextAlignment.Center});
+            PART_Grid.ColumnDefinitions.Add(new ColumnDefinition(){Width = new GridLength(DateBlockWidth)});
+            var inspectionTimeBlock = new TextBlock()
+            {
+                Width = DateBlockWidth, Text = collection.InspectionTime.ToString("G"),
+                TextAlignment = TextAlignment.Center
+                , HorizontalAlignment = HorizontalAlignment.Center};
+            Grid.SetColumn(inspectionTimeBlock, 0);
+            PART_Grid.Children.Add(inspectionTimeBlock);
             
+
             // Add result block
-            PART_StackPanel.Children.Add(new TextBlock()
-                {Width = ValueBlockWidth, Text = collection.Result, TextAlignment = TextAlignment.Center});
+            PART_Grid.ColumnDefinitions.Add(new ColumnDefinition() {Width = new GridLength(ValueBlockWidth)});
+            var resultBlock = new TextBlock()
+                {Width = ValueBlockWidth, Text = collection.Result, TextAlignment = TextAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center};
+            Grid.SetColumn(resultBlock, 1);
+            PART_Grid.Children.Add(resultBlock);
             
             // Add cavity block
-            PART_StackPanel.Children.Add(new TextBlock()
-                {Width = ValueBlockWidth, Text = collection.Cavity.ToString(), TextAlignment = TextAlignment.Center});
+            PART_Grid.ColumnDefinitions.Add(new ColumnDefinition() {Width = new GridLength(ValueBlockWidth)});
+            var cavityBlock = new TextBlock()
+            {
+                Width = ValueBlockWidth, Text = collection.Cavity.ToString(), TextAlignment = TextAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+            Grid.SetColumn(cavityBlock, 2);
+            PART_Grid.Children.Add(cavityBlock);
 
             // Add other blocks
             var collectionType = collection.GetType();
-            foreach (var property in collectionType.GetProperties())
+            var props = collectionType.GetProperties();
+            for (var index = 0; index < props.Length; index++)
             {
-                if(!property.Name.Contains("FAI")) continue;
-                var value = (double)property.GetValue(collection);
-                PART_StackPanel.Children.Add(new TextBlock()
-                    {Width = ValueBlockWidth, Text = value.ToString("F4"), TextAlignment = TextAlignment.Center});
+                var property = props[index];
+                var propName = property.Name;
+                if (!propName.Contains("FAI")) continue;
+                var value = (double) property.GetValue(collection);
+                var max = viewModel.DictionaryUpper[propName];
+                var min = viewModel.DictionaryLower[propName];
+                var faiBlock = new TextBlock()
+                {
+                    Width = ValueBlockWidth, Text = value.ToString("F3"), TextAlignment = TextAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center, ToolTip = $"({min:F3}-{max:F3})"
+                };
+                // Colorize ng cells
+                if(value > max) faiBlock.Foreground = new SolidColorBrush(ColorConstants.ExceedUpperColor); 
+                if(value < min) faiBlock.Foreground = new SolidColorBrush(ColorConstants.ExceedLowerColor);
+                PART_Grid.ColumnDefinitions.Add(new ColumnDefinition() {Width = new GridLength(ValueBlockWidth)});
+                Grid.SetColumn(faiBlock, index+3);
+                PART_Grid.Children.Add(faiBlock);
             }
         }
-
-        #region FaiCollectionProperty
-
-        public static readonly DependencyProperty FaiCollectionProperty = DependencyProperty.Register(
-            "FaiCollection", typeof(IFaiCollection), typeof(FaiCollectionItemView), new PropertyMetadata(default(IFaiCollection), OnFaiCollectionChanged));
-
-        private static void OnFaiCollectionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-          // TODO delete this
-
-        }
-
-        public IFaiCollection FaiCollection
-        {
-            get { return (IFaiCollection) GetValue(FaiCollectionProperty); }
-            set { SetValue(FaiCollectionProperty, value); }
-        }
-
-        #endregion
+        
 
         #region DateBlockWidthProperty
 
@@ -85,5 +101,7 @@ namespace DatabaseQuery.Views.Table
         }
 
         #endregion
+        
+        
     }
 }

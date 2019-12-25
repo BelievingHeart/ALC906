@@ -6,5 +6,5 @@
              xmlns:local="clr-namespace:DatabaseQuery.Views.Table"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-    <StackPanel x:Name="PART_StackPanel"/>
+    <Grid x:Name="PART_Grid"/>
 </UserControl>

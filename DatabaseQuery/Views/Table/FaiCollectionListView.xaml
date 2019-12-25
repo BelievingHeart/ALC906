@@ -7,15 +7,25 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300" x:Name="PART_FaiCollectionListView">
 
-    <StackPanel>
-        <local:FaiCollectionHeaderRowView x:Name="PART_HeaderRow"/>
-        <ListBox x:Name="PART_ListBox">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <local:FaiCollectionItemView DateBlockWidth="{Binding ElementName=PART_FaiCollectionListView, Path=DateBlockWidth}"
-                                                 ValueBlockWidth="{Binding ElementName=PART_FaiCollectionListView, Path=ValueBlockWidth}"/>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-    </StackPanel>
+
+    <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Disabled">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <local:FaiCollectionHeaderRowView x:Name="PART_HeaderRow"  Grid.Row="0" Background="{StaticResource PrimaryHueDarkBrush}" Foreground="White"/>
+            <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Disabled" PreviewMouseWheel="ListViewScrollViewer_PreviewMouseWheel" Grid.Row="1">
+                <ListBox x:Name="PART_ListBox" SelectionMode="Extended" SelectionChanged="OnListBoxSelectionChanged">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <local:FaiCollectionItemView
+                                DateBlockWidth="{Binding ElementName=PART_FaiCollectionListView, Path=DateBlockWidth}"
+                                ValueBlockWidth="{Binding ElementName=PART_FaiCollectionListView, Path=ValueBlockWidth}" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </ScrollViewer>
+        </Grid>
+    </ScrollViewer>
 </UserControl>

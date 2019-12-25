@@ -19,13 +19,15 @@ namespace Core.ViewModels.Database
         private int _currentPageIndex;
         private IList<IFaiCollection> _tableToShow;
         private int _rowsPerPage = 20;
+        private IList<IFaiCollection> _collectionsToShow;
 
         #endregion
 
+        public event Action CollectionToShowChanged;
 
 
         #region prop
-        
+
         public DateTime MinDate { get; set; }
 
         public DateTime MaxDate { get; set; }
@@ -81,19 +83,23 @@ namespace Core.ViewModels.Database
             }
         }
 
-        public IList<IFaiCollection> TableToShow
+        public IList<IFaiCollection> CollectionsToShow
         {
-            get { return _tableToShow; }
-            set { _tableToShow = value as FaiCollectionList ?? new FaiCollectionList(value); }
+            get { return _collectionsToShow; }
+            set
+            {
+                _collectionsToShow = value;
+                OnCollectionToShowChanged();
+            }
         }
 
-        public int CollectionCount => FaiCollectionBuffers?.Count ?? 0;
+        public int CollectionCount
+        {
+            get { return FaiCollectionBuffers?.Count ?? 0; }
+        }
 
         public string TotalYield { get; private set; }
 
-        public IEnumerable<IFaiCollection> SelectedCollections { get; set; }
-
-  
 
         #endregion
 
@@ -131,12 +137,12 @@ namespace Core.ViewModels.Database
             CurrentPageIndex = pageIndex;
             if (FaiCollectionBuffers == null || FaiCollectionBuffers.Count == 0)
             {
-                TableToShow = new List<IFaiCollection>();
+                CollectionsToShow = new List<IFaiCollection>();
                 return;
             }
             // If it is the first page ...
             if (pageIndex == 0)
-                TableToShow = FaiCollectionBuffers
+                CollectionsToShow = FaiCollectionBuffers
                     .Take(RowsPerPage > FaiCollectionBuffers.Count ? FaiCollectionBuffers.Count : RowsPerPage)
                     .ToList();
             // If it is the last page ...
@@ -145,11 +151,11 @@ namespace Core.ViewModels.Database
                 var numRowsToShow = FaiCollectionBuffers.Count % RowsPerPage == 0
                     ? RowsPerPage
                     : FaiCollectionBuffers.Count % RowsPerPage;
-                TableToShow = FaiCollectionBuffers.Skip(pageIndex * RowsPerPage).Take(numRowsToShow).ToList();
+                CollectionsToShow = FaiCollectionBuffers.Skip(pageIndex * RowsPerPage).Take(numRowsToShow).ToList();
             }
             else
             {
-                TableToShow = FaiCollectionBuffers.Skip(pageIndex * RowsPerPage).Take(RowsPerPage).ToList();
+                CollectionsToShow = FaiCollectionBuffers.Skip(pageIndex * RowsPerPage).Take(RowsPerPage).ToList();
             }
         }
 
@@ -195,6 +201,11 @@ namespace Core.ViewModels.Database
             GenerateTotalYield();
             GenerateTotalDayAndTotalHours();
             CalculateTotalPages();
+        }
+
+        protected virtual void OnCollectionToShowChanged()
+        {
+            CollectionToShowChanged?.Invoke();
         }
     }
 }

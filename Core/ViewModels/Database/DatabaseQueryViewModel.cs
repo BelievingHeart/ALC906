@@ -32,6 +32,8 @@ namespace Core.ViewModels.Database
         private bool _shouldDisplayDialog;
         private IList<IFaiCollection> _selectedCollections;
         private DatabaseViewDialogType _currentDialogType;
+        private Dictionary<string, double> _dictionaryLower;
+        private Dictionary<string, double> _dictionaryUpper;
 
         #endregion
 
@@ -83,9 +85,7 @@ namespace Core.ViewModels.Database
                 if (!value) CurrentDialogType = DatabaseViewDialogType.None;
             }
         }
-
-        public Dictionary<string, double> DictionaryUpper { get; set; }
-        public Dictionary<string, double> DictionaryLower { get; set; }
+        
 
         public DatabaseBufferViewModel DatabaseBuffer { get; set; }
 
@@ -136,15 +136,31 @@ namespace Core.ViewModels.Database
             set
             {
                 _currentDatabaseContentPage = value;
-                if (value == DatabaseContentPageType.TablePage) GenerateLimitDictionaries();
+                if (value == DatabaseContentPageType.TablePage)   GenTableToShow();
             }
         }
+        
+        
 
-        private void GenerateLimitDictionaries()
+        private void GenTableToShow()
         {
-            DictionaryLower = FaiLimits.ToDictionary(item => item.Name, item => item.Lower);
-            DictionaryUpper = FaiLimits.ToDictionary(item => item.Name, item => item.Upper);
+
+            GenLimitDictionaries();
+            FaiCollectionItemViewModels = DatabaseBuffer.CollectionsToShow.Select(c => new FaiCollectionItemViewModel()
+            {
+                DictionaryLower = _dictionaryLower,
+                DictionaryUpper = _dictionaryUpper,
+                FaiCollection = c
+            }).ToList();
         }
+
+        private void GenLimitDictionaries()
+        {
+            _dictionaryLower = FaiLimits.ToDictionary(item => item.Name, item => item.Lower);
+            _dictionaryUpper = FaiLimits.ToDictionary(item => item.Name, item => item.Upper);
+        }
+
+        public IList<FaiCollectionItemViewModel> FaiCollectionItemViewModels { get; set; }
 
         public ICommand SwitchTablesViewCommand { get; set; }
 
@@ -221,11 +237,12 @@ namespace Core.ViewModels.Database
 
 
             DatabaseBuffer = new DatabaseBufferViewModel();
+            DatabaseBuffer.CollectionToShowChanged += GenTableToShow;
 
             DoSimulationCommand = new RelayCommand(DoSimulation);
 
             LoadFaiLimits(_productType);
-            GenerateLimitDictionaries();
+            GenLimitDictionaries();
         }
 
         private void SaveCollectionsToCsv(IList<IFaiCollection> faiCollections)
@@ -246,7 +263,11 @@ namespace Core.ViewModels.Database
                 var contentRow = new List<string>();
                 foreach (var property in properties)
                 {
-                    contentRow.Add(property.GetValue(faiCollection).ToString());
+                    var propValue = property.GetValue(faiCollection);
+                    var cellContent = property.PropertyType == typeof(DateTime)
+                        ? ((DateTime)propValue).ToString("yy-MM-dd-HH:mm:ss-fff")
+                        : propValue.ToString();
+                    contentRow.Add(cellContent);
                 }
 
                 contentsRows.Add(string.Join(",", contentRow));
@@ -262,8 +283,8 @@ namespace Core.ViewModels.Database
 
         private void OpenSaveDialog(object obj)
         {
-            var items = (IList) obj;
-            SelectedCollections = items.Cast<IFaiCollection>().ToList();
+
+            SelectedCollections = (IList<IFaiCollection>) obj;
             CurrentDialogType = DatabaseViewDialogType.SaveDialog;
         }
 
@@ -308,8 +329,8 @@ namespace Core.ViewModels.Database
         /// </summary>
         private void OpenDeleteDialog(object o)
         {
-            var items = (IList) o;
-            SelectedCollections = items.Cast<IFaiCollection>().ToList();
+
+            SelectedCollections = (IList<IFaiCollection>) o;
             CurrentDialogType = DatabaseViewDialogType.DeleteDialog;
         }
 
@@ -430,7 +451,7 @@ namespace Core.ViewModels.Database
             await Task.Run(() =>
             {
                 // Init PieChartData with all 0s
-                foreach (var key in DictionaryLower.Keys)
+                foreach (var key in _dictionaryLower.Keys)
                 {
                     output[key] = 0;
                 }
@@ -443,7 +464,7 @@ namespace Core.ViewModels.Database
                         if (!IsFaiProp(property)) continue;
                         var propName = property.Name;
                         var propValue = (double) property.GetValue(collection);
-                        if (IsFaiPropNg(propValue, propName, DictionaryLower, DictionaryUpper))
+                        if (IsFaiPropNg(propValue, propName, _dictionaryLower, _dictionaryUpper))
                             output[propName]++;
                     }
                 }

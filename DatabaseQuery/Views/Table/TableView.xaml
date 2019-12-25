@@ -12,7 +12,7 @@
 
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-    
+    <!-- -->
     <!-- <UserControl.DataContext> -->
     <!--     <database:DatabaseQueryViewModel/> -->
     <!-- </UserControl.DataContext> -->
@@ -185,22 +185,23 @@
             <TextBlock Text="{Binding DatabaseBuffer.TotalHours, StringFormat=N1}" Margin="0 0 10 0" />
 
             <TextBlock Text="Selected rows: " />
-            <TextBlock Text="{Binding ElementName=FaiCollectionGridView, Path=SelectionCount}" Margin="0 0 10 0" />
+            <TextBlock Text="{Binding ElementName=PART_FaiCollectionGridView, Path=SelectionCount}" Margin="0 0 10 0" />
             <Separator />
 
                     <Button ToolTip="Delete selected rows"
-                            CommandParameter="{Binding ElementName=PART_DataGrid, Path=SelectedItems}"
+                            CommandParameter="{Binding ElementName=PART_FaiCollectionGridView, Path=SelectedCollections}"
                             Command="{Binding OpenDeleteDialogCommand}" Background="Transparent"
                             BorderBrush="Transparent">
                         <materialDesign:PackIcon Kind="Delete" />
                     </Button>
                     <Button ToolTip="Save as csv"
-                            CommandParameter="{Binding ElementName=PART_DataGrid, Path=SelectedItems}"
+                            CommandParameter="{Binding ElementName=PART_FaiCollectionGridView, Path=SelectedCollections}"
                             Command="{Binding OpenSaveDialogCommand}" Background="Transparent"
                             BorderBrush="Transparent">
                         <materialDesign:PackIcon Kind="ContentSave" />
                     </Button>
         </StatusBar>
-        <table:FaiCollectionGridView Grid.Row="2" x:Name="FaiCollectionGridView" FaiCollections="{Binding DatabaseBuffer.TableToShow}" DictionaryLower="{Binding DictionaryLower}" DictionaryUpper="{Binding DictionaryUpper}"/>
+        <table:FaiCollectionListView Grid.Row="2" x:Name="PART_FaiCollectionGridView" FaiCollectionItemList="{Binding FaiCollectionItemViewModels}" DateBlockWidth="200" ValueBlockWidth="100" SelectedCollections="{Binding SelectedCollections}"/>
+        <!-- <table:FaiCollectionGridView Grid.Row="2" x:Name="FaiCollectionGridView" FaiCollections="{Binding DatabaseBuffer.TableToShow}" DictionaryLower="{Binding DictionaryLower}" DictionaryUpper="{Binding DictionaryUpper}"/> -->
     </Grid>
 </UserControl>
