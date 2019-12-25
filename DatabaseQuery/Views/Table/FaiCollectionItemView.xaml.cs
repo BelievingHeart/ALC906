@@ -37,6 +37,12 @@ namespace DatabaseQuery.Views.Table
             PART_Grid.ColumnDefinitions.Add(new ColumnDefinition() {Width = new GridLength(ValueBlockWidth)});
             var resultBlock = new TextBlock()
                 {Width = ValueBlockWidth, Text = collection.Result, TextAlignment = TextAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center};
+            // Highlight ng row
+            if(collection.Result == "NG")
+            {
+                resultBlock.Foreground = Brushes.White;
+                resultBlock.Background = Brushes.Red;
+            }
             Grid.SetColumn(resultBlock, 1);
             PART_Grid.Children.Add(resultBlock);
             
@@ -53,6 +59,7 @@ namespace DatabaseQuery.Views.Table
             // Add other blocks
             var collectionType = collection.GetType();
             var props = collectionType.GetProperties();
+            var resultTooltipText = string.Empty;
             for (var index = 0; index < props.Length; index++)
             {
                 var property = props[index];
@@ -69,10 +76,13 @@ namespace DatabaseQuery.Views.Table
                 // Colorize ng cells
                 if(value > max) faiBlock.Foreground = new SolidColorBrush(ColorConstants.ExceedUpperColor); 
                 if(value < min) faiBlock.Foreground = new SolidColorBrush(ColorConstants.ExceedLowerColor);
+                if (value < min || value > max) resultTooltipText += $"{propName}, ";
                 PART_Grid.ColumnDefinitions.Add(new ColumnDefinition() {Width = new GridLength(ValueBlockWidth)});
                 Grid.SetColumn(faiBlock, index+3);
                 PART_Grid.Children.Add(faiBlock);
             }
+
+            if (collection.Result == "NG") resultBlock.ToolTip = resultTooltipText;
         }
         
 

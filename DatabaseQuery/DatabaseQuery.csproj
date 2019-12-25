@@ -101,9 +101,6 @@
     <Compile Include="Views\SettingView.xaml.cs">
       <DependentUpon>SettingView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Table\FaiCollectionGridView.xaml.cs">
-      <DependentUpon>FaiCollectionGridView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Table\FaiCollectionHeaderRowView.xaml.cs">
       <DependentUpon>FaiCollectionHeaderRowView.xaml</DependentUpon>
     </Compile>
@@ -139,7 +136,6 @@
     <Page Include="Views\LineChart\LineChartHostView.xaml" />
     <Page Include="Views\PieChartView.xaml" />
     <Page Include="Views\SettingView.xaml" />
-    <Page Include="Views\Table\FaiCollectionGridView.xaml" />
     <Page Include="Views\Table\FaiCollectionHeaderRowView.xaml" />
     <Page Include="Views\Table\FaiCollectionItemView.xaml" />
     <Page Include="Views\Table\FaiCollectionListView.xaml" />

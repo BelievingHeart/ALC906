@@ -8,7 +8,7 @@
              d:DesignHeight="300" d:DesignWidth="300" x:Name="PART_FaiCollectionListView">
 
 
-    <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Disabled">
+    <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Disabled" IsTabStop="True">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>

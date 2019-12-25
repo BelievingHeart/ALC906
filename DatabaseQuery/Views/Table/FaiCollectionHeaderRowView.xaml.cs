@@ -33,7 +33,7 @@ namespace DatabaseQuery.Views.Table
             view.PART_StackPanel.Children.Add(new TextBlock()
                 {Width = view.ValueBlockWidth, Text = "Cavity", TextAlignment = TextAlignment.Center});
 
-            // Add other blocks
+            // Add fai blocks
             foreach (var property in collectionType.GetProperties())
             {
                 if(!property.Name.Contains("FAI")) continue;

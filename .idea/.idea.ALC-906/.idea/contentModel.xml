@@ -182,8 +182,6 @@
           <e p="SettingView.xaml" t="Include" />
           <e p="SettingView.xaml.cs" t="Include" />
           <e p="Table" t="Include">
-            <e p="FaiCollectionGridView.xaml" t="Include" />
-            <e p="FaiCollectionGridView.xaml.cs" t="Include" />
             <e p="FaiCollectionHeaderRowView.xaml" t="Include" />
             <e p="FaiCollectionHeaderRowView.xaml.cs" t="Include" />
             <e p="FaiCollectionItemView.xaml" t="Include" />
