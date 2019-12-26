@@ -77,6 +77,9 @@
     <Compile Include="Converters\IntegerToComboBoxItemConverter.cs" />
     <Compile Include="Converters\LineChartUnitTypeToTitleConverter.cs" />
     <Compile Include="Converters\Plus1Converter.cs" />
+    <Compile Include="Views\DateTimeInputView.xaml.cs">
+      <DependentUpon>DateTimeInputView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Dialogs\DeleteCollectionsDialog.xaml.cs">
       <DependentUpon>DeleteCollectionsDialog.xaml</DependentUpon>
     </Compile>
@@ -130,6 +133,7 @@
       <DependentUpon>DatabaseQueryView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\DateTimeInputView.xaml" />
     <Page Include="Views\Dialogs\DeleteCollectionsDialog.xaml" />
     <Page Include="Views\Dialogs\LineChartDialog.xaml" />
     <Page Include="Views\Dialogs\PieChartDialog.xaml" />

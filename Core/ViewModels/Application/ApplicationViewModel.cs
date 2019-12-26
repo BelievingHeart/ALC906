@@ -13,6 +13,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Threading;
 using _2DI40Check;
+using Core.Commands;
 using Core.Constants;
 using Core.Enums;
 using Core.Helpers;
@@ -23,6 +24,7 @@ using Core.ViewModels.Database.FaiCollection;
 using Core.ViewModels.Fai;
 using Core.ViewModels.Login;
 using Core.ViewModels.Message;
+using Core.ViewModels.Popup;
 using Core.ViewModels.Results;
 using Core.ViewModels.Summary;
 using CYG906ALC.ALG;
@@ -123,6 +125,29 @@ namespace Core.ViewModels.Application
             ClearProductErrorStatesCommand = new SimpleCommand(
                 o => Server.SentToPlc(PlcMessagePackConstants.ClearProductErrorStateMessagePack, PlcMessageType.Request),
                 o => !Server.IsAutoRunning);
+            
+            CloseMainWindowCommand = new RelayCommand(AskIfCloseIntentionally);
+
+        }
+        
+        private void AskIfCloseIntentionally()
+        {
+            var popup = new PopupViewModel
+            {
+                OkCommand = new CloseDialogAttachedCommand(o=>true, CloseMainWindow),
+                CancelCommand = new CloseDialogAttachedCommand(o=>true, () => {}),
+                IsSpecialPopup = true,
+                MessageItem = LoggingMessageItem.CreateMessage("Close window?"),
+                OkButtonText = "Close",
+                CancelButtonText = "Cancel"
+            };
+            Logger.EnqueuePopup(popup);
+        }
+
+        private void CloseMainWindow()
+        {
+            if (System.Windows.Application.Current.MainWindow != null)
+                System.Windows.Application.Current.MainWindow.Close();
         }
 
         /// <summary>
@@ -812,7 +837,14 @@ namespace Core.ViewModels.Application
             }
             catch
             {
-               Logger.LogHighLevelWarningNormal("相机连接失败，请解除相机占用稍候并重启ALC");
+                var popup = new PopupViewModel
+                {
+                    OkCommand = new CloseDialogAttachedCommand(o=>true,CloseMainWindow),
+                    IsSpecialPopup = false,
+                    Content = "相机连接失败，请解除相机占用稍候并重启ALC",
+                    OkButtonText = "确定"
+                };
+                Logger.EnqueuePopup(popup);
             }
 
             SetupLaserControllers();
@@ -953,6 +985,8 @@ namespace Core.ViewModels.Application
 
         public ICommand OpenCSVDirCommand { get; set; }
         public ICommand OpenImageDirCommand { get; set; }
+        
+        public ICommand CloseMainWindowCommand { get; set; }
 
         public bool ShouldSave2DImagesLeft { get; set; }
         public bool ShouldSave2DImagesRight { get; set; }

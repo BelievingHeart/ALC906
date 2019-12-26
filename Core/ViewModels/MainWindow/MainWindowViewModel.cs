@@ -1,6 +1,10 @@
 ﻿using System.Windows.Input;
+using Core.Commands;
 using Core.Enums;
+using Core.IoC.Loggers;
 using Core.ViewModels.Application;
+using Core.ViewModels.Message;
+using Core.ViewModels.Popup;
 using WPFCommon.Commands;
 using WPFCommon.ViewModels.Base;
 
@@ -58,6 +62,8 @@ namespace Core.ViewModels.MainWindow
         #endregion
 
 
+        #region ctor
+
         public MainWindowViewModel()
         {
             SwitchHomePageCommand = new SimpleCommand(o => SwitchHomePage(),
@@ -72,10 +78,13 @@ namespace Core.ViewModels.MainWindow
                 o => ApplicationViewModel.Instance.CurrentApplicationPage != ApplicationPageType.SettingsPage);
             SwitchDatabaseHostView = new SimpleCommand(o => SwitchDatabaseHostPage(),
                 o => ApplicationViewModel.Instance.CurrentApplicationPage != ApplicationPageType.DatabaseHostPage);
-             SwitchLoginViewCommand = new SimpleCommand(o => SwitchLoginPage(),
+            SwitchLoginViewCommand = new SimpleCommand(o => SwitchLoginPage(),
                 o => ApplicationViewModel.Instance.CurrentApplicationPage != ApplicationPageType.DatabaseHostPage);
-            
         }
+
+
+
+        #endregion
 
         private void SwitchLoginPage()
         {

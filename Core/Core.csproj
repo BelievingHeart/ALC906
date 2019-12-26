@@ -133,6 +133,7 @@
     <Compile Include="ViewModels\Application\ApplicationViewModel.cs" />
     <Compile Include="ViewModels\Database\DatabaseBufferViewModel.cs" />
     <Compile Include="ViewModels\Database\DatabaseQueryViewModel.cs" />
+    <Compile Include="ViewModels\Database\DateTimeViewModel.cs" />
     <Compile Include="ViewModels\Database\FaiCollection\FaiCollectionAlps.cs" />
     <Compile Include="ViewModels\Database\FaiCollection\FaiCollectionItemViewModel.cs" />
     <Compile Include="ViewModels\Database\FaiCollection\FaiCollectionList.cs" />

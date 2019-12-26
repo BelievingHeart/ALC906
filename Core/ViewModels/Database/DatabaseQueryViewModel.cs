@@ -92,18 +92,9 @@ namespace Core.ViewModels.Database
 
         public DatabaseBufferViewModel DatabaseBuffer { get; set; }
 
-        public int YearStart { get; set; } = int.Parse(DateTime.Now.ToString("yyyy"));
-
-        public int MonthStart { get; set; } = int.Parse(DateTime.Now.ToString("MM"));
-        public int DayStart { get; set; } = int.Parse(DateTime.Now.ToString("dd"));
-        public int HourStart { get; set; } = int.Parse(DateTime.Now.ToString("HH"));
-
-        public int YearEnd { get; set; } = int.Parse(DateTime.Now.ToString("yyyy"));
-
-        public int MonthEnd { get; set; } = int.Parse(DateTime.Now.ToString("MM"));
-        public int DayEnd { get; set; } = int.Parse(DateTime.Now.ToString("dd"));
-        public int HourEnd { get; set; } = int.Parse(DateTime.Now.ToString("HH"));
-
+        public DateTimeViewModel DateTimeViewModelStart { get; set; }
+        public DateTimeViewModel DateTimeViewModelEnd { get; set; }
+        
         public bool IsBusyQuerying { get; set; }
 
         public ProductType ProductType
@@ -240,6 +231,9 @@ namespace Core.ViewModels.Database
 
             SnackbarMessageQueue = new SnackbarMessageQueue(TimeSpan.FromSeconds(3));
             LoadPasswordModule(SnackbarMessageQueue);
+            
+            DateTimeViewModelStart = new DateTimeViewModel();
+            DateTimeViewModelEnd = new DateTimeViewModel();
         }
         #endregion
 
@@ -525,8 +519,8 @@ namespace Core.ViewModels.Database
 
         private async Task QueryByIntervalAsync()
         {
-            var dateStart = ParseDateTime(YearStart, MonthStart, DayStart, HourStart);
-            var dateEnd = ParseDateTime(YearEnd, MonthEnd, DayEnd, HourEnd);
+            var dateStart = DateTimeViewModelStart.ToDateTime();
+            var dateEnd = DateTimeViewModelEnd.ToDateTime();
 
             if (!dateStart.HasValue || !dateEnd.HasValue)
             {
@@ -567,13 +561,7 @@ namespace Core.ViewModels.Database
             SnackbarMessageQueue.Enqueue(message);
         }
 
-        private DateTime? ParseDateTime(int year, int month, int day, int hour)
-        {
-            var dateText = $"{year}-{month:D2}-{day:D2} {hour:D2}:00";
-            var date = dateText.ToDate("yyyy-MM-dd HH:mm");
-//            return DateTime.ParseExact("yyyy-MM-dd HH:mm", dateText, CultureInfo.InvariantCulture);
-            return date;
-        }
+ 
 
         private void LoadFaiLimits(ProductType productType)
         {

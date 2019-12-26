@@ -154,9 +154,14 @@ namespace Core.IoC.Loggers
 
         public static void LogHighLevelWarningSpecial(PopupViewModel popupViewModel)
         {
+            EnqueuePopup(popupViewModel);
+        }
+
+        public static void EnqueuePopup(PopupViewModel popupViewModel)
+        {
             Instance._popupQueue.EnqueuePopupThreadSafe(popupViewModel);
         }
-        
+
         public static void LogHighLevelWarningNormal(string s)
         {
             var popupViewModel = PopupHelper.CreateNormalPopup(s);

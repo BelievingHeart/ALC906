@@ -48,7 +48,7 @@
                         <Button Click="RestoreWindow" Margin="0 2 2 0">
                             <materialDesign:PackIcon Kind="WindowRestore" />
                         </Button>
-                        <Button Click="CloseWindow" Margin="0 2 15 0">
+                        <Button Command="{Binding Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Path=CloseMainWindowCommand}" Margin="0 2 15 0">
                             <materialDesign:PackIcon Kind="WindowClose" />
                         </Button>
 

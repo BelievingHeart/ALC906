@@ -95,6 +95,7 @@
           <e p="Database" t="Include">
             <e p="DatabaseBufferViewModel.cs" t="Include" />
             <e p="DatabaseQueryViewModel.cs" t="Include" />
+            <e p="DateTimeViewModel.cs" t="Include" />
             <e p="FaiCollection" t="Include">
               <e p="FaiCollectionAlps.cs" t="Include" />
               <e p="FaiCollectionItemViewModel.cs" t="Include" />
@@ -160,6 +161,8 @@
           <e p="Resources.resx" t="Include" />
         </e>
         <e p="Views" t="Include">
+          <e p="DateTimeInputView.xaml" t="Include" />
+          <e p="DateTimeInputView.xaml.cs" t="Include" />
           <e p="Dialogs" t="Include">
             <e p="DeleteCollectionsDialog.xaml" t="Include" />
             <e p="DeleteCollectionsDialog.xaml.cs" t="Include" />

@@ -14,7 +14,7 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <!-- -->
     <!-- <UserControl.DataContext> -->
-    <!--     <database:DatabaseQueryViewModel/> -->
+    <!--     <database:DatabaseQueryViewModel /> -->
     <!-- </UserControl.DataContext> -->
     <Grid>
         <Grid.RowDefinitions>
@@ -27,112 +27,12 @@
 
             <!-- Year start-->
             <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" Margin="10">
-                <TextBox materialDesign:HintAssist.Hint="Year" Width="60"
-                         materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
-                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                         materialDesign:HintAssist.FloatingScale="1" Margin="3 0">
-                    <TextBox.Text>
-                        <Binding Path="YearStart" UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <validations:IntegerValidationRule Max="2030" Min="2019" />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
-                <!-- Month start-->
-                <TextBox materialDesign:HintAssist.Hint="Month" Width="60"
-                         materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
-                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                         materialDesign:HintAssist.FloatingScale="1" Margin="3 0">
-                    <TextBox.Text>
-                        <Binding Path="MonthStart" UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <validations:IntegerValidationRule Max="12" Min="1" />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
-                <!-- Day start-->
-                <TextBox materialDesign:HintAssist.Hint="Day" Width="60"
-                         materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
-                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                         materialDesign:HintAssist.FloatingScale="1" Margin="3 0">
-                    <TextBox.Text>
-                        <Binding Path="DayStart" UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <validations:IntegerValidationRule Max="31" Min="1" />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
-                <!-- Hour start-->
-                <TextBox Margin="3 0" Width="60"
-                         materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
-                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                         materialDesign:HintAssist.FloatingScale="1" materialDesign:HintAssist.Hint="Hour">
-                    <TextBox.Text>
-                        <Binding Path="HourStart" UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <validations:IntegerValidationRule Max="23" Min="0" />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
+                <!-- start dateTime input -->
+                <local:DateTimeInputView DataContext="{Binding DateTimeViewModelStart}"/>
                 <materialDesign:PackIcon Kind="ArrowRightThick" Margin="30 0" Width="40" Height="40"
                                          Padding="0 20 0 0" />
-                <!-- Year end -->
-                <TextBox materialDesign:HintAssist.Hint="Year" Width="60"
-                         materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
-                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                         materialDesign:HintAssist.FloatingScale="1" Margin="3 0">
-                    <TextBox.Text>
-                        <Binding Path="YearEnd" UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <validations:IntegerValidationRule Max="2030" Min="2019" />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
-                <!-- Month end -->
-                <TextBox materialDesign:HintAssist.Hint="Month" Width="60"
-                         materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
-                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                         materialDesign:HintAssist.FloatingScale="1" Margin="3 0">
-                    <TextBox.Text>
-                        <Binding Path="MonthEnd" UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <validations:IntegerValidationRule Max="12" Min="1" />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
-                <!-- Day end -->
-                <TextBox materialDesign:HintAssist.Hint="Day" Width="60"
-                         materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
-                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                         materialDesign:HintAssist.FloatingScale="1" Margin="3 0">
-                    <TextBox.Text>
-                        <Binding Path="DayEnd" UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <validations:IntegerValidationRule Max="31" Min="1" />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
-                <!-- Hour end -->
-                <TextBox Margin="3 0" Width="60"
-                         materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
-                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                         materialDesign:HintAssist.FloatingScale="1" materialDesign:HintAssist.Hint="Hour">
-                    <TextBox.Text>
-                        <Binding Path="HourEnd" UpdateSourceTrigger="PropertyChanged">
-                            <Binding.ValidationRules>
-                                <validations:IntegerValidationRule Max="23" Min="0" />
-                            </Binding.ValidationRules>
-                        </Binding>
-                    </TextBox.Text>
-                </TextBox>
-
+                <local:DateTimeInputView DataContext="{Binding DateTimeViewModelEnd}"/>
+                
                 <!-- Query button -->
                 <Button Content="Query" Command="{Binding QueryByIntervalCommand}" IsDefault="True" />
             </StackPanel>
@@ -188,20 +88,21 @@
             <TextBlock Text="{Binding ElementName=PART_FaiCollectionGridView, Path=SelectionCount}" Margin="0 0 10 0" />
             <Separator />
 
-                    <Button ToolTip="Delete selected rows"
-                            CommandParameter="{Binding ElementName=PART_FaiCollectionGridView, Path=SelectedCollections}"
-                            Command="{Binding OpenDeleteDialogCommand}" Background="Transparent"
-                            BorderBrush="Transparent">
-                        <materialDesign:PackIcon Kind="Delete" />
-                    </Button>
-                    <Button ToolTip="Save as csv"
-                            CommandParameter="{Binding ElementName=PART_FaiCollectionGridView, Path=SelectedCollections}"
-                            Command="{Binding OpenSaveDialogCommand}" Background="Transparent"
-                            BorderBrush="Transparent">
-                        <materialDesign:PackIcon Kind="ContentSave" />
-                    </Button>
+            <Button ToolTip="Delete selected rows"
+                    CommandParameter="{Binding ElementName=PART_FaiCollectionGridView, Path=SelectedCollections}"
+                    Command="{Binding OpenDeleteDialogCommand}" Background="Transparent"
+                    BorderBrush="Transparent">
+                <materialDesign:PackIcon Kind="Delete" />
+            </Button>
+            <Button ToolTip="Save as csv"
+                    CommandParameter="{Binding ElementName=PART_FaiCollectionGridView, Path=SelectedCollections}"
+                    Command="{Binding OpenSaveDialogCommand}" Background="Transparent"
+                    BorderBrush="Transparent">
+                <materialDesign:PackIcon Kind="ContentSave" />
+            </Button>
         </StatusBar>
-        <table:FaiCollectionListView Grid.Row="2" x:Name="PART_FaiCollectionGridView" FaiCollectionItemList="{Binding FaiCollectionItemViewModels}" DateBlockWidth="200" ValueBlockWidth="100" SelectedCollections="{Binding SelectedCollections}"/>
-        <!-- <table:FaiCollectionGridView Grid.Row="2" x:Name="FaiCollectionGridView" FaiCollections="{Binding DatabaseBuffer.TableToShow}" DictionaryLower="{Binding DictionaryLower}" DictionaryUpper="{Binding DictionaryUpper}"/> -->
+        <table:FaiCollectionListView Grid.Row="2" x:Name="PART_FaiCollectionGridView"
+                                     FaiCollectionItemList="{Binding FaiCollectionItemViewModels}" DateBlockWidth="200"
+                                     ValueBlockWidth="100" SelectedCollections="{Binding SelectedCollections}" />
     </Grid>
 </UserControl>
