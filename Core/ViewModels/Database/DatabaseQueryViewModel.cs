@@ -268,6 +268,7 @@ namespace Core.ViewModels.Database
 
         private void SaveCollectionsToCsv(IList<IFaiCollection> faiCollections)
         {
+            // Close dialog
             ShouldDisplayDialog = false;
             // Gen header
             var properties = faiCollections[0].GetType().GetProperties();
@@ -275,6 +276,19 @@ namespace Core.ViewModels.Database
             foreach (var property in properties)
             {
                 headerRow.Add(property.Name);
+            }
+            
+            // Gen max and min row
+            var maxRow = new List<string>();
+            var minRow = new List<string>();
+            foreach (var property in properties)
+            {
+                var propName = property.Name;
+                var isFaiProp = propName.Contains("FAI");
+                var max = isFaiProp ? _dictionaryUpper[propName].ToString("F3") : "";
+                var min = isFaiProp ? _dictionaryLower[propName].ToString("F3") : "";
+                maxRow.Add(max);
+                minRow.Add(min);
             }
 
             // Gen contents row
@@ -295,6 +309,8 @@ namespace Core.ViewModels.Database
             }
 
             // combine header and contents
+            contentsRows.Insert(0, string.Join(",", minRow));
+            contentsRows.Insert(0, string.Join(",", maxRow));
             contentsRows.Insert(0, string.Join(",", headerRow));
 
             var csvPath = Path.Combine(CsvDir, ProductType + $"-{faiCollections.Count}PCS.csv");
