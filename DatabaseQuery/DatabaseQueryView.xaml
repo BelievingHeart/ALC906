@@ -41,7 +41,7 @@
                         </ComboBox>
 
                         <Button Command="{Binding SwitchTablesViewCommand}">
-                            <materialDesign:PackIcon Kind="DatabaseSearch" />
+                            <materialDesign:PackIcon Kind="DatabaseSearch"/>
                         </Button>
                         <Button Command="{Binding SwitchSettingViewCommand}">
                             <materialDesign:PackIcon Kind="CogOutline" />

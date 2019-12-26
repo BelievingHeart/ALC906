@@ -20,9 +20,9 @@ namespace DatabaseQuery.Views.Table
         {
             var view = (FaiCollectionHeaderRowView) d;
             var collectionType = (Type)e.NewValue;
-            if (collectionType == null) return;
             view.PART_StackPanel.Children.Clear();
-            
+            if (collectionType == null) return;
+
             // Add date block
             view.PART_StackPanel.Children.Add(new TextBlock()
                 {Width = view.DateBlockWidth, Text = "Inspection time",TextAlignment = TextAlignment.Center});

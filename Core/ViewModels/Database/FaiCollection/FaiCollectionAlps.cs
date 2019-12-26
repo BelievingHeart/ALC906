@@ -65,6 +65,12 @@ namespace Core.ViewModels.Database.FaiCollection
         public double FAI19__10 { get; set; }
         public double FAI19__11 { get; set; }
         public double FAI19__12 { get; set; }
+        public double FAI19__13 { get; set; }
+        public double FAI19__14 { get; set; }
+        public double FAI19__15 { get; set; }
+        public double FAI19__16 { get; set; }
+        public double FAI19__17 { get; set; }
+        public double FAI19__18 { get; set; }
         public double FAI20__1 { get; set; }
         public double FAI20__2 { get; set; }
         public double FAI20__3 { get; set; }

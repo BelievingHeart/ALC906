@@ -28,10 +28,10 @@ namespace DatabaseQuery.Views.Table
         {
             var view = (FaiCollectionListView) d;
             var collectionList = (IList<FaiCollectionItemViewModel>) e.NewValue;
-            if (e.NewValue == null || collectionList.Count == 0) return;
+       
 
             // Define header row
-            view.PART_HeaderRow.CollectionType = collectionList[0].FaiCollection.GetType();
+            view.PART_HeaderRow.CollectionType = collectionList == null || collectionList.Count == 0? null :collectionList[0].FaiCollection.GetType();
             view.PART_HeaderRow.DateBlockWidth = view.DateBlockWidth;
             view.PART_HeaderRow.ValueBlockWidth = view.ValueBlockWidth;
 

@@ -119,7 +119,7 @@
                                        DataContext="{Binding Source={x:Static loggers:Logger.Instance}, Path=PopupViewModel}"
                                        IsOpen="{Binding Path=ShouldMessageBoxPopup, Source={x:Static loggers:Logger.Instance}}">
                 <Grid>   <!-- Pages here -->
-                    <ContentControl
+                    <ContentControl DataContext="{x:Static applicationViewModel:ApplicationViewModel.Instance}"
                         Content="{Binding Path=CurrentApplicationPage, Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Converter={converters:EnumToApplicationPageConverter}}" />
                     <materialDesign:Snackbar Panel.ZIndex="10" HorizontalAlignment="Center" VerticalAlignment="Center"
                                              MessageQueue="{Binding Source={x:Static loggers:Logger.Instance}, Path=StateChangedMessageQueue}" />

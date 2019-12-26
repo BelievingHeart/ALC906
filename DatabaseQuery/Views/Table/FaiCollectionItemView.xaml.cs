@@ -81,8 +81,7 @@ namespace DatabaseQuery.Views.Table
                 Grid.SetColumn(faiBlock, index+3);
                 PART_Grid.Children.Add(faiBlock);
             }
-
-            if (collection.Result == "NG") resultBlock.ToolTip = resultTooltipText;
+            resultBlock.ToolTip = resultTooltipText;
         }
         
 
