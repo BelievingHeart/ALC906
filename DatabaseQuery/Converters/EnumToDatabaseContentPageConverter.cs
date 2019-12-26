@@ -13,7 +13,9 @@ namespace DatabaseQuery.Converters
         public override object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var newValue = (DatabaseContentPageType) value;
-            return newValue == DatabaseContentPageType.SettingPage ? new SettingView() : new TableView() as UserControl;
+            return newValue == DatabaseContentPageType.SettingPage ? new SettingView() :
+                newValue == DatabaseContentPageType.TablePage ? new TableView() :
+                new LoginView() as UserControl;
         }
 
         public override object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

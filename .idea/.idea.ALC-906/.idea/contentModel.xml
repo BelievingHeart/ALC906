@@ -177,6 +177,8 @@
           </e>
           <e p="LineChartView.xaml" t="Include" />
           <e p="LineChartView.xaml.cs" t="Include" />
+          <e p="LoginView.xaml" t="Include" />
+          <e p="LoginView.xaml.cs" t="Include" />
           <e p="PieChartView.xaml" t="Include" />
           <e p="PieChartView.xaml.cs" t="Include" />
           <e p="SettingView.xaml" t="Include" />

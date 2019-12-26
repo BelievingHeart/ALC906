@@ -14,6 +14,7 @@ using Core.Enums;
 using Core.Helpers;
 using Core.Models;
 using Core.ViewModels.Database.FaiCollection;
+using Core.ViewModels.Login;
 using LiveCharts;
 using MaterialDesignThemes.Wpf;
 using WPFCommon.Commands;
@@ -38,6 +39,8 @@ namespace Core.ViewModels.Database
         #endregion
 
         #region prop
+
+        public LoginViewModel LoginViewModel { get; set; }
 
         public LineChartData ProductionSeriesData { get; set; }
         public LineChartData YieldSeriesData { get; set; }
@@ -135,29 +138,13 @@ namespace Core.ViewModels.Database
             get { return _currentDatabaseContentPage; }
             set
             {
+                var previousPage = _currentDatabaseContentPage;
                 _currentDatabaseContentPage = value;
-                if (value == DatabaseContentPageType.TablePage)   GenTableToShow();
+                // Update table because
+                // the user may changed setting before view switching to table view
+                if (value == DatabaseContentPageType.TablePage && previousPage == DatabaseContentPageType.SettingPage)
+                    GenTableToShow();
             }
-        }
-        
-        
-
-        private void GenTableToShow()
-        {
-
-            GenLimitDictionaries();
-            FaiCollectionItemViewModels = DatabaseBuffer.CollectionsToShow.Select(c => new FaiCollectionItemViewModel()
-            {
-                DictionaryLower = _dictionaryLower,
-                DictionaryUpper = _dictionaryUpper,
-                FaiCollection = c
-            }).ToList();
-        }
-
-        private void GenLimitDictionaries()
-        {
-            _dictionaryLower = FaiLimits.ToDictionary(item => item.Name, item => item.Lower);
-            _dictionaryUpper = FaiLimits.ToDictionary(item => item.Name, item => item.Upper);
         }
 
         public IList<FaiCollectionItemViewModel> FaiCollectionItemViewModels { get; set; }
@@ -168,7 +155,7 @@ namespace Core.ViewModels.Database
 
         public ICommand GenPieChartCommand { get; }
 
-        public ISnackbarMessageQueue SnackbarMessageQueue { get; } = new SnackbarMessageQueue(TimeSpan.FromSeconds(3));
+        public ISnackbarMessageQueue SnackbarMessageQueue { get; } 
 
         public bool IsBusyGeneratingLineCharts { get; private set; }
 
@@ -195,6 +182,8 @@ namespace Core.ViewModels.Database
 
         public ICommand SaveSelectionCommand { get; }
 
+        public ICommand SwitchLoginViewCommand { get; }
+
         #endregion
 
 
@@ -206,10 +195,15 @@ namespace Core.ViewModels.Database
                 RunOnlySingleFireIsAllowedEachTimeCommand(() => IsBusyQuerying, QueryByIntervalAsync));
             SwitchSettingViewCommand =
                 new SimpleCommand(o => CurrentDatabaseContentPage = DatabaseContentPageType.SettingPage,
-                    o => CurrentDatabaseContentPage != DatabaseContentPageType.SettingPage);
+                    o => CurrentDatabaseContentPage != DatabaseContentPageType.SettingPage&& LoginViewModel.Authorized);
             SwitchTablesViewCommand =
                 new SimpleCommand(o => CurrentDatabaseContentPage = DatabaseContentPageType.TablePage,
                     o => CurrentDatabaseContentPage != DatabaseContentPageType.TablePage);
+            
+            SwitchLoginViewCommand = 
+                new SimpleCommand(o => CurrentDatabaseContentPage = DatabaseContentPageType.LoginPage,
+                    o => CurrentDatabaseContentPage != DatabaseContentPageType.LoginPage);
+            
             GenPieChartCommand = new SimpleCommand(
                 o => RunOnlySingleFireIsAllowedEachTimeCommand(() => IsBusyGeneratingPieChart, GenPieChartDataAsync),
                 o => DatabaseBuffer.CollectionCount > 0);
@@ -220,7 +214,7 @@ namespace Core.ViewModels.Database
                 o => DatabaseBuffer.CollectionCount > 0);
 
             // Delete commands
-            OpenDeleteDialogCommand = new SimpleCommand(OpenDeleteDialog, o => DatabaseBuffer.CollectionCount > 0);
+            OpenDeleteDialogCommand = new SimpleCommand(OpenDeleteDialog, o => DatabaseBuffer.CollectionCount > 0 && LoginViewModel.Authorized);
             DeleteAllCommand = new SimpleCommand(
                 o => RunOnlySingleFireIsAllowedEachTimeCommand(() => IsBusyDeleting, DeleteAll),
                 o => DatabaseBuffer.CollectionCount > 0);
@@ -243,6 +237,39 @@ namespace Core.ViewModels.Database
 
             LoadFaiLimits(_productType);
             GenLimitDictionaries();
+
+            SnackbarMessageQueue = new SnackbarMessageQueue(TimeSpan.FromSeconds(3));
+            LoadPasswordModule(SnackbarMessageQueue);
+        }
+        #endregion
+
+
+        #region impl
+
+        private void GenTableToShow()
+        {
+
+            GenLimitDictionaries();
+            FaiCollectionItemViewModels = DatabaseBuffer.CollectionsToShow.Select(c => new FaiCollectionItemViewModel()
+            {
+                DictionaryLower = _dictionaryLower,
+                DictionaryUpper = _dictionaryUpper,
+                FaiCollection = c
+            }).ToList();
+        }
+
+        private void GenLimitDictionaries()
+        {
+            _dictionaryLower = FaiLimits.ToDictionary(item => item.Name, item => item.Lower);
+            _dictionaryUpper = FaiLimits.ToDictionary(item => item.Name, item => item.Upper);
+        }
+        
+        private void LoadPasswordModule(ISnackbarMessageQueue snackbarMessageQueue)
+        {
+            LoginViewModel =
+                AutoSerializableHelper.LoadAutoSerializable<LoginViewModel>(DirectoryHelper.ConfigDirectory, "PD");
+            LoginViewModel.ShouldAutoSerialize = true;
+            LoginViewModel.MessageQueue = snackbarMessageQueue;
         }
 
         private void SaveCollectionsToCsv(IList<IFaiCollection> faiCollections)
@@ -350,7 +377,7 @@ namespace Core.ViewModels.Database
             var okCounts = new Dictionary<string, int>();
             List<DateTimePair> dateTimePairs;
             var dateFormat = lineChartUnitType == LineChartUnitType.Day ? "yy-MM-dd" : "MM-dd-HH";
-              // Gen line chart data measured by day
+            // Gen line chart data measured by day
             if (lineChartUnitType == LineChartUnitType.Day)
             {
                 // Partition timespan into bins by day
@@ -486,7 +513,6 @@ namespace Core.ViewModels.Database
             return propValue < dictionaryLower[propName] || propValue > dictionaryUpper[propName];
         }
 
-        #endregion
 
         private void DoSimulation()
         {
@@ -568,5 +594,8 @@ namespace Core.ViewModels.Database
         {
             return propertyInfo.Name.Contains("FAI");
         }
+        
+
+        #endregion 
     }
 }

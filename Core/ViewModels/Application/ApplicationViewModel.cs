@@ -12,6 +12,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Threading;
+using _2DI40Check;
 using Core.Constants;
 using Core.Enums;
 using Core.Helpers;
@@ -833,6 +834,7 @@ namespace Core.ViewModels.Application
             LoginViewModel =
                 AutoSerializableHelper.LoadAutoSerializable<LoginViewModel>(DirectoryHelper.ConfigDirectory, "PD");
             LoginViewModel.ShouldAutoSerialize = true;
+            LoginViewModel.MessageQueue = Logger.Instance.StateChangedMessageQueue;
         }
 
 

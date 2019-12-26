@@ -8,6 +8,7 @@
         xmlns:converters="clr-namespace:DatabaseQuery.Converters"
         xmlns:validations="clr-namespace:WPFCommon.Validations;assembly=WPFCommon"
         xmlns:views="clr-namespace:DatabaseQuery.Views"
+        xmlns:loggers="clr-namespace:Core.IoC.Loggers;assembly=Core"
         mc:Ignorable="d"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
@@ -19,13 +20,14 @@
         FontFamily="{DynamicResource MaterialDesignFont}"
 
         Title="Database Query" Height="1000" Width="1400">
-    
+
     <Window.DataContext>
         <database:DatabaseQueryViewModel />
     </Window.DataContext>
     <materialDesign:DialogHost IsOpen="{Binding ShouldDisplayDialog}">
         <Grid>
-            <materialDesign:Snackbar HorizontalAlignment="Center" VerticalAlignment="Center" MessageQueue="{Binding SnackbarMessageQueue}" Panel.ZIndex="10"/>
+            <materialDesign:Snackbar HorizontalAlignment="Center" VerticalAlignment="Center"
+                                     MessageQueue="{Binding SnackbarMessageQueue}" Panel.ZIndex="10" />
             <DockPanel>
                 <ToolBarTray Orientation="Vertical" DockPanel.Dock="Left">
                     <ToolBar>
@@ -41,10 +43,13 @@
                         </ComboBox>
 
                         <Button Command="{Binding SwitchTablesViewCommand}">
-                            <materialDesign:PackIcon Kind="DatabaseSearch"/>
+                            <materialDesign:PackIcon Kind="DatabaseSearch" />
                         </Button>
                         <Button Command="{Binding SwitchSettingViewCommand}">
                             <materialDesign:PackIcon Kind="CogOutline" />
+                        </Button>
+                        <Button Command="{Binding SwitchLoginViewCommand}">
+                            <materialDesign:PackIcon Kind="UsersSwitch" />
                         </Button>
 
                         <Separator Margin="0 100 0 10" />
@@ -54,26 +59,28 @@
                                 materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding IsBusyGeneratingPieChart}">
                             <materialDesign:PackIcon Kind="ChartPie" />
                         </Button>
-                        <Button  Command="{Binding GenLineChartsCommand}"
-                            materialDesign:ButtonProgressAssist.IsIndicatorVisible="True"
-                                 materialDesign:ButtonProgressAssist.Value="-1"
-                                 materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding IsBusyGeneratingLineCharts}">
+                        <Button Command="{Binding GenLineChartsCommand}"
+                                materialDesign:ButtonProgressAssist.IsIndicatorVisible="True"
+                                materialDesign:ButtonProgressAssist.Value="-1"
+                                materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding IsBusyGeneratingLineCharts}">
                             <materialDesign:PackIcon Kind="ChartAreaspline" />
                         </Button>
-              
+
                     </ToolBar>
                 </ToolBarTray>
-             
-                    <!-- Content page -->
-                    <ContentControl 
-                                    Content="{Binding CurrentDatabaseContentPage, Converter={converters:EnumToDatabaseContentPageConverter}}" />
-             
+
+                <!-- Content page -->
+                <ContentControl
+                    Content="{Binding CurrentDatabaseContentPage, Converter={converters:EnumToDatabaseContentPageConverter}}" />
+
             </DockPanel>
+            
         </Grid>
 
         <!-- PieChart view -->
         <materialDesign:DialogHost.DialogContent>
-        <ContentControl Content="{Binding CurrentDialogType, Converter={converters:EnumToDatabaseViewDialogConverter}}"/>
+            <ContentControl
+                Content="{Binding CurrentDialogType, Converter={converters:EnumToDatabaseViewDialogConverter}}" />
         </materialDesign:DialogHost.DialogContent>
     </materialDesign:DialogHost>
 </Window>

@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using System.Xml.Serialization;
 using Core.IoC.Loggers;
+using MaterialDesignThemes.Wpf;
 using WPFCommon.Commands;
 using WPFCommon.ViewModels.Base;
 
@@ -10,9 +11,12 @@ namespace Core.ViewModels.Login
     public class LoginViewModel : AutoSerializableBase<LoginViewModel>
     {
         private string _inputPassWord;
+        
+        
         public string RememberedPassword { get; set; } = "123456";
 
         [XmlIgnore] public string NewPassword { get; set; }
+        [XmlIgnore] public ISnackbarMessageQueue MessageQueue { get; set; }
 
         [XmlIgnore] public string NewPasswordDoubleCheck { get; set; }
 
@@ -38,37 +42,42 @@ namespace Core.ViewModels.Login
         private void Logout()
         {
             Authorized = false;
-            Logger.LogStateChanged("Log out success");
+            Log("Log out success");
         }
 
         private void ChangePassword()
         {
             if (InputPassWord != RememberedPassword)
             {
-                Logger.LogStateChanged("Incorrect old password");
+                Log("Incorrect old password");
                 return;
             }
 
             if (string.IsNullOrEmpty(NewPassword) || string.IsNullOrEmpty(NewPasswordDoubleCheck))
             {
-                Logger.LogStateChanged("New password can not be empty");
+                Log("New password can not be empty");
                 return;
             }
 
             if (NewPassword.Length < 6 || NewPasswordDoubleCheck.Length < 6)
             {
-                Logger.LogStateChanged("New password must at least have 6 characters");
+                Log("New password must at least have 6 characters");
                 return;
             }
 
             if (NewPassword != NewPasswordDoubleCheck)
             {
-                Logger.LogStateChanged("New password does not match");
+                Log("New password does not match");
                 return;
             }
 
             RememberedPassword = NewPassword;
-            Logger.LogStateChanged("Change password success!");
+            Log("Change password success!");
+        }
+
+        private void Log(string message)
+        {
+            MessageQueue?.Enqueue(message);
         }
 
         private void Login()
@@ -76,24 +85,24 @@ namespace Core.ViewModels.Login
             Authorized = false;
             if (string.IsNullOrEmpty(RememberedPassword))
             {
-                Logger.LogStateChanged("Password has not registered");
+                Log("Password has not registered");
                 return;
             }
 
             if (string.IsNullOrEmpty(InputPassWord))
             {
-                Logger.LogStateChanged("Password can not be empty");
+                Log("Password can not be empty");
                 return;
             }
 
             if (InputPassWord != RememberedPassword)
             {
-                Logger.LogStateChanged("Incorrect password");
+                Log("Incorrect password");
                 return;
             }
 
             Authorized = true;
-            Logger.LogStateChanged("Login success");
+            Log("Login success");
         }
     }
 }

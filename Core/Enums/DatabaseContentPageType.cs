@@ -3,6 +3,7 @@
     public enum DatabaseContentPageType
     {
         TablePage,
-        SettingPage
+        SettingPage,
+        LoginPage
     }
 }

@@ -95,6 +95,9 @@
     <Compile Include="Views\LineChart\LineChartHostView.xaml.cs">
       <DependentUpon>LineChartHostView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\LoginView.xaml.cs">
+      <DependentUpon>LoginView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PieChartView.xaml.cs">
       <DependentUpon>PieChartView.xaml</DependentUpon>
     </Compile>
@@ -134,6 +137,7 @@
     <Page Include="Views\Dialogs\WaitingDialog.xaml" />
     <Page Include="Views\LineChartView.xaml" />
     <Page Include="Views\LineChart\LineChartHostView.xaml" />
+    <Page Include="Views\LoginView.xaml" />
     <Page Include="Views\PieChartView.xaml" />
     <Page Include="Views\SettingView.xaml" />
     <Page Include="Views\Table\FaiCollectionHeaderRowView.xaml" />
