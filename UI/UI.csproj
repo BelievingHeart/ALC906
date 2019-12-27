@@ -91,6 +91,7 @@
     <Compile Include="Converters\EnumToApplicationPageConverter.cs" />
     <Compile Include="Converters\EventToCommandBehaviour.cs" />
     <Compile Include="Converters\LogicNotConverter.cs" />
+    <Compile Include="Converters\MachineStateTranslationConverter.cs" />
     <Compile Include="Converters\MachineStateToColorConverter.cs" />
     <Compile Include="Converters\ProductTypeToIndexConverter.cs" />
     <Compile Include="Views\Summary\BinItemView.xaml.cs">

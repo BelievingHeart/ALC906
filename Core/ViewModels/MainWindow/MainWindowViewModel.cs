@@ -79,7 +79,7 @@ namespace Core.ViewModels.MainWindow
             SwitchDatabaseHostView = new SimpleCommand(o => SwitchDatabaseHostPage(),
                 o => ApplicationViewModel.Instance.CurrentApplicationPage != ApplicationPageType.DatabaseHostPage);
             SwitchLoginViewCommand = new SimpleCommand(o => SwitchLoginPage(),
-                o => ApplicationViewModel.Instance.CurrentApplicationPage != ApplicationPageType.DatabaseHostPage);
+                o => ApplicationViewModel.Instance.CurrentApplicationPage != ApplicationPageType.LoginPage);
         }
 
 

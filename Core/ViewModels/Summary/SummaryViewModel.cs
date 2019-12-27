@@ -101,7 +101,7 @@ namespace Core.ViewModels.Summary
         public int EmptyCount { get; set; }
         public int NgCount
         {
-            get { return Ng2Count + Ng3Count + Ng4Count + Ng5Count; }
+            get { return Ng2Count + Ng3Count + Ng4Count; }
         }
 
         public string YieldText

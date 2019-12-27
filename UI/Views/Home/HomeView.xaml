@@ -42,7 +42,7 @@
                     materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding IsBusyResetting}">
                 <StackPanel>
                     <Image Height="35" Source="{StaticResource Init}" />
-                    <TextBlock HorizontalAlignment="Center" Text="Reset" />
+                    <TextBlock HorizontalAlignment="Center" Text="重置" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" />
                 </StackPanel>
             </Button>
             <!-- Start button -->
@@ -50,7 +50,7 @@
                     Background="{StaticResource PrimaryHueLightBrush}" Command="{Binding StartCommand}">
                 <StackPanel>
                     <Image Height="35" Source="{StaticResource Start}" />
-                    <TextBlock HorizontalAlignment="Center" Text="Start" />
+                    <TextBlock HorizontalAlignment="Center" Text="启动" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"/>
                 </StackPanel>
             </Button>
             <!-- Stop button -->
@@ -58,7 +58,7 @@
                     Background="{StaticResource PrimaryHueLightBrush}" Command="{Binding StopCommand}">
                 <StackPanel>
                     <Image Height="35" Source="{StaticResource Stop}" />
-                    <TextBlock HorizontalAlignment="Center" Text="Stop" />
+                    <TextBlock HorizontalAlignment="Center" Text="停止" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"/>
                 </StackPanel>
             </Button>
             <!-- Pause button -->
@@ -66,7 +66,7 @@
                     Background="{StaticResource PrimaryHueLightBrush}" Command="{Binding PauseCommand}">
                 <StackPanel>
                     <Image Height="35" Source="{StaticResource Pause}" />
-                    <TextBlock HorizontalAlignment="Center" Text="Pause" />
+                    <TextBlock HorizontalAlignment="Center" Text="暂停" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"/>
                 </StackPanel>
             </Button>
             <!-- Continue button -->
@@ -74,7 +74,7 @@
                     Background="{StaticResource PrimaryHueLightBrush}" Command="{Binding ContinueCommand}">
                 <StackPanel>
                     <Image Height="35" Source="{StaticResource Restore}" />
-                    <TextBlock HorizontalAlignment="Center" Text="Continue" />
+                    <TextBlock HorizontalAlignment="Center" Text="继续" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"/>
                 </StackPanel>
             </Button>
             <!-- Machine state banner -->
@@ -82,7 +82,7 @@
                     Background="{Binding CurrentMachineState, Converter={converters:MachineStateToColorConverter}}"
                     Height="70" materialDesign:ButtonAssist.CornerRadius="10"
                     Command="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=SimulateCommand}">
-                <TextBlock Text="{Binding CurrentMachineState}" FontSize="35" HorizontalAlignment="Center"
+                <TextBlock Text="{Binding CurrentMachineState, Converter={converters:MachineStateTranslationConverter}}" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" FontSize="35" HorizontalAlignment="Center"
                            VerticalAlignment="Center" />
             </Button>
         </Grid>

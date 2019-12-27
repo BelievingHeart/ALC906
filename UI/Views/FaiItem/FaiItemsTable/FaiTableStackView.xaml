@@ -22,7 +22,7 @@
                 <Border Width="40" Margin="2" Background="Red" />
                 <TextBlock Text=" NG" />
             </StackPanel>
-            <CheckBox Content="Auto scroll" x:Name="PART_AutoScrollCheckBox"/>
+            <CheckBox Content="自动滚动" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" x:Name="PART_AutoScrollCheckBox"/>
         </StackPanel>
 
         <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="0 0 50 0">

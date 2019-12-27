@@ -18,16 +18,16 @@
         <Grid Grid.Row="0">
 
             <!-- Buttons -->
-            <StackPanel Orientation="Horizontal" Grid.Column="0">
+            <StackPanel Orientation="Horizontal" Grid.Column="0" Margin="20 0">
                 <!-- Connect button -->
                 <Button
-                    Command="{Binding Path=Server.ConnectCommand}"
-                    Content="Connect" Style="{StaticResource MaterialDesignRaisedLightButton}" Height="50"
+                    Command="{Binding Path=Server.ConnectCommand}" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"
+                    Content="连接" Style="{StaticResource MaterialDesignRaisedLightButton}" Height="50"
                     materialDesign:ButtonAssist.CornerRadius="5" />
                 <!-- Disconnect button -->
                 <Button
-                    Command="{Binding Path=Server.DisconnectCommand}"
-                    Content="Disconnect" Style="{StaticResource MaterialDesignRaisedLightButton}" Height="50"
+                    Command="{Binding Path=Server.DisconnectCommand}" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"
+                    Content="断开连接" Style="{StaticResource MaterialDesignRaisedLightButton}" Height="50"
                     materialDesign:ButtonAssist.CornerRadius="5" />
 
                 <TextBlock Text="2D results: " Margin="20 0 0 0" VerticalAlignment="Center" />

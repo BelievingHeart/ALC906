@@ -9,7 +9,7 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <Button HorizontalAlignment="Center" VerticalAlignment="Center"
-                Content="{Binding OkButtonText}" IsDefault="True"
+                Content="{Binding OkButtonText}" IsDefault="True" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" 
                 Command="{Binding OkCommand}"
                 Background="Chartreuse"
                 CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=materialDesign:DialogHost}}"

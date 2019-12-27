@@ -72,13 +72,13 @@
                     <Button Command="{Binding SwitchLoginViewCommand}" Margin="10 0">
                         <StackPanel Orientation="Horizontal">
                                 <Image Source="{StaticResource Login}" Height="30" />
-                                <TextBlock Text=" Login" VerticalAlignment="Center" />
+                                <TextBlock FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Text=" 登陆" VerticalAlignment="Center" />
                             </StackPanel>
                     </Button>
                     <Button Command="{Binding SwitchHomePageCommand}" Margin="10 0">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{StaticResource Home}" Height="30" />
-                            <TextBlock Text=" Home" VerticalAlignment="Center" />
+                            <TextBlock FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Text=" 主页" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
                     <Button Command="{Binding SwitchServerPageCommand}" Margin="10 0">
@@ -102,13 +102,13 @@
                     <Button Margin="10 0" Command="{Binding Path=SwitchSettingsPageCommand}">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{StaticResource Settings}" Height="30" />
-                            <TextBlock Text=" Settings" VerticalAlignment="Center" />
+                            <TextBlock FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Text=" 设置" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
                     <Button Margin="10 0" Command="{Binding Path=SwitchDatabaseHostView}">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Table" Height="30" />
-                            <TextBlock Text=" Tables" VerticalAlignment="Center" />
+                            <TextBlock FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Text=" 表格" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
                 </ToolBar>

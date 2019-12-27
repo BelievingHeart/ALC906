@@ -137,9 +137,9 @@ namespace Core.ViewModels.Application
                 OkCommand = new CloseDialogAttachedCommand(o=>true, CloseMainWindow),
                 CancelCommand = new CloseDialogAttachedCommand(o=>true, () => {}),
                 IsSpecialPopup = true,
-                MessageItem = LoggingMessageItem.CreateMessage("Close window?"),
-                OkButtonText = "Close",
-                CancelButtonText = "Cancel"
+                MessageItem = LoggingMessageItem.CreateMessage("是否退出ALC?"),
+                OkButtonText = "是",
+                CancelButtonText = "否"
             };
             Logger.EnqueuePopup(popup);
         }

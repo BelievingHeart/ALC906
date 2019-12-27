@@ -42,37 +42,37 @@ namespace Core.ViewModels.Login
         private void Logout()
         {
             Authorized = false;
-            Log("Log out success");
+            Log("登出成功");
         }
 
         private void ChangePassword()
         {
             if (InputPassWord != RememberedPassword)
             {
-                Log("Incorrect old password");
+                Log("密码错误");
                 return;
             }
 
             if (string.IsNullOrEmpty(NewPassword) || string.IsNullOrEmpty(NewPasswordDoubleCheck))
             {
-                Log("New password can not be empty");
+                Log("密码不能为空");
                 return;
             }
 
             if (NewPassword.Length < 6 || NewPasswordDoubleCheck.Length < 6)
             {
-                Log("New password must at least have 6 characters");
+                Log("新密码必须含有6位以上数字或字母");
                 return;
             }
 
             if (NewPassword != NewPasswordDoubleCheck)
             {
-                Log("New password does not match");
+                Log("新密码两次输入不对应");
                 return;
             }
 
             RememberedPassword = NewPassword;
-            Log("Change password success!");
+            Log("修改密码成功!");
         }
 
         private void Log(string message)
@@ -85,24 +85,24 @@ namespace Core.ViewModels.Login
             Authorized = false;
             if (string.IsNullOrEmpty(RememberedPassword))
             {
-                Log("Password has not registered");
+                Log("密码还没设置");
                 return;
             }
 
             if (string.IsNullOrEmpty(InputPassWord))
             {
-                Log("Password can not be empty");
+                Log("密码不能为空");
                 return;
             }
 
             if (InputPassWord != RememberedPassword)
             {
-                Log("Incorrect password");
+                Log("密码错误");
                 return;
             }
 
             Authorized = true;
-            Log("Login success");
+            Log("登陆成功");
         }
     }
 }

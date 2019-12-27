@@ -28,15 +28,15 @@
                     
                     <PasswordBox Width="200" x:Name="InputPasswordBox"
                                  PasswordChanged="InputPasswordBoxPasswordChanged"
-                                 materialDesign:HintAssist.Hint="Password"
+                                 materialDesign:HintAssist.Hint="密码"
                                  materialDesign:HintAssist.Foreground="Green"
                                  materialDesign:TextFieldAssist.UnderlineBrush="Green"
                                  Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" />
-                    <Button Content="Login" Margin="10" Width="150" Height="40" FontSize="24"
+                    <Button Content="登陆" Margin="10" Width="150" Height="40" FontSize="24" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" 
                             Command="{Binding LoginCommand}" IsDefault="True"/>
-                    <Button Content="Log out" Margin="10" Width="150" Height="40" FontSize="24" Click="ClearInputPasswordBox"
+                    <Button Content="登出" Margin="10" Width="150" Height="40" FontSize="24" Click="ClearInputPasswordBox" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" 
                             Command="{Binding LogoutCommand}"/>
-                    <Button Content="Change password" Margin="20" VerticalAlignment="Center"
+                    <Button Content="修改密码" Margin="20" VerticalAlignment="Center" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" 
                             HorizontalAlignment="Center" Command="{x:Static materialDesign:Flipper.FlipCommand}"
                             BorderBrush="Transparent" BorderThickness="0" Background="Transparent" />
                 </StackPanel>
@@ -52,24 +52,24 @@
                             <Button Command="{x:Static materialDesign:Flipper.FlipCommand}">
                                 <materialDesign:PackIcon Kind="ArrowLeft" />
                             </Button>
-                            <TextBlock Text="Change password" VerticalAlignment="Center" Margin="20 0" />
+                            <TextBlock Text="修改密码" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" VerticalAlignment="Center" Margin="20 0" />
                         </StackPanel>
                     </materialDesign:ColorZone>
                     <PasswordBox Width="200" Margin="10" x:Name="OldPasswordBox"
                                  PasswordChanged="OldPasswordBoxPasswordChanged"
-                                 materialDesign:HintAssist.Hint="Old password"
+                                 materialDesign:HintAssist.Hint="旧密码"
                                  materialDesign:HintAssist.Foreground="Green"
                                  materialDesign:TextFieldAssist.UnderlineBrush="Green"
                                  Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" />
                     <PasswordBox Width="200" Margin="10 20 10 0" x:Name="NewPasswordBox"
                                  PasswordChanged="NewPasswordBoxPasswordChanged"
-                                 materialDesign:HintAssist.Hint="New password"
+                                 materialDesign:HintAssist.Hint="新密码" 
                                  materialDesign:HintAssist.Foreground="Green"
                                  materialDesign:TextFieldAssist.UnderlineBrush="Green"
                                  Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" />
                     <PasswordBox Width="200" Margin="10" x:Name="NewPasswordBoxDoubleCheck"
                                  PasswordChanged="NewPasswordBoxDoubleCheckPasswordChanged"
-                                 materialDesign:HintAssist.Hint="New password again"
+                                 materialDesign:HintAssist.Hint="再次输入"
                                  materialDesign:HintAssist.Foreground="Green"
                                  materialDesign:TextFieldAssist.UnderlineBrush="Green"
                                  Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" />

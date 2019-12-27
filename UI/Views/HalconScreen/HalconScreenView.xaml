@@ -15,7 +15,7 @@
                 Command="{Binding RelativeSource={RelativeSource AncestorType=local:HalconScreenView}, Path=ChangeSocketViewCommand}"
                 Margin="20" MinHeight="80" HorizontalAlignment="Left" VerticalAlignment="Bottom">
             <StackPanel>
-                <TextBlock Text="Switch cavity" HorizontalAlignment="Left" FontSize="10" />
+                <TextBlock Text="切换视图" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" HorizontalAlignment="Left" FontSize="10" />
                 <Separator />
                 <TextBlock
                     Text="{Binding RelativeSource={RelativeSource AncestorType=local:HalconScreenView}, Path=SocketToDisplay}"
@@ -28,7 +28,7 @@
                                   Background="{StaticResource PrimaryHueDarkBrush}"
                                   Width="80">
             <StackPanel>
-                <TextBlock Text="Image index" Foreground="White" HorizontalAlignment="Center" />
+                <TextBlock Text="图片序号" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Foreground="White" HorizontalAlignment="Center" />
                 <Separator />
                 <ComboBox
                     SelectedIndex="{Binding RelativeSource={RelativeSource AncestorType=local:HalconScreenView}, Path=ImageIndexToDisplay}"

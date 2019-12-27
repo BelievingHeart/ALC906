@@ -16,8 +16,8 @@ namespace Core.Helpers
         {
           return  new PopupViewModel()
             {
-                OkButtonText = "OK",
-                CancelButtonText = "Cancel",
+                OkButtonText = "确定",
+                CancelButtonText = "取消",
                 OkCommand = new CloseDialogAttachedCommand(o => true, () => {}),
                 CancelCommand = new CloseDialogAttachedCommand(o => true, () => {}),
                 MessageItem = LoggingMessageItem.CreateMessage(message),
@@ -34,8 +34,8 @@ namespace Core.Helpers
             
             return  new PopupViewModel()
             {
-                OkButtonText = "Continue",
-                CancelButtonText = "Quit",
+                OkButtonText = "继续",
+                CancelButtonText = "退出",
                 OkCommand = new CloseDialogAttachedCommand(o => true, execution: () => alcServer.SentToPlc(continueMessagePack,PlcMessageType.Request)),
                 CancelCommand = new CloseDialogAttachedCommand(o => true, () =>
                 {

@@ -29,15 +29,18 @@
             </Grid.RowDefinitions>
             <materialDesign:ColorZone Grid.Column="0" Grid.Row="0" Background="Bisque" Height="60" BorderBrush="Gray"
                                       BorderThickness="1">
-                <TextBlock Text="Product type" HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="24" />
+                <TextBlock FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Text="产品类型"
+                           HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="24" />
             </materialDesign:ColorZone>
             <materialDesign:ColorZone Grid.Column="0" Grid.Row="1" Background="Bisque" Height="60" BorderBrush="Gray"
                                       BorderThickness="1">
-                <TextBlock Text="Operator ID" HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="24" />
+                <TextBlock FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Text="操作员ID"
+                           HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="24" />
             </materialDesign:ColorZone>
             <materialDesign:ColorZone Grid.Column="0" Grid.Row="2" Background="Bisque" Height="60" BorderBrush="Gray"
                                       BorderThickness="1">
-                <TextBlock Text="Yield" HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="24" />
+                <TextBlock FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Text="良率" HorizontalAlignment="Center"
+                           VerticalAlignment=" Center" FontSize="24" />
             </materialDesign:ColorZone>
             <materialDesign:ColorZone Grid.Column="0" Grid.Row="3" Background="Bisque" Height="60" BorderBrush="Gray"
                                       BorderThickness="1">
@@ -48,7 +51,8 @@
                                       Height="60" BorderBrush="Gray" BorderThickness="1">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <TextBlock Text="I40 " VerticalAlignment="Center" FontSize="20" />
-                    <ComboBox HorizontalContentAlignment="Center" MinWidth="100" IsEnabled="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Server.IsAutoRunning, Converter={converters:LogicNotConverter}}"
+                    <ComboBox HorizontalContentAlignment="Center" MinWidth="100"
+                              IsEnabled="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Server.IsAutoRunning, Converter={converters:LogicNotConverter}}"
                               SelectedIndex="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=CurrentProductType, Converter={converters:ProductTypeToIndexConverter}}">
                         <ComboBoxItem Content="MTM" HorizontalAlignment="Center" />
                         <ComboBoxItem Content="ALPS" HorizontalAlignment="Center" />
@@ -66,8 +70,11 @@
             </materialDesign:ColorZone>
             <materialDesign:ColorZone Grid.Column="1" Grid.Row="3" Background="{StaticResource PrimaryHueLightBrush}"
                                       Height="60" BorderBrush="Gray" BorderThickness="1">
-                <TextBlock Text="{Binding Uph, StringFormat=N1}" HorizontalAlignment="Center"
-                           VerticalAlignment=" Center" FontSize="20" />
+                <Grid>
+                    <TextBlock Text="{Binding Uph, StringFormat=N1}" HorizontalAlignment="Center"
+                               VerticalAlignment=" Center" FontSize="20" />
+                    <Button Content="重置统计" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Command="{Binding ClearCommand}" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+                </Grid>
             </materialDesign:ColorZone>
 
         </Grid>
@@ -76,22 +83,28 @@
         <Grid Height="190">
 
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            
-            <summary1:BinItemView Margin="10" VerticalAlignment="Center" Grid.Column="0" Grid.Row="0" Header="Total" HeaderBackground="DarkCyan" ContentText="{Binding TotalCount}"/>
-            <summary1:BinItemView Margin="10" VerticalAlignment="Center" Grid.Column="0" Grid.Row="1" Header="OK" HeaderBackground="Lime" ContentText="{Binding OkCount}"/>
-            <summary1:BinItemView Margin="10" VerticalAlignment="Center" Grid.Column="0" Grid.Row="2" Header="NG" HeaderBackground="#c62828" ContentText="{Binding NgCount}"/>
-            <summary1:BinItemView Margin="10" VerticalAlignment="Center" Grid.Column="1" Grid.Row="0" Header="NG2" HeaderBackground="#ff1744" ContentText="{Binding Ng2Count}"/>
-            <summary1:BinItemView Margin="10" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1" Header="NG3" HeaderBackground="#c51162" ContentText="{Binding Ng3Count}"/>
-            <summary1:BinItemView Margin="10" VerticalAlignment="Center" Grid.Column="1" Grid.Row="2" Header="NG4" HeaderBackground="#ff5252" ContentText="{Binding Ng4Count}"/>
-            
+
+            <summary1:BinItemView Margin="10" VerticalAlignment="Center" Grid.Column="0" Grid.Row="0" Header="Total"
+                                  HeaderBackground="DarkCyan" ContentText="{Binding TotalCount}" />
+            <summary1:BinItemView Margin="10" VerticalAlignment="Center" Grid.Column="0" Grid.Row="1" Header="OK"
+                                  HeaderBackground="Lime" ContentText="{Binding OkCount}" />
+            <summary1:BinItemView Margin="10" VerticalAlignment="Center" Grid.Column="0" Grid.Row="2" Header="NG"
+                                  HeaderBackground="#c62828" ContentText="{Binding NgCount}" />
+            <summary1:BinItemView Margin="10" VerticalAlignment="Center" Grid.Column="1" Grid.Row="0" Header="NG2"
+                                  HeaderBackground="#ff1744" ContentText="{Binding Ng2Count}" />
+            <summary1:BinItemView Margin="10" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1" Header="NG3"
+                                  HeaderBackground="#c51162" ContentText="{Binding Ng3Count}" />
+            <summary1:BinItemView Margin="10" VerticalAlignment="Center" Grid.Column="1" Grid.Row="2" Header="NG4"
+                                  HeaderBackground="#ff5252" ContentText="{Binding Ng4Count}" />
+
         </Grid>
-     </StackPanel>
+    </StackPanel>
 </UserControl>

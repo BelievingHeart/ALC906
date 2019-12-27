@@ -9,12 +9,12 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <Button HorizontalAlignment="Left" VerticalAlignment="Center"
-                Content="{Binding OkButtonText}" IsDefault="True"
+                Content="{Binding OkButtonText}" IsDefault="True" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" 
                 Command="{Binding OkCommand}"
                 Background="Chartreuse"
                 CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=materialDesign:DialogHost}}"
                 Margin="10 2" Width="100" />
-        <Button HorizontalAlignment="Right" VerticalAlignment="Center"
+        <Button HorizontalAlignment="Right" VerticalAlignment="Center" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" 
                 Content="{Binding CancelButtonText}" IsCancel="True"
                 Command="{Binding CancelCommand}"
                 Background="Red"

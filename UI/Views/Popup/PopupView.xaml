@@ -22,7 +22,7 @@
                            VerticalAlignment="Center" />
             </materialDesign:ColorZone>
 
-            <TextBlock Grid.Row="1" Text="{Binding MessageItem.Message}" TextWrapping="Wrap" FontSize="20"
+            <TextBlock Grid.Row="1" Text="{Binding MessageItem.Message}" TextWrapping="Wrap" FontSize="20" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" 
                        HorizontalAlignment="Left" />
             <TextBlock Grid.Row="2" Text="{Binding Content}" TextWrapping="Wrap" FontSize="16"
                        HorizontalAlignment="Center" />
