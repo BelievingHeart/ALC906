@@ -34,12 +34,12 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <Button Grid.Row="0" Grid.Column="0" Content="加载" Click="LoadMiscData" Margin="5" />
-                <Button Grid.Row="0" Grid.Column="1" Content="保存" Click="SaveMiscData" Margin="5" x:Name="PART_saveButton"/>
-                <Button Grid.Row="1" Grid.Column="0" Content="加载搜边" Click="LoadFindLineData" Margin="5" />
-                <Button Grid.Row="1" Grid.Column="1" Content="保存搜边" Click="SaveFindLineData" Margin="5" x:Name="PART_saveFindLineConfigButton"/>
-                <Button Grid.Row="2" Grid.Column="0" Content="加载结果" Click="LoadResultData" Margin="5" />
-                <Button Grid.Row="2" Grid.Column="1" Content="保存结果" Click="SaveResultData" Margin="5" x:Name="PART_saveResultConfigButton"/>
+                <Button Grid.Row="0" Grid.Column="0" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Content="加载" Click="LoadMiscData" Margin="5" />
+                <Button Grid.Row="0" Grid.Column="1" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Content="保存" Click="SaveMiscData" Margin="5" x:Name="PART_saveButton"/>
+                <Button Grid.Row="1" Grid.Column="0" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Content="加载搜边" Click="LoadFindLineData" Margin="5" />
+                <Button Grid.Row="1" Grid.Column="1" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Content="保存搜边" Click="SaveFindLineData" Margin="5" x:Name="PART_saveFindLineConfigButton"/>
+                <Button Grid.Row="2" Grid.Column="0" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Content="加载结果" Click="LoadResultData" Margin="5" />
+                <Button Grid.Row="2" Grid.Column="1" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Content="保存结果" Click="SaveResultData" Margin="5" x:Name="PART_saveResultConfigButton"/>
             </Grid>
         </Grid>
     </GroupBox>

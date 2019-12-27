@@ -5,19 +5,27 @@ using System.Linq;
 using System.Threading.Tasks;
 using Core.Enums;
 using Core.ViewModels.Database.FaiCollection;
+using Core.ViewModels.Fai;
 using Dapper;
 
 namespace Core.Helpers
 {
     public static class FaiCollectionHelper
     {
-        public static void SetFaiValues(this IFaiCollection faiCollection, IDictionary<string, double> values, DateTime inspectionTime, int cavityNo, string result)
+        public static void SetFaiValues(this IFaiCollection faiCollection, IList<FaiItem> faiItems, DateTime inspectionTime, int cavityNo, string result)
         {
             if (result == "Empty") return;
             // Assign meta data
             faiCollection.Result = result;
             faiCollection.Cavity = cavityNo;
             faiCollection.InspectionTime = inspectionTime;
+            
+            // make dictionary for performance reason
+            var dict = new Dictionary<string, double>();
+            foreach (var faiItem in faiItems)
+            {
+                dict[faiItem.Name] = faiItem.Value;
+            }
             
             // Assign fai values
             var collectionType = faiCollection.GetType();
@@ -26,7 +34,7 @@ namespace Core.Helpers
 
             foreach (var faiProp in faiProps)
             {
-                faiProp.SetValue(faiCollection, values[ToSingleUnderScore(faiProp.Name)]);
+                faiProp.SetValue(faiCollection, dict[ToSingleUnderScore(faiProp.Name)]);
             }
         }
 

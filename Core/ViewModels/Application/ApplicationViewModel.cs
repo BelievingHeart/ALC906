@@ -17,7 +17,6 @@ using Core.Commands;
 using Core.Constants;
 using Core.Enums;
 using Core.Helpers;
-using Core.ImageProcessing;
 using Core.ImageProcessing._2D;
 using Core.IoC.Loggers;
 using Core.IoC.PlcErrorParser;
@@ -641,13 +640,13 @@ namespace Core.ViewModels.Application
             var faiCollectionCavity2 = CurrentProductType == ProductType.Mtm
                 ? new FaiCollectionMtm()
                 : new FaiCollectionAlps() as IFaiCollection;
-            faiCollectionCavity2.SetFaiValues(_faiResultDictCavity2, TimestampCavity2, 2,
+            faiCollectionCavity2.SetFaiValues(FaiItemsCavity2, TimestampCavity2, 2,
                 ProductLevelCavity2.GetResultText());
 
             var faiCollectionCavity1 = CurrentProductType == ProductType.Mtm
                 ? new FaiCollectionMtm()
                 : new FaiCollectionAlps() as IFaiCollection;
-            faiCollectionCavity1.SetFaiValues(_faiResultDictCavity1, TimestampCavity1, 1,
+            faiCollectionCavity1.SetFaiValues(FaiItemsCavity1, TimestampCavity1, 1,
                 ProductLevelCavity1.GetResultText());
             // Insert into local database
             FaiCollectionHelper.Insert(NameConstants.SqlConnectionString, faiCollectionCavity2, faiCollectionCavity1);
