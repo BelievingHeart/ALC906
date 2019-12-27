@@ -8,49 +8,53 @@
              xmlns:faiItem="clr-namespace:UI.Views.FaiItem"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-    
-    <ListBox ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=faiItem:FaiItemListWarpView}, Path=FaiItems}" Margin="10">
+
+    <Grid>
+        <TextBlock x:Name="PART_TextBlockOverallResult" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="80" Opacity="0.3"/>
+        <ListBox
+            ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=faiItem:FaiItemListWarpView}, Path=FaiItems}"
+            Margin="10">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <WrapPanel/>
+                    <WrapPanel />
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
-        
-        <ListBox.ItemTemplate>
-            <DataTemplate>
-                <Border>
-                        <Button  Height="40" Width="80" Margin="-8" BorderBrush="Black" BorderThickness="1" Background="{StaticResource PrimaryHueLightBrush}">
+
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border>
+                        <Button Height="40" Width="80" Margin="-8" BorderBrush="Black" BorderThickness="1"
+                                Background="{StaticResource PrimaryHueLightBrush}">
                             <StackPanel>
                                 <TextBlock Text="{Binding Name}" HorizontalAlignment="Left" FontSize="10" />
                                 <TextBlock Text="{Binding Value}" FontSize="16" />
                             </StackPanel>
-                           <Button.Style>
-                               <Style TargetType="{x:Type Button}">
-                                   <Style.Triggers>
-                                       <!-- Value too large -->
-                                       <DataTrigger Binding="{Binding TooLarge}" Value="True">
-                                           <DataTrigger.Setters>
-                                               <Setter Property="BorderBrush" Value="Red"/>
-                                               <Setter Property="Foreground" Value="Red"/>
-                                           </DataTrigger.Setters>
-                                       </DataTrigger>
-                                       <!-- Value too small -->
-                                       <DataTrigger Binding="{Binding TooSmall}" Value="True">
-                                           <DataTrigger.Setters>
-                                               <Setter Property="BorderBrush" Value="Blue"/>
-                                               <Setter Property="Foreground" Value="Blue"/>
-                                           </DataTrigger.Setters>
-                                       </DataTrigger>
-                                   </Style.Triggers>
-                               </Style>
-                           </Button.Style>
+                            <Button.Style>
+                                <Style TargetType="{x:Type Button}">
+                                    <Style.Triggers>
+                                        <!-- Value too large -->
+                                        <DataTrigger Binding="{Binding TooLarge}" Value="True">
+                                            <DataTrigger.Setters>
+                                                <Setter Property="BorderBrush" Value="Red" />
+                                                <Setter Property="Foreground" Value="Red" />
+                                            </DataTrigger.Setters>
+                                        </DataTrigger>
+                                        <!-- Value too small -->
+                                        <DataTrigger Binding="{Binding TooSmall}" Value="True">
+                                            <DataTrigger.Setters>
+                                                <Setter Property="BorderBrush" Value="Blue" />
+                                                <Setter Property="Foreground" Value="Blue" />
+                                            </DataTrigger.Setters>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
                         </Button>
 
 
-                     
-
-                </Border>
-            </DataTemplate>
-        </ListBox.ItemTemplate>
-    </ListBox>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
 </UserControl>

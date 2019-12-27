@@ -27,66 +27,62 @@ namespace UI.Views.Vision2D
         
         private void LoadMiscData(object sender, RoutedEventArgs e)
         {
-            var header = ApplicationViewModel.Instance.I40Check.AlgHeader;
-            var dict = ApplicationViewModel.Instance.I40Check.AlgDictionary;
+            MatrixType = StringMatrixType.Misc;
+            var data = ApplicationViewModel.Instance.LoadData2D(StringMatrixType.Misc);
             
             PART_MatrixView.ClearGrid();
-            PART_MatrixView.Header = header;
-            PART_MatrixView.StringMatrix = dict.ToStringMatrix();
+            PART_MatrixView.Header = data.Header;
+            PART_MatrixView.StringMatrix = data.Content;
         }
 
         private void SaveMiscData(object sender, RoutedEventArgs e)
         {
+            if (MatrixType != StringMatrixType.Misc) return;
             var stringMatrix = PART_MatrixView.ParseContent();
 
-            ApplicationViewModel.Instance.I40Check.AlgDictionary = stringMatrix.ToDict();
-            ApplicationViewModel.Instance.I40Check.SaveAlgParam();
-            Logger.LogStateChanged("保存其他数据成功");
+            ApplicationViewModel.Instance.SaveData2D(stringMatrix, StringMatrixType.Misc);
         }
 
         private void LoadFindLineData(object sender, RoutedEventArgs e)
         {
-            var header = ApplicationViewModel.Instance.I40Check.SearchLineHeader;
-            var dict = ApplicationViewModel.Instance.I40Check.SearchLineDictionary;
+            MatrixType = StringMatrixType.FindLine;
+            var data = ApplicationViewModel.Instance.LoadData2D(StringMatrixType.FindLine);
             
             PART_MatrixView.ClearGrid();
-            PART_MatrixView.Header = header;
-            PART_MatrixView.StringMatrix = dict.ToStringMatrix();
+            PART_MatrixView.Header = data.Header;
+            PART_MatrixView.StringMatrix = data.Content;
         }
 
         private void SaveFindLineData(object sender, RoutedEventArgs e)
         {
+            if (MatrixType != StringMatrixType.FindLine) return;
             var stringMatrix = PART_MatrixView.ParseContent();
 
-            ApplicationViewModel.Instance.I40Check.SearchLineDictionary = stringMatrix.ToDict();
-            ApplicationViewModel.Instance.I40Check.SaveSearchLineParam();
-            Logger.LogStateChanged("保存找边数据成功");
+            ApplicationViewModel.Instance.SaveData2D(stringMatrix, StringMatrixType.FindLine);
         }
 
         private void LoadResultData(object sender, RoutedEventArgs e)
         {
-            var header = ApplicationViewModel.Instance.I40Check.ResultHeader;
-            var dict = ApplicationViewModel.Instance.I40Check.ResultDictionary1;
+            MatrixType = StringMatrixType.Results;
+            var data = ApplicationViewModel.Instance.LoadData2D(StringMatrixType.Results);
             
             PART_MatrixView.ClearGrid();
-            PART_MatrixView.Header = header;
-            PART_MatrixView.StringMatrix = dict.ToStringMatrix();        }
+            PART_MatrixView.Header = data.Header;
+            PART_MatrixView.StringMatrix = data.Content;
+        }
 
         private void SaveResultData(object sender, RoutedEventArgs e)
         {
+            if (MatrixType != StringMatrixType.Results) return;
             var stringMatrix = PART_MatrixView.ParseContent();
 
-            ApplicationViewModel.Instance.I40Check.ResultDictionary1 = stringMatrix.ToDict();
-            ApplicationViewModel.Instance.I40Check.SaveResultLimitParam();
-            ApplicationViewModel.Instance.Update2DMinMax();
-            Logger.LogStateChanged("保存结果数据成功");
+            ApplicationViewModel.Instance.SaveData2D(stringMatrix, StringMatrixType.Results);
         }
 
         private void OnCameraDataViewLoaded(object sender, RoutedEventArgs e)
         {
             if (_isFirstLoaded)
             {
-                MatrixType = StringMatrixType.Results;
                 LoadResultData(null, null);
             }
 

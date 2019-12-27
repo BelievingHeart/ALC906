@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
@@ -36,7 +37,7 @@ namespace UI.Views.StringMatrix
         {
             // Check for alignment
             var countOfFirstList = stringMatrix[0].Count;
-            Trace.Assert(stringMatrix.All(list => list.Count == countOfFirstList));
+            if(stringMatrix.Any(list => list.Count != countOfFirstList)) throw new InvalidOperationException("Unexpected item count in some rows");
             var gridHeight = stringMatrix.Count + 1;
 
 
@@ -69,7 +70,7 @@ namespace UI.Views.StringMatrix
 
             // Add header if header exists
             if (Header == null) return;
-            Trace.Assert(Header.Count == countOfFirstList);
+            if(Header.Count != countOfFirstList) throw new InvalidOperationException("Header count != count of first list");
             for (int col = 0; col < countOfFirstList; col++)
             {
                 var text = Header[col];
@@ -107,7 +108,7 @@ namespace UI.Views.StringMatrix
             
             if(sender.StringMatrix?.Count>0)
             {
-                Trace.Assert(newValue.Count == sender.StringMatrix[0].Count);
+                if(newValue.Count != sender.StringMatrix[0].Count) throw new InvalidOperationException("Header count != item count in string matrix row");
                 for (int col = 0; col < newValue.Count; col++)
                 {
                     var text = newValue[col];

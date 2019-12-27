@@ -18,6 +18,7 @@ using Core.Constants;
 using Core.Enums;
 using Core.Helpers;
 using Core.ImageProcessing;
+using Core.ImageProcessing._2D;
 using Core.IoC.Loggers;
 using Core.IoC.PlcErrorParser;
 using Core.ViewModels.Database.FaiCollection;
@@ -1083,16 +1084,42 @@ namespace Core.ViewModels.Application
             FaiItems2DRight = I40Check.GetFaiBoundaries();
         }
         
-        /// <summary>
-        /// Update min max information if 2D fai configs are updated
-        /// </summary>
-        public void Update2DMinMax()
+
+        public StringMatrixData LoadData2D(StringMatrixType dataType)
         {
-            FaiItems2DLeft = I40Check.GetFaiBoundaries();
-            FaiItems2DRight = I40Check.GetFaiBoundaries();
-            
-            FaiItemsCavity1 = FaiItems2DLeft.ConcatNew(FaiItems3DLeft);
-            FaiItemsCavity2 = FaiItems2DRight.ConcatNew(FaiItems3DRight);
+            return I40Check.GetData(dataType);
+        }
+
+        public void SaveData2D(List<List<string>> data, StringMatrixType dataType)
+        {
+            switch (dataType)
+            {
+                case StringMatrixType.Results:
+                    I40Check.ResultDictionary1 = data.ToDict();
+                    I40Check.SaveResultLimitParam();
+                    // Update 2d boundaries
+                    FaiItems2DLeft = I40Check.GetFaiBoundaries();
+                    FaiItems2DRight = I40Check.GetFaiBoundaries();
+                    FaiItemsCavity1 = FaiItems2DLeft.ConcatNew(FaiItems3DLeft);
+                    FaiItemsCavity2 = FaiItems2DRight.ConcatNew(FaiItems3DRight);
+                    
+                    Logger.LogStateChanged("保存结果数据成功");
+                    break;
+                
+                case StringMatrixType.Misc:
+                    I40Check.AlgDictionary = data.ToDict();
+                    I40Check.SaveAlgParam();
+                    Logger.LogStateChanged("保存其他数据成功");
+                    break;
+                
+                case StringMatrixType.FindLine:
+                    I40Check.SearchLineDictionary = data.ToDict();
+                    I40Check.SaveSearchLineParam();
+                    Logger.LogStateChanged("保存找边数据成功");
+                    break;
+                default:
+                    throw new KeyNotFoundException($"Can not find such StringMatrixType {dataType}");
+            }
         }
 
         #endregion

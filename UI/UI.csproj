@@ -108,7 +108,7 @@
     <Compile Include="Views\FaiItem\FaiItemListStackView.xaml.cs">
       <DependentUpon>FaiItemListStackView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\FaiItem\FaiItemListView.xaml.cs">
+    <Compile Include="Views\FaiItem\FaiItemListWrapView.xaml.cs">
       <DependentUpon>FaiItemListWarpView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\FaiItem\FaiItemsTable\DataRowView.xaml.cs">

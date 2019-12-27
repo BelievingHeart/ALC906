@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using Core.Enums;
 using Core.ImageProcessing._2D;
 using Core.ViewModels.Fai;
@@ -61,6 +62,33 @@ namespace Core.Helpers
             };
 
             return result;
+        }
+
+        public static StringMatrixData GetData(this I40Check procedure, StringMatrixType dataType)
+        {
+            List<string> header;
+            List<List<string>> content;
+            switch (dataType)
+            {
+                case StringMatrixType.Results:
+                    header = procedure.ResultHeader;
+                    content = procedure.ResultDictionary1.ToStringMatrix();
+                    break;
+                case StringMatrixType.FindLine:
+                    header = procedure.SearchLineHeader;
+                    content = procedure.SearchLineDictionary.ToStringMatrix();
+                    break;
+                case StringMatrixType.Misc:
+                    header = procedure.AlgHeader;
+                    content = procedure.AlgDictionary.ToStringMatrix();
+                    break;
+                    default:
+                        throw new KeyNotFoundException("Can not find such StringMatrixType");
+            }
+            
+            if(header.Count == 0 || content.Count == 0) Debugger.Break();
+
+            return new StringMatrixData(){Header = header, Content = content};
         }
 
         /// <summary>
