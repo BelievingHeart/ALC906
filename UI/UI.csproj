@@ -94,6 +94,9 @@
     <Compile Include="Converters\MachineStateTranslationConverter.cs" />
     <Compile Include="Converters\MachineStateToColorConverter.cs" />
     <Compile Include="Converters\ProductTypeToIndexConverter.cs" />
+    <Compile Include="Views\ProductLevelView.xaml.cs">
+      <DependentUpon>ProductLevelView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Summary\BinItemView.xaml.cs">
       <DependentUpon>BinItemView.xaml</DependentUpon>
     </Compile>
@@ -255,6 +258,7 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Resources\Images.xaml" />
+    <Page Include="Views\ProductLevelView.xaml" />
     <Page Include="Views\Summary\BinItemView.xaml" />
     <Page Include="Views\Summary\SummaryView.xaml" />
     <Page Include="Views\Database\DatabaseHostView.xaml" />

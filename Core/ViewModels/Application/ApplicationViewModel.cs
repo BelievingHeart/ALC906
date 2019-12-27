@@ -100,6 +100,7 @@ namespace Core.ViewModels.Application
         protected ApplicationViewModel()
         {
             CurrentApplicationPage = ApplicationPageType.Home;
+            Server = new AlcServerViewModel();
 
             Logger.Instance.StartPopupQueue();
 
@@ -149,7 +150,7 @@ namespace Core.ViewModels.Application
             if (System.Windows.Application.Current.MainWindow != null)
                 System.Windows.Application.Current.MainWindow.Close();
         }
-
+        
         /// <summary>
         /// Do temporary simulations
         /// </summary>
@@ -188,11 +189,10 @@ namespace Core.ViewModels.Application
 
         private void SetupServer()
         {
-            Server = new AlcServerViewModel
-            {
-                IpAddress = IPAddress.Parse("192.168.100.100"),
-                Port = 4000
-            };
+
+            Server.IpAddress = IPAddress.Parse("192.168.100.100");
+            Server.Port = 4000;
+            
             Server.NewRunStarted += OnNewRunStarted;
             Server.PlcStopRequested += () => Logger.LogPlcMessage("Auto-mode-stop requested from plc");
             Server.PlcResetRequestd += OnPlcInitRequested;
@@ -894,7 +894,7 @@ namespace Core.ViewModels.Application
         /// </summary>
         public void Cleanup()
         {
-            Server.Disconnect();
+            Server?.Disconnect();
 
             try
             {

@@ -11,6 +11,7 @@
              xmlns:halconScreen="clr-namespace:UI.Views.HalconScreen"
              xmlns:converters="clr-namespace:UI.Converters"
              xmlns:summary="clr-namespace:UI.Views.Summary"
+             xmlns:views="clr-namespace:UI.Views"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              DataContext="{Binding Source={x:Static application:ApplicationViewModel.Instance}}">
@@ -42,7 +43,8 @@
                     materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding IsBusyResetting}">
                 <StackPanel>
                     <Image Height="35" Source="{StaticResource Init}" />
-                    <TextBlock HorizontalAlignment="Center" Text="重置" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" />
+                    <TextBlock HorizontalAlignment="Center" Text="重置"
+                               FontFamily="{x:Static SystemFonts.CaptionFontFamily}" />
                 </StackPanel>
             </Button>
             <!-- Start button -->
@@ -50,7 +52,8 @@
                     Background="{StaticResource PrimaryHueLightBrush}" Command="{Binding StartCommand}">
                 <StackPanel>
                     <Image Height="35" Source="{StaticResource Start}" />
-                    <TextBlock HorizontalAlignment="Center" Text="启动" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"/>
+                    <TextBlock HorizontalAlignment="Center" Text="启动"
+                               FontFamily="{x:Static SystemFonts.CaptionFontFamily}" />
                 </StackPanel>
             </Button>
             <!-- Stop button -->
@@ -58,7 +61,8 @@
                     Background="{StaticResource PrimaryHueLightBrush}" Command="{Binding StopCommand}">
                 <StackPanel>
                     <Image Height="35" Source="{StaticResource Stop}" />
-                    <TextBlock HorizontalAlignment="Center" Text="停止" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"/>
+                    <TextBlock HorizontalAlignment="Center" Text="停止"
+                               FontFamily="{x:Static SystemFonts.CaptionFontFamily}" />
                 </StackPanel>
             </Button>
             <!-- Pause button -->
@@ -66,7 +70,8 @@
                     Background="{StaticResource PrimaryHueLightBrush}" Command="{Binding PauseCommand}">
                 <StackPanel>
                     <Image Height="35" Source="{StaticResource Pause}" />
-                    <TextBlock HorizontalAlignment="Center" Text="暂停" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"/>
+                    <TextBlock HorizontalAlignment="Center" Text="暂停"
+                               FontFamily="{x:Static SystemFonts.CaptionFontFamily}" />
                 </StackPanel>
             </Button>
             <!-- Continue button -->
@@ -74,7 +79,8 @@
                     Background="{StaticResource PrimaryHueLightBrush}" Command="{Binding ContinueCommand}">
                 <StackPanel>
                     <Image Height="35" Source="{StaticResource Restore}" />
-                    <TextBlock HorizontalAlignment="Center" Text="继续" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"/>
+                    <TextBlock HorizontalAlignment="Center" Text="继续"
+                               FontFamily="{x:Static SystemFonts.CaptionFontFamily}" />
                 </StackPanel>
             </Button>
             <!-- Machine state banner -->
@@ -82,8 +88,10 @@
                     Background="{Binding CurrentMachineState, Converter={converters:MachineStateToColorConverter}}"
                     Height="70" materialDesign:ButtonAssist.CornerRadius="10"
                     Command="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=SimulateCommand}">
-                <TextBlock Text="{Binding CurrentMachineState, Converter={converters:MachineStateTranslationConverter}}" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" FontSize="35" HorizontalAlignment="Center"
-                           VerticalAlignment="Center" />
+                <TextBlock
+                    Text="{Binding CurrentMachineState, Converter={converters:MachineStateTranslationConverter}}"
+                    FontFamily="{x:Static SystemFonts.CaptionFontFamily}" FontSize="35" HorizontalAlignment="Center"
+                    VerticalAlignment="Center" />
             </Button>
         </Grid>
 
@@ -95,20 +103,20 @@
             </Grid.ColumnDefinitions>
 
             <!-- Basic product info -->
-  
 
-                <!-- Bin views -->
-                <summary:SummaryView Grid.Column="0" DataContext="{Binding Summary}"/>
+
+            <!-- Bin views -->
+            <summary:SummaryView Grid.Column="0" DataContext="{Binding Summary}" />
 
             <!-- Left socket preview -->
             <halconScreen:HalconScreenView Grid.Column="1" ButtonVisibility="Visible" Height="421"
                                            LeftGraphics="{Binding Path=Graphics2DCavity1}"
-                                           RightGraphics="{Binding Path=Graphics2DCavity2}" VerticalAlignment="Top"/>
+                                           RightGraphics="{Binding Path=Graphics2DCavity2}" VerticalAlignment="Top" />
 
             <!-- Right socket preview -->
             <halconScreen:HalconScreenView Grid.Column="2" ButtonVisibility="Visible" Height="421"
                                            LeftGraphics="{Binding Path=Graphics3DCavity1}"
-                                           RightGraphics="{Binding Path=Graphics3DCavity2}" VerticalAlignment="Top"/>
+                                           RightGraphics="{Binding Path=Graphics3DCavity2}" VerticalAlignment="Top" />
 
 
         </Grid>
@@ -118,8 +126,20 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <faiItem:FaiItemListWarpView Grid.Column="0" FaiItems="{Binding FaiItemsCavity1}" />
-            <faiItem:FaiItemListWarpView Grid.Column="1" FaiItems="{Binding FaiItemsCavity2}"/>
+            <StackPanel Grid.Column="0">
+                <Grid>
+                    <faiItem:FaiItemListWarpView FaiItems="{Binding FaiItemsCavity1}" />
+                    <views:ProductLevelView ProductLevel="{Binding ProductLevelCavity1}" HorizontalAlignment="Center"
+                                            VerticalAlignment="Center" />
+                </Grid>
+            </StackPanel>
+            <StackPanel Grid.Column="1">
+                <Grid>
+                    <faiItem:FaiItemListWarpView FaiItems="{Binding FaiItemsCavity2}" />
+                    <views:ProductLevelView ProductLevel="{Binding ProductLevelCavity2}" HorizontalAlignment="Center"
+                                            VerticalAlignment="Center" />
+                </Grid>
+            </StackPanel>
         </Grid>
 
     </Grid>

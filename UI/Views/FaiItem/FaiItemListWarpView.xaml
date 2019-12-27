@@ -8,9 +8,7 @@
              xmlns:faiItem="clr-namespace:UI.Views.FaiItem"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-
-    <Grid>
-        <TextBlock x:Name="PART_TextBlockOverallResult" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="80" Opacity="0.3"/>
+    
         <ListBox
             ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=faiItem:FaiItemListWarpView}, Path=FaiItems}"
             Margin="10">
@@ -56,5 +54,4 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-    </Grid>
 </UserControl>

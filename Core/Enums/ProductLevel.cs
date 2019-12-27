@@ -7,6 +7,7 @@
         Ng3=3,
         Ng4=4,
         Ng5=5,
-        Empty = 100
+        Empty = 100,
+        Undefined = 101
     }
 }
