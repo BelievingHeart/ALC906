@@ -93,7 +93,10 @@
     <Compile Include="Converters\LogicNotConverter.cs" />
     <Compile Include="Converters\MachineStateToColorConverter.cs" />
     <Compile Include="Converters\ProductTypeToIndexConverter.cs" />
-    <Compile Include="Views\Bins\SummaryView.xaml.cs">
+    <Compile Include="Views\Summary\BinItemView.xaml.cs">
+      <DependentUpon>BinItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Summary\SummaryView.xaml.cs">
       <DependentUpon>SummaryView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Database\DatabaseHostView.xaml.cs">
@@ -251,7 +254,8 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Resources\Images.xaml" />
-    <Page Include="Views\Bins\SummaryView.xaml" />
+    <Page Include="Views\Summary\BinItemView.xaml" />
+    <Page Include="Views\Summary\SummaryView.xaml" />
     <Page Include="Views\Database\DatabaseHostView.xaml" />
     <Page Include="Views\FaiItem\FaiItemGridView.xaml" />
     <Page Include="Views\FaiItem\FaiItemListStackView.xaml" />

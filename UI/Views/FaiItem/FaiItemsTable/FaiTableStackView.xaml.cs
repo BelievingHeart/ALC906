@@ -76,7 +76,8 @@ namespace UI.Views.FaiItem.FaiItemsTable
             
                 // Add new row
                 PART_ItemsStack.Children.Add(newRow);
-          
+                
+              if(PART_AutoScrollCheckBox.IsChecked != null && (bool) PART_AutoScrollCheckBox.IsChecked) PART_ScrollViewer.ScrollToBottom();
         }
         
         

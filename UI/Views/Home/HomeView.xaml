@@ -4,13 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:application="clr-namespace:Core.ViewModels.Application;assembly=Core"
-             xmlns:bins="clr-namespace:UI.Views.Bins"
              xmlns:home="clr-namespace:UI.Views.Home"
              xmlns:halconDotNet="clr-namespace:HalconDotNet;assembly=halcondotnet"
              xmlns:faiItem="clr-namespace:UI.Views.FaiItem"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:halconScreen="clr-namespace:UI.Views.HalconScreen"
              xmlns:converters="clr-namespace:UI.Converters"
+             xmlns:summary="clr-namespace:UI.Views.Summary"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              DataContext="{Binding Source={x:Static application:ApplicationViewModel.Instance}}">
@@ -98,7 +98,7 @@
   
 
                 <!-- Bin views -->
-                <bins:SummaryView Grid.Column="0" DataContext="{Binding Summary}"/>
+                <summary:SummaryView Grid.Column="0" DataContext="{Binding Summary}"/>
 
             <!-- Left socket preview -->
             <halconScreen:HalconScreenView Grid.Column="1" ButtonVisibility="Visible" Height="421"

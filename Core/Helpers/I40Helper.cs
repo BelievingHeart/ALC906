@@ -9,6 +9,7 @@ using Core.ViewModels.Results;
 using CYG906ALC.ALG;
 using HalconDotNet;
 using I40_3D_Test;
+using WPFCommon.Helpers;
 
 namespace Core.Helpers
 {
@@ -62,17 +63,35 @@ namespace Core.Helpers
             return result;
         }
 
-        public static List<FaiItem> GetFaiItems(this I40Check procedure)
+        /// <summary>
+        /// Get min max boundaries from I40Check
+        /// </summary>
+        /// <param name="procedure"></param>
+        /// <param name="faiItems">FaiItems to reuse</param>
+        /// <returns></returns>
+        public static List<FaiItem> GetFaiBoundaries(this I40Check procedure, List<FaiItem> faiItems = null)
         {
             var numValidFai = I40Check.YouXiaoFAINum;
             var names = procedure.GetFaiNames();
             var uppers = procedure.myResult.Take(numValidFai).Select(ele => ele.upper).ToList();
             var lowers = procedure.myResult.Take(numValidFai).Select(ele => ele.lower).ToList();
 
-            var output = new List<FaiItem>();
-            for (int i = 0; i < numValidFai; i++)
+            var output = faiItems ?? new List<FaiItem>();
+            if (faiItems == null)
             {
-                output.Add(new FaiItem(){Name = names[i], MaxBoundary = uppers[i], MinBoundary = lowers[i], ShouldAutoSerialize = false});
+                for (int i = 0; i < numValidFai; i++)
+                {
+                    output.Add(new FaiItem(){Name = names[i], MaxBoundary = uppers[i], MinBoundary = lowers[i], ShouldAutoSerialize = false});
+                }
+            }
+            else
+            {
+                for (int i = 0; i < numValidFai; i++)
+                {
+                    var item = output.ByName(names[i]);
+                    item.MaxBoundary = uppers[i];
+                    item.MinBoundary = lowers[i];
+                }
             }
 
             return output;

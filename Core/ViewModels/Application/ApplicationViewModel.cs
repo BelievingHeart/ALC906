@@ -1079,8 +1079,20 @@ namespace Core.ViewModels.Application
             var i40ConfigDir2d = DirectoryConstants.ConfigDirs2D[currentProductType];
             I40Check = new I40Check(i40ConfigDir2d, "I40");
 
-            FaiItems2DLeft = I40Check.GetFaiItems();
-            FaiItems2DRight = I40Check.GetFaiItems();
+            FaiItems2DLeft = I40Check.GetFaiBoundaries();
+            FaiItems2DRight = I40Check.GetFaiBoundaries();
+        }
+        
+        /// <summary>
+        /// Update min max information if 2D fai configs are updated
+        /// </summary>
+        public void Update2DMinMax()
+        {
+            FaiItems2DLeft = I40Check.GetFaiBoundaries();
+            FaiItems2DRight = I40Check.GetFaiBoundaries();
+            
+            FaiItemsCavity1 = FaiItems2DLeft.ConcatNew(FaiItems3DLeft);
+            FaiItemsCavity2 = FaiItems2DRight.ConcatNew(FaiItems3DRight);
         }
 
         #endregion

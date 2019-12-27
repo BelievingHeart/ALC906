@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using Core.Enums;
 using Core.Helpers;
+using Core.IoC.Loggers;
 using Core.ViewModels.Application;
 
 namespace UI.Views.Vision2D
@@ -40,6 +41,7 @@ namespace UI.Views.Vision2D
 
             ApplicationViewModel.Instance.I40Check.AlgDictionary = stringMatrix.ToDict();
             ApplicationViewModel.Instance.I40Check.SaveAlgParam();
+            Logger.LogStateChanged("保存其他数据成功");
         }
 
         private void LoadFindLineData(object sender, RoutedEventArgs e)
@@ -58,6 +60,7 @@ namespace UI.Views.Vision2D
 
             ApplicationViewModel.Instance.I40Check.SearchLineDictionary = stringMatrix.ToDict();
             ApplicationViewModel.Instance.I40Check.SaveSearchLineParam();
+            Logger.LogStateChanged("保存找边数据成功");
         }
 
         private void LoadResultData(object sender, RoutedEventArgs e)
@@ -75,6 +78,8 @@ namespace UI.Views.Vision2D
 
             ApplicationViewModel.Instance.I40Check.ResultDictionary1 = stringMatrix.ToDict();
             ApplicationViewModel.Instance.I40Check.SaveResultLimitParam();
+            ApplicationViewModel.Instance.Update2DMinMax();
+            Logger.LogStateChanged("保存结果数据成功");
         }
 
         private void OnCameraDataViewLoaded(object sender, RoutedEventArgs e)

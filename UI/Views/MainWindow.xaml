@@ -61,7 +61,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <sideLogger:SideLoggerView HorizontalAlignment="Right" Grid.Row="0" Grid.RowSpan="2" Panel.ZIndex="3"
+            <sideLogger:SideLoggerView HorizontalAlignment="Left" Grid.Row="0" Grid.RowSpan="2" Panel.ZIndex="3"
                                        MessageList="{Binding Source={x:Static loggers:Logger.Instance}, Path=RoutineMessageList}" />
             <!-- ToolBar -->
             <ToolBarTray Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Top">
