@@ -4,8 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:application="clr-namespace:Core.ViewModels.Application;assembly=Core"
-             xmlns:home="clr-namespace:UI.Views.Home"
-             xmlns:halconDotNet="clr-namespace:HalconDotNet;assembly=halcondotnet"
              xmlns:faiItem="clr-namespace:UI.Views.FaiItem"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:halconScreen="clr-namespace:UI.Views.HalconScreen"
@@ -43,7 +41,7 @@
                     materialDesign:ButtonProgressAssist.IsIndeterminate="{Binding IsBusyResetting}">
                 <StackPanel>
                     <Image Height="35" Source="{StaticResource Init}" />
-                    <TextBlock HorizontalAlignment="Center" Text="重置"
+                    <TextBlock HorizontalAlignment="Center" Text="复位"
                                FontFamily="{x:Static SystemFonts.CaptionFontFamily}" />
                 </StackPanel>
             </Button>
@@ -129,7 +127,7 @@
             <StackPanel Grid.Column="0">
                 <Grid>
                     <faiItem:FaiItemListWarpView FaiItems="{Binding FaiItemsCavity1}" />
-                    <views:ProductLevelView ProductLevel="{Binding ProductLevelCavity1}" HorizontalAlignment="Center"
+                    <views:ProductLevelView ProductLevel="{Binding ProductLevelCavity1, Mode=OneWay}" HorizontalAlignment="Center"
                                             VerticalAlignment="Center" />
                 </Grid>
             </StackPanel>

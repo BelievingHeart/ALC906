@@ -16,6 +16,8 @@ namespace UI.Views
 
         public static readonly DependencyProperty ProductLevelProperty = DependencyProperty.Register(
             "ProductLevel", typeof(ProductLevel), typeof(ProductLevelView), new PropertyMetadata(default(ProductLevel), OnProductLevelChanged));
+        
+
 
         private static void OnProductLevelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -23,28 +25,28 @@ namespace UI.Views
             var productLevel = (ProductLevel) e.NewValue;
             // Avoid recursive call
             if (productLevel == ProductLevel.Undefined) return;
-            view.DisplayText = Empty;
+            view.PART_ProductLevelTextBlock.Text = Empty;
 
             if (productLevel == ProductLevel.OK) {
-                view.DisplayText = "OK";
+                view.PART_ProductLevelTextBlock.Text = "OK";
                 view.PART_ProductLevelTextBlock.Foreground = Brushes.Green;
             }
             else if (productLevel == ProductLevel.Ng2 || productLevel == ProductLevel.Ng3 ||
                      productLevel == ProductLevel.Ng4) {
-                view.DisplayText = "NG";
+                view.PART_ProductLevelTextBlock.Text = "NG";
                 view.PART_ProductLevelTextBlock.Foreground = Brushes.Red;
             }
             else if (productLevel == ProductLevel.Ng5) {
-                view.DisplayText = "错误";
+                view.PART_ProductLevelTextBlock.Text = "错误";
                 view.PART_ProductLevelTextBlock.Foreground = Brushes.Goldenrod;
             }
             else if (productLevel == ProductLevel.Empty) {
-                view.DisplayText = "空";
+                view.PART_ProductLevelTextBlock.Text = "空";
                 view.PART_ProductLevelTextBlock.Foreground = Brushes.Blue;
             }
             
-            // Allow product level to be reassigned
-            view.ProductLevel = ProductLevel.Undefined;
+            view.SetCurrentValue(ProductLevelProperty, Core.Enums.ProductLevel.Undefined);
+            
         }
 
         public ProductLevel ProductLevel
@@ -53,13 +55,5 @@ namespace UI.Views
             set { SetValue(ProductLevelProperty, value); }
         }
 
-        public static readonly DependencyProperty DisplayTextProperty = DependencyProperty.Register(
-            "DisplayText", typeof(string), typeof(ProductLevelView), new PropertyMetadata(default(string)));
-
-        public string DisplayText
-        {
-            get { return (string) GetValue(DisplayTextProperty); }
-            set { SetValue(DisplayTextProperty, value); }
-        }
     }
 }

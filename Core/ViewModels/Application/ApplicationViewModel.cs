@@ -156,6 +156,28 @@ namespace Core.ViewModels.Application
         /// </summary>
         private void DoSimulation()
         {
+//            _testValue++;
+//            if (_testValue % 4 == 0)
+//            {
+//                ProductLevelCavity1 = ProductLevel.Empty;
+//                OnPropertyChanged(nameof(ProductLevelCavity1));
+//                return;
+//            }  if (_testValue % 3 == 0)
+//            {
+//                ProductLevelCavity1 = ProductLevel.Ng2;
+//                OnPropertyChanged(nameof(ProductLevelCavity1));
+//                return;
+//            }  if (_testValue % 2 == 0)
+//            {
+//                ProductLevelCavity1 = ProductLevel.Ng5;
+//                OnPropertyChanged(nameof(ProductLevelCavity1));
+//                return;
+//            }  if (_testValue % 1 == 0)
+//            {
+//                ProductLevelCavity1 = ProductLevel.OK;
+//                OnPropertyChanged(nameof(ProductLevelCavity1));
+//
+//            }
         }
 
         private void ClearLaserImagesForNewRound()
@@ -325,7 +347,7 @@ namespace Core.ViewModels.Application
 
         private void OnPlcResetFinished()
         {
-            Logger.LogStateChanged("Plc init done");
+            Logger.LogStateChanged("PLC复位完成");
         }
 
         private void ResetStates()
@@ -369,7 +391,7 @@ namespace Core.ViewModels.Application
                 CurrentArrivedSocket2D = CavityType.Cavity1;
             }
 
-            Logger.LogPlcMessage("2D left socket arrived");
+            Logger.LogPlcMessage("2D cavity1 arrived");
         }
 
         private void OnCavity2Arrived2D()
@@ -379,7 +401,7 @@ namespace Core.ViewModels.Application
                 CurrentArrivedSocket2D = CavityType.Cavity2;
             }
 
-            Logger.LogPlcMessage("2D right socket arrived");
+            Logger.LogPlcMessage("2D cavity2 arrived");
             ResultReady2D = ResultStatus.Waiting;
         }
 
@@ -461,7 +483,7 @@ namespace Core.ViewModels.Application
             var enumValue = (CavityType) socketIndex;
 
 
-            Logger.LogRoutineMessage($"3D processing starts for {enumValue} cavity");
+            Logger.LogRoutineMessageAsync($"3D processing starts for {enumValue} cavity");
             // Do processing for one socket and get its result
             var imagesForOneSocket =
                 _laserImageBuffers.Values.Select(list => list[socketIndex]).ToList();
@@ -499,7 +521,7 @@ namespace Core.ViewModels.Application
                 Graphics3DCavity2 = result3D.GetGraphics();
             }
 
-            Logger.LogRoutineMessage($"3D processing ends for {enumValue} cavity");
+            Logger.LogRoutineMessageAsync($"3D processing ends for {enumValue} cavity");
 
 
             // If all reserved places for 3D image buffers are filled,
@@ -545,7 +567,7 @@ namespace Core.ViewModels.Application
                 SubmitProductLevels();
 
                 UiDispatcher.Invoke(UpdateSummaries);
-                Task.Run(() => SerializeImagesAndCsv(Graphics2DCavity1.Images, Graphics2DCavity2.Images,
+                Task.Run(() => SerializeImagesAndData(Graphics2DCavity1.Images, Graphics2DCavity2.Images,
                     _imagesToSerialize3dCavity1, _imagesToSerialize3dCavity2,
                     FaiItemsCavity1, FaiItemsCavity2));
             }
@@ -556,7 +578,7 @@ namespace Core.ViewModels.Application
 
         private void UpdateSummaries()
         {
-            if (ProductLevelCavity1 != ProductLevel.Empty) Summary.Update(ProductLevelCavity1, ProductLevelCavity2);
+             Summary.Update(ProductLevelCavity1, ProductLevelCavity2);
         }
 
         /// <summary>
@@ -607,7 +629,7 @@ namespace Core.ViewModels.Application
             });
         }
 
-        private void SerializeImagesAndCsv(List<HImage> images2dCavity1, List<HImage> images2dCavity2,
+        private void SerializeImagesAndData(List<HImage> images2dCavity1, List<HImage> images2dCavity2,
             List<HImage> images3dCavity1, List<HImage> images3dCavity2, List<FaiItem> faiItemsCavity1,
             List<FaiItem> faiItemsCavity2)
         {
@@ -759,7 +781,7 @@ namespace Core.ViewModels.Application
         /// <param name="images"></param>
         private void ProcessImages2D(List<HImage> images)
         {
-            Logger.LogRoutineMessage($"Received {images.Count} 2d images");
+            Logger.LogRoutineMessageAsync($"Received {images.Count} 2d images");
             if (!Server.IsAutoRunning) return;
             CavityType currentArrivedSocket2D;
             lock (_lockerOfCurrentArrivedSocket2D)
@@ -777,7 +799,7 @@ namespace Core.ViewModels.Application
             }
 
 
-            Logger.LogRoutineMessage($"2D processing starts for {currentArrivedSocket2D}");
+            Logger.LogRoutineMessageAsync($"2D processing starts for {currentArrivedSocket2D}");
             GraphicsPackViewModel result;
 
             try
@@ -791,7 +813,7 @@ namespace Core.ViewModels.Application
                     Images = images, FaiResults = I40Check.GetFaiDict(currentArrivedSocket2D.ToChusIndex()),
                     ErrorMessage = e.Message
                 };
-                Logger.LogRoutineMessage($"2D processing for {currentArrivedSocket2D} errored");
+                Logger.LogRoutineMessageAsync($"2D processing for {currentArrivedSocket2D} errored");
                 // If error is unexpected
                 if (!e.Message.Contains("[2D Vision]"))
                 {
@@ -801,7 +823,7 @@ namespace Core.ViewModels.Application
                 }
             }
 
-            Logger.LogRoutineMessage($"2D processing ends for {currentArrivedSocket2D}");
+            Logger.LogRoutineMessageAsync($"2D processing ends for {currentArrivedSocket2D}");
 
             bool all2DProcessingForThisRunIsDone;
             lock (_lockerOfResultQueues2D)
@@ -816,7 +838,7 @@ namespace Core.ViewModels.Application
 
             if (!all2DProcessingForThisRunIsDone) return;
             // If results of both cavities are ready
-            Logger.LogRoutineMessage("All 2D images have processed");
+            Logger.LogRoutineMessageAsync("All 2D images have processed");
             ResultReady2D = ResultStatus.Ready;
             Server.NotifyPlcReadyToGoNextLoop();
         }

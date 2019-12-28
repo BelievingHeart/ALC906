@@ -15,9 +15,9 @@ namespace UI.Converters
                 case MachineState.Disconnect:
                     return "连接断开";
                 case MachineState.Idle:
-                    return "空闲";
+                    return "准备";
                 case MachineState.Pausing:
-                    return "正在暂停";
+                    return "暂停中";
                 case MachineState.Resetting:
                     return "正在重置";
                 case MachineState.Running:

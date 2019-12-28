@@ -27,7 +27,7 @@ namespace Core.Helpers
 
         private static float GetProductLevelValue(this ProductLevel productLevel)
         {
-            if (productLevel == ProductLevel.Empty) return 3;
+            if (productLevel == ProductLevel.Empty) return 0;
             return (float) productLevel;
         }
     }

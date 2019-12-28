@@ -7,56 +7,6 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <TextBlock x:Name="PART_ProductLevelTextBlock" FontSize="200" HorizontalAlignment="Center"
-               VerticalAlignment="Center"
-               Text="{Binding RelativeSource={RelativeSource AncestorType=local:ProductLevelView}, Path=DisplayText}"
-               Foreground="Green" Opacity="0.8">
-        <TextBlock.Style>
-            <Style TargetType="TextBlock">
-                <Style.Triggers>
-                    <Trigger Property="Text" Value="错误">
-                        <Trigger.EnterActions>
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                     To="0" Duration="0:0:1" />
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </Trigger.EnterActions>
-                    </Trigger>
-                    <Trigger Property="Text" Value="OK">
-                        <Trigger.EnterActions>
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                     To="0" Duration="0:0:1" />
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </Trigger.EnterActions>
-                    </Trigger>
-                    <Trigger Property="Text" Value="NG">
-                        <Trigger.EnterActions>
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                     To="0" Duration="0:0:1" />
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </Trigger.EnterActions>
-                    </Trigger>
-                    <Trigger Property="Text" Value="空">
-                        <Trigger.EnterActions>
-                            <BeginStoryboard>
-                                <Storyboard>
-                                    <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                                     To="0" Duration="0:0:1" />
-                                </Storyboard>
-                            </BeginStoryboard>
-                        </Trigger.EnterActions>
-                    </Trigger>
-
-
-                </Style.Triggers>
-            </Style>
-        </TextBlock.Style>
+               VerticalAlignment="Center">
     </TextBlock>
 </UserControl>

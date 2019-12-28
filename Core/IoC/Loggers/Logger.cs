@@ -131,7 +131,7 @@ namespace Core.IoC.Loggers
         {
             Instance?.UnhandledPlcMessageList?.LogAsync(message);
         }
-        public static void LogRoutineMessage(string message)
+        public static void LogRoutineMessageAsync(string message)
         {
             Instance?.RoutineMessageList?.LogAsync(message);
         }

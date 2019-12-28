@@ -10,7 +10,7 @@ namespace Core.IoC.Loggers
     {
         public void LogThreadSafe(string message)
         {
-            Logger.LogRoutineMessage(message);
+            Logger.LogRoutineMessageAsync(message);
         }
     }
 }
