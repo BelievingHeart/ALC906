@@ -8,5 +8,6 @@
         PieChartDialog,
         LineChartDialog,
         WaitingDialog,
+        LoginDialog
     }
 }

@@ -151,7 +151,7 @@
         </e>
         <e p="DatabaseQuery.csproj" t="IncludeRecursive" />
         <e p="DatabaseQueryView.xaml" t="Include" />
-        <e p="MainWindow.xaml.cs" t="Include" />
+        <e p="DatabaseQueryView.xaml.cs" t="Include" />
         <e p="obj" t="ExcludeRecursive" />
         <e p="packages.config" t="Include" />
         <e p="Properties" t="Include">

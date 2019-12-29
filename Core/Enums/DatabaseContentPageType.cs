@@ -4,6 +4,5 @@
     {
         TablePage,
         SettingPage,
-        LoginPage
     }
 }

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Core.Enums;
 using Core.Models;
 using LiveCharts;
 using LiveCharts.Wpf;
@@ -47,14 +48,14 @@ namespace DatabaseQuery.Views
         {
             var buttonText = (string) PART_SwitchViewButton.Content;
             // Previously showing productivity line, now switch to yield line
-            if (buttonText == "Productivity")
+            if (buttonText == "产量")
             {
-                PART_SwitchViewButton.Content = "Yield";
+                PART_SwitchViewButton.Content = "良率";
                 ShowYield();
             }
             else // Show productivity line
             {
-                PART_SwitchViewButton.Content = "Productivity";
+                PART_SwitchViewButton.Content = "产量";
                 ShowProductivity();
             }
         }
@@ -62,12 +63,14 @@ namespace DatabaseQuery.Views
         private void ShowYield()
         {
             PART_XAxis.Labels = YieldData.Data.Keys.ToList();
+            var unitTypeText = YieldData.UnitType == LineChartUnitType.Day ? "天" : "小时";
             PART_CartesianChart.Series = new SeriesCollection
             {
                 new LineSeries()
                 {
                     Values = new ChartValues<double>(YieldData.Data.Values), LineSmoothness = 0,
-                    Title = $"Yield per {YieldData.UnitType.ToString()}"
+                    Title = $"每{unitTypeText}的良率",
+                    FontFamily = SystemFonts.CaptionFontFamily
                 }
             };
         }
@@ -81,12 +84,13 @@ namespace DatabaseQuery.Views
         private void ShowProductivity()
         {
             PART_XAxis.Labels = ProductivityData.Data.Keys.ToList();
+            var unitTypeText = YieldData.UnitType == LineChartUnitType.Day ? "天" : "小时";
             PART_CartesianChart.Series = new SeriesCollection
             {
                 new LineSeries()
                 {
                     Values = new ChartValues<double>(ProductivityData.Data.Values), LineSmoothness = 0,
-                    Title = $"Units per {ProductivityData.UnitType.ToString()}"
+                    Title = $"PCS每{unitTypeText}"
                 }
             };
         }

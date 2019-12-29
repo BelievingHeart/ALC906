@@ -129,7 +129,7 @@
     </Compile>
     <Compile Include="Converters\EnumToDatabaseContentPageConverter.cs" />
     <Compile Include="Converters\ProductTypeToIndexConverter.cs" />
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="DatabaseQueryView.xaml.cs">
       <DependentUpon>DatabaseQueryView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>

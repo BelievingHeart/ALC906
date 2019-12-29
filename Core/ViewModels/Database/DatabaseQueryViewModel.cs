@@ -88,13 +88,13 @@ namespace Core.ViewModels.Database
                 if (!value) CurrentDialogType = DatabaseViewDialogType.None;
             }
         }
-        
+
 
         public DatabaseBufferViewModel DatabaseBuffer { get; set; }
 
         public DateTimeViewModel DateTimeViewModelStart { get; set; }
         public DateTimeViewModel DateTimeViewModelEnd { get; set; }
-        
+
         public bool IsBusyQuerying { get; set; }
 
         public ProductType ProductType
@@ -146,7 +146,7 @@ namespace Core.ViewModels.Database
 
         public ICommand GenPieChartCommand { get; }
 
-        public ISnackbarMessageQueue SnackbarMessageQueue { get; } 
+        public ISnackbarMessageQueue SnackbarMessageQueue { get; }
 
         public bool IsBusyGeneratingLineCharts { get; private set; }
 
@@ -191,9 +191,7 @@ namespace Core.ViewModels.Database
                 new SimpleCommand(o => CurrentDatabaseContentPage = DatabaseContentPageType.TablePage,
                     o => CurrentDatabaseContentPage != DatabaseContentPageType.TablePage);
             
-            SwitchLoginViewCommand = 
-                new SimpleCommand(o => CurrentDatabaseContentPage = DatabaseContentPageType.LoginPage,
-                    o => CurrentDatabaseContentPage != DatabaseContentPageType.LoginPage);
+            SwitchLoginViewCommand = new RelayCommand(()=>CurrentDialogType = DatabaseViewDialogType.LoginDialog);
             
             GenPieChartCommand = new SimpleCommand(
                 o => RunOnlySingleFireIsAllowedEachTimeCommand(() => IsBusyGeneratingPieChart, GenPieChartDataAsync),
@@ -231,10 +229,22 @@ namespace Core.ViewModels.Database
 
             SnackbarMessageQueue = new SnackbarMessageQueue(TimeSpan.FromSeconds(3));
             LoadPasswordModule(SnackbarMessageQueue);
-            
+
             DateTimeViewModelStart = new DateTimeViewModel();
             DateTimeViewModelEnd = new DateTimeViewModel();
         }
+
+        private void SwitchSettingPage()
+        {
+            if (!LoginViewModel.Authorized)
+            {
+                CurrentDialogType = DatabaseViewDialogType.LoginDialog;
+                return;
+            }
+
+            CurrentDatabaseContentPage = DatabaseContentPageType.SettingPage;
+        }
+
         #endregion
 
 
@@ -242,7 +252,6 @@ namespace Core.ViewModels.Database
 
         private void GenTableToShow()
         {
-
             GenLimitDictionaries();
             FaiCollectionItemViewModels = DatabaseBuffer.CollectionsToShow.Select(c => new FaiCollectionItemViewModel()
             {
@@ -257,7 +266,7 @@ namespace Core.ViewModels.Database
             _dictionaryLower = FaiLimits.ToDictionary(item => item.Name, item => item.Lower);
             _dictionaryUpper = FaiLimits.ToDictionary(item => item.Name, item => item.Upper);
         }
-        
+
         private void LoadPasswordModule(ISnackbarMessageQueue snackbarMessageQueue)
         {
             LoginViewModel =
@@ -277,7 +286,7 @@ namespace Core.ViewModels.Database
             {
                 headerRow.Add(property.Name);
             }
-            
+
             // Gen max and min row
             var maxRow = new List<string>();
             var minRow = new List<string>();
@@ -300,7 +309,7 @@ namespace Core.ViewModels.Database
                 {
                     var propValue = property.GetValue(faiCollection);
                     var cellContent = property.PropertyType == typeof(DateTime)
-                        ? ((DateTime)propValue).ToString(NameConstants.DateTimeFormat)
+                        ? ((DateTime) propValue).ToString(NameConstants.DateTimeFormat)
                         : propValue.ToString();
                     contentRow.Add(cellContent);
                 }
@@ -320,7 +329,6 @@ namespace Core.ViewModels.Database
 
         private void OpenSaveDialog(object obj)
         {
-
             SelectedCollections = (IList<IFaiCollection>) obj;
             CurrentDialogType = DatabaseViewDialogType.SaveDialog;
         }
@@ -366,6 +374,11 @@ namespace Core.ViewModels.Database
         /// </summary>
         private void OpenDeleteDialog(object o)
         {
+            if (!LoginViewModel.Authorized)
+            {
+                CurrentDialogType = DatabaseViewDialogType.LoginDialog;
+                return;
+            }
 
             SelectedCollections = (IList<IFaiCollection>) o;
             CurrentDialogType = DatabaseViewDialogType.DeleteDialog;
@@ -383,7 +396,6 @@ namespace Core.ViewModels.Database
 
         private void GenYieldData(LineChartUnitType lineChartUnitType)
         {
-            
             var okCounts = new Dictionary<string, int>();
             List<DateTimePair> dateTimePairs;
             var dateFormat = lineChartUnitType == LineChartUnitType.Day ? "yy-MM-dd" : "MM-dd-HH";
@@ -402,9 +414,8 @@ namespace Core.ViewModels.Database
                 var lastHour = DatabaseBuffer.MaxDate.Date + TimeSpan.FromHours(DatabaseBuffer.MaxDate.Hour + 1);
                 var totalHours = (lastHour - firstHour).Hours;
                 dateTimePairs = DateTimeHelper.GetDateTimePairs(firstHour, lastHour, totalHours);
-                
             }
-            
+
             foreach (var dateTimePair in dateTimePairs)
             {
                 okCounts[dateTimePair.FromDateTime.ToString(dateFormat)] = 0;
@@ -412,22 +423,21 @@ namespace Core.ViewModels.Database
 
             foreach (var collection in DatabaseBuffer.FaiCollectionBuffers)
             {
-                if(collection.Result == "OK") okCounts[collection.InspectionTime.ToString(dateFormat)]++;
+                if (collection.Result == "OK") okCounts[collection.InspectionTime.ToString(dateFormat)]++;
             }
-            
+
             var yieldData = new Dictionary<string, double>();
             foreach (var key in okCounts.Keys)
             {
                 var yieldNumber = okCounts[key] / ProductionSeriesData.Data[key] * 100;
                 yieldData[key] = yieldNumber;
             }
-            
+
             YieldSeriesData = new LineChartData()
             {
                 Data = yieldData,
                 UnitType = lineChartUnitType
             };
-
         }
 
         private LineChartUnitType GenProductivityData()
@@ -447,7 +457,6 @@ namespace Core.ViewModels.Database
                 var lastDay = (DatabaseBuffer.MaxDate.Date + TimeSpan.FromDays(1)).Date;
                 var totalDays = (lastDay - firstDay).Days;
                 dateTimePairs = DateTimeHelper.GetDateTimePairs(firstDay, lastDay, totalDays);
-      
             }
             else
             {
@@ -456,7 +465,7 @@ namespace Core.ViewModels.Database
                 var totalHours = (lastHour - firstHour).Hours;
                 dateTimePairs = DateTimeHelper.GetDateTimePairs(firstHour, lastHour, totalHours);
             }
-            
+
             foreach (var dateTimePair in dateTimePairs)
             {
                 bins[dateTimePair.FromDateTime.ToString(dateFormat)] = 0;
@@ -577,7 +586,6 @@ namespace Core.ViewModels.Database
             SnackbarMessageQueue.Enqueue(message);
         }
 
- 
 
         private void LoadFaiLimits(ProductType productType)
         {
@@ -598,8 +606,7 @@ namespace Core.ViewModels.Database
         {
             return propertyInfo.Name.Contains("FAI");
         }
-        
 
-        #endregion 
+        #endregion
     }
 }

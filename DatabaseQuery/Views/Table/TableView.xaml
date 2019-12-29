@@ -34,17 +34,17 @@
                 <local:DateTimeInputView DataContext="{Binding DateTimeViewModelEnd}"/>
                 
                 <!-- Query button -->
-                <Button Content="Query" Command="{Binding QueryByIntervalCommand}" IsDefault="True" />
+                <Button Content="查询" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Command="{Binding QueryByIntervalCommand}" IsDefault="True" />
             </StackPanel>
 
             <StackPanel HorizontalAlignment="Right" DockPanel.Dock="Right" Orientation="Horizontal" Margin="10">
                 <!-- Previous page -->
                 <Button Command="{Binding DatabaseBuffer.PreviousPageCommand}" Height="40" Background="Transparent"
-                        BorderBrush="Transparent" ToolTip="Previous page" Margin="0 0 -20 0">
+                        BorderBrush="Transparent" ToolTip="上一页" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Margin="0 0 -20 0">
                     <materialDesign:PackIcon Kind="ArrowLeftDropCircle" Width="30" Height="30" />
                 </Button>
                 <Button Command="{Binding DatabaseBuffer.NextPageCommand}" Height="40" Background="Transparent"
-                        BorderBrush="Transparent" ToolTip="Next page">
+                        BorderBrush="Transparent" ToolTip="下一页" FontFamily="{x:Static SystemFonts.CaptionFontFamily}">
                     <materialDesign:PackIcon Kind="ArrowRightDropCircle" Width="30" Height="30" />
                 </Button>
                 <!-- Current page and total pages -->
@@ -58,7 +58,7 @@
                 <ComboBox
                     SelectedItem="{Binding DatabaseBuffer.RowsPerPage, Converter={converters:IntegerToComboBoxItemConverter}, Mode=OneWayToSource}"
                     Margin="10 0 0 0"
-                    materialDesign:HintAssist.Hint="Rows per page"
+                    materialDesign:HintAssist.Hint="行每页" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"
                     materialDesign:HintAssist.HintOpacity=".26">
                     <ComboBoxItem>
                         20
@@ -75,26 +75,26 @@
 
         <!-- Total, total yield , total days, total hours-->
         <StatusBar Grid.Row="1">
-            <TextBlock Text="Total: " />
+            <TextBlock Text="总计: " FontFamily="{x:Static SystemFonts.CaptionFontFamily}"/>
             <TextBlock Text="{Binding DatabaseBuffer.CollectionCount}" Margin="0 0 10 0" />
-            <TextBlock Text="Yield: " />
+            <TextBlock Text="良率: " FontFamily="{x:Static SystemFonts.CaptionFontFamily}"/>
             <TextBlock Text="{Binding DatabaseBuffer.TotalYield}" Margin="0 0 10 0" />
-            <TextBlock Text="Days: " />
+            <TextBlock Text="天数: " FontFamily="{x:Static SystemFonts.CaptionFontFamily}"/>
             <TextBlock Text="{Binding DatabaseBuffer.TotalDays, StringFormat=N1}" Margin="0 0 10 0" />
-            <TextBlock Text="Hours: " />
+            <TextBlock Text="小时数: " FontFamily="{x:Static SystemFonts.CaptionFontFamily}"/>
             <TextBlock Text="{Binding DatabaseBuffer.TotalHours, StringFormat=N1}" Margin="0 0 10 0" />
 
-            <TextBlock Text="Selected rows: " />
+            <TextBlock Text="选中行数: " FontFamily="{x:Static SystemFonts.CaptionFontFamily}"/>
             <TextBlock Text="{Binding ElementName=PART_FaiCollectionGridView, Path=SelectionCount}" Margin="0 0 10 0" />
             <Separator />
 
-            <Button ToolTip="Delete selected rows"
+            <Button ToolTip="删除" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"
                     CommandParameter="{Binding ElementName=PART_FaiCollectionGridView, Path=SelectedCollections}"
                     Command="{Binding OpenDeleteDialogCommand}" Background="Transparent"
                     BorderBrush="Transparent">
                 <materialDesign:PackIcon Kind="Delete" />
             </Button>
-            <Button ToolTip="Save as csv"
+            <Button ToolTip="保存为csv" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"
                     CommandParameter="{Binding ElementName=PART_FaiCollectionGridView, Path=SelectedCollections}"
                     Command="{Binding OpenSaveDialogCommand}" Background="Transparent"
                     BorderBrush="Transparent">

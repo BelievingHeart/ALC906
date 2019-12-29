@@ -20,11 +20,11 @@
                 <wpf:Axis x:Name="PART_YAxis"/>
             </wpf:CartesianChart.AxisY>
             <wpf:CartesianChart.AxisX>
-                <wpf:Axis x:Name="PART_XAxis" Title="Month"></wpf:Axis>
+                <wpf:Axis x:Name="PART_XAxis"></wpf:Axis>
             </wpf:CartesianChart.AxisX>
         </wpf:CartesianChart>
         
-        <Button Margin="20" x:Name="PART_SwitchViewButton" Click="OnSwitchViewButtonClick" Content="Productivity" VerticalAlignment="Top" HorizontalAlignment="Right"/>
+        <Button Grid.Row="0" Margin="20" x:Name="PART_SwitchViewButton" Click="OnSwitchViewButtonClick" Content="产量" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" VerticalAlignment="Top" HorizontalAlignment="Right"/>
         <Button HorizontalAlignment="Center" Margin="10" Content="OK" Grid.Row="1"
                 Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}" IsDefault="True" IsCancel="True"/>
     </Grid>

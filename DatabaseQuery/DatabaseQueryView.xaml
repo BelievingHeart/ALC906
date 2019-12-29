@@ -19,14 +19,14 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
 
-        Title="Database Query" Height="1000" Width="1400">
+        Title="数据库查询" Height="1000" Width="1400">
 
     <Window.DataContext>
         <database:DatabaseQueryViewModel />
     </Window.DataContext>
-    <materialDesign:DialogHost IsOpen="{Binding ShouldDisplayDialog}">
+    <materialDesign:DialogHost IsOpen="{Binding ShouldDisplayDialog}" CloseOnClickAway="True">
         <Grid>
-            <materialDesign:Snackbar HorizontalAlignment="Center" VerticalAlignment="Center"
+            <materialDesign:Snackbar HorizontalAlignment="Center" VerticalAlignment="Top"
                                      MessageQueue="{Binding SnackbarMessageQueue}" Panel.ZIndex="10" />
             <DockPanel>
                 <ToolBarTray Orientation="Vertical" DockPanel.Dock="Left">

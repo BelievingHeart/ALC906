@@ -11,7 +11,7 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <StackPanel Orientation="Horizontal">
         <!-- Year -->
-        <TextBox materialDesign:HintAssist.Hint="Year" Width="60"
+        <TextBox materialDesign:HintAssist.Hint="年" Width="60"
                  materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
                  Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                  materialDesign:HintAssist.FloatingScale="1" Margin="3 0">
@@ -24,7 +24,7 @@
             </TextBox.Text>
         </TextBox>
         <!-- Month -->
-        <TextBox materialDesign:HintAssist.Hint="Month" Width="60"
+        <TextBox materialDesign:HintAssist.Hint="月" Width="60"
                  materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
                  Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                  materialDesign:HintAssist.FloatingScale="1" Margin="3 0">
@@ -37,7 +37,7 @@
             </TextBox.Text>
         </TextBox>
         <!-- Day -->
-        <TextBox materialDesign:HintAssist.Hint="Day" Width="60"
+        <TextBox materialDesign:HintAssist.Hint="日" Width="60"
                  materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
                  Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                  materialDesign:HintAssist.FloatingScale="1" Margin="3 0">
@@ -53,7 +53,7 @@
         <TextBox Margin="3 0" Width="60"
                  materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
                  Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                 materialDesign:HintAssist.FloatingScale="1" materialDesign:HintAssist.Hint="Hour">
+                 materialDesign:HintAssist.FloatingScale="1" materialDesign:HintAssist.Hint="时">
             <TextBox.Text>
                 <Binding Path="Hour" UpdateSourceTrigger="PropertyChanged">
                     <Binding.ValidationRules>
@@ -66,7 +66,7 @@
         <TextBox Margin="3 0" Width="60"
                  materialDesign:TextFieldAssist.TextBoxViewMargin="1 0 1 0"
                  Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                 materialDesign:HintAssist.FloatingScale="1" materialDesign:HintAssist.Hint="Minute">
+                 materialDesign:HintAssist.FloatingScale="1" materialDesign:HintAssist.Hint="分">
             <TextBox.Text>
                 <Binding Path="Minute" UpdateSourceTrigger="PropertyChanged">
                     <Binding.ValidationRules>
