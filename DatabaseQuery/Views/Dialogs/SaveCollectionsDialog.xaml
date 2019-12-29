@@ -17,7 +17,7 @@
                 <!-- Delete all button -->
                 <Button Command="{Binding SaveAllCommand}" Width="120" Height="80">
                     <StackPanel>
-                        <TextBlock Text="All" HorizontalAlignment="Center"/>
+                        <TextBlock Text="保存所有" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" HorizontalAlignment="Center"/>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <TextBlock Text="{Binding DatabaseBuffer.CollectionCount}" />
                             <TextBlock Text=" PCS"/>
@@ -27,7 +27,7 @@
                 <Border Width="30" Height="80" Background="Transparent" BorderBrush="Transparent"/>
                 <Button Command="{Binding SaveSelectionCommand}" Width="120" Height="80">
                     <StackPanel>
-                        <TextBlock Text="Selection"  HorizontalAlignment="Center"/>
+                        <TextBlock Text="保存选中" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"  HorizontalAlignment="Center"/>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <TextBlock Text="{Binding SelectionCount}" />
                             <TextBlock Text=" PCS"/>

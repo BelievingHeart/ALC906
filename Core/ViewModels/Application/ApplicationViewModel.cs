@@ -348,6 +348,7 @@ namespace Core.ViewModels.Application
         private void OnPlcResetFinished()
         {
             Logger.LogStateChanged("PLC复位完成");
+            UiDispatcher.InvokeAsync(CommandManager.InvalidateRequerySuggested);
         }
 
         private void ResetStates()

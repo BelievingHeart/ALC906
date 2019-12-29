@@ -233,17 +233,7 @@ namespace Core.ViewModels.Database
             DateTimeViewModelStart = new DateTimeViewModel();
             DateTimeViewModelEnd = new DateTimeViewModel();
         }
-
-        private void SwitchSettingPage()
-        {
-            if (!LoginViewModel.Authorized)
-            {
-                CurrentDialogType = DatabaseViewDialogType.LoginDialog;
-                return;
-            }
-
-            CurrentDatabaseContentPage = DatabaseContentPageType.SettingPage;
-        }
+        
 
         #endregion
 
@@ -579,6 +569,8 @@ namespace Core.ViewModels.Database
             }
 
             DatabaseBuffer.NavigateToPage(0);
+            // Activate related controls
+            CommandManager.InvalidateRequerySuggested();
         }
 
         private void PromptUser(string message)
