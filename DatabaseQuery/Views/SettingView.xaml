@@ -9,9 +9,9 @@
     <Grid>
         <DataGrid ItemsSource="{Binding FaiLimits}" AutoGenerateColumns="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Name}" Header="Fai name" IsReadOnly="True"/>
-                <DataGridTextColumn Binding="{Binding Upper}" Header="Max"/>
-                <DataGridTextColumn Binding="{Binding Lower}" Header="Min"/>
+                <DataGridTextColumn Binding="{Binding Name}" Header="测试项" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" IsReadOnly="True"/>
+                <DataGridTextColumn Binding="{Binding Upper}" Header="最大值" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"/>
+                <DataGridTextColumn Binding="{Binding Lower}" Header="最小值" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

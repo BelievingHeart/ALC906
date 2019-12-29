@@ -133,7 +133,7 @@ namespace Core.ViewModels.Database
                 _currentDatabaseContentPage = value;
                 // Update table because
                 // the user may changed setting before view switching to table view
-                if (value == DatabaseContentPageType.TablePage && previousPage == DatabaseContentPageType.SettingPage)
+                if (value == DatabaseContentPageType.TablePage && previousPage == DatabaseContentPageType.SettingPage && DatabaseBuffer.CollectionCount > 0)
                     GenTableToShow();
             }
         }

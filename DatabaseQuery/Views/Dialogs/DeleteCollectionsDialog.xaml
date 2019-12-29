@@ -11,7 +11,7 @@
     <!-- <UserControl.DataContext> -->
     <!--     <database:DatabaseQueryViewModel /> -->
     <!-- </UserControl.DataContext> -->
-    <GroupBox Header="Delete from database">
+    <GroupBox Header="从数据库中删除"  FontFamily="{x:Static SystemFonts.CaptionFontFamily}">
         <StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top">
                 <!-- Delete all button -->
@@ -35,7 +35,7 @@
                     </StackPanel>
                 </Button>
             </StackPanel>
-            <Button Content="Close" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+            <Button Content="关闭" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
                     VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="10" />
         </StackPanel>
     </GroupBox>
