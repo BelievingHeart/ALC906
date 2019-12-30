@@ -408,7 +408,7 @@ namespace Core.ViewModels.Application
 
         private void SetupCameras()
         {
-            TopCamera = new HKCameraViewModel {ImageBatchSize = 6};
+            TopCamera = new HKCameraViewModel {ImageBatchSize = 2};
             TopCamera.ImageBatchCollected += ProcessImages2D;
             TopCamera.ImageAcquisitionEnd += () =>
             {
@@ -544,6 +544,7 @@ namespace Core.ViewModels.Application
         private ProductType _currentProductType;
         private Dictionary<string, double> _faiResultDictCavity1;
         private Dictionary<string, double> _faiResultDictCavity2;
+        private int _shotsPerExecution2D;
 
         /// <summary>
         /// Left socket finishing scanning indicates
@@ -1046,6 +1047,23 @@ namespace Core.ViewModels.Application
         public ICommand ClearProductErrorStatesCommand { get; private set; }
 
         public LoginViewModel LoginViewModel { get; set; }
+
+        /// <summary>
+        /// Count of 2D input images per execution
+        /// </summary>
+        public int ShotsPerExecution2D    
+        {
+            get { return _shotsPerExecution2D; }
+            set
+            {
+                if (value <= 0) return;
+                _shotsPerExecution2D = value;
+                TopCamera.ImageBatchSize = value;
+            }
+        }
+
+        public bool CanChangeShotsPerExecution2D =>
+            !Server.IsAutoRunning && !Server.IsBusyResetting && LoginViewModel.Authorized;
 
         private void SwitchProductType(ProductType currentProductType)
         {

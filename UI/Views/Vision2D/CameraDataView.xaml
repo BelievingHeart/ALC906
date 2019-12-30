@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:UI.Views.Vision2D"
              xmlns:stringMatrix="clr-namespace:UI.Views.StringMatrix"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="300" Loaded="OnCameraDataViewLoaded">
+             d:DesignHeight="300" d:DesignWidth="300">
     <GroupBox>
         <GroupBox.Header>
             <StackPanel Orientation="Horizontal">

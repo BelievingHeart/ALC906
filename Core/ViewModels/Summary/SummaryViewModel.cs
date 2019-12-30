@@ -14,10 +14,19 @@ namespace Core.ViewModels.Summary
         private int _ng4Count;
         private int _ng5Count;
         private int _okCount;
+        private bool _shouldRefreshStartTime = true;
 
         public SummaryViewModel()
         {
             ClearCommand = new RelayCommand(ClearSummary);
+            PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName != nameof(TotalCount)) return;
+                // Update Start time if clear command has just called
+                if (!_shouldRefreshStartTime) return;
+                StartTime = DateTime.Now - TimeSpan.FromSeconds(10);
+                _shouldRefreshStartTime = false;
+            };
         }
 
         private void ClearSummary()
@@ -27,6 +36,7 @@ namespace Core.ViewModels.Summary
             Ng3Count = 0;
             Ng4Count = 0;
             Ng5Count = 0;
+            _shouldRefreshStartTime = true;
         }
 
         public int OkCount

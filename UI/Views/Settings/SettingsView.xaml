@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:UI.Views.Settings"
              xmlns:application="clr-namespace:Core.ViewModels.Application;assembly=Core"
              xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:converters="clr-namespace:UI.Converters"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid DataContext="{Binding Source={x:Static application:ApplicationViewModel.Instance}}">
@@ -18,7 +19,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <GroupBox Header="图片设置" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"  Grid.Column="0" Grid.Row="0">
+        <GroupBox Header="图片设置" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Grid.Column="0" Grid.Row="0">
             <DockPanel Margin="20">
                 <StackPanel DockPanel.Dock="Left">
                     <StackPanel Orientation="Horizontal">
@@ -30,21 +31,38 @@
                         <CheckBox Content="3D Cavity1" IsChecked="{Binding ShouldSave3DImagesLeft}" />
                         <CheckBox Content="3D Cavity2" IsChecked="{Binding ShouldSave3DImagesRight}" />
                     </StackPanel>
-                    <Button HorizontalAlignment="Left" Content="打开图片文件夹" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" 
+                    <Button HorizontalAlignment="Left" Content="打开图片文件夹"
+                            FontFamily="{x:Static SystemFonts.CaptionFontFamily}"
                             Command="{Binding OpenImageDirCommand}" />
                 </StackPanel>
-                <CheckBox DockPanel.Dock="Right" VerticalAlignment="Top" HorizontalAlignment="Right" Content="仅保存NG图片" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" IsChecked="{Binding SaveNgImagesOnly}"/>
+                <StackPanel DockPanel.Dock="Right" VerticalAlignment="Top" HorizontalAlignment="Right">
+                    <CheckBox
+                        Content="仅保存NG图片" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"
+                        IsChecked="{Binding SaveNgImagesOnly}" />
+                    <!-- 2D shots per execution -->
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="2D每次拍照" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"/>
+                        <ComboBox SelectedItem="{Binding Path=ShotsPerExecution2D, Converter={converters:StringToIntegerConverter}, Mode=OneWayToSource}" MinWidth="10" VerticalAlignment="Top" IsEnabled="{Binding Path=CanChangeShotsPerExecution2D}">
+                            <ComboBoxItem>2</ComboBoxItem>
+                            <ComboBoxItem>6</ComboBoxItem>
+                        </ComboBox>
+                        <TextBlock Text="张" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"/>
+                    </StackPanel>
+                </StackPanel>
+
             </DockPanel>
         </GroupBox>
 
-        <GroupBox Grid.Column="1" Grid.Row="0" Header="Csv设置" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" >
-            <Button Content="打开CSV文件夹" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Command="{Binding OpenCSVDirCommand}" HorizontalAlignment="Left"
+        <GroupBox Grid.Column="1" Grid.Row="0" Header="Csv设置" FontFamily="{x:Static SystemFonts.CaptionFontFamily}">
+            <Button Content="打开CSV文件夹" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"
+                    Command="{Binding OpenCSVDirCommand}" HorizontalAlignment="Left"
                     VerticalAlignment="Top" />
         </GroupBox>
 
         <GroupBox Grid.Row="1" Grid.Column="0" Header="其他设置" FontFamily="{x:Static SystemFonts.CaptionFontFamily}">
             <Grid>
-                <Button Content="清料" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"  Command="{Binding ClearProductErrorStatesCommand}" Width="100" />
+                <Button Content="清料" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"
+                        Command="{Binding ClearProductErrorStatesCommand}" Width="100" />
             </Grid>
         </GroupBox>
 

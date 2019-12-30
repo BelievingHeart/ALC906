@@ -79,15 +79,7 @@ namespace UI.Views.Vision2D
             ApplicationViewModel.Instance.SaveData2D(stringMatrix, StringMatrixType.Results);
         }
 
-        private void OnCameraDataViewLoaded(object sender, RoutedEventArgs e)
-        {
-            if (_isFirstLoaded)
-            {
-                LoadResultData(null, null);
-            }
-
-            _isFirstLoaded = false;
-        }
+   
 
         #region IsEditable
 

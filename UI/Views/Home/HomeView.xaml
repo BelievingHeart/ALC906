@@ -127,15 +127,15 @@
             <StackPanel Grid.Column="0">
                 <Grid>
                     <faiItem:FaiItemListWarpView FaiItems="{Binding FaiItemsCavity1}" />
-                    <views:ProductLevelView ProductLevel="{Binding ProductLevelCavity1, Mode=OneWay}" HorizontalAlignment="Center"
-                                            VerticalAlignment="Center" />
+                    <!-- <views:ProductLevelView ProductLevel="{Binding ProductLevelCavity1, Mode=OneWay}" HorizontalAlignment="Center" -->
+                    <!--                         VerticalAlignment="Center" /> -->
                 </Grid>
             </StackPanel>
             <StackPanel Grid.Column="1">
                 <Grid>
                     <faiItem:FaiItemListWarpView FaiItems="{Binding FaiItemsCavity2}" />
-                    <views:ProductLevelView ProductLevel="{Binding ProductLevelCavity2}" HorizontalAlignment="Center"
-                                            VerticalAlignment="Center" />
+                    <!-- <views:ProductLevelView ProductLevel="{Binding ProductLevelCavity2}" HorizontalAlignment="Center" -->
+                    <!--                         VerticalAlignment="Center" /> -->
                 </Grid>
             </StackPanel>
         </Grid>
