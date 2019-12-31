@@ -30,7 +30,7 @@ namespace Core.Helpers
             var continueMessagePack = PlcMessagePackConstants.PlcWarningHandler2080Series[errorCode][0];
             var quitMessagePack = PlcMessagePackConstants.PlcWarningHandler2080Series[errorCode][1];
             
-            var content = errorCode == 2088? "请清除所有产品后点Continue，或者点Quit退出自动" : "请清料后点击Continue，或者点Quit再清料";
+            var content = errorCode == 2088? "请清除所有产品后点继续，或者点退出取消自动模式" : "请清料后点击继续，或者点退出再清料";
             
             return  new PopupViewModel()
             {

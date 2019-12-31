@@ -36,7 +36,7 @@
                     <Image Source="{StaticResource Logo}" Width="100" />
                     <TextBlock Text="Assembly Line Controller" Margin="20 0" FontSize="24" />
                     <ContentControl Margin="20 0 0 0" VerticalAlignment="Center"
-                                    Content="{Binding Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Path=LoginViewModel.Authorized, Converter={converters:BooleanToLoginStateConverter}}"/>
+                                    Content="{Binding Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Path=LoginViewModel.Authorized, Converter={converters:BooleanToLoginStateConverter}}" />
                 </StackPanel>
 
                 <!-- System buttons -->
@@ -48,7 +48,9 @@
                         <Button Click="RestoreWindow" Margin="0 2 2 0">
                             <materialDesign:PackIcon Kind="WindowRestore" />
                         </Button>
-                        <Button Command="{Binding Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Path=CloseMainWindowCommand}" Margin="0 2 15 0">
+                        <Button
+                            Command="{Binding Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Path=CloseMainWindowCommand}"
+                            Margin="0 2 15 0">
                             <materialDesign:PackIcon Kind="WindowClose" />
                         </Button>
 
@@ -57,6 +59,9 @@
             </Grid>
         </materialDesign:ColorZone>
         <Grid DockPanel.Dock="Top">
+            <Grid.DataContext>
+                <mainWindow:MainWindowViewModel />
+            </Grid.DataContext>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
@@ -66,19 +71,19 @@
             <!-- ToolBar -->
             <ToolBarTray Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Top">
                 <ToolBar>
-                    <ToolBar.DataContext>
-                        <mainWindow:MainWindowViewModel />
-                    </ToolBar.DataContext>
+           
                     <Button Command="{Binding SwitchLoginViewCommand}" Margin="10 0">
                         <StackPanel Orientation="Horizontal">
-                                <Image Source="{StaticResource Login}" Height="30" />
-                                <TextBlock FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Text=" 登陆" VerticalAlignment="Center" />
-                            </StackPanel>
+                            <Image Source="{StaticResource Login}" Height="30" />
+                            <TextBlock FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Text=" 登陆"
+                                       VerticalAlignment="Center" />
+                        </StackPanel>
                     </Button>
                     <Button Command="{Binding SwitchHomePageCommand}" Margin="10 0">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{StaticResource Home}" Height="30" />
-                            <TextBlock FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Text=" 主页" VerticalAlignment="Center" />
+                            <TextBlock FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Text=" 主页"
+                                       VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
                     <Button Command="{Binding SwitchServerPageCommand}" Margin="10 0">
@@ -102,31 +107,37 @@
                     <Button Margin="10 0" Command="{Binding Path=SwitchSettingsPageCommand}">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{StaticResource Settings}" Height="30" />
-                            <TextBlock FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Text=" 设置" VerticalAlignment="Center" />
+                            <TextBlock FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Text=" 设置"
+                                       VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
                     <Button Margin="10 0" Command="{Binding Path=SwitchDatabaseHostView}">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Table" Height="30" />
-                            <TextBlock FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Text=" 表格" VerticalAlignment="Center" />
+                            <TextBlock FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Text=" 表格"
+                                       VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
+
                 </ToolBar>
             </ToolBarTray>
-
+            <Button Grid.Row="0" HorizontalAlignment="Right" Background="Transparent" BorderBrush="Transparent"
+                    ToolTip="帮助" Command="{Binding Path=OpenHelpDocsCommand}">
+                <materialDesign:PackIcon Kind="QuestionMarkCircle" />
+            </Button>
 
             <materialDesign:DialogHost Grid.Row="1"
                                        DataContext="{Binding Source={x:Static loggers:Logger.Instance}, Path=PopupViewModel}"
                                        IsOpen="{Binding Path=ShouldMessageBoxPopup, Source={x:Static loggers:Logger.Instance}}">
                 <Grid>   <!-- Pages here -->
                     <ContentControl DataContext="{x:Static applicationViewModel:ApplicationViewModel.Instance}"
-                        Content="{Binding Path=CurrentApplicationPage, Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Converter={converters:EnumToApplicationPageConverter}}" />
+                                    Content="{Binding Path=CurrentApplicationPage, Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Converter={converters:EnumToApplicationPageConverter}}" />
                     <materialDesign:Snackbar Panel.ZIndex="10" HorizontalAlignment="Center" VerticalAlignment="Center"
                                              MessageQueue="{Binding Source={x:Static loggers:Logger.Instance}, Path=StateChangedMessageQueue}" />
                 </Grid>
                 <!-- Message dialog -->
                 <materialDesign:DialogHost.DialogContent>
-                  <popup:PopupView/>
+                    <popup:PopupView />
                 </materialDesign:DialogHost.DialogContent>
             </materialDesign:DialogHost>
         </Grid>

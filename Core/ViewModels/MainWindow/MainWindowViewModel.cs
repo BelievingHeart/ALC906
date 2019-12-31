@@ -1,4 +1,6 @@
-﻿using System.Windows.Input;
+﻿using System.Diagnostics;
+using System.IO;
+using System.Windows.Input;
 using Core.Commands;
 using Core.Enums;
 using Core.IoC.Loggers;
@@ -6,6 +8,7 @@ using Core.ViewModels.Application;
 using Core.ViewModels.Message;
 using Core.ViewModels.Popup;
 using WPFCommon.Commands;
+using WPFCommon.Helpers;
 using WPFCommon.ViewModels.Base;
 
 namespace Core.ViewModels.MainWindow
@@ -25,6 +28,7 @@ namespace Core.ViewModels.MainWindow
 
         public ICommand SwitchLoginViewCommand { get; }
 
+        public ICommand OpenHelpDocsCommand { get; }
         #endregion
 
         #region Command Implemtations
@@ -80,6 +84,7 @@ namespace Core.ViewModels.MainWindow
                 o => ApplicationViewModel.Instance.CurrentApplicationPage != ApplicationPageType.DatabaseHostPage);
             SwitchLoginViewCommand = new SimpleCommand(o => SwitchLoginPage(),
                 o => ApplicationViewModel.Instance.CurrentApplicationPage != ApplicationPageType.LoginPage);
+            OpenHelpDocsCommand = new RelayCommand(()=>Process.Start(Path.Combine(DirectoryHelper.DocumentaryDir, "IA906调试说明书.docx")));
         }
 
 
