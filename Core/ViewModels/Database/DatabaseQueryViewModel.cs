@@ -291,7 +291,7 @@ namespace Core.ViewModels.Database
             }
 
             // Gen contents row
-            var contentsRows = new List<string>();
+            var contentsRows = new List<List<string>>();
             foreach (var faiCollection in faiCollections)
             {
                 var contentRow = new List<string>();
@@ -304,17 +304,19 @@ namespace Core.ViewModels.Database
                     contentRow.Add(cellContent);
                 }
 
-                contentsRows.Add(string.Join(",", contentRow));
+                contentsRows.Add(contentRow);
             }
 
-            // combine header and contents
-            contentsRows.Insert(0, string.Join(",", minRow));
-            contentsRows.Insert(0, string.Join(",", maxRow));
-            contentsRows.Insert(0, string.Join(",", headerRow));
 
-            var csvPath = Path.Combine(CsvDir, ProductType + $"-{faiCollections.Count}PCS.csv");
-            File.WriteAllLines(csvPath, contentsRows);
+            // combine header and contents
+            contentsRows.Insert(0, minRow);
+            contentsRows.Insert(0, maxRow);
+            contentsRows.Insert(0, headerRow);
+
+            var csvPath = Path.Combine(CsvDir, ProductType + $"-{faiCollections.Count}PCS.xlsx");
+            ExcelHelper.CsvToExcel(csvPath, "ALC", contentsRows);
             Process.Start(CsvDir);
+            ExcelHelper.FormatFaiExcel(csvPath, 1, 2, contentsRows.Count-3, minRow.Count-3);
         }
 
         private void OpenSaveDialog(object obj)
