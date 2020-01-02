@@ -42,7 +42,7 @@
                     <!-- 2D shots per execution -->
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="2D每次拍照" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"/>
-                        <ComboBox SelectedItem="{Binding Path=ShotsPerExecution2D, Converter={converters:StringToIntegerConverter}, Mode=OneWayToSource}" MinWidth="10" VerticalAlignment="Top" IsEnabled="{Binding Path=CanChangeShotsPerExecution2D}">
+                        <ComboBox SelectedItem="{Binding Path=ShotsPerExecution2D, Converter={converters:StringToIntegerConverter}, Mode=OneWayToSource}" MinWidth="10" VerticalAlignment="Top" IsEnabled="{Binding LoginViewModel.Authorized}">
                             <ComboBoxItem>2</ComboBoxItem>
                             <ComboBoxItem>6</ComboBoxItem>
                         </ComboBox>

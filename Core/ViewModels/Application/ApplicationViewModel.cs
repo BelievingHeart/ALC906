@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
@@ -32,6 +33,7 @@ using HalconDotNet;
 using HKCamera;
 using I40_3D_Test;
 using LJX8000.Core.ViewModels.Controller;
+using PLCCommunication.Core;
 using PLCCommunication.Core.Enums;
 using PLCCommunication.Core.ViewModels;
 using WPFCommon.Commands;
@@ -156,28 +158,6 @@ namespace Core.ViewModels.Application
         /// </summary>
         private void DoSimulation()
         {
-//            _testValue++;
-//            if (_testValue % 4 == 0)
-//            {
-//                ProductLevelCavity1 = ProductLevel.Empty;
-//                OnPropertyChanged(nameof(ProductLevelCavity1));
-//                return;
-//            }  if (_testValue % 3 == 0)
-//            {
-//                ProductLevelCavity1 = ProductLevel.Ng2;
-//                OnPropertyChanged(nameof(ProductLevelCavity1));
-//                return;
-//            }  if (_testValue % 2 == 0)
-//            {
-//                ProductLevelCavity1 = ProductLevel.Ng5;
-//                OnPropertyChanged(nameof(ProductLevelCavity1));
-//                return;
-//            }  if (_testValue % 1 == 0)
-//            {
-//                ProductLevelCavity1 = ProductLevel.OK;
-//                OnPropertyChanged(nameof(ProductLevelCavity1));
-//
-//            }
         }
 
         private void ClearLaserImagesForNewRound()
@@ -216,20 +196,24 @@ namespace Core.ViewModels.Application
             Server.Port = 4000;
             
             Server.NewRunStarted += OnNewRunStarted;
-            Server.PlcStopRequested += () => Logger.LogPlcMessage("Auto-mode-stop requested from plc");
-            Server.PlcResetRequestd += OnPlcInitRequested;
+            Server.PlcStopRequested += () => Logger.LogPlcMessage("收到停止请求");
+            Server.PlcResetRequested += OnPlcInitRequested;
             Server.ClientHooked += OnPlcHooked;
             Server.CustomCommandReceived += PlcCustomCommandHandler;
             Server.PlcResetFinished += OnPlcResetFinished;
             Server.IsAutoRunningChanged += isAutoRunning =>
             {
-                if (isAutoRunning) ResetStates();
+                if (isAutoRunning)
+                {
+                    ResetStates();
+                    Logger.LogPlcMessage("进入自动模式");
+                }
             };
-            Server.MessageSendFailed += () => { Logger.LogHighLevelWarningNormal("Failed to send message to plc"); };
+            Server.MessageSendFailed += () => { Logger.LogHighLevelWarningNormal("发送消息失败"); };
             Server.MessagePackReceived += messagePack =>
             {
                 Task.Run(() =>
-                    Logger.Instance.LogMessageToFile($"Received command id:{messagePack.CommandId} from plc.",
+                    Logger.Instance.LogMessageToFile($"收到代号{messagePack.CommandId}",
                         Logger.AllCommandIdsFromPlcFilePath));
                 
             };
@@ -237,7 +221,7 @@ namespace Core.ViewModels.Application
             Server.MessagePackSent += messagePack =>
             {
                 Task.Run(() =>
-                    Logger.Instance.LogMessageToFile($"Sent command id:{messagePack.CommandId} to plc.",
+                    Logger.Instance.LogMessageToFile($"发送代号:{messagePack.CommandId}.",
                         Logger.AllCommandIdsToPlcFilePath));
                 
             };
@@ -253,7 +237,7 @@ namespace Core.ViewModels.Application
 
         private void OnPlcInitRequested()
         {
-            Logger.LogPlcMessage("Init requested from plc");
+            Logger.LogPlcMessage("收到复位请求");
         }
 
 
@@ -277,7 +261,7 @@ namespace Core.ViewModels.Application
 
             if (PlcErrorParser.IsSpecialErrorCode(errorCode))
             {
-                Logger.LogUnhandledPlcMessage($"Received special error code {errorCode} from plc");
+                Logger.LogUnhandledPlcMessage($"收到特殊代号{errorCode}");
                 var popupViewModel = PopupHelper.CreateClearProductPopup(message, errorCode, Server);
                 Logger.LogHighLevelWarningSpecial(popupViewModel);
             }
@@ -300,12 +284,17 @@ namespace Core.ViewModels.Application
 
         private void OnPlcHooked(Socket socket)
         {
-            Logger.LogPlcMessage(socket.RemoteEndPoint + " is hooked");
+            Logger.LogPlcMessage(socket.RemoteEndPoint +"已连接");
         }
 
         private void OnNewRunStarted()
         {
-            Logger.LogPlcMessage("New run starts");
+            Logger.LogPlcMessage("新一轮开始");
+            
+            // Reply plc
+            Server.SentToPlc(new PlcMessagePack(){CommandId = 23, MsgType = PlcMessagePack.RespondIndicator, Param1 = 0, Param2 = ShotsPerExecution2D == 2? 0:1});
+            
+            // Clear run related states
             ClearLaserImagesForNewRound();
             Enqueue2DImagesFromPreviousRound();
             lock (_lockerOfRightSocketIndexSinceReset2D)
@@ -380,7 +369,7 @@ namespace Core.ViewModels.Application
                     OnCavity2Arrived2D();
                     break;
                 default:
-                    Logger.LogUnhandledPlcMessage($"Command ID {commandId} received");
+                    Logger.LogUnhandledPlcMessage($"未处理代号{commandId}");
                     break;
             }
         }
@@ -392,7 +381,7 @@ namespace Core.ViewModels.Application
                 CurrentArrivedSocket2D = CavityType.Cavity1;
             }
 
-            Logger.LogPlcMessage("2D cavity1 arrived");
+            Logger.LogPlcMessage("2D cavity1到达");
         }
 
         private void OnCavity2Arrived2D()
@@ -402,7 +391,7 @@ namespace Core.ViewModels.Application
                 CurrentArrivedSocket2D = CavityType.Cavity2;
             }
 
-            Logger.LogPlcMessage("2D cavity2 arrived");
+            Logger.LogPlcMessage("2D cavity2到达");
             ResultReady2D = ResultStatus.Waiting;
         }
 
@@ -415,7 +404,7 @@ namespace Core.ViewModels.Application
                 if (!Server.IsConnected) return;
                 // Else image acquisition failed
                 Server.Disconnect();
-                Logger.LogHighLevelWarningNormal("2D image acquisition failed please restart ALC");
+                Logger.LogHighLevelWarningNormal("2D相机不能正常取像，请重启ALC");
             };
             TopCamera.Open();
             TopCamera.SetTriggerToLine0();
@@ -484,7 +473,7 @@ namespace Core.ViewModels.Application
             var enumValue = (CavityType) socketIndex;
 
 
-            Logger.LogRoutineMessageAsync($"3D processing starts for {enumValue} cavity");
+            Logger.LogRoutineMessageAsync($"3D处理开始-{enumValue}");
             // Do processing for one socket and get its result
             var imagesForOneSocket =
                 _laserImageBuffers.Values.Select(list => list[socketIndex]).ToList();
@@ -522,7 +511,7 @@ namespace Core.ViewModels.Application
                 Graphics3DCavity2 = result3D.GetGraphics();
             }
 
-            Logger.LogRoutineMessageAsync($"3D processing ends for {enumValue} cavity");
+            Logger.LogRoutineMessageAsync($"3D处理完成-{enumValue}");
 
 
             // If all reserved places for 3D image buffers are filled,
@@ -783,7 +772,7 @@ namespace Core.ViewModels.Application
         /// <param name="images"></param>
         private void ProcessImages2D(List<HImage> images)
         {
-            Logger.LogRoutineMessageAsync($"Received {images.Count} 2d images");
+            Logger.LogRoutineMessageAsync($"收到2D图像{images.Count}张");
             if (!Server.IsAutoRunning) return;
             CavityType currentArrivedSocket2D;
             lock (_lockerOfCurrentArrivedSocket2D)
@@ -801,7 +790,7 @@ namespace Core.ViewModels.Application
             }
 
 
-            Logger.LogRoutineMessageAsync($"2D processing starts for {currentArrivedSocket2D}");
+            Logger.LogRoutineMessageAsync($"2D处理开始-{currentArrivedSocket2D}");
             GraphicsPackViewModel result;
 
             try
@@ -815,7 +804,7 @@ namespace Core.ViewModels.Application
                     Images = images, FaiResults = I40Check.GetFaiDict(currentArrivedSocket2D.ToChusIndex()),
                     ErrorMessage = e.Message
                 };
-                Logger.LogRoutineMessageAsync($"2D processing for {currentArrivedSocket2D} errored");
+                Logger.LogRoutineMessageAsync($"2D处理错误-{currentArrivedSocket2D}");
                 // If error is unexpected
                 if (!e.Message.Contains("[2D Vision]"))
                 {
@@ -825,7 +814,7 @@ namespace Core.ViewModels.Application
                 }
             }
 
-            Logger.LogRoutineMessageAsync($"2D processing ends for {currentArrivedSocket2D}");
+            Logger.LogRoutineMessageAsync($"2D处理完成-{currentArrivedSocket2D}");
 
             bool all2DProcessingForThisRunIsDone;
             lock (_lockerOfResultQueues2D)
@@ -840,7 +829,7 @@ namespace Core.ViewModels.Application
 
             if (!all2DProcessingForThisRunIsDone) return;
             // If results of both cavities are ready
-            Logger.LogRoutineMessageAsync("All 2D images have processed");
+            Logger.LogRoutineMessageAsync("本轮2D处理完成");
             ResultReady2D = ResultStatus.Ready;
             Server.NotifyPlcReadyToGoNextLoop();
         }
@@ -858,6 +847,7 @@ namespace Core.ViewModels.Application
             try
             {
                 SetupCameras();
+                ShotsPerExecution2D = 2;
             }
             catch
             {
@@ -1062,8 +1052,7 @@ namespace Core.ViewModels.Application
             }
         }
 
-        public bool CanChangeShotsPerExecution2D =>
-            !Server.IsAutoRunning && !Server.IsBusyResetting && LoginViewModel.Authorized;
+
 
         private void SwitchProductType(ProductType currentProductType)
         {
