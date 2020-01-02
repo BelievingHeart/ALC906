@@ -19,12 +19,12 @@ namespace Core.Helpers
 
             int rowCount = 0;
 
-            IWorkbook workbook = new XSSFWorkbook();
-            ISheet worksheet = workbook.CreateSheet(worksheetName);
+            var workbook = new XSSFWorkbook();
+            var worksheet = workbook.CreateSheet(worksheetName);
 
             foreach (var line in csvLines)
             {
-                IRow row = worksheet.CreateRow(rowCount);
+                var row = worksheet.CreateRow(rowCount);
 
                 var colCount = 0;
                 foreach (var col in line)
@@ -88,46 +88,47 @@ namespace Core.Helpers
             {
                 wb = new XSSFWorkbook(file);
             }
+            // Delete unformatted file
+            File.Delete(path);
 
             var ws = wb.GetSheetAt(0);
 
-            for (int i = 3; i < numFaiRows + 3; i++)
-            {
-                var row = ws.GetRow(i);
+          
                 for (int j = 0; j < numFaiColumns; j++)
                 {
-                    var cell = row.Cells[j];
-                    var columnIndex = GetExcelColumnName(cell.ColumnIndex+1);
-                    var maxFormula = $"=${columnIndex}${maxRowIndex + 1}";
-                    var minFormula = $"=${columnIndex}${minRowIndex + 1}";
+                    var columnIndex = GetExcelColumnName(j+1);
+                    var maxFormula = $"${columnIndex}${maxRowIndex + 1}";
+                    var minFormula = $"${columnIndex}${minRowIndex + 1}";
 
-                    XSSFSheetConditionalFormatting sCF = (XSSFSheetConditionalFormatting) ws.SheetConditionalFormatting;
+                    ISheetConditionalFormatting sheetCF = ws.SheetConditionalFormatting;
 
-//Fill red if too big
-                    XSSFConditionalFormattingRule formatTooBig =
-                        (XSSFConditionalFormattingRule) sCF.CreateConditionalFormattingRule(
-                            ComparisonOperator.GreaterThan, maxFormula);
-                    XSSFPatternFormatting fillRed = (XSSFPatternFormatting) formatTooBig.CreatePatternFormatting();
-                    fillRed.FillBackgroundColor = IndexedColors.Red.Index;
-                    fillRed.FillPattern = (short) FillPattern.SolidForeground;
-                    
-                    //Fill red if too big
-                    XSSFConditionalFormattingRule formatTooSmall =
-                        (XSSFConditionalFormattingRule) sCF.CreateConditionalFormattingRule(
-                            ComparisonOperator.LessThan, minFormula);
-                    XSSFPatternFormatting fillBlue = (XSSFPatternFormatting) formatTooSmall.CreatePatternFormatting();
-                    fillBlue.FillBackgroundColor = IndexedColors.Blue.Index;
-                    fillBlue.FillPattern = (short) FillPattern.SolidForeground;
+                    // Max rule
+                    IConditionalFormattingRule maxRule =
+                        sheetCF.CreateConditionalFormattingRule(ComparisonOperator.GreaterThan, maxFormula);
+                    IPatternFormatting fill1 = maxRule.CreatePatternFormatting();
+                    fill1.FillBackgroundColor = (IndexedColors.Red.Index);
+                    fill1.FillPattern = FillPattern.SolidForeground;
 
-                    CellRangeAddress[] cfRange = { CellRangeAddress.ValueOf($"{columnIndex}{i+1}") };
-                    sCF.AddConditionalFormatting(cfRange, formatTooBig, formatTooSmall);
+                    // min rule
+                    IConditionalFormattingRule minRule =
+                        sheetCF.CreateConditionalFormattingRule(ComparisonOperator.LessThan, minFormula);
+                    IPatternFormatting fill2 = minRule.CreatePatternFormatting();
+                    fill2.FillBackgroundColor = (IndexedColors.Blue.Index);
+                    fill2.FillPattern = FillPattern.SolidForeground;
+
+                    CellRangeAddress[] regions =
+                    {
+                        CellRangeAddress.ValueOf($"{columnIndex}{4}:{columnIndex}{numFaiRows+3}")
+                    };
+
+                    sheetCF.AddConditionalFormatting(regions, maxRule, minRule);
                 }
-            }
             
-            using (FileStream stream = new FileStream(path, FileMode.Create, FileAccess.Write))
-            {
-                wb.Write(stream);
-            }  
+            
+                using (var fs = File.Create(path))
+                {
+                    wb.Write(fs);
+                }
         }
 
         private static string GetExcelColumnName(int columnNumber)

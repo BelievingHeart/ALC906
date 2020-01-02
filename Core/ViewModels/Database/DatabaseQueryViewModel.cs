@@ -315,8 +315,9 @@ namespace Core.ViewModels.Database
 
             var csvPath = Path.Combine(CsvDir, ProductType + $"-{faiCollections.Count}PCS.xlsx");
             ExcelHelper.CsvToExcel(csvPath, "ALC", contentsRows);
-            Process.Start(CsvDir);
             ExcelHelper.FormatFaiExcel(csvPath, 1, 2, contentsRows.Count-3, minRow.Count-3);
+            Process.Start(CsvDir);
+
         }
 
         private void OpenSaveDialog(object obj)
