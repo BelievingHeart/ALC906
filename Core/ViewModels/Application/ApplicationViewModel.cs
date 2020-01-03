@@ -338,6 +338,23 @@ namespace Core.ViewModels.Application
         {
             Logger.LogStateChanged("PLC复位完成");
             UiDispatcher.InvokeAsync(CommandManager.InvalidateRequerySuggested);
+
+            // Reopen camera
+            try
+            {
+                SetupCameras();
+            }
+            catch
+            {
+                var popup = new PopupViewModel
+                {
+                    OkCommand = new CloseDialogAttachedCommand(o=>true,CloseMainWindow),
+                    IsSpecialPopup = false,
+                    Content = "2D相机不能正常取像，请重启ALC",
+                    OkButtonText = "确定"
+                };
+                Logger.EnqueuePopup(popup);
+            }
         }
 
         private void ResetStates()
@@ -395,20 +412,41 @@ namespace Core.ViewModels.Application
             ResultReady2D = ResultStatus.Waiting;
         }
 
+        /// <summary>
+        /// Open or reopen camera
+        /// </summary>
         private void SetupCameras()
         {
+            if (TopCamera != null)
+            {
+                TopCamera.ImageBatchCollected -= ProcessImages2D;
+                TopCamera.ImageAcquisitionEnd -= OnTopCameraOnImageAcquisitionEnd;
+                try
+                {
+                    TopCamera.Close();
+                }
+                catch
+                {
+                    //Don't care
+                }
+            }
+
+       
+            
             TopCamera = new HKCameraViewModel {ImageBatchSize = 2};
             TopCamera.ImageBatchCollected += ProcessImages2D;
-            TopCamera.ImageAcquisitionEnd += () =>
-            {
-                if (!Server.IsConnected) return;
-                // Else image acquisition failed
-                Server.Disconnect();
-                Logger.LogHighLevelWarningNormal("2D相机不能正常取像，请重启ALC");
-            };
+            TopCamera.ImageAcquisitionEnd += OnTopCameraOnImageAcquisitionEnd;
             TopCamera.Open();
             TopCamera.SetTriggerToLine0();
             TopCamera.StartGrabbing();
+        }
+
+        private void OnTopCameraOnImageAcquisitionEnd()
+        {
+            if (!Server.IsConnected) return;
+            // Else image acquisition failed
+            Server.Disconnect();
+            Logger.LogHighLevelWarningNormal("2D相机不能正常取像，请重启ALC");
         }
 
         private void SetupLaserControllers()
@@ -1078,6 +1116,7 @@ namespace Core.ViewModels.Application
         {
             Table = null;
         }
+        
 
         private void InitSerializer()
         {
