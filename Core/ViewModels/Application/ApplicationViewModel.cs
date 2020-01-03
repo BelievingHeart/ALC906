@@ -900,7 +900,15 @@ namespace Core.ViewModels.Application
         /// </summary>
         public static void Init()
         {
-            _instance = new ApplicationViewModel();
+            _instance = new ApplicationViewModel()
+            {
+                // Save ng images only by default
+                ShouldSave2DImagesLeft = true,
+                ShouldSave2DImagesRight = true,
+                ShouldSave3DImagesLeft = true,
+                ShouldSave3DImagesRight = true,
+                SaveNgImagesOnly = true
+            };
         }
 
         /// <summary>
