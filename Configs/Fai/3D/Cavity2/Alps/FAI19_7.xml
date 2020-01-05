@@ -1,2 +1,2 @@
 <?xml version="1.0"?>
-<FaiItem xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="FAI19_7" MaxBoundary="2.875" MinBoundary="2.775" Weight="1" Bias="-0.003" />
+<FaiItem xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="FAI19_7" MaxBoundary="2.875" MinBoundary="2.775" Weight="1" Bias="0.034" />

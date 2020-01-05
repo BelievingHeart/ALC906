@@ -7,21 +7,24 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <ListBox x:Name="PART_ListBox">
-            
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal"></StackPanel>
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-            
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <local:FaiYieldItemView ProgressBarHeight="{Binding Path=ProgressBarHeight, RelativeSource={RelativeSource AncestorType=local:FaiYieldCollectionView}}"
-                                            LethalValue="{Binding Path=LethalValue, RelativeSource={RelativeSource AncestorType=local:FaiYieldCollectionView}}"
-                                            WarningValue="{Binding Path=WarningValue, RelativeSource={RelativeSource AncestorType=local:FaiYieldCollectionView}}"/>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+        <ScrollViewer HorizontalScrollBarVisibility="Auto">
+            <ListBox x:Name="PART_ListBox">
+
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <local:FaiYieldItemView
+                            ProgressBarHeight="{Binding Path=ProgressBarHeight, RelativeSource={RelativeSource AncestorType=local:FaiYieldCollectionView}}"
+                            LethalValue="{Binding Path=LethalValue, RelativeSource={RelativeSource AncestorType=local:FaiYieldCollectionView}}"
+                            WarningValue="{Binding Path=WarningValue, RelativeSource={RelativeSource AncestorType=local:FaiYieldCollectionView}}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </ScrollViewer>
     </Grid>
 </UserControl>
