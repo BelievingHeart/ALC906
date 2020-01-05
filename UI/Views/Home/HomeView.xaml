@@ -10,6 +10,7 @@
              xmlns:converters="clr-namespace:UI.Converters"
              xmlns:summary="clr-namespace:UI.Views.Summary"
              xmlns:views="clr-namespace:UI.Views"
+             xmlns:faiYieldCollection="clr-namespace:UI.Views.FaiItem.FaiYieldCollection"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              DataContext="{Binding Source={x:Static application:ApplicationViewModel.Instance}}">
@@ -17,7 +18,8 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <!-- PLC buttons -->
@@ -118,8 +120,10 @@
 
 
         </Grid>
+        
+        <faiYieldCollection:FaiYieldCollectionView Grid.Row="2" ProgressBarHeight="40" WarningValue="95" LethalValue="90" DataContext="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Summary.FaiYieldCollectionViewModel}"/>
 
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
@@ -127,15 +131,11 @@
             <StackPanel Grid.Column="0">
                 <Grid>
                     <faiItem:FaiItemListWarpView FaiItems="{Binding FaiItemsCavity1}" />
-                    <!-- <views:ProductLevelView ProductLevel="{Binding ProductLevelCavity1, Mode=OneWay}" HorizontalAlignment="Center" -->
-                    <!--                         VerticalAlignment="Center" /> -->
                 </Grid>
             </StackPanel>
             <StackPanel Grid.Column="1">
                 <Grid>
                     <faiItem:FaiItemListWarpView FaiItems="{Binding FaiItemsCavity2}" />
-                    <!-- <views:ProductLevelView ProductLevel="{Binding ProductLevelCavity2}" HorizontalAlignment="Center" -->
-                    <!--                         VerticalAlignment="Center" /> -->
                 </Grid>
             </StackPanel>
         </Grid>

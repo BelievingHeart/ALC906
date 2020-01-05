@@ -23,6 +23,7 @@ using Core.IoC.Loggers;
 using Core.IoC.PlcErrorParser;
 using Core.ViewModels.Database.FaiCollection;
 using Core.ViewModels.Fai;
+using Core.ViewModels.Fai.FaiYieldCollection;
 using Core.ViewModels.Login;
 using Core.ViewModels.Message;
 using Core.ViewModels.Popup;
@@ -607,7 +608,9 @@ namespace Core.ViewModels.Application
 
         private void UpdateSummaries()
         {
-             Summary.Update(ProductLevelCavity1, ProductLevelCavity2);
+             Summary.UpdateSummary(ProductLevelCavity1, ProductLevelCavity2);
+             Summary.UpdateYieldCollection(ProductLevelCavity2 == ProductLevel.Empty || ProductLevelCavity2 == ProductLevel.Ng5? null: FaiItemsCavity2,
+                 ProductLevelCavity1 == ProductLevel.Empty || ProductLevelCavity1 == ProductLevel.Ng5? null: FaiItemsCavity1);
         }
 
         /// <summary>
@@ -1108,6 +1111,9 @@ namespace Core.ViewModels.Application
             FaiItemsCavity1 = FaiItems2DLeft.ConcatNew(FaiItems3DLeft);
             FaiItemsCavity2 = FaiItems2DRight.ConcatNew(FaiItems3DRight);
 
+            // Init yield collection
+            Summary.FaiYieldCollectionViewModel = new FaiYieldCollectionViewModel(FaiItemsCavity1.Select(item=>item.Name));
+            
             InitSerializer();
             InitTables();
         }

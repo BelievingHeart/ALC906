@@ -30,7 +30,7 @@ namespace UI.Views
         private void OnMainWindowLoaded(object sender, RoutedEventArgs e)
         {
             ApplicationViewModel.Instance.LoadConfigs();
-            ApplicationViewModel.Instance.InitHardWares();
+//            ApplicationViewModel.Instance.InitHardWares();
         }
 
 

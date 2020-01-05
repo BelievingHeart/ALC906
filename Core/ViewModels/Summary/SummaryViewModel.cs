@@ -2,6 +2,7 @@
 using System.Diagnostics.Contracts;
 using System.Windows.Input;
 using System.Xml.Serialization;
+using Core.ViewModels.Fai.FaiYieldCollection;
 using WPFCommon.Commands;
 using WPFCommon.ViewModels.Base;
 
@@ -37,6 +38,9 @@ namespace Core.ViewModels.Summary
             Ng4Count = 0;
             Ng5Count = 0;
             _shouldRefreshStartTime = true;
+            
+            // Clear yield collection
+            FaiYieldCollectionViewModel.Clear();
         }
 
         public int OkCount
@@ -125,6 +129,8 @@ namespace Core.ViewModels.Summary
         {
             get { return TotalCount / (DateTime.Now - StartTime).TotalHours; }
         }
+
+        public FaiYieldCollectionViewModel FaiYieldCollectionViewModel { get; set; }
 
         public ICommand ClearCommand { get; set; }
 

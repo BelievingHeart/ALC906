@@ -167,6 +167,8 @@
     <Compile Include="ViewModels\Database\FaiCollection\IFaiCollection.cs" />
     <Compile Include="ViewModels\Fai\DataRowViewModel.cs" />
     <Compile Include="ViewModels\Fai\FaiTableStackViewModel.cs" />
+    <Compile Include="ViewModels\Fai\FaiYieldCollection\FaiYieldCollectionViewModel.cs" />
+    <Compile Include="ViewModels\Fai\FaiYieldCollection\FaiYieldItemViewModel.cs" />
     <Compile Include="ViewModels\Login\LoginViewModel.cs" />
     <Compile Include="ViewModels\Message\FixedSizeMessageList.cs" />
     <Compile Include="ViewModels\Popup\PopupQueue.cs" />

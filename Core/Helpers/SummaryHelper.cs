@@ -1,11 +1,13 @@
-﻿using Core.Enums;
+﻿using System.Collections.Generic;
+using Core.Enums;
+using Core.ViewModels.Fai;
 using Core.ViewModels.Summary;
 
 namespace Core.Helpers
 {
     public static class SummaryHelper
     {
-        public static void Update(this SummaryViewModel summary,
+        public static void UpdateSummary(this SummaryViewModel summary,
             params ProductLevel[] productLevels)
         {
             foreach (var productLevel in productLevels)
@@ -32,6 +34,14 @@ namespace Core.Helpers
                         break;
                 }
 
+            }
+        }
+
+        public static void UpdateYieldCollection(this SummaryViewModel summaryViewModel, params IEnumerable<FaiItem>[] faiItems)
+        {
+            foreach (var faiItem in faiItems)
+            {
+                if(faiItem!=null) summaryViewModel.FaiYieldCollectionViewModel.Update(faiItem);
             }
         }
     }
