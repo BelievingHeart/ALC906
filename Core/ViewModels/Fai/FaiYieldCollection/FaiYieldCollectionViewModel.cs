@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using WPFCommon.ViewModels.Base;
 
 namespace Core.ViewModels.Fai.FaiYieldCollection
@@ -63,7 +64,8 @@ namespace Core.ViewModels.Fai.FaiYieldCollection
         public void Clear()
         {
             _totalCount = 0;
-            foreach (var key in _okCountDict.Keys)
+            var faiNames = _okCountDict.Keys.ToArray();
+            foreach (var key in faiNames)
             {
                 _okCountDict[key] = 0;
                 PercentDict[key] = 100;
