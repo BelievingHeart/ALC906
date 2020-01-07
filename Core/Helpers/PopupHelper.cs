@@ -54,5 +54,34 @@ namespace Core.Helpers
                 IsSpecialPopup = true
             };
         }
+
+        public static PopupViewModel CreateSafeDoorPopup(string message, AlcServerViewModel alcServer)
+        {
+            // disallow plc to continue
+            alcServer.IsContinueAllowed = false;
+
+            var continueMessagePack = PlcMessagePackConstants.PromptPlcToCheckDoorStateMessagePack;
+            var quitMessagePack = PlcMessagePack.AbortMessage;
+            
+            var content = "请关门后点击继续，或者点取消退出自动模式";
+            
+            return  new PopupViewModel()
+            {
+                OkButtonText = "继续",
+                CancelButtonText = "取消",
+                OkCommand = new CloseDialogAttachedCommand(o => true, () =>
+                    {
+                        alcServer.SentToPlc(continueMessagePack, PlcMessageType.Request);
+                        alcServer.IsContinueAllowed = true;
+                    }),
+                CancelCommand = new CloseDialogAttachedCommand(o => true, () =>
+                {
+                    alcServer.SentToPlc(quitMessagePack, PlcMessageType.Request);
+                    alcServer.IsAutoRunning = false;
+                }),
+                MessageItem = LoggingMessageItem.CreateMessage(message),
+                Content = content,
+                IsSpecialPopup = true
+            };        }
     }
 }

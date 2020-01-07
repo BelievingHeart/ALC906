@@ -27,6 +27,12 @@ namespace Core.Constants
         /// 只允许在！IsAutoRunning状态下执行 
         /// </summary>
         private const int CommandIdClearProductErrorState = 25;
+        
+        public static readonly PlcMessagePack PromptPlcToCheckDoorStateMessagePack = new PlcMessagePack()
+        {
+            CommandId = 33,
+            MsgType = PlcMessagePack.RequestIndicator
+        };
 
 
         public static readonly PlcMessagePack ClearProductErrorStateMessagePack = new PlcMessagePack()

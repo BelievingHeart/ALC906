@@ -75,11 +75,17 @@ namespace Core.IoC.PlcErrorParser
             WarningL4Emit?.Invoke(obj, errorCode);
         }
         
-        private static List<long> _specialCode = new List<long>(){2080, 2081, 2082, 2083, 2084, 2085, 2086, 2087, 2088};
+        private static readonly List<long> ClearProductCode = new List<long>(){2080, 2081, 2082, 2083, 2084, 2085, 2086, 2087, 2088};
+        private static readonly List<long> SafeDoorOpenCode = new List<long>(){2062, 2063, 2064, 2065};
 
-        public static bool IsSpecialErrorCode(long errorCode)
+        public static bool IsClearProductWarningCode(long errorCode)
         {
-            return _specialCode.Contains(errorCode);
+            return ClearProductCode.Contains(errorCode);
+        }
+
+        public static bool IsSafeDoorOpenWarningCode(long errorCode)
+        {
+            return SafeDoorOpenCode.Contains(errorCode);
         }
     }
 }

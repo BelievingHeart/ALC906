@@ -260,10 +260,15 @@ namespace Core.ViewModels.Application
             if (Server.IsAutoRunning) Server.PauseCommand.Execute(null);
             Logger.Instance.LogMessageToFile(message, Logger.HighLevelWarningFilePath);
 
-            if (PlcErrorParser.IsSpecialErrorCode(errorCode))
+            if (PlcErrorParser.IsClearProductWarningCode(errorCode))
             {
                 Logger.LogUnhandledPlcMessage($"收到特殊代号{errorCode}");
                 var popupViewModel = PopupHelper.CreateClearProductPopup(message, errorCode, Server);
+                Logger.LogHighLevelWarningSpecial(popupViewModel);
+            }else if(PlcErrorParser.IsSafeDoorOpenWarningCode(errorCode))
+            {
+                Logger.LogUnhandledPlcMessage($"收到特殊代号{errorCode}");
+                var popupViewModel = PopupHelper.CreateSafeDoorPopup(message, Server);
                 Logger.LogHighLevelWarningSpecial(popupViewModel);
             }
             else
