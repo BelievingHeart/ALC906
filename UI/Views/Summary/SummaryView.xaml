@@ -73,7 +73,15 @@
                 <Grid>
                     <TextBlock Text="{Binding Uph, StringFormat=N1}" HorizontalAlignment="Center"
                                VerticalAlignment=" Center" FontSize="20" />
-                    <Button Content="重置统计" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Command="{Binding ClearCommand}" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+                    <Button Content="重置统计" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"
+                            Command="{Binding ClearCommand}" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                        <Button.ToolTip>
+                            <StackPanel>
+                                <TextBlock Text="上次重置时间：" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"/>
+                                <TextBlock Text="{Binding StartTime, Converter={converters:DateTimeFormatConverter}}"/>
+                            </StackPanel>
+                        </Button.ToolTip>
+                    </Button>
                 </Grid>
             </materialDesign:ColorZone>
 

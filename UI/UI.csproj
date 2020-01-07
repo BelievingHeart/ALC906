@@ -90,6 +90,7 @@
     <Compile Include="Converters\BooleanToLoginStateConverter.cs" />
     <Compile Include="Converters\BooleanToPopupButtonTypeConverter.cs" />
     <Compile Include="Converters\BooleanToSpecialBackgroundConverter.cs" />
+    <Compile Include="Converters\DateTimeFormatConverter.cs" />
     <Compile Include="Converters\EnumToApplicationPageConverter.cs" />
     <Compile Include="Converters\EventToCommandBehaviour.cs" />
     <Compile Include="Converters\LogicNotConverter.cs" />
@@ -102,6 +103,12 @@
     </Compile>
     <Compile Include="Views\FaiItem\FaiYieldCollection\FaiYieldItemView.xaml.cs">
       <DependentUpon>FaiYieldItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HeartBeat\HeartBeatIconView.xaml.cs">
+      <DependentUpon>HeartBeatIconView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HeartBeat\HeartBeatView.xaml.cs">
+      <DependentUpon>HeartBeatView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ProductLevelView.xaml.cs">
       <DependentUpon>ProductLevelView.xaml</DependentUpon>
@@ -269,6 +276,8 @@
     <Page Include="Resources\Images.xaml" />
     <Page Include="Views\FaiItem\FaiYieldCollection\FaiYieldCollectionView.xaml" />
     <Page Include="Views\FaiItem\FaiYieldCollection\FaiYieldItemView.xaml" />
+    <Page Include="Views\HeartBeat\HeartBeatIconView.xaml" />
+    <Page Include="Views\HeartBeat\HeartBeatView.xaml" />
     <Page Include="Views\ProductLevelView.xaml" />
     <Page Include="Views\Summary\BinItemView.xaml" />
     <Page Include="Views\Summary\SummaryView.xaml" />

@@ -221,6 +221,7 @@
           <e p="BooleanToLoginStateConverter.cs" t="Include" />
           <e p="BooleanToPopupButtonTypeConverter.cs" t="Include" />
           <e p="BooleanToSpecialBackgroundConverter.cs" t="Include" />
+          <e p="DateTimeFormatConverter.cs" t="Include" />
           <e p="EnumToApplicationPageConverter.cs" t="Include" />
           <e p="EventToCommandBehaviour.cs" t="Include" />
           <e p="LogicNotConverter.cs" t="Include" />
@@ -305,6 +306,12 @@
           <e p="HalconScreen" t="Include">
             <e p="HalconScreenView.xaml" t="Include" />
             <e p="HalconScreenView.xaml.cs" t="Include" />
+          </e>
+          <e p="HeartBeat" t="Include">
+            <e p="HeartBeatIconView.xaml" t="Include" />
+            <e p="HeartBeatIconView.xaml.cs" t="Include" />
+            <e p="HeartBeatView.xaml" t="Include" />
+            <e p="HeartBeatView.xaml.cs" t="Include" />
           </e>
           <e p="Home" t="Include">
             <e p="HomeView.xaml" t="Include" />
