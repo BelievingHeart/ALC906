@@ -289,6 +289,13 @@ namespace Core.ViewModels.Database
                 maxRow.Add(max);
                 minRow.Add(min);
             }
+            
+            // Ng count for each fai items
+            var faiNgCounts = new Dictionary<string, int>();
+            foreach (var key in _dictionaryLower.Keys)
+            {
+                faiNgCounts[key] = 0;
+            }
 
             // Gen contents row
             var contentsRows = new List<List<string>>();
@@ -298,6 +305,14 @@ namespace Core.ViewModels.Database
                 foreach (var property in properties)
                 {
                     var propValue = property.GetValue(faiCollection);
+                    var isFaiProp = property.Name.Contains("FAI");
+                    if (isFaiProp)
+                    {
+                        var value = (double) propValue;
+                        if (value > _dictionaryUpper[property.Name] || value < _dictionaryLower[property.Name])
+                            faiNgCounts[property.Name]++;
+                    }
+                    
                     var cellContent = property.PropertyType == typeof(DateTime)
                         ? ((DateTime) propValue).ToString(NameConstants.DateTimeFormat)
                         : propValue.ToString();
@@ -312,6 +327,18 @@ namespace Core.ViewModels.Database
             contentsRows.Insert(0, minRow);
             contentsRows.Insert(0, maxRow);
             contentsRows.Insert(0, headerRow);
+            
+            // Create ng count row
+            var ngCountRowContent = new List<string>();
+            foreach (var property in properties)
+            {
+                var isFaiProp = property.Name.Contains("FAI");
+                ngCountRowContent.Add(isFaiProp? faiNgCounts[property.Name].ToString() : "");
+            }
+            
+            // Append ng count row
+            contentsRows.Add(ngCountRowContent);
+            
 
             var csvPath = Path.Combine(CsvDir, ProductType + $"-{faiCollections.Count}PCS.xlsx");
             ExcelHelper.CsvToExcel(csvPath, "ALC", contentsRows);
