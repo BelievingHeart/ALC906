@@ -100,15 +100,26 @@ namespace Core.ViewModels.Application
         private readonly object _lockerOfRightSocketIndexSinceReset2D = new object();
         private readonly object _lockerOfCurrentArrivedSocket2D = new object();
 
+        #region ctor
+
         protected ApplicationViewModel()
         {
             CurrentApplicationPage = ApplicationPageType.Home;
             Server = new AlcServerViewModel();
 
             Logger.Instance.StartPopupQueue();
+            Logger.Instance.ShouldMessageBoxPopupChanged += OnShouldWarningMessageBoxPopupChanged;
 
             InitCommands();
         }
+
+        private void OnShouldWarningMessageBoxPopupChanged(bool shouldPopup)
+        {
+            if (shouldPopup) Server.IsContinueAllowed = false;
+            if (!shouldPopup && !Logger.HasPopupsUnhandled) Server.IsContinueAllowed = true;
+        }
+
+        #endregion
 
         private void InitCommands()
         {

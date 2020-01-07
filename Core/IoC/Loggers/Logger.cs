@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows.Documents;
 using Core.Constants;
 using Core.Helpers;
 using Core.ViewModels.Message;
@@ -20,6 +21,8 @@ namespace Core.IoC.Loggers
         private PopupQueue _popupQueue;
         private int _errorCount;
         private PopupViewModel _popupViewModel;
+        private bool _shouldMessageBoxPopup;
+
         private static Logger _instance = new Logger(DirectoryConstants.ErrorLogDir)
         {
             PlcMessageList = new FixedSizeMessageList(DirectoryConstants.ErrorLogDir, "PLC.txt"),
@@ -29,7 +32,11 @@ namespace Core.IoC.Loggers
 
         #endregion
 
+        public event Action<bool> ShouldMessageBoxPopupChanged; 
+
         #region prop
+
+        public static bool HasPopupsUnhandled => Instance._popupQueue.PopupCount > 0;
 
         public static string LogDir { get; set; }
 
@@ -43,9 +50,16 @@ namespace Core.IoC.Loggers
         /// </summary>
         public ISnackbarMessageQueue StateChangedMessageQueue { get; set; }
 
-   
-        
-        public bool ShouldMessageBoxPopup { get; set; }
+
+        public bool ShouldMessageBoxPopup
+        {
+            get { return _shouldMessageBoxPopup; }
+            set
+            {
+                _shouldMessageBoxPopup = value;
+                OnShouldMessageBoxPopupChanged(_shouldMessageBoxPopup);
+            }
+        }
 
         public PopupViewModel PopupViewModel
         {
@@ -193,5 +207,10 @@ namespace Core.IoC.Loggers
         
 
         #endregion
+
+        protected virtual void OnShouldMessageBoxPopupChanged(bool obj)
+        {
+            ShouldMessageBoxPopupChanged?.Invoke(obj);
+        }
     }
 }

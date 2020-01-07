@@ -122,6 +122,9 @@
           <e p="Login" t="Include">
             <e p="LoginViewModel.cs" t="Include" />
           </e>
+          <e p="LotRecord" t="Include">
+            <e p="LotRecordItemViewModel.cs" t="Include" />
+          </e>
           <e p="MainWindow" t="Include">
             <e p="MainWindowViewModel.cs" t="Include" />
           </e>

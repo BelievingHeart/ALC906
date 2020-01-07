@@ -27,9 +27,7 @@ namespace Core.Helpers
 
         public static PopupViewModel CreateClearProductPopup(string message, long errorCode, AlcServerViewModel alcServer)
         {
-            // disallow plc to continue
-            alcServer.IsContinueAllowed = false;
-            
+
             var continueMessagePack = PlcMessagePackConstants.PlcWarningHandler2080Series[errorCode][0];
             var quitMessagePack = PlcMessagePackConstants.PlcWarningHandler2080Series[errorCode][1];
             
@@ -42,7 +40,6 @@ namespace Core.Helpers
                 OkCommand = new CloseDialogAttachedCommand(o => true, () =>
                     {
                         alcServer.SentToPlc(continueMessagePack, PlcMessageType.Request);
-                        alcServer.IsContinueAllowed = true;
                     }),
                 CancelCommand = new CloseDialogAttachedCommand(o => true, () =>
                 {
@@ -57,8 +54,7 @@ namespace Core.Helpers
 
         public static PopupViewModel CreateSafeDoorPopup(string message, AlcServerViewModel alcServer)
         {
-            // disallow plc to continue
-            alcServer.IsContinueAllowed = false;
+     
 
             var continueMessagePack = PlcMessagePackConstants.PromptPlcToCheckDoorStateMessagePack;
             var quitMessagePack = PlcMessagePack.AbortMessage;
@@ -72,7 +68,6 @@ namespace Core.Helpers
                 OkCommand = new CloseDialogAttachedCommand(o => true, () =>
                     {
                         alcServer.SentToPlc(continueMessagePack, PlcMessageType.Request);
-                        alcServer.IsContinueAllowed = true;
                     }),
                 CancelCommand = new CloseDialogAttachedCommand(o => true, () =>
                 {

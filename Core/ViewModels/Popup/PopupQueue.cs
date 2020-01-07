@@ -18,6 +18,17 @@ namespace Core.ViewModels.Popup
         /// </summary>
         private Predicate<object> _canPopup;
 
+        public int PopupCount
+        {
+            get
+            {
+                lock (_lockerOfPopups)
+                {
+                    return  _popups.Count;
+                }
+            }
+        }
+
         public event Action<PopupViewModel> NewPopupDequeued; 
 
         /// <summary>
