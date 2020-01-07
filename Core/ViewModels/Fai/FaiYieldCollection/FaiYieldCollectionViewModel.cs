@@ -10,7 +10,7 @@ namespace Core.ViewModels.Fai.FaiYieldCollection
         #region private members
 
         private int _totalCount = 0;
-        private Dictionary<string, int> _okCountDict;
+        public Dictionary<string, int> NgCountDict { get; }
 
         #endregion
 
@@ -29,11 +29,11 @@ namespace Core.ViewModels.Fai.FaiYieldCollection
 
         public FaiYieldCollectionViewModel(IEnumerable<string> faiNames)
         {
-            _okCountDict = new Dictionary<string, int>();
+            NgCountDict = new Dictionary<string, int>();
             PercentDict = new Dictionary<string, int>();
             foreach (var name in faiNames)
             {
-                _okCountDict[name] = 0;
+                NgCountDict[name] = 0;
                 PercentDict[name] = 100;
             }
         }
@@ -49,13 +49,13 @@ namespace Core.ViewModels.Fai.FaiYieldCollection
             // Increment ok counts
             foreach (var faiItem in faiItems)
             {
-                if (faiItem.Passed) _okCountDict[faiItem.Name]++;
+                if (faiItem.Rejected) NgCountDict[faiItem.Name]++;
             }
             
             // Calc yields
-            foreach (var key in _okCountDict.Keys)
+            foreach (var key in NgCountDict.Keys)
             {
-                PercentDict[key] = (int)(_okCountDict[key] / (double) _totalCount * 100);
+                PercentDict[key] = (int)((_totalCount - NgCountDict[key]) / (double) _totalCount * 100);
             }
 
             OnYieldsUpdated();
@@ -64,10 +64,10 @@ namespace Core.ViewModels.Fai.FaiYieldCollection
         public void Clear()
         {
             _totalCount = 0;
-            var faiNames = _okCountDict.Keys.ToArray();
+            var faiNames = NgCountDict.Keys.ToArray();
             foreach (var key in faiNames)
             {
-                _okCountDict[key] = 0;
+                NgCountDict[key] = 0;
                 PercentDict[key] = 100;
             }
             OnYieldsUpdated();

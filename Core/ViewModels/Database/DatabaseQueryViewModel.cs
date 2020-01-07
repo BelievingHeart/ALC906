@@ -323,10 +323,7 @@ namespace Core.ViewModels.Database
             }
 
 
-            // combine header and contents
-            contentsRows.Insert(0, minRow);
-            contentsRows.Insert(0, maxRow);
-            contentsRows.Insert(0, headerRow);
+      
             
             // Create ng count row
             var ngCountRowContent = new List<string>();
@@ -337,12 +334,16 @@ namespace Core.ViewModels.Database
             }
             
             // Append ng count row
-            contentsRows.Add(ngCountRowContent);
+            contentsRows.Insert(0, ngCountRowContent);
             
+            // combine header and contents
+            contentsRows.Insert(0, minRow);
+            contentsRows.Insert(0, maxRow);
+            contentsRows.Insert(0, headerRow);
 
             var csvPath = Path.Combine(CsvDir, ProductType + $"-{faiCollections.Count}PCS.xlsx");
             ExcelHelper.CsvToExcel(csvPath, "ALC", contentsRows);
-            ExcelHelper.FormatFaiExcel(csvPath, 1, 2, contentsRows.Count-3, minRow.Count-3);
+            ExcelHelper.FormatFaiExcel(csvPath, 1, 2, contentsRows.Count-4, minRow.Count-3, 4);
             Process.Start(CsvDir);
 
         }

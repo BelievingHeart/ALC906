@@ -6,5 +6,7 @@ namespace Core.ViewModels.Fai.FaiYieldCollection
     {
         public int Percent { get; set; }
         public string Name { get; set; }
+
+        public int NgCount { get; set; }
     }
 }

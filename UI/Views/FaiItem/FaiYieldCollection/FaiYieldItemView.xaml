@@ -9,13 +9,20 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid Margin="-5" Width="20">
         <Grid.ToolTip>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="{Binding Percent}" />
-                <TextBlock Text="%" />
+            <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{Binding NgCount}" />
+                    <TextBlock Text="PCS" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{Binding Percent}" />
+                    <TextBlock Text="%" />
+                </StackPanel>
             </StackPanel>
         </Grid.ToolTip>
-        <materialDesign:ColorZone Background="{DynamicResource PrimaryHueDarkBrush}" Height="100" BorderBrush="Black" CornerRadius="3">
-           
+        <materialDesign:ColorZone Background="{DynamicResource PrimaryHueDarkBrush}" Height="100" BorderBrush="Black"
+                                  CornerRadius="3">
+
             <materialDesign:ColorZone VerticalAlignment="Bottom" x:Name="PART_ValueIndicator" />
         </materialDesign:ColorZone>
         <TextBlock

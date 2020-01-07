@@ -80,8 +80,17 @@ namespace Core.Helpers
             cell.SetCellValue(value);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="maxRowIndex">Row index of max values</param>
+        /// <param name="minRowIndex">Row index of min values</param>
+        /// <param name="numFaiRows"></param>
+        /// <param name="numFaiColumns"></param>
+        /// <param name="numMiscRows">Count of rows other than fai value rows</param>
         public static void FormatFaiExcel(string path, int maxRowIndex, int minRowIndex, int numFaiRows,
-            int numFaiColumns)
+            int numFaiColumns, int numMiscRows)
         {
             XSSFWorkbook wb;
             using (FileStream file = new FileStream(path, FileMode.Open, FileAccess.Read))
@@ -118,7 +127,7 @@ namespace Core.Helpers
 
                     CellRangeAddress[] regions =
                     {
-                        CellRangeAddress.ValueOf($"{columnIndex}{4}:{columnIndex}{numFaiRows+3}")
+                        CellRangeAddress.ValueOf($"{columnIndex}{numMiscRows+1}:{columnIndex}{numFaiRows+numMiscRows}")
                     };
 
                     sheetCF.AddConditionalFormatting(regions, maxRule, minRule);

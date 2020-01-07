@@ -46,7 +46,7 @@ namespace UI.Views.FaiItem.FaiYieldCollection
                 // Create items' view models
                 var viewModel = (FaiYieldCollectionViewModel) DataContext;
                 var yieldItemViewModels =
-                    viewModel.PercentDict.Select(ele => new FaiYieldItemViewModel() {Name = ele.Key, Percent = ele.Value});
+                    viewModel.PercentDict.Select(ele => new FaiYieldItemViewModel() {Name = ele.Key, Percent = ele.Value, NgCount = viewModel.NgCountDict[ele.Key]});
 
                 // Set ItemSource
                 PART_ListBox.ItemsSource = yieldItemViewModels;
