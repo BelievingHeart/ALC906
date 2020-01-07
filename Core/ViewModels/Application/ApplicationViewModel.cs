@@ -117,7 +117,7 @@ namespace Core.ViewModels.Application
                 Directory.CreateDirectory(DirectoryConstants.CsvOutputDir);
                 Process.Start(DirectoryConstants.CsvOutputDir);
             });
-            OpenImageDirCommand = new RelayCommand(() => { Process.Start(Directory.GetCurrentDirectory()); });
+            OpenImageDirCommand = new RelayCommand(() => { Process.Start(DirectoryConstants.ImageBaseDir); });
 
             SimulateCommand = new RelayCommand(DoSimulation);
 
@@ -327,10 +327,21 @@ namespace Core.ViewModels.Application
                 lock (_lockerOfResultQueues2D)
                 {
                     _graphics2DCavity1 = _resultQueues2D[CavityType.Cavity1].Dequeue();
-                    Trace.Assert(_resultQueues2D[CavityType.Cavity1].Count == 0);
-
                     _graphics2DCavity2 = _resultQueues2D[CavityType.Cavity2].Dequeue();
-                    Trace.Assert(_resultQueues2D[CavityType.Cavity2].Count == 0);
+
+                    if(_resultQueues2D[CavityType.Cavity1].Count != 0 || _resultQueues2D[CavityType.Cavity2].Count != 0)
+                    {
+                        var popup = new PopupViewModel
+                        {
+                            OkCommand = new CloseDialogAttachedCommand(o=>true,()=>{Server.SentToPlc(PlcMessagePack.AbortMessage);}),
+                            IsSpecialPopup = false,
+                            Content = "2D相机不能正常取像，请复位",
+                            OkButtonText = "确定"
+                        };
+                        Server.IsAutoRunning = false;
+                        Logger.EnqueuePopup(popup);
+                    }
+
                 }
             }
         }
@@ -943,12 +954,11 @@ namespace Core.ViewModels.Application
         {
             _instance = new ApplicationViewModel()
             {
-                // Save ng images only by default
-                ShouldSave2DImagesLeft = true,
-                ShouldSave2DImagesRight = true,
-                ShouldSave3DImagesLeft = true,
-                ShouldSave3DImagesRight = true,
-                SaveNgImagesOnly = true
+                ShouldSave2DImagesLeft = false,
+                ShouldSave2DImagesRight = false,
+                ShouldSave3DImagesLeft = false,
+                ShouldSave3DImagesRight = false,
+                SaveNgImagesOnly = false
             };
         }
 
@@ -1112,6 +1122,7 @@ namespace Core.ViewModels.Application
             FaiItemsCavity2 = FaiItems2DRight.ConcatNew(FaiItems3DRight);
 
             // Init yield collection
+            Summary.ClearCommand.Execute(null);
             Summary.FaiYieldCollectionViewModel = new FaiYieldCollectionViewModel(FaiItemsCavity1.Select(item=>item.Name));
             
             InitSerializer();

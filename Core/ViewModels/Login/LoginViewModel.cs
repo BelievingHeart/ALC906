@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Input;
+using System.Windows.Threading;
 using System.Xml.Serialization;
 using Core.IoC.Loggers;
 using MaterialDesignThemes.Wpf;
@@ -11,8 +12,9 @@ namespace Core.ViewModels.Login
     public class LoginViewModel : AutoSerializableBase<LoginViewModel>
     {
         private string _inputPassWord;
-        
-        
+        private bool _authorized;
+
+
         public string RememberedPassword { get; set; } = "123456";
 
         [XmlIgnore] public string NewPassword { get; set; }
@@ -26,23 +28,47 @@ namespace Core.ViewModels.Login
 
         [XmlIgnore] public string InputPassWord { get; set; }
 
-        [XmlIgnore] public bool Authorized { set; get; }
+        [XmlIgnore]
+        public bool Authorized
+        {
+            set
+            {
+                _authorized = value;
+                if (_authorized)
+                {
+                    // Start time out for auto log out
+                    if (_logoutTimer != null) _logoutTimer.Tick -= Logout;
+                    _logoutTimer = new DispatcherTimer(DispatcherPriority.Background)
+                    {
+                        Interval = TimeSpan.FromMinutes(10)
+                    };
+                    _logoutTimer.Tick += Logout;
+                    _logoutTimer.Start();
+                }
+                else
+                {
+                    Log("已登出");
+                }
+            }
+            get { return _authorized; }
+        }
 
         [XmlIgnore]
         public ICommand LogoutCommand { get; }
+
+        private DispatcherTimer _logoutTimer;
 
 
         public LoginViewModel()
         {
             LoginCommand = new SimpleCommand(o=>Login(), o=>!Authorized);
-            LogoutCommand = new SimpleCommand(o=>Logout(), o=>Authorized);
+            LogoutCommand = new SimpleCommand(o=>Logout(null, null), o=>Authorized);
             ChangePasswordCommand = new RelayCommand(ChangePassword);
         }
 
-        private void Logout()
+        private void Logout(object sender, EventArgs eventArgs)
         {
             Authorized = false;
-            Log("登出成功");
         }
 
         private void ChangePassword()

@@ -35,16 +35,16 @@ namespace Core.Constants
             get { return Path.Combine(Directory.GetCurrentDirectory(), "Log"); }
         }
 
-        
+        public static readonly string ImageBaseDir = "D:\\ALC-Images";
 
         public static string ImageDir2D
         {
-            get { return Path.Combine(Directory.GetCurrentDirectory(), "2DImages"); }
+            get { return Path.Combine(ImageBaseDir, "2D"); }
         }
 
         public static string ImageDir3D
         {
-            get { return Path.Combine(Directory.GetCurrentDirectory(), "3DImages"); }
+            get { return Path.Combine(ImageBaseDir, "3D"); }
         }
 
 

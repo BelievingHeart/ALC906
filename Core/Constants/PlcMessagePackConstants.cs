@@ -21,7 +21,7 @@ namespace Core.Constants
         /// 处理完毕后处理弹窗，并回复PLC
         /// </summary>
         public const int CommandIdProductStateError = 24;
-
+        
         /// <summary>
         /// 清除产品异常状态
         /// 只允许在！IsAutoRunning状态下执行 

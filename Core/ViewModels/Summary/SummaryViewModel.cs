@@ -40,7 +40,7 @@ namespace Core.ViewModels.Summary
             _shouldRefreshStartTime = true;
             
             // Clear yield collection
-            FaiYieldCollectionViewModel.Clear();
+            FaiYieldCollectionViewModel?.Clear();
         }
 
         public int OkCount
