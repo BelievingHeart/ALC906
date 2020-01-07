@@ -20,12 +20,12 @@
             <!-- Buttons -->
             <StackPanel Orientation="Horizontal" Grid.Column="0" Margin="20 0">
                 <!-- Connect button -->
-                <Button
+                <Button Width="100" Margin="10 0"
                     Command="{Binding Path=Server.ConnectCommand}" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"
                     Content="连接" Style="{StaticResource MaterialDesignRaisedLightButton}" Height="50"
                     materialDesign:ButtonAssist.CornerRadius="5" />
                 <!-- Disconnect button -->
-                <Button
+                <Button Width="100"
                     Command="{Binding Path=Server.DisconnectCommand}" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"
                     Content="断开连接" Style="{StaticResource MaterialDesignRaisedLightButton}" Height="50"
                     materialDesign:ButtonAssist.CornerRadius="5" />

@@ -40,10 +40,11 @@ namespace UI.Views.Login
             viewModel.NewPasswordDoubleCheck = passwordBox.Password;
         }
 
-        private void ClearInputPasswordBox(object sender, RoutedEventArgs e)
+    
+
+        private void ClearPassword(object sender, RoutedEventArgs e)
         {
             InputPasswordBox.Clear();
         }
-        
     }
 }

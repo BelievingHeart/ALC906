@@ -9,7 +9,7 @@
              xmlns:application="clr-namespace:Core.ViewModels.Application;assembly=Core"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
-             DataContext="{Binding LoginViewModel}">
+             DataContext="{Binding LoginViewModel}" Unloaded="ClearPassword">
 
 
     <materialDesign:Flipper Style="{StaticResource MaterialDesignCardFlipper}" HorizontalAlignment="Center"
@@ -32,9 +32,9 @@
                                  materialDesign:HintAssist.Foreground="Green"
                                  materialDesign:TextFieldAssist.UnderlineBrush="Green"
                                  Style="{StaticResource MaterialDesignFloatingHintPasswordBox}" />
-                    <Button Content="登陆" Margin="10" Width="150" Height="40" FontSize="24" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" 
+                    <Button Content="登陆" Margin="10" Width="150" Height="40" FontSize="24" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"
                             Command="{Binding LoginCommand}" IsDefault="True"/>
-                    <Button Content="登出" Margin="10" Width="150" Height="40" FontSize="24" Click="ClearInputPasswordBox" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" 
+                    <Button Content="登出" Margin="10" Width="150" Height="40" FontSize="24" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" 
                             Command="{Binding LogoutCommand}"/>
                     <Button Content="修改密码" Margin="20" VerticalAlignment="Center" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" 
                             HorizontalAlignment="Center" Command="{x:Static materialDesign:Flipper.FlipCommand}"

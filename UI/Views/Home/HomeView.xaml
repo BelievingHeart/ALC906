@@ -121,7 +121,7 @@
 
         </Grid>
         
-        <faiYieldCollection:FaiYieldCollectionView Grid.Row="2" ProgressBarHeight="40" WarningValue="95" LethalValue="90" DataContext="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Summary.FaiYieldCollectionViewModel}"/>
+        <faiYieldCollection:FaiYieldCollectionView Margin="20 3" Grid.Row="2" ProgressBarHeight="40" WarningValue="95" LethalValue="90" DataContext="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Summary.FaiYieldCollectionViewModel}"/>
 
         <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>

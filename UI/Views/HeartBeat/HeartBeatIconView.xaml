@@ -19,9 +19,9 @@
                         <DoubleAnimation Storyboard.TargetName="PART_ConnectIndicator"
                                          Storyboard.TargetProperty="Opacity"
                                          From="0"
-                                         To="1"
+                                         To="1" RepeatBehavior="3x"
                                          AutoReverse="True"
-                                         Duration="0:0:0.5" />
+                                         Duration="0:0:0.83" />
                     </Storyboard>
                 </BeginStoryboard>
             </EventTrigger>
