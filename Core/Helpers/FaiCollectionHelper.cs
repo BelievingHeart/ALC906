@@ -99,7 +99,7 @@ namespace Core.Helpers
             {
                 foreach (var faiCollection in collections)
                 {
-                    if(faiCollection.Result!=null && faiCollection.Result!="Error") connection.Execute(insertQuery, faiCollection);
+                    if(faiCollection.Result!=null && faiCollection.Result!="Error" && faiCollection.Result!="WrongProductType") connection.Execute(insertQuery, faiCollection);
                 }
             }
         }

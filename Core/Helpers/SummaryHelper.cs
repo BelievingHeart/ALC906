@@ -23,9 +23,9 @@ namespace Core.Helpers
                     case ProductLevel.Ng2:
                         summary.Ng2Count++;
                         break;
-                    case ProductLevel.Ng3:
-                        summary.Ng3Count++;
-                        break;
+//                    case ProductLevel.Ng3:
+//                        summary.Ng3Count++;
+//                        break;
                     case ProductLevel.Ng4:
                         summary.Ng4Count++;
                         break;

@@ -793,6 +793,11 @@ namespace Core.ViewModels.Application
         {
             if (!itemExists) return ProductLevel.Empty;
             if (errored) return ProductLevel.Ng5;
+            
+            var value_16_1 = faiItems.First(item => item.Name == "FAI16_1").Value;
+            var wrongProduct = value_16_1 > 0.15 && value_16_1 < 100;
+            if (wrongProduct) return ProductLevel.Ng3;
+            
             return faiItems.Any(item => item.Rejected) ? ProductLevel.Ng2 : ProductLevel.OK;
         }
 
