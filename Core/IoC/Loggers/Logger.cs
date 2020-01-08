@@ -23,7 +23,7 @@ namespace Core.IoC.Loggers
         private PopupViewModel _popupViewModel;
         private bool _shouldMessageBoxPopup;
 
-        private static Logger _instance = new Logger(DirectoryConstants.ErrorLogDir)
+        private static Logger _instance = new Logger
         {
             PlcMessageList = new FixedSizeMessageList(DirectoryConstants.ErrorLogDir, "PLC.txt"),
             UnhandledPlcMessageList = new FixedSizeMessageList(DirectoryConstants.ErrorLogDir, "PLC-Unhandled.txt"),
@@ -37,12 +37,10 @@ namespace Core.IoC.Loggers
         #region prop
 
         public static bool HasPopupsUnhandled => Instance._popupQueue.PopupCount > 0;
-
-        public static string LogDir { get; set; }
-
-        public static string HighLevelWarningFilePath => Path.Combine(LogDir, "PlcErrors.txt");
-        public static string AllCommandIdsFromPlcFilePath => Path.Combine(LogDir, "AllCommandIdsFromPlc.txt");
-        public static string AllCommandIdsToPlcFilePath => Path.Combine(LogDir, "AllCommandIdsToPlc.txt");
+        
+        public static string HighLevelWarningFilePath => Path.Combine(DirectoryConstants.ErrorLogDir, "PlcErrors.txt");
+        public static string AllCommandIdsFromPlcFilePath => Path.Combine(DirectoryConstants.ErrorLogDir, "AllCommandIdsFromPlc.txt");
+        public static string AllCommandIdsToPlcFilePath => Path.Combine(DirectoryConstants.ErrorLogDir, "AllCommandIdsToPlc.txt");
 
              
         /// <summary>
@@ -90,32 +88,14 @@ namespace Core.IoC.Loggers
         public FixedSizeMessageList UnhandledPlcMessageList { get; set; }
     
         public FixedSizeMessageList RoutineMessageList { get; set; }
-
-        public int ErrorCount
-        {
-            get { return _errorCount; }
-            set
-            {
-                _errorCount = value;
-                if (_errorCount > 0) HasError = true;
-            }
-        }
-
-        public bool HasError { get; set; }
-
         
-
         #endregion
 
         #region ctor
 
-        public Logger(string logDir)
+        public Logger()
         {
-            // Error logging
-            LogDir = logDir;
-            Directory.CreateDirectory(LogDir);
             _previousDate = CurrentDate;
-            
             // State changed logging
             StateChangedMessageQueue = new SnackbarMessageQueue(TimeSpan.FromSeconds(3));
         }

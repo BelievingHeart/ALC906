@@ -20,20 +20,10 @@ namespace Core.Constants
         {
             get { return Path.Combine(OutputDir, "CSV"); }
         }
-
-        /// <summary>
-        /// Directory that stores general records
-        /// </summary>
-        public static string ProductionLineRecordDir
-        {
-            get { return Path.Combine(OutputDir, "General"); }
-        }
+        
 
 
-        public static string ErrorLogDir
-        {
-            get { return Path.Combine(Directory.GetCurrentDirectory(), "Log"); }
-        }
+        public static string ErrorLogDir = "D:\\ALC-Logs";
 
         public static readonly string ImageBaseDir = "D:\\ALC-Images";
 

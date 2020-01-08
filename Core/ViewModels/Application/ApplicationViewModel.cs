@@ -60,6 +60,8 @@ namespace Core.ViewModels.Application
 
         private readonly Object _lockerOfLaserImageBuffers = new Object();
 
+        private bool _readyToEnterNextRun = true;
+
         /// <summary>
         /// Key=ControllerName, Value=CurrentIndexOfSocket
         /// CurrentIndexOfSocket: 0 for right, 1 for left
@@ -96,8 +98,6 @@ namespace Core.ViewModels.Application
 
         private readonly object _lockerOfResultQueues2D = new object();
         private bool _isAllControllersHighSpeedConnected;
-        private int _rightSocketIndexSinceReset2D;
-        private readonly object _lockerOfRightSocketIndexSinceReset2D = new object();
         private readonly object _lockerOfCurrentArrivedSocket2D = new object();
 
         #region ctor
@@ -207,7 +207,7 @@ namespace Core.ViewModels.Application
             Server.IpAddress = IPAddress.Parse("192.168.100.100");
             Server.Port = 4000;
             
-            Server.NewRunStarted += OnNewRunStarted;
+            Server.PlcRequestToEnterNewRun += OnPlcRequestToEnterNewRun;
             Server.PlcStopRequested += () => Logger.LogPlcMessage("收到停止请求");
             Server.PlcResetRequested += OnPlcInitRequested;
             Server.ClientHooked += OnPlcHooked;
@@ -237,6 +237,7 @@ namespace Core.ViewModels.Application
                         Logger.AllCommandIdsToPlcFilePath));
                 
             };
+            
 
             var errorParser = new PlcErrorParser(Path.Combine(DirectoryHelper.ConfigDirectory, "ErrorSheet.csv"));
             errorParser.WarningL1Emit += OnWarningL1Received;
@@ -304,21 +305,24 @@ namespace Core.ViewModels.Application
             Logger.LogPlcMessage(socket.RemoteEndPoint +"已连接");
         }
 
-        private void OnNewRunStarted()
+        private void OnPlcRequestToEnterNewRun()
         {
             Logger.LogPlcMessage("新一轮开始");
             
             // Reply plc
-            Server.SentToPlc(new PlcMessagePack(){CommandId = 23, MsgType = PlcMessagePack.RespondIndicator, Param1 = 0, Param2 = ShotsPerExecution2D == 2? 0:1});
+            Server.SentToPlc(new PlcMessagePack(){CommandId = 23, MsgType = PlcMessagePack.RespondIndicator, Param1 = _readyToEnterNextRun? 0 : 1, Param2 = ShotsPerExecution2D == 2? 0:1});
+
+            if (!_readyToEnterNextRun)
+            {
+                Show2DAcquisitionErrorPopup();
+                return;
+            }
             
             // Clear run related states
             ClearLaserImagesForNewRound();
             Enqueue2DImagesFromPreviousRound();
-            lock (_lockerOfRightSocketIndexSinceReset2D)
-            {
-                // Note: this must be updated at the time of take-off
-                _rightSocketIndexSinceReset2D = RoundCountSinceReset * 2 + 1;
-            }
+
+            _readyToEnterNextRun = false;
         }
 
         /// <summary>
@@ -347,19 +351,24 @@ namespace Core.ViewModels.Application
 
                     if(_resultQueues2D[CavityType.Cavity1].Count != 0 || _resultQueues2D[CavityType.Cavity2].Count != 0)
                     {
-                        var popup = new PopupViewModel
-                        {
-                            OkCommand = new CloseDialogAttachedCommand(o=>true,()=>{Server.SentToPlc(PlcMessagePack.AbortMessage);}),
-                            IsSpecialPopup = false,
-                            Content = "2D相机不能正常取像，请复位",
-                            OkButtonText = "确定"
-                        };
-                        Server.IsAutoRunning = false;
-                        Logger.EnqueuePopup(popup);
+                        Show2DAcquisitionErrorPopup();
                     }
 
                 }
             }
+        }
+
+        private void Show2DAcquisitionErrorPopup()
+        {
+            var popup = new PopupViewModel
+            {
+                OkCommand = new CloseDialogAttachedCommand(o => true, () => { Server.SentToPlc(PlcMessagePack.AbortMessage); }),
+                IsSpecialPopup = false,
+                Content = "2D相机不能正常取像，请复位",
+                OkButtonText = "确定"
+            };
+            Server.IsAutoRunning = false;
+            Logger.EnqueuePopup(popup);
         }
 
         private void OnPlcResetFinished()
@@ -400,7 +409,7 @@ namespace Core.ViewModels.Application
                 controller.ClearBuffer();
             }
 
-            Server.NotifyPlcReadyToGoNextLoop();
+            _readyToEnterNextRun = true;
         }
 
         private void PlcCustomCommandHandler(int commandId)
@@ -847,17 +856,7 @@ namespace Core.ViewModels.Application
             {
                 currentArrivedSocket2D = CurrentArrivedSocket2D;
             }
-
-
-            int itemIndexSinceReset;
-            lock (_lockerOfRightSocketIndexSinceReset2D)
-            {
-                itemIndexSinceReset = currentArrivedSocket2D == CavityType.Cavity2
-                    ? _rightSocketIndexSinceReset2D
-                    : _rightSocketIndexSinceReset2D + 1;
-            }
-
-
+            
             Logger.LogRoutineMessageAsync($"2D处理开始-{currentArrivedSocket2D}");
             GraphicsPackViewModel result;
 
@@ -899,7 +898,7 @@ namespace Core.ViewModels.Application
             // If results of both cavities are ready
             Logger.LogRoutineMessageAsync("本轮2D处理完成");
             ResultReady2D = ResultStatus.Ready;
-            Server.NotifyPlcReadyToGoNextLoop();
+            _readyToEnterNextRun = true;
         }
 
 
@@ -1001,7 +1000,7 @@ namespace Core.ViewModels.Application
             }
             
             // Remove outdated files if any
-            SerializationHelper.RemoveOutdatedFiles(Logger.LogDir, 1);
+            SerializationHelper.RemoveOutdatedFiles(DirectoryConstants.ErrorLogDir, 1);
             SerializationHelper.RemoveOutdatedFiles(DirectoryConstants.ImageDir2D, 5);
             SerializationHelper.RemoveOutdatedFiles(DirectoryConstants.ImageDir3D, 5);
             SerializationHelper.RemoveOutdatedFiles(DirectoryConstants.CsvOutputDir, 30);

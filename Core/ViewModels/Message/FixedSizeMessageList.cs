@@ -48,7 +48,6 @@ namespace Core.ViewModels.Message
             _serializationDir = serializationDir;
             _fileName = fileName;
             var path = Path.Combine(_serializationDir, _fileName);
-            if(File.Exists(path)) File.Delete(path);
         }
 
         public int MaxCount { get; set; } = 100;
