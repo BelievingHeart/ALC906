@@ -645,8 +645,8 @@ namespace Core.ViewModels.Application
         private void UpdateSummaries()
         {
              Summary.UpdateSummary(ProductLevelCavity1, ProductLevelCavity2);
-             Summary.UpdateYieldCollection(ProductLevelCavity2 == ProductLevel.Empty || ProductLevelCavity2 == ProductLevel.Ng5? null: FaiItemsCavity2,
-                 ProductLevelCavity1 == ProductLevel.Empty || ProductLevelCavity1 == ProductLevel.Ng5? null: FaiItemsCavity1);
+             Summary.UpdateYieldCollection(ProductLevelCavity2 == ProductLevel.Empty || ProductLevelCavity2 == ProductLevel.Ng5 || ProductLevelCavity2 == ProductLevel.Ng3? null: FaiItemsCavity2,
+                 ProductLevelCavity1 == ProductLevel.Empty || ProductLevelCavity1 == ProductLevel.Ng5 || ProductLevelCavity1 == ProductLevel.Ng3? null: FaiItemsCavity1);
         }
 
         /// <summary>
