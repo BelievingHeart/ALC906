@@ -28,8 +28,8 @@ namespace Core.Helpers
         public static PopupViewModel CreateClearProductPopup(string message, long errorCode, AlcServerViewModel alcServer)
         {
 
-            var continueMessagePack = PlcMessagePackConstants.PlcWarningHandler2080Series[errorCode][0];
-            var quitMessagePack = PlcMessagePackConstants.PlcWarningHandler2080Series[errorCode][1];
+            var continueMessagePack = PlcMessagePackConstants.PlcWarningHandler8090Series[errorCode][0];
+            var quitMessagePack = PlcMessagePackConstants.PlcWarningHandler8090Series[errorCode][1];
             
             var content = errorCode == 2088? "请清除所有产品后点继续，或者点退出取消自动模式" : "请清料后点击继续，或者点退出再清料";
             
