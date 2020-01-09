@@ -90,7 +90,8 @@
     <Compile Include="Converters\BooleanToLoginStateConverter.cs" />
     <Compile Include="Converters\BooleanToPopupButtonTypeConverter.cs" />
     <Compile Include="Converters\BooleanToSpecialBackgroundConverter.cs" />
-    <Compile Include="Converters\DateTimeFormatConverter.cs" />
+    <Compile Include="Converters\DayHourMinuteToStringConverter.cs" />
+    <Compile Include="Converters\ShortDateTimeFormatConverter.cs" />
     <Compile Include="Converters\EnumToApplicationPageConverter.cs" />
     <Compile Include="Converters\EventToCommandBehaviour.cs" />
     <Compile Include="Converters\LogicNotConverter.cs" />
@@ -172,6 +173,18 @@
     </Compile>
     <Compile Include="Views\StringMatrix\StringMatrixView.xaml.cs">
       <DependentUpon>StringMatrixView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TimeLine\InsertTimeLineView.xaml.cs">
+      <DependentUpon>InsertTimeLineView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TimeLine\SummaryDialogHostView.xaml.cs">
+      <DependentUpon>SummaryDialogHostView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TimeLine\TimeLineItemView.xaml.cs">
+      <DependentUpon>TimeLineItemView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TimeLine\TimeLineManagerView.xaml.cs">
+      <DependentUpon>TimeLineManagerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Vision2D\CameraDataView.xaml.cs">
       <DependentUpon>CameraDataView.xaml</DependentUpon>
@@ -299,6 +312,10 @@
     <Page Include="Views\Settings\SettingsView.xaml" />
     <Page Include="Views\SideLogger\SideLoggerView.xaml" />
     <Page Include="Views\StringMatrix\StringMatrixView.xaml" />
+    <Page Include="Views\TimeLine\InsertTimeLineView.xaml" />
+    <Page Include="Views\TimeLine\SummaryDialogHostView.xaml" />
+    <Page Include="Views\TimeLine\TimeLineItemView.xaml" />
+    <Page Include="Views\TimeLine\TimeLineManagerView.xaml" />
     <Page Include="Views\Vision2D\CameraDataView.xaml" />
     <Page Include="Views\Vision2D\CameraHostView.xaml" />
     <Page Include="Views\Vision2D\Vision2DView.xaml" />

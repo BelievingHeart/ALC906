@@ -1,0 +1,51 @@
+﻿<UserControl x:Class="UI.Views.TimeLine.TimeLineManagerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:UI.Views.TimeLine"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:converters="clr-namespace:UI.Converters"
+             xmlns:application="clr-namespace:Core.ViewModels.Application;assembly=Core"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid Width="400" Height="400">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Flip button -->
+        <Button Background="Transparent" BorderBrush="Transparent" Command="{x:Static materialDesign:Flipper.FlipCommand}" ToolTip="转到插入时间节点页面" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10">
+            <materialDesign:PackIcon Kind="BooksAdd" Width="30" Height="30"/>
+        </Button>
+        
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Top">
+            <materialDesign:PackIcon Kind="WarningOctagon" />
+            <TextBlock Text="历史只保留两天，请及时记录" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Foreground="Red"/>
+        </StackPanel>
+        <ListBox Grid.Row="1" ItemsSource="{Binding TimeLineItems}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <materialDesign:Chip Icon="{Binding ProductType}" Background="{DynamicResource PrimaryHueLightBrush}" IsHitTestVisible="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=LoginViewModel.Authorized}"
+                                         IsDeletable="True" FontSize="12">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="DeleteClick">
+                                <i:InvokeCommandAction
+                                    Command="{Binding DataContext.DeleteSingleTimeLineCommand, RelativeSource={RelativeSource AncestorType={x:Type local:TimeLineManagerView}}}"
+                                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type materialDesign:Chip}}}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                        
+                        <StackPanel Orientation="Horizontal" Width="300">
+                            <TextBlock Text="{Binding StartTime, Converter={converters:DayHourMinuteToStringConverter}}" Width="80" />
+                            <TextBlock Text=">" Margin="2 0" />
+                            <TextBlock Text="{Binding Comment}" />
+                        </StackPanel>
+                    </materialDesign:Chip>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</UserControl>

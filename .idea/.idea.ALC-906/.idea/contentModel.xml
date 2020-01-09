@@ -143,6 +143,10 @@
           <e p="Summary" t="Include">
             <e p="SummaryViewModel.cs" t="Include" />
           </e>
+          <e p="TimeLine" t="Include">
+            <e p="TimeLineItemViewModel.cs" t="Include" />
+            <e p="TimeLineManagerViewModel.cs" t="Include" />
+          </e>
           <e p="Vision2D" t="Include">
             <e p="Vision2DViewModel.cs" t="Include" />
           </e>
@@ -225,13 +229,14 @@
           <e p="BooleanToLoginStateConverter.cs" t="Include" />
           <e p="BooleanToPopupButtonTypeConverter.cs" t="Include" />
           <e p="BooleanToSpecialBackgroundConverter.cs" t="Include" />
-          <e p="DateTimeFormatConverter.cs" t="Include" />
+          <e p="DayHourMinuteToStringConverter.cs" t="Include" />
           <e p="EnumToApplicationPageConverter.cs" t="Include" />
           <e p="EventToCommandBehaviour.cs" t="Include" />
           <e p="LogicNotConverter.cs" t="Include" />
           <e p="MachineStateToColorConverter.cs" t="Include" />
           <e p="MachineStateTranslationConverter.cs" t="Include" />
           <e p="ProductTypeToIndexConverter.cs" t="Include" />
+          <e p="ShortDateTimeFormatConverter.cs" t="Include" />
           <e p="StringToIntegerConverter.cs" t="Include" />
         </e>
         <e p="DataAccess" t="Include" />
@@ -366,6 +371,16 @@
             <e p="BinItemView.xaml.cs" t="Include" />
             <e p="SummaryView.xaml" t="Include" />
             <e p="SummaryView.xaml.cs" t="Include" />
+          </e>
+          <e p="TimeLine" t="Include">
+            <e p="InsertTimeLineView.xaml" t="Include" />
+            <e p="InsertTimeLineView.xaml.cs" t="Include" />
+            <e p="SummaryDialogHostView.xaml" t="Include" />
+            <e p="SummaryDialogHostView.xaml.cs" t="Include" />
+            <e p="TimeLineItemView.xaml" t="Include" />
+            <e p="TimeLineItemView.xaml.cs" t="Include" />
+            <e p="TimeLineManagerView.xaml" t="Include" />
+            <e p="TimeLineManagerView.xaml.cs" t="Include" />
           </e>
           <e p="UserControlBase.cs" t="Include" />
           <e p="Vision2D" t="Include">

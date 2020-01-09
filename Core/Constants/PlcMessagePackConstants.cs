@@ -256,7 +256,7 @@ namespace Core.Constants
         /// </summary>
         private static readonly PlcMessagePack MessagePack2092Continue = new PlcMessagePack()
         {
-            CommandId = 35,
+            CommandId = 36,
             MsgType = PlcMessagePack.RequestIndicator
         };
         
@@ -267,7 +267,7 @@ namespace Core.Constants
         /// </summary>
         private static readonly PlcMessagePack MessagePack2093Continue = new PlcMessagePack()
         {
-            CommandId = 35,
+            CommandId = 36,
             Param1 = 0,
             Param2 = 1,
             MsgType = PlcMessagePack.RequestIndicator
@@ -279,7 +279,7 @@ namespace Core.Constants
         /// </summary>
         private static readonly PlcMessagePack MessagePack2094Continue = new PlcMessagePack()
         {
-            CommandId = 36,
+            CommandId = 35,
             Param1 = 0,
             Param2 = 0,
             MsgType = PlcMessagePack.RequestIndicator
@@ -290,7 +290,7 @@ namespace Core.Constants
         /// </summary>
         private static readonly PlcMessagePack MessagePack2095Continue = new PlcMessagePack()
         {
-            CommandId = 36,
+            CommandId = 35,
             Param1 = 0,
             Param2 = 1,
             MsgType = PlcMessagePack.RequestIndicator

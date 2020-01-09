@@ -181,6 +181,8 @@
     <Compile Include="ViewModels\Fai\FaiItem.cs" />
     <Compile Include="ViewModels\Fai\FaiItemUILogic.cs" />
     <Compile Include="ViewModels\Message\LoggingMessageItem.cs" />
+    <Compile Include="ViewModels\TimeLine\TimeLineItemViewModel.cs" />
+    <Compile Include="ViewModels\TimeLine\TimeLineManagerViewModel.cs" />
     <Compile Include="ViewModels\Vision2D\Vision2DViewModel.cs" />
     <Compile Include="ViewModels\MainWindow\MainWindowViewModel.cs" />
   </ItemGroup>

@@ -1,0 +1,32 @@
+﻿<UserControl x:Class="UI.Views.TimeLine.InsertTimeLineView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:UI.Views.TimeLine"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:application="clr-namespace:Core.ViewModels.Application;assembly=Core"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid Width="400" Height="400">
+
+        <!-- Flip button -->
+        <Button Command="{x:Static materialDesign:Flipper.FlipCommand}" ToolTip="转到历史页面" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10" Background="Transparent" BorderBrush="Transparent"
+                FontFamily="{x:Static SystemFonts.CaptionFontFamily}">
+            <materialDesign:PackIcon Kind="FormatListNumbered" Width="30" Height="30"/>
+        </Button>
+
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="2 30">
+            <StackPanel Orientation="Horizontal">
+                <materialDesign:PackIcon Kind="CommentTextOutline" VerticalAlignment="Center" Margin="5 0" />
+                <TextBox x:Name="PART_TimeLineNameTextBox" Width="200"
+                         materialDesign:HintAssist.Hint="重置原因"
+                         Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+            </StackPanel>
+
+            <Button Content="确定" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" IsDefault="True"
+                    Command="{Binding InsertNewTimelineCommand, Source={x:Static application:ApplicationViewModel.Instance}}"     
+                    CommandParameter="{Binding ElementName=PART_TimeLineNameTextBox, Path=Text}" />
+        </StackPanel>
+    </Grid>
+</UserControl>

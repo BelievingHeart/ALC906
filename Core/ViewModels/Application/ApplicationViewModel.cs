@@ -29,6 +29,7 @@ using Core.ViewModels.Message;
 using Core.ViewModels.Popup;
 using Core.ViewModels.Results;
 using Core.ViewModels.Summary;
+using Core.ViewModels.TimeLine;
 using CYG906ALC.ALG;
 using HalconDotNet;
 using HKCamera;
@@ -111,6 +112,11 @@ namespace Core.ViewModels.Application
             Logger.Instance.ShouldMessageBoxPopupChanged += OnShouldWarningMessageBoxPopupChanged;
 
             InitCommands();
+
+            
+            // Summary and time line
+            TimeLineManager = new TimeLineManagerViewModel(DirectoryConstants.TimeLineSerializationDir);
+            Summary = new SummaryViewModel() {StartTime = DateTime.Now};
         }
 
         private void OnShouldWarningMessageBoxPopupChanged(bool shouldPopup)
@@ -146,6 +152,15 @@ namespace Core.ViewModels.Application
 
             Backup3DConfigsCommand = new RelayCommand(Backup3DConfigs);
             Recover3DConfigsCommand = new RelayCommand(Recover3DConfigs);
+            
+            OpenTimelineDialogCommand = new RelayCommand(()=>TimeLineManager.ShouldDialogOpen = true);
+            
+            InsertNewTimelineCommand = new ParameterizedCommand(obj =>
+            {
+                var comment = (string) obj;
+                TimeLineManager.AddTimeLineItem(comment);
+                Summary.ClearSummary();
+            });
         }
 
         private void Recover3DConfigs()
@@ -998,7 +1013,8 @@ namespace Core.ViewModels.Application
 
             ApplicationConfigs =
                 AutoSerializableHelper.LoadAutoSerializable<ApplicationConfigViewModel>(DirectoryHelper.ConfigDirectory,
-                    "ApplicationConfigs");
+                    "ApplicationConfigs");            
+            
             ApplicationConfigs.ShouldAutoSerialize = true;
         }
 
@@ -1033,7 +1049,8 @@ namespace Core.ViewModels.Application
                 ShouldSave2DImagesRight = false,
                 ShouldSave3DImagesLeft = false,
                 ShouldSave3DImagesRight = false,
-                SaveNgImagesOnly = false
+                SaveNgImagesOnly = false,
+
             };
         }
 
@@ -1068,6 +1085,8 @@ namespace Core.ViewModels.Application
 
 
         #region prop
+
+        public TimeLineManagerViewModel TimeLineManager { get; set; }
 
         public GraphicsPackViewModel Graphics2DCavity1
         {
@@ -1132,6 +1151,10 @@ namespace Core.ViewModels.Application
         public I40Check I40Check { get; set; }
 
         public ICommand OpenCSVDirCommand { get; set; }
+        
+        public ICommand OpenTimelineDialogCommand { get; set; }
+        public ICommand InsertNewTimelineCommand { get; set; }
+
         public ICommand OpenImageDirCommand { get; set; }
 
         public ICommand CloseMainWindowCommand { get; set; }
@@ -1149,7 +1172,7 @@ namespace Core.ViewModels.Application
             get { return System.Windows.Application.Current.Dispatcher; }
         }
 
-        public SummaryViewModel Summary { get; set; } = new SummaryViewModel() {StartTime = DateTime.Now};
+        public SummaryViewModel Summary { get; set; } 
 
         public ResultStatus ResultReady2D { get; set; }
 
@@ -1201,7 +1224,7 @@ namespace Core.ViewModels.Application
             FaiItemsCavity2 = FaiItems2DRight.ConcatNew(FaiItems3DRight);
 
             // Init yield collection
-            Summary.ClearCommand.Execute(null);
+            Summary.ClearSummary();
             Summary.FaiYieldCollectionViewModel =
                 new FaiYieldCollectionViewModel(FaiItemsCavity1.Select(item => item.Name));
 

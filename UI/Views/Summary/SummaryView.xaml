@@ -8,111 +8,124 @@
              xmlns:converters="clr-namespace:UI.Converters"
              xmlns:summary="clr-namespace:Core.ViewModels.Summary;assembly=Core"
              xmlns:summary1="clr-namespace:UI.Views.Summary"
+             xmlns:timeLine="clr-namespace:UI.Views.TimeLine"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-    <UserControl.DataContext>
-        <summary:SummaryViewModel />
-    </UserControl.DataContext>
-    <!-- Height = 240 + 131 = 371 -->
-    <StackPanel>  <!-- Bins -->
-        <!-- Basic info height=240 -->
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <materialDesign:ColorZone Grid.Column="0" Grid.Row="0" Background="Bisque" Height="60" BorderBrush="Gray"
-                                      BorderThickness="1">
-                <TextBlock FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Text="产品类型"
-                           HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="24" />
-            </materialDesign:ColorZone>
-            <materialDesign:ColorZone Grid.Column="0" Grid.Row="1" Background="Bisque" Height="60" BorderBrush="Gray"
-                                      BorderThickness="1">
-                <TextBlock FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Text="操作员ID"
-                           HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="24" />
-            </materialDesign:ColorZone>
-            <materialDesign:ColorZone Grid.Column="0" Grid.Row="2" Background="Bisque" Height="60" BorderBrush="Gray"
-                                      BorderThickness="1">
-                <TextBlock FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Text="良率" HorizontalAlignment="Center"
-                           VerticalAlignment=" Center" FontSize="24" />
-            </materialDesign:ColorZone>
-            <materialDesign:ColorZone Grid.Column="0" Grid.Row="3" Background="Bisque" Height="60" BorderBrush="Gray"
-                                      BorderThickness="1">
-                <TextBlock Text="UPH" HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="24" />
-            </materialDesign:ColorZone>
 
-            <materialDesign:ColorZone Grid.Column="1" Grid.Row="0" Background="{StaticResource PrimaryHueLightBrush}"
-                                      Height="60" BorderBrush="Gray" BorderThickness="1">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <TextBlock Text="I40 " VerticalAlignment="Center" FontSize="20" />
-                    <ComboBox HorizontalContentAlignment="Center" MinWidth="100"
-                              IsEnabled="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Server.IsAutoRunning, Converter={converters:LogicNotConverter}}"
-                              SelectedIndex="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=CurrentProductType, Converter={converters:ProductTypeToIndexConverter}}">
-                        <ComboBoxItem Content="MTM" HorizontalAlignment="Center" />
-                        <ComboBoxItem Content="ALPS" HorizontalAlignment="Center" />
-                    </ComboBox>
-                </StackPanel>
-            </materialDesign:ColorZone>
-            <materialDesign:ColorZone Grid.Column="1" Grid.Row="1" Background="{StaticResource PrimaryHueLightBrush}"
-                                      Height="60" BorderBrush="Gray" BorderThickness="1">
-                <TextBlock Text="1234" HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="20" />
-            </materialDesign:ColorZone>
-            <materialDesign:ColorZone Grid.Column="1" Grid.Row="2" Background="{StaticResource PrimaryHueLightBrush}"
-                                      Height="60" BorderBrush="Gray" BorderThickness="1">
-                <TextBlock Text="{Binding YieldText}" HorizontalAlignment="Center" VerticalAlignment=" Center"
-                           FontSize="20" />
-            </materialDesign:ColorZone>
-            <materialDesign:ColorZone Grid.Column="1" Grid.Row="3" Background="{StaticResource PrimaryHueLightBrush}"
-                                      Height="60" BorderBrush="Gray" BorderThickness="1">
-                <Grid>
-                    <TextBlock Text="{Binding Uph, StringFormat=N1}" HorizontalAlignment="Center"
-                               VerticalAlignment=" Center" FontSize="20" />
-                    <Button Content="重置统计" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"
-                            Command="{Binding ClearCommand}" HorizontalAlignment="Right" VerticalAlignment="Bottom">
-                        <Button.ToolTip>
-                            <StackPanel>
-                                <TextBlock Text="上次重置时间：" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"/>
-                                <TextBlock Text="{Binding StartTime, Converter={converters:DateTimeFormatConverter}}"/>
-                            </StackPanel>
-                        </Button.ToolTip>
-                    </Button>
-                </Grid>
-            </materialDesign:ColorZone>
+    <materialDesign:DialogHost IsOpen="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=TimeLineManager.ShouldDialogOpen}">    <!-- Height = 240 + 131 = 371 -->
+        <materialDesign:DialogHost.DialogContent>
+            <timeLine:SummaryDialogHostView DataContext="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=TimeLineManager}"/>
+        </materialDesign:DialogHost.DialogContent>
+        <StackPanel>  <!-- Bins -->
+            <!-- Basic info height=240 -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <materialDesign:ColorZone Grid.Column="0" Grid.Row="0" Background="Bisque" Height="60"
+                                          BorderBrush="Gray"
+                                          BorderThickness="1">
+                    <TextBlock FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Text="产品类型"
+                               HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="24" />
+                </materialDesign:ColorZone>
+                <materialDesign:ColorZone Grid.Column="0" Grid.Row="1" Background="Bisque" Height="60"
+                                          BorderBrush="Gray"
+                                          BorderThickness="1">
+                    <TextBlock FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Text="操作员ID"
+                               HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="24" />
+                </materialDesign:ColorZone>
+                <materialDesign:ColorZone Grid.Column="0" Grid.Row="2" Background="Bisque" Height="60"
+                                          BorderBrush="Gray"
+                                          BorderThickness="1">
+                    <TextBlock FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Text="良率"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment=" Center" FontSize="24" />
+                </materialDesign:ColorZone>
+                <materialDesign:ColorZone Grid.Column="0" Grid.Row="3" Background="Bisque" Height="60"
+                                          BorderBrush="Gray"
+                                          BorderThickness="1">
+                    <TextBlock Text="UPH" HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="24" />
+                </materialDesign:ColorZone>
 
-        </Grid>
+                <materialDesign:ColorZone Grid.Column="1" Grid.Row="0"
+                                          Background="{StaticResource PrimaryHueLightBrush}"
+                                          Height="60" BorderBrush="Gray" BorderThickness="1">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock Text="I40 " VerticalAlignment="Center" FontSize="20" />
+                        <ComboBox HorizontalContentAlignment="Center" MinWidth="100"
+                                  IsEnabled="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=Server.IsAutoRunning, Converter={converters:LogicNotConverter}}"
+                                  SelectedIndex="{Binding Source={x:Static application:ApplicationViewModel.Instance}, Path=CurrentProductType, Converter={converters:ProductTypeToIndexConverter}}">
+                            <ComboBoxItem Content="MTM" HorizontalAlignment="Center" />
+                            <ComboBoxItem Content="ALPS" HorizontalAlignment="Center" />
+                        </ComboBox>
+                    </StackPanel>
+                </materialDesign:ColorZone>
+                <materialDesign:ColorZone Grid.Column="1" Grid.Row="1"
+                                          Background="{StaticResource PrimaryHueLightBrush}"
+                                          Height="60" BorderBrush="Gray" BorderThickness="1">
+                    <TextBlock Text="1234" HorizontalAlignment="Center" VerticalAlignment=" Center" FontSize="20" />
+                </materialDesign:ColorZone>
+                <materialDesign:ColorZone Grid.Column="1" Grid.Row="2"
+                                          Background="{StaticResource PrimaryHueLightBrush}"
+                                          Height="60" BorderBrush="Gray" BorderThickness="1">
+                    <TextBlock Text="{Binding YieldText}" HorizontalAlignment="Center" VerticalAlignment=" Center"
+                               FontSize="20" />
+                </materialDesign:ColorZone>
+                <materialDesign:ColorZone Grid.Column="1" Grid.Row="3"
+                                          Background="{StaticResource PrimaryHueLightBrush}"
+                                          Height="60" BorderBrush="Gray" BorderThickness="1">
+                    <Grid>
+                        <TextBlock Text="{Binding Uph, StringFormat=N1}" HorizontalAlignment="Center"
+                                   VerticalAlignment=" Center" FontSize="20" />
+                        <Button Content="重置统计" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"
+                                Command="{Binding OpenTimelineDialogCommand, Source={x:Static application:ApplicationViewModel.Instance}}" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+                            <Button.ToolTip>
+                                <StackPanel>
+                                    <TextBlock Text="上次重置时间：" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" />
+                                    <TextBlock
+                                        Text="{Binding StartTime, Converter={converters:ShortDateTimeFormatConverter}}" />
+                                </StackPanel>
+                            </Button.ToolTip>
+                        </Button>
+                    </Grid>
+                </materialDesign:ColorZone>
 
-        <!-- bin info -->
-        <Grid Height="190">
+            </Grid>
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+            <!-- bin info -->
+            <Grid Height="190">
 
-            <summary1:BinItemView Margin="10" VerticalAlignment="Center" Grid.Column="0" Grid.Row="0" Header="Total"
-                                  HeaderBackground="DarkCyan" ContentText="{Binding TotalCount}" />
-            <summary1:BinItemView Margin="10" VerticalAlignment="Center" Grid.Column="0" Grid.Row="1" Header="OK"
-                                  HeaderBackground="Lime" ContentText="{Binding OkCount}" />
-            <summary1:BinItemView Margin="10" VerticalAlignment="Center" Grid.Column="0" Grid.Row="2" Header="NG"
-                                  HeaderBackground="#c62828" ContentText="{Binding NgCount}" />
-            <summary1:BinItemView Margin="10" VerticalAlignment="Center" Grid.Column="1" Grid.Row="0" Header="NG2"
-                                  HeaderBackground="#ff1744" ContentText="{Binding Ng2Count}" />
-            <summary1:BinItemView Margin="10" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1" Header="NG3"
-                                  HeaderBackground="#c51162" ContentText="{Binding Ng3Count}" />
-            <summary1:BinItemView Margin="10" VerticalAlignment="Center" Grid.Column="1" Grid.Row="2" Header="NG4"
-                                  HeaderBackground="#ff5252" ContentText="{Binding Ng4Count}" />
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-        </Grid>
-    </StackPanel>
+                <summary1:BinItemView Margin="10" VerticalAlignment="Center" Grid.Column="0" Grid.Row="0"
+                                      Header="Total"
+                                      HeaderBackground="DarkCyan" ContentText="{Binding TotalCount}" />
+                <summary1:BinItemView Margin="10" VerticalAlignment="Center" Grid.Column="0" Grid.Row="1" Header="OK"
+                                      HeaderBackground="Lime" ContentText="{Binding OkCount}" />
+                <summary1:BinItemView Margin="10" VerticalAlignment="Center" Grid.Column="0" Grid.Row="2" Header="NG"
+                                      HeaderBackground="#c62828" ContentText="{Binding NgCount}" />
+                <summary1:BinItemView Margin="10" VerticalAlignment="Center" Grid.Column="1" Grid.Row="0" Header="NG2"
+                                      HeaderBackground="#ff1744" ContentText="{Binding Ng2Count}" />
+                <summary1:BinItemView Margin="10" VerticalAlignment="Center" Grid.Column="1" Grid.Row="1" Header="NG3"
+                                      HeaderBackground="#c51162" ContentText="{Binding Ng3Count}" />
+                <summary1:BinItemView Margin="10" VerticalAlignment="Center" Grid.Column="1" Grid.Row="2" Header="NG4"
+                                      HeaderBackground="#ff5252" ContentText="{Binding Ng4Count}" />
+
+            </Grid>
+        </StackPanel></materialDesign:DialogHost>
 </UserControl>

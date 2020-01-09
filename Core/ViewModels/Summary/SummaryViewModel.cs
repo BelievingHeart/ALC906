@@ -19,7 +19,6 @@ namespace Core.ViewModels.Summary
 
         public SummaryViewModel()
         {
-            ClearCommand = new RelayCommand(ClearSummary);
             PropertyChanged += (sender, args) =>
             {
                 if (args.PropertyName != nameof(TotalCount)) return;
@@ -30,7 +29,7 @@ namespace Core.ViewModels.Summary
             };
         }
 
-        private void ClearSummary()
+        public void ClearSummary()
         {
             OkCount = 0;
             Ng2Count = 0;
@@ -42,7 +41,7 @@ namespace Core.ViewModels.Summary
             // Clear yield collection
             FaiYieldCollectionViewModel?.Clear();
         }
-
+        
         public int OkCount
         {
             get { return _okCount; }
@@ -132,7 +131,8 @@ namespace Core.ViewModels.Summary
 
         public FaiYieldCollectionViewModel FaiYieldCollectionViewModel { get; set; }
 
-        public ICommand ClearCommand { get; set; }
+
+
 
     }
 }

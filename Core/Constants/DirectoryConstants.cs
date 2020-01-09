@@ -108,5 +108,7 @@ namespace Core.Constants
                 [ProductType.Mtm] = Path.Combine(FaiConfigDir3DCavity2, ProductType.Mtm.ToString()),
                 [ProductType.Alps] = Path.Combine(FaiConfigDir3DCavity2, ProductType.Alps.ToString())
             };
+
+        public static string TimeLineSerializationDir => System.IO.Path.Combine(ErrorLogDir, "Timelines");
     }
 }
