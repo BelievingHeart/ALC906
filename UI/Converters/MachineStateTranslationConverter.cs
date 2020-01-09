@@ -19,7 +19,7 @@ namespace UI.Converters
                 case MachineState.Pausing:
                     return "暂停中";
                 case MachineState.Resetting:
-                    return "正在重置";
+                    return "正在复位";
                 case MachineState.Running:
                     return "自动运行中";
                 case MachineState.Stopping:

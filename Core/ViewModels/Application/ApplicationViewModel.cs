@@ -74,7 +74,7 @@ namespace Core.ViewModels.Application
         /// </summary>
         private readonly Dictionary<string, List<HImage>> _laserImageBuffers = new Dictionary<string, List<HImage>>();
 
-   
+
         private HTuple _shapeModel2D, _shapeModel3D;
 
         private CsvSerializer.CsvSerializer _serializerAll;
@@ -138,19 +138,59 @@ namespace Core.ViewModels.Application
                 o => CurrentProductType != ProductType.Alps);
 
             ClearProductErrorStatesCommand = new SimpleCommand(
-                o => Server.SentToPlc(PlcMessagePackConstants.ClearProductErrorStateMessagePack, PlcMessageType.Request),
+                o => Server.SentToPlc(PlcMessagePackConstants.ClearProductErrorStateMessagePack,
+                    PlcMessageType.Request),
                 o => !Server.IsAutoRunning);
-            
+
             CloseMainWindowCommand = new RelayCommand(AskIfCloseIntentionally);
 
+            Backup3DConfigsCommand = new RelayCommand(Backup3DConfigs);
+            Recover3DConfigsCommand = new RelayCommand(Recover3DConfigs);
         }
-        
+
+        private void Recover3DConfigs()
+        {
+            Directory.CreateDirectory(DirectoryConstants.BackupDir3DConfigs);
+            Directory.CreateDirectory(DirectoryConstants.FaiConfigDir3D);
+//Copy all the files & Replaces any files with the same name
+            foreach (string oldPath in Directory.GetFiles(DirectoryConstants.BackupDir3DConfigs, "*.*",
+                SearchOption.AllDirectories))
+            {
+                var dstPath = oldPath.Replace(DirectoryConstants.BackupDir3DConfigs, DirectoryConstants.FaiConfigDir3D);
+                var closestDir = Directory.GetParent(dstPath).FullName;
+                Directory.CreateDirectory(closestDir);
+                File.Copy(oldPath, dstPath
+                    , true);
+            }
+
+            ApplicationConfigs.LastRecoverDate3D = DateTime.Now;
+            Logger.LogStateChanged("还原成功");
+        }
+
+        private void Backup3DConfigs()
+        {
+            Directory.CreateDirectory(DirectoryConstants.BackupDir3DConfigs);
+            Directory.CreateDirectory(DirectoryConstants.FaiConfigDir3D);
+
+            foreach (string oldPath in Directory.GetFiles(DirectoryConstants.FaiConfigDir3D, "*.*",
+                SearchOption.AllDirectories))
+            {
+                var dstPath = oldPath.Replace(DirectoryConstants.FaiConfigDir3D, DirectoryConstants.BackupDir3DConfigs);
+                var closestDir = Directory.GetParent(dstPath).FullName;
+                Directory.CreateDirectory(closestDir);
+                File.Copy(oldPath, dstPath, true);
+            }
+            
+            ApplicationConfigs.LastBackupDate3D = DateTime.Now;
+            Logger.LogStateChanged("备份成功");
+        }
+
         private void AskIfCloseIntentionally()
         {
             var popup = new PopupViewModel
             {
-                OkCommand = new CloseDialogAttachedCommand(o=>true, CloseMainWindow),
-                CancelCommand = new CloseDialogAttachedCommand(o=>true, () => {}),
+                OkCommand = new CloseDialogAttachedCommand(o => true, CloseMainWindow),
+                CancelCommand = new CloseDialogAttachedCommand(o => true, () => { }),
                 IsSpecialPopup = true,
                 MessageItem = LoggingMessageItem.CreateMessage("是否退出ALC?"),
                 OkButtonText = "是",
@@ -164,7 +204,7 @@ namespace Core.ViewModels.Application
             if (System.Windows.Application.Current.MainWindow != null)
                 System.Windows.Application.Current.MainWindow.Close();
         }
-        
+
         /// <summary>
         /// Do temporary simulations
         /// </summary>
@@ -203,10 +243,9 @@ namespace Core.ViewModels.Application
 
         private void SetupServer()
         {
-
             Server.IpAddress = IPAddress.Parse("192.168.100.100");
             Server.Port = 4000;
-            
+
             Server.PlcRequestToEnterNewRun += OnPlcRequestToEnterNewRun;
             Server.PlcStopRequested += () => Logger.LogPlcMessage("收到停止请求");
             Server.PlcResetRequested += OnPlcInitRequested;
@@ -227,17 +266,15 @@ namespace Core.ViewModels.Application
                 Task.Run(() =>
                     Logger.Instance.LogMessageToFile($"收到代号{messagePack.CommandId}",
                         Logger.AllCommandIdsFromPlcFilePath));
-                
             };
-            
+
             Server.MessagePackSent += messagePack =>
             {
                 Task.Run(() =>
                     Logger.Instance.LogMessageToFile($"发送代号:{messagePack.CommandId}.",
                         Logger.AllCommandIdsToPlcFilePath));
-                
             };
-            
+
 
             var errorParser = new PlcErrorParser(Path.Combine(DirectoryHelper.ConfigDirectory, "ErrorSheet.csv"));
             errorParser.WarningL1Emit += OnWarningL1Received;
@@ -277,7 +314,8 @@ namespace Core.ViewModels.Application
                 Logger.LogUnhandledPlcMessage($"收到特殊代号{errorCode}");
                 var popupViewModel = PopupHelper.CreateClearProductPopup(message, errorCode, Server);
                 Logger.LogHighLevelWarningSpecial(popupViewModel);
-            }else if(PlcErrorParser.IsSafeDoorOpenWarningCode(errorCode))
+            }
+            else if (PlcErrorParser.IsSafeDoorOpenWarningCode(errorCode))
             {
                 Logger.LogUnhandledPlcMessage($"收到特殊代号{errorCode}");
                 var popupViewModel = PopupHelper.CreateSafeDoorPopup(message, Server);
@@ -302,22 +340,26 @@ namespace Core.ViewModels.Application
 
         private void OnPlcHooked(Socket socket)
         {
-            Logger.LogPlcMessage(socket.RemoteEndPoint +"已连接");
+            Logger.LogPlcMessage(socket.RemoteEndPoint + "已连接");
         }
 
         private void OnPlcRequestToEnterNewRun()
         {
             Logger.LogPlcMessage("新一轮开始");
-            
+
             // Reply plc
-            Server.SentToPlc(new PlcMessagePack(){CommandId = 23, MsgType = PlcMessagePack.RespondIndicator, Param1 = _readyToEnterNextRun? 0 : 1, Param2 = ShotsPerExecution2D == 2? 0:1});
+            Server.SentToPlc(new PlcMessagePack()
+            {
+                CommandId = 23, MsgType = PlcMessagePack.RespondIndicator, Param1 = _readyToEnterNextRun ? 0 : 1,
+                Param2 = ShotsPerExecution2D == 2 ? 0 : 1
+            });
 
             if (!_readyToEnterNextRun)
             {
                 Show2DAcquisitionErrorPopup();
                 return;
             }
-            
+
             // Clear run related states
             ClearLaserImagesForNewRound();
             Enqueue2DImagesFromPreviousRound();
@@ -349,11 +391,11 @@ namespace Core.ViewModels.Application
                     _graphics2DCavity1 = _resultQueues2D[CavityType.Cavity1].Dequeue();
                     _graphics2DCavity2 = _resultQueues2D[CavityType.Cavity2].Dequeue();
 
-                    if(_resultQueues2D[CavityType.Cavity1].Count != 0 || _resultQueues2D[CavityType.Cavity2].Count != 0)
+                    if (_resultQueues2D[CavityType.Cavity1].Count != 0 ||
+                        _resultQueues2D[CavityType.Cavity2].Count != 0)
                     {
                         Show2DAcquisitionErrorPopup();
                     }
-
                 }
             }
         }
@@ -362,7 +404,8 @@ namespace Core.ViewModels.Application
         {
             var popup = new PopupViewModel
             {
-                OkCommand = new CloseDialogAttachedCommand(o => true, () => { Server.SentToPlc(PlcMessagePack.AbortMessage); }),
+                OkCommand = new CloseDialogAttachedCommand(o => true,
+                    () => { Server.SentToPlc(PlcMessagePack.AbortMessage); }),
                 IsSpecialPopup = false,
                 Content = "2D相机不能正常取像，请复位",
                 OkButtonText = "确定"
@@ -385,7 +428,7 @@ namespace Core.ViewModels.Application
             {
                 var popup = new PopupViewModel
                 {
-                    OkCommand = new CloseDialogAttachedCommand(o=>true,CloseMainWindow),
+                    OkCommand = new CloseDialogAttachedCommand(o => true, CloseMainWindow),
                     IsSpecialPopup = false,
                     Content = "2D相机不能正常取像，请重启ALC",
                     OkButtonText = "确定"
@@ -468,8 +511,7 @@ namespace Core.ViewModels.Application
                 }
             }
 
-       
-            
+
             TopCamera = new HKCameraViewModel {ImageBatchSize = 2};
             TopCamera.ImageBatchCollected += ProcessImages2D;
             TopCamera.ImageAcquisitionEnd += OnTopCameraOnImageAcquisitionEnd;
@@ -644,9 +686,16 @@ namespace Core.ViewModels.Application
 
         private void UpdateSummaries()
         {
-             Summary.UpdateSummary(ProductLevelCavity1, ProductLevelCavity2);
-             Summary.UpdateYieldCollection(ProductLevelCavity2 == ProductLevel.Empty || ProductLevelCavity2 == ProductLevel.Ng5 || ProductLevelCavity2 == ProductLevel.Ng3? null: FaiItemsCavity2,
-                 ProductLevelCavity1 == ProductLevel.Empty || ProductLevelCavity1 == ProductLevel.Ng5 || ProductLevelCavity1 == ProductLevel.Ng3? null: FaiItemsCavity1);
+            Summary.UpdateSummary(ProductLevelCavity1, ProductLevelCavity2);
+            Summary.UpdateYieldCollection(
+                ProductLevelCavity2 == ProductLevel.Empty || ProductLevelCavity2 == ProductLevel.Ng5 ||
+                ProductLevelCavity2 == ProductLevel.Ng3
+                    ? null
+                    : FaiItemsCavity2,
+                ProductLevelCavity1 == ProductLevel.Empty || ProductLevelCavity1 == ProductLevel.Ng5 ||
+                ProductLevelCavity1 == ProductLevel.Ng3
+                    ? null
+                    : FaiItemsCavity1);
         }
 
         /// <summary>
@@ -744,7 +793,8 @@ namespace Core.ViewModels.Application
 
             // Update tables
             UiDispatcher.InvokeAsync(() =>
-                UpdateTables(TimestampCavity1.ToString(NameConstants.DateTimeFormat), TimestampCavity2.ToString(NameConstants.DateTimeFormat)));
+                UpdateTables(TimestampCavity1.ToString(NameConstants.DateTimeFormat),
+                    TimestampCavity2.ToString(NameConstants.DateTimeFormat)));
         }
 
         public DateTime TimestampCavity1 { get; set; }
@@ -793,11 +843,11 @@ namespace Core.ViewModels.Application
         {
             if (!itemExists) return ProductLevel.Empty;
             if (errored) return ProductLevel.Ng5;
-            
+
             var value_16_1 = faiItems.First(item => item.Name == "FAI16_1").Value;
             var wrongProduct = value_16_1 > 0.15 && value_16_1 < 100;
             if (wrongProduct) return ProductLevel.Ng3;
-            
+
             return faiItems.Any(item => item.Rejected) ? ProductLevel.Ng2 : ProductLevel.OK;
         }
 
@@ -861,7 +911,7 @@ namespace Core.ViewModels.Application
             {
                 currentArrivedSocket2D = CurrentArrivedSocket2D;
             }
-            
+
             Logger.LogRoutineMessageAsync($"2D处理开始-{currentArrivedSocket2D}");
             GraphicsPackViewModel result;
 
@@ -925,7 +975,7 @@ namespace Core.ViewModels.Application
             {
                 var popup = new PopupViewModel
                 {
-                    OkCommand = new CloseDialogAttachedCommand(o=>true,CloseMainWindow),
+                    OkCommand = new CloseDialogAttachedCommand(o => true, CloseMainWindow),
                     IsSpecialPopup = false,
                     Content = "相机连接失败，请解除相机占用稍候并重启ALC",
                     OkButtonText = "确定"
@@ -945,6 +995,11 @@ namespace Core.ViewModels.Application
             LoadPasswordModule();
 
             LoadShapeModels();
+
+            ApplicationConfigs =
+                AutoSerializableHelper.LoadAutoSerializable<ApplicationConfigViewModel>(DirectoryHelper.ConfigDirectory,
+                    "ApplicationConfigs");
+            ApplicationConfigs.ShouldAutoSerialize = true;
         }
 
         private void LoadPasswordModule()
@@ -994,7 +1049,7 @@ namespace Core.ViewModels.Application
                 TopCamera.StopGrabbing();
                 TopCamera.Close();
             }
-            catch 
+            catch
             {
                 // I don't care
             }
@@ -1003,7 +1058,7 @@ namespace Core.ViewModels.Application
             {
                 controller.IsConnectedHighSpeed = false;
             }
-            
+
             // Remove outdated files if any
             SerializationHelper.RemoveOutdatedFiles(DirectoryConstants.ErrorLogDir, 1);
             SerializationHelper.RemoveOutdatedFiles(DirectoryConstants.ImageDir2D, 5);
@@ -1030,7 +1085,7 @@ namespace Core.ViewModels.Application
         public GraphicsPackViewModel Graphics3DCavity2 { get; set; } = new GraphicsPackViewModel();
 
         public bool SaveNgImagesOnly { get; set; }
-        
+
         public int RoundCountSinceReset { get; set; }
 
         public bool IsAllControllersHighSpeedConnected
@@ -1078,7 +1133,7 @@ namespace Core.ViewModels.Application
 
         public ICommand OpenCSVDirCommand { get; set; }
         public ICommand OpenImageDirCommand { get; set; }
-        
+
         public ICommand CloseMainWindowCommand { get; set; }
 
         public bool ShouldSave2DImagesLeft { get; set; }
@@ -1116,11 +1171,12 @@ namespace Core.ViewModels.Application
         public ICommand ClearProductErrorStatesCommand { get; private set; }
 
         public LoginViewModel LoginViewModel { get; set; }
+        public ApplicationConfigViewModel ApplicationConfigs { get; set; }
 
         /// <summary>
         /// Count of 2D input images per execution
         /// </summary>
-        public int ShotsPerExecution2D    
+        public int ShotsPerExecution2D
         {
             get { return _shotsPerExecution2D; }
             set
@@ -1131,6 +1187,9 @@ namespace Core.ViewModels.Application
             }
         }
 
+        public ICommand Backup3DConfigsCommand { get; private set; }
+
+        public ICommand Recover3DConfigsCommand { get; private set; }
 
 
         private void SwitchProductType(ProductType currentProductType)
@@ -1143,8 +1202,9 @@ namespace Core.ViewModels.Application
 
             // Init yield collection
             Summary.ClearCommand.Execute(null);
-            Summary.FaiYieldCollectionViewModel = new FaiYieldCollectionViewModel(FaiItemsCavity1.Select(item=>item.Name));
-            
+            Summary.FaiYieldCollectionViewModel =
+                new FaiYieldCollectionViewModel(FaiItemsCavity1.Select(item => item.Name));
+
             InitSerializer();
             InitTables();
         }
@@ -1153,7 +1213,7 @@ namespace Core.ViewModels.Application
         {
             Table = null;
         }
-        
+
 
         private void InitSerializer()
         {
@@ -1196,7 +1256,7 @@ namespace Core.ViewModels.Application
             FaiItems2DLeft = I40Check.GetFaiBoundaries();
             FaiItems2DRight = I40Check.GetFaiBoundaries();
         }
-        
+
 
         public StringMatrixData LoadData2D(StringMatrixType dataType)
         {
@@ -1215,16 +1275,16 @@ namespace Core.ViewModels.Application
                     FaiItems2DRight = I40Check.GetFaiBoundaries();
                     FaiItemsCavity1 = FaiItems2DLeft.ConcatNew(FaiItems3DLeft);
                     FaiItemsCavity2 = FaiItems2DRight.ConcatNew(FaiItems3DRight);
-                    
+
                     Logger.LogStateChanged("保存结果数据成功");
                     break;
-                
+
                 case StringMatrixType.Misc:
                     I40Check.AlgDictionary = data.ToDict();
                     I40Check.SaveAlgParam();
                     Logger.LogStateChanged("保存其他数据成功");
                     break;
-                
+
                 case StringMatrixType.FindLine:
                     I40Check.SearchLineDictionary = data.ToDict();
                     I40Check.SaveSearchLineParam();

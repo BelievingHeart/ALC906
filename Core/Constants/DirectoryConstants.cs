@@ -76,8 +76,11 @@ namespace Core.Constants
             [ProductType.Mtm] = Path.Combine(DatabaseLimitsDir, ProductType.Mtm.ToString()),
             [ProductType.Alps] = Path.Combine(DatabaseLimitsDir, ProductType.Alps.ToString())
         };
+        
+        private static string BackupDir => "D:\\ALC-Backups";
+        public static string BackupDir3DConfigs => Path.Combine(BackupDir, "3D");
 
-        private static string FaiConfigDir3D
+        public static string FaiConfigDir3D
         {
             get { return Path.Combine(FaiConfigDir, "3D"); }
         }

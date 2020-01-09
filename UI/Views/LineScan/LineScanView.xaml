@@ -17,17 +17,35 @@
         </Grid.ColumnDefinitions>
         <!-- Halcon window -->
         <halconScreen:HalconScreenView x:Name="HalconScreen" LeftGraphics="{Binding Path=Graphics3DCavity1}"
-                                       RightGraphics="{Binding Path=Graphics3DCavity2}"/>
+                                       RightGraphics="{Binding Path=Graphics3DCavity2}" />
 
-
-        <GroupBox Grid.Column="1" Header="Fai Items">
-            <faiItem:FaiItemGridView LeftFaiItems="{Binding Path=FaiItems3DLeft}"
-                                     RightFaiItems="{Binding FaiItems3DRight}"
-                                     SocketType="{Binding ElementName=HalconScreen, Path=SocketToDisplay}"
-                                     Margin="0 10 50 0"
-                                     IsEditable="{Binding LoginViewModel.Authorized}"
-                                     />
-        </GroupBox>
+        <Grid Grid.Column="1">
+            <GroupBox Header="Fai Items">
+                <faiItem:FaiItemGridView LeftFaiItems="{Binding Path=FaiItems3DLeft}"
+                                         RightFaiItems="{Binding FaiItems3DRight}"
+                                         SocketType="{Binding ElementName=HalconScreen, Path=SocketToDisplay}"
+                                         Margin="0 10 50 0"
+                                         IsEditable="{Binding LoginViewModel.Authorized}" />
+            </GroupBox>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+                <Button Content="备份3D补偿" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Command="{Binding Backup3DConfigsCommand}" IsEnabled="{Binding LoginViewModel.Authorized}">
+                    <Button.ToolTip>
+                        <StackPanel>
+                            <TextBlock Text="上次备份日期"  FontFamily="{x:Static SystemFonts.CaptionFontFamily}"/>
+                            <TextBlock Text="{Binding ApplicationConfigs.LastBackupDate3D}"/>
+                        </StackPanel>
+                    </Button.ToolTip>
+                </Button>
+                <Button Content="还原3D补偿" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Command="{Binding Recover3DConfigsCommand}" IsEnabled="{Binding LoginViewModel.Authorized}">
+                    <Button.ToolTip>
+                        <StackPanel>
+                            <TextBlock Text="上次还原日期"  FontFamily="{x:Static SystemFonts.CaptionFontFamily}"/>
+                            <TextBlock Text="{Binding ApplicationConfigs.LastRecoverDate3D}"/>
+                        </StackPanel>
+                    </Button.ToolTip>
+                </Button>
+            </StackPanel>
+        </Grid>
 
     </Grid>
 </UserControl>

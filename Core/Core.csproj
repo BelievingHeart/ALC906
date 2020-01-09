@@ -154,6 +154,7 @@
     <Compile Include="Models\FixedSizeQueue.cs" />
     <Compile Include="Models\LineChartData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\Application\ApplicationConfigViewModel.cs" />
     <Compile Include="ViewModels\Application\ApplicationViewModel.cs" />
     <Compile Include="ViewModels\Database\DatabaseBufferViewModel.cs" />
     <Compile Include="ViewModels\Database\DatabaseQueryViewModel.cs" />
