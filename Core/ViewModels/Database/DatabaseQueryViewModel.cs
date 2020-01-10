@@ -342,6 +342,11 @@ namespace Core.ViewModels.Database
             contentsRows.Insert(0, headerRow);
 
             var csvPath = Path.Combine(CsvDir, ProductType + $"-{faiCollections.Count}PCS.xlsx");
+            if (File.Exists(csvPath))
+            {
+                SnackbarMessageQueue.Enqueue("保存失败，已存在相同名称的文件");
+                return;
+            }
             ExcelHelper.CsvToExcel(csvPath, "ALC", contentsRows);
             ExcelHelper.FormatFaiExcel(csvPath, 1, 2, contentsRows.Count-4, minRow.Count-3, 4);
             Process.Start(CsvDir);
