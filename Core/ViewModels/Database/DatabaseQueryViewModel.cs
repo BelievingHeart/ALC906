@@ -630,6 +630,11 @@ namespace Core.ViewModels.Database
             return propertyInfo.Name.Contains("FAI");
         }
 
+        public void DeleteOutdatedCollections()
+        {
+             FaiCollectionHelper.DeleteOutdated(NameConstants.SqlConnectionString);
+        }
+
         #endregion
     }
 }
