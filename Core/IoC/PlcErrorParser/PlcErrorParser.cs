@@ -75,7 +75,7 @@ namespace Core.IoC.PlcErrorParser
             WarningL4Emit?.Invoke(obj, errorCode);
         }
         
-        private static readonly List<long> ClearProductCode = new List<long>(){2080, 2081, 2082, 2083, 2084, 2085, 2086, 2087, 2088, 2090, 2091, 2092, 2093, 2094, 2095, 2096, 2097};
+        private static readonly List<long> ClearProductCode = new List<long>(){2080, 2081, 2082, 2083, 2084, 2085, 2086, 2087, 2088, 2090, 2091, 2092, 2093, 2094, 2095, 2096, 2097, 2098, 2099};
         private static readonly List<long> SafeDoorOpenCode = new List<long>(){2062, 2063, 2064, 2065};
 
         public static bool IsClearProductWarningCode(long errorCode)

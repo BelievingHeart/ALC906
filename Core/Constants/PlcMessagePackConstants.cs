@@ -320,6 +320,26 @@ namespace Core.Constants
             MsgType = PlcMessagePack.RequestIndicator
         };
         
+        /// <summary>
+        /// See communication table for more details
+        /// </summary>
+        private static readonly PlcMessagePack MessagePack2098Continue = new PlcMessagePack()
+        {
+            CommandId = 38,
+            Param2 = 0,
+            MsgType = PlcMessagePack.RequestIndicator
+        };
+        
+        /// <summary>
+        /// See communication table for more details
+        /// </summary>
+        private static readonly PlcMessagePack MessagePack2099Continue = new PlcMessagePack()
+        {
+            CommandId = 38,
+            Param2 = 1,
+            MsgType = PlcMessagePack.RequestIndicator
+        };
+        
         
 
         #endregion
@@ -350,6 +370,8 @@ namespace Core.Constants
             [2095] = new List<PlcMessagePack>(){MessagePack2095Continue, PlcMessagePack.AbortMessage},
             [2096] = new List<PlcMessagePack>(){MessagePack2096Continue, PlcMessagePack.AbortMessage},
             [2097] = new List<PlcMessagePack>(){MessagePack2097Continue, PlcMessagePack.AbortMessage},
+            [2098] = new List<PlcMessagePack>(){MessagePack2098Continue, PlcMessagePack.AbortMessage},
+            [2099] = new List<PlcMessagePack>(){MessagePack2099Continue, PlcMessagePack.AbortMessage},
         };
     }
 }

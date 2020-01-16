@@ -379,7 +379,7 @@ namespace Core.ViewModels.Application
             ClearLaserImagesForNewRound();
             Enqueue2DImagesFromPreviousRound();
 
-            _readyToEnterNextRun = false;
+             _readyToEnterNextRun = false;
         }
 
         /// <summary>
@@ -965,10 +965,12 @@ namespace Core.ViewModels.Application
             }
 
             if (!all2DProcessingForThisRunIsDone) return;
-            // If results of both cavities are ready
-            Logger.LogRoutineMessageAsync("本轮2D处理完成");
+        
             ResultReady2D = ResultStatus.Ready;
             _readyToEnterNextRun = true;
+            
+            // If results of both cavities are ready
+            Logger.LogRoutineMessageAsync("本轮2D处理完成");
         }
 
 
