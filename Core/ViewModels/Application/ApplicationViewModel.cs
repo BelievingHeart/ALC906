@@ -99,7 +99,6 @@ namespace Core.ViewModels.Application
 
         private readonly object _lockerOfResultQueues2D = new object();
         private bool _isAllControllersHighSpeedConnected;
-        private readonly object _lockerOfCurrentArrivedSocket2D = new object();
 
         #region ctor
 
@@ -380,6 +379,8 @@ namespace Core.ViewModels.Application
             Enqueue2DImagesFromPreviousRound();
 
              _readyToEnterNextRun = false;
+             ResultReady2D = ResultStatus.Waiting;
+                 CurrentArrivedSocket2D = CavityType.Cavity2;
         }
 
         /// <summary>
@@ -488,23 +489,12 @@ namespace Core.ViewModels.Application
 
         private void OnCavity1Arrived2D()
         {
-            lock (_lockerOfCurrentArrivedSocket2D)
-            {
-                CurrentArrivedSocket2D = CavityType.Cavity1;
-            }
-
             Logger.LogPlcMessage("2D cavity1到达");
         }
 
         private void OnCavity2Arrived2D()
         {
-            lock (_lockerOfCurrentArrivedSocket2D)
-            {
-                CurrentArrivedSocket2D = CavityType.Cavity2;
-            }
-
             Logger.LogPlcMessage("2D cavity2到达");
-            ResultReady2D = ResultStatus.Waiting;
         }
 
         /// <summary>
@@ -921,11 +911,8 @@ namespace Core.ViewModels.Application
         {
             Logger.LogRoutineMessageAsync($"收到2D图像{images.Count}张");
             if (!Server.IsAutoRunning) return;
-            CavityType currentArrivedSocket2D;
-            lock (_lockerOfCurrentArrivedSocket2D)
-            {
-                currentArrivedSocket2D = CurrentArrivedSocket2D;
-            }
+
+            var currentArrivedSocket2D = CurrentArrivedSocket2D;
 
             Logger.LogRoutineMessageAsync($"2D处理开始-{currentArrivedSocket2D}");
             GraphicsPackViewModel result;
@@ -952,6 +939,12 @@ namespace Core.ViewModels.Application
             }
 
             Logger.LogRoutineMessageAsync($"2D处理完成-{currentArrivedSocket2D}");
+
+            if (currentArrivedSocket2D == CavityType.Cavity2)
+            {
+                CurrentArrivedSocket2D = CavityType.Cavity1;
+            }
+            
 
             bool all2DProcessingForThisRunIsDone;
             lock (_lockerOfResultQueues2D)
