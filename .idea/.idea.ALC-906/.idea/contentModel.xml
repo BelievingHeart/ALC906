@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\afterbunny\.Rider2019.2\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\afterbunny\.Rider2019.2\system\resharper-host\local\Transient\ReSharperHost\v192\SolutionCaches\_ALC-906.234775048.00" t="ExcludeRecursive" />
-    <e p="C:\Users\afterbunny\Desktop\Projects\906\ALC\ALC-906" t="IncludeFlat">
+    <e p="C:\Users\rocke\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\rocke\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_ALC-906.-888285017.00" t="ExcludeRecursive" />
+    <e p="E:\ALC\ALC-906" t="IncludeFlat">
       <e p="ALC-906.sln" t="IncludeFlat" />
       <e p="Core" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
@@ -168,7 +168,36 @@
         <e p="DatabaseQuery.csproj" t="IncludeRecursive" />
         <e p="DatabaseQueryView.xaml" t="Include" />
         <e p="DatabaseQueryView.xaml.cs" t="Include" />
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="App.g.cs" t="Include" />
+            <e p="DatabaseQueryView.g.cs" t="Include" />
+            <e p="GeneratedInternalTypeHelper.g.cs" t="Include" />
+            <e p="Views" t="Include">
+              <e p="DateTimeInputView.g.cs" t="Include" />
+              <e p="Dialogs" t="Include">
+                <e p="DeleteCollectionsDialog.g.cs" t="Include" />
+                <e p="LineChartDialog.g.cs" t="Include" />
+                <e p="PieChartDialog.g.cs" t="Include" />
+                <e p="SaveCollectionsDialog.g.cs" t="Include" />
+                <e p="WaitingDialog.g.cs" t="Include" />
+              </e>
+              <e p="LineChart" t="Include">
+                <e p="LineChartHostView.g.cs" t="Include" />
+              </e>
+              <e p="LineChartView.g.cs" t="Include" />
+              <e p="LoginView.g.cs" t="Include" />
+              <e p="PieChartView.g.cs" t="Include" />
+              <e p="SettingView.g.cs" t="Include" />
+              <e p="Table" t="Include">
+                <e p="FaiCollectionHeaderRowView.g.cs" t="Include" />
+                <e p="FaiCollectionItemView.g.cs" t="Include" />
+                <e p="FaiCollectionListView.g.cs" t="Include" />
+                <e p="TableView.g.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+        </e>
         <e p="packages.config" t="Include" />
         <e p="Properties" t="Include">
           <e p="AssemblyInfo.cs" t="Include" />
@@ -274,7 +303,84 @@
           <e p="tray_pass.png" t="Include" />
           <e p="Trilian_Pro_014.png" t="Include" />
         </e>
-        <e p="obj" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="App.g.cs" t="Include" />
+            <e p="GeneratedInternalTypeHelper.g.cs" t="Include" />
+            <e p="UI_Content.g.cs" t="Include" />
+            <e p="Views" t="Include">
+              <e p="Database" t="Include">
+                <e p="DatabaseHostView.g.cs" t="Include" />
+              </e>
+              <e p="FaiItem" t="Include">
+                <e p="FaiItemGridView.g.cs" t="Include" />
+                <e p="FaiItemListStackView.g.cs" t="Include" />
+                <e p="FaiItemListWarpView.g.cs" t="Include" />
+                <e p="FaiItemsTable" t="Include">
+                  <e p="DataRowView.g.cs" t="Include" />
+                  <e p="FaiTableStackView.g.cs" t="Include" />
+                  <e p="HeaderRowView.g.cs" t="Include" />
+                </e>
+                <e p="FaiYieldCollection" t="Include">
+                  <e p="FaiYieldCollectionView.g.cs" t="Include" />
+                  <e p="FaiYieldItemView.g.cs" t="Include" />
+                </e>
+              </e>
+              <e p="HalconScreen" t="Include">
+                <e p="HalconScreenView.g.cs" t="Include" />
+              </e>
+              <e p="HeartBeat" t="Include">
+                <e p="HeartBeatIconView.g.cs" t="Include" />
+                <e p="HeartBeatView.g.cs" t="Include" />
+              </e>
+              <e p="Home" t="Include">
+                <e p="HomeView.g.cs" t="Include" />
+              </e>
+              <e p="LineScan" t="Include">
+                <e p="LineScanHostView.g.cs" t="Include" />
+                <e p="LineScanView.g.cs" t="Include" />
+              </e>
+              <e p="Login" t="Include">
+                <e p="LoginView.g.cs" t="Include" />
+              </e>
+              <e p="MainWindow.g.cs" t="Include" />
+              <e p="Popup" t="Include">
+                <e p="PopupButtonsNormal.g.cs" t="Include" />
+                <e p="PopupButtonsSpecial.g.cs" t="Include" />
+                <e p="PopupView.g.cs" t="Include" />
+              </e>
+              <e p="ProductLevelView.g.cs" t="Include" />
+              <e p="Server" t="Include">
+                <e p="AutoScrollMessageBox.g.cs" t="Include" />
+                <e p="ServerView.g.cs" t="Include" />
+              </e>
+              <e p="Settings" t="Include">
+                <e p="SettingsView.g.cs" t="Include" />
+              </e>
+              <e p="SideLogger" t="Include">
+                <e p="SideLoggerView.g.cs" t="Include" />
+              </e>
+              <e p="StringMatrix" t="Include">
+                <e p="StringMatrixView.g.cs" t="Include" />
+              </e>
+              <e p="Summary" t="Include">
+                <e p="BinItemView.g.cs" t="Include" />
+                <e p="SummaryView.g.cs" t="Include" />
+              </e>
+              <e p="TimeLine" t="Include">
+                <e p="InsertTimeLineView.g.cs" t="Include" />
+                <e p="SummaryDialogHostView.g.cs" t="Include" />
+                <e p="TimeLineItemView.g.cs" t="Include" />
+                <e p="TimeLineManagerView.g.cs" t="Include" />
+              </e>
+              <e p="Vision2D" t="Include">
+                <e p="CameraDataView.g.cs" t="Include" />
+                <e p="CameraHostView.g.cs" t="Include" />
+                <e p="Vision2DView.g.cs" t="Include" />
+              </e>
+            </e>
+          </e>
+        </e>
         <e p="packages.config" t="Include" />
         <e p="Properties" t="Include">
           <e p="AssemblyInfo.cs" t="Include" />
@@ -394,7 +500,7 @@
         </e>
       </e>
     </e>
-    <e p="C:\Users\afterbunny\Desktop\Projects\906\ALC\HKCamera\HKCamera" t="IncludeRecursive">
+    <e p="E:\ALC\HKCamera\HKCamera" t="IncludeRecursive">
       <e p="bin" t="ExcludeRecursive" />
       <e p="HKCamera.csproj" t="IncludeRecursive" />
       <e p="HKCameraViewModel.cs" t="Include" />
@@ -403,7 +509,7 @@
         <e p="AssemblyInfo.cs" t="Include" />
       </e>
     </e>
-    <e p="C:\Users\afterbunny\Desktop\Projects\906\ALC\LJX8000Dev\LJX8000.Core" t="IncludeRecursive">
+    <e p="E:\ALC\LJX8000Dev\LJX8000.Core" t="IncludeRecursive">
       <e p="Attributes" t="Include">
         <e p="AutoSerializeAttribute.cs" t="Include" />
       </e>
@@ -457,8 +563,8 @@
         </e>
       </e>
     </e>
-    <e p="C:\Users\afterbunny\Desktop\Projects\906\ALC\LJX8000Dev\UI\FodyWeavers.xml" t="Include" />
-    <e p="C:\Users\afterbunny\Desktop\Projects\906\ALC\PLCCommunication\PLCCommunication.Core" t="IncludeRecursive">
+    <e p="E:\ALC\LJX8000Dev\UI\FodyWeavers.xml" t="Include" />
+    <e p="E:\ALC\PLCCommunication\PLCCommunication.Core" t="IncludeRecursive">
       <e p="bin" t="ExcludeRecursive" />
       <e p="Enums" t="Include">
         <e p="MachineState.cs" t="Include" />
@@ -481,7 +587,7 @@
         <e p="LibraryViewModel.cs" t="Include" />
       </e>
     </e>
-    <e p="C:\Users\afterbunny\Desktop\Projects\906\ALC\WPFCommon\WPFCommon" t="IncludeRecursive">
+    <e p="E:\ALC\WPFCommon\WPFCommon" t="IncludeRecursive">
       <e p="bin" t="ExcludeRecursive" />
       <e p="Commands" t="Include">
         <e p="ParameterizedCommand.cs" t="Include" />

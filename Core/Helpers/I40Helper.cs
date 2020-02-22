@@ -33,6 +33,7 @@ namespace Core.Helpers
             }
 
             return output;
+            
         }
 
         public static Dictionary<string, double> GetFaiDict(this I40Check procedure, int chusIndex)

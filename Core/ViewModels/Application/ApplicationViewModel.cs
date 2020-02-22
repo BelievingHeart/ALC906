@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -376,7 +377,7 @@ namespace Core.ViewModels.Application
 
             // Clear run related states
             ClearLaserImagesForNewRound();
-            Enqueue2DImagesFromPreviousRound();
+            Dequeue2DImagesFromPreviousRound();
 
              _readyToEnterNextRun = false;
              ResultReady2D = ResultStatus.Waiting;
@@ -388,7 +389,7 @@ namespace Core.ViewModels.Application
         /// the last one in the queue must be the one
         /// that will be concluded with 3D results in the new round
         /// </summary>
-        private void Enqueue2DImagesFromPreviousRound()
+        private void Dequeue2DImagesFromPreviousRound()
         {
             lock (_lockerOfResultQueues2D)
             {
@@ -416,14 +417,14 @@ namespace Core.ViewModels.Application
             }
         }
 
-        private void Show2DAcquisitionErrorPopup()
+        private void Show2DAcquisitionErrorPopup([CallerLineNumber]int lineNumber= 0)
         {
             var popup = new PopupViewModel
             {
                 OkCommand = new CloseDialogAttachedCommand(o => true,
                     () => { Server.SentToPlc(PlcMessagePack.AbortMessage); }),
                 IsSpecialPopup = false,
-                Content = "2D相机不能正常取像，请复位",
+                Content = $"2D相机不能正常取像{lineNumber}，请复位",
                 OkButtonText = "确定"
             };
             Server.IsAutoRunning = false;
@@ -603,7 +604,7 @@ namespace Core.ViewModels.Application
             // Save images for later serialization when 2d and 3d combine
             if (enumValue == CavityType.Cavity1) _imagesToSerialize3dCavity1 = imagesForOneSocket;
             else _imagesToSerialize3dCavity2 = imagesForOneSocket;
-
+            
             MeasurementResult3D result3D = null;
             try
             {
@@ -622,6 +623,12 @@ namespace Core.ViewModels.Application
                 var logDir = Path.Combine(DirectoryConstants.ImageDir3D,
                     "Error/" + DateTime.Now.ToString(NameConstants.DateTimeFormat));
                 Task.Run(() => { Logger.Instance.RecordErrorImages(imagesForOneSocket, e.Message, logDir); });
+            }
+
+            if (OutputRawData3D)
+            {
+                var rawFilePath = Path.Combine(DirectoryConstants.ErrorLogDir, $"{enumValue}-3D-raw.csv");
+                Task.Run(() => SerializationHelper.LogDataDict(result3D.FaiResults, rawFilePath));
             }
 
             if (socketIndex == (int) CavityType.Cavity1)
@@ -1080,6 +1087,8 @@ namespace Core.ViewModels.Application
 
 
         #region prop
+
+        public bool OutputRawData3D { get; set; }
 
         public TimeLineManagerViewModel TimeLineManager { get; set; }
 

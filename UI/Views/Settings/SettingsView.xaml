@@ -54,9 +54,7 @@
         </GroupBox>
 
         <GroupBox Grid.Column="1" Grid.Row="0" Header="Csv设置" FontFamily="{x:Static SystemFonts.CaptionFontFamily}">
-            <Button Content="打开CSV文件夹" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"
-                    Command="{Binding OpenCSVDirCommand}" HorizontalAlignment="Left"
-                    VerticalAlignment="Top" />
+            <CheckBox Content="保存3D原始数据" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" IsChecked="{Binding OutputRawData3D}"/>
         </GroupBox>
 
         <GroupBox Grid.Row="1" Grid.Column="0" Header="其他设置" FontFamily="{x:Static SystemFonts.CaptionFontFamily}">

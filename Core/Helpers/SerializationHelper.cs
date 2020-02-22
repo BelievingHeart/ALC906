@@ -72,6 +72,22 @@ namespace Core.Helpers
                 if(timeSpan > expireDays) File.Delete(path);
             }
         }
+
+        public static void LogDataDict(IDictionary<string, double> dict, string path)
+        {
+            if (!File.Exists(path))
+            {
+                var keys = dict.Keys.ToArray();
+                var headerLine = string.Join(",", keys);
+                headerLine = headerLine + Environment.NewLine;
+                File.WriteAllText(path, headerLine);
+            }
+
+            var values = dict.Values.ToArray();
+            var valueLine = string.Join(",", values);
+            valueLine = valueLine + Environment.NewLine;
+            File.WriteAllText(path, valueLine);
+        }
         
        
         
