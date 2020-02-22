@@ -80,13 +80,13 @@ namespace Core.Helpers
                 var keys = dict.Keys.ToArray();
                 var headerLine = string.Join(",", keys);
                 headerLine = headerLine + Environment.NewLine;
-                File.WriteAllText(path, headerLine);
+                File.AppendAllText(path, headerLine);
             }
 
             var values = dict.Values.ToArray();
             var valueLine = string.Join(",", values);
             valueLine = valueLine + Environment.NewLine;
-            File.WriteAllText(path, valueLine);
+            File.AppendAllText(path, valueLine);
         }
         
        

@@ -41,12 +41,14 @@
                         IsChecked="{Binding SaveNgImagesOnly}" />
                     <!-- 2D shots per execution -->
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="2D每次拍照" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"/>
-                        <ComboBox SelectedItem="{Binding Path=ShotsPerExecution2D, Converter={converters:StringToIntegerConverter}, Mode=OneWayToSource}" MinWidth="10" VerticalAlignment="Top" IsEnabled="{Binding LoginViewModel.Authorized}">
+                        <TextBlock Text="2D每次拍照" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" />
+                        <ComboBox
+                            SelectedItem="{Binding Path=ShotsPerExecution2D, Converter={converters:StringToIntegerConverter}, Mode=OneWayToSource}"
+                            MinWidth="10" VerticalAlignment="Top" IsEnabled="{Binding LoginViewModel.Authorized}">
                             <ComboBoxItem>2</ComboBoxItem>
                             <ComboBoxItem>6</ComboBoxItem>
                         </ComboBox>
-                        <TextBlock Text="张" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"/>
+                        <TextBlock Text="张" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" />
                     </StackPanel>
                 </StackPanel>
 
@@ -54,7 +56,11 @@
         </GroupBox>
 
         <GroupBox Grid.Column="1" Grid.Row="0" Header="Csv设置" FontFamily="{x:Static SystemFonts.CaptionFontFamily}">
-            <CheckBox Content="保存3D原始数据" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" IsChecked="{Binding OutputRawData3D}"/>
+            <StackPanel HorizontalAlignment="Left">
+                <CheckBox Content="保存3D原始数据" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"
+                          IsChecked="{Binding OutputRawData3D}" />
+                <Button Content="打开LOG文件夹" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Command="{Binding OpenLogDirCommand}"/>
+            </StackPanel>
         </GroupBox>
 
         <GroupBox Grid.Row="1" Grid.Column="0" Header="其他设置" FontFamily="{x:Static SystemFonts.CaptionFontFamily}">

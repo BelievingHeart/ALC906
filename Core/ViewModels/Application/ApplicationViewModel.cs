@@ -129,10 +129,10 @@ namespace Core.ViewModels.Application
 
         private void InitCommands()
         {
-            OpenCSVDirCommand = new RelayCommand(() =>
+            OpenLogDirCommand = new RelayCommand(() =>
             {
-                Directory.CreateDirectory(DirectoryConstants.CsvOutputDir);
-                Process.Start(DirectoryConstants.CsvOutputDir);
+                Directory.CreateDirectory(DirectoryConstants.ErrorLogDir);
+                Process.Start(DirectoryConstants.ErrorLogDir);
             });
             OpenImageDirCommand = new RelayCommand(() => { Process.Start(DirectoryConstants.ImageBaseDir); });
 
@@ -625,7 +625,7 @@ namespace Core.ViewModels.Application
                 Task.Run(() => { Logger.Instance.RecordErrorImages(imagesForOneSocket, e.Message, logDir); });
             }
 
-            if (OutputRawData3D)
+            if (OutputRawData3D && result3D.ItemExists && string.IsNullOrEmpty(result3D.ErrorMessage)) 
             {
                 var rawFilePath = Path.Combine(DirectoryConstants.ErrorLogDir, $"{enumValue}-3D-raw.csv");
                 Task.Run(() => SerializationHelper.LogDataDict(result3D.FaiResults, rawFilePath));
@@ -1088,7 +1088,7 @@ namespace Core.ViewModels.Application
 
         #region prop
 
-        public bool OutputRawData3D { get; set; }
+        public bool OutputRawData3D { get; set; } = false;
 
         public TimeLineManagerViewModel TimeLineManager { get; set; }
 
@@ -1154,7 +1154,7 @@ namespace Core.ViewModels.Application
 
         public I40Check I40Check { get; set; }
 
-        public ICommand OpenCSVDirCommand { get; set; }
+        public ICommand OpenLogDirCommand { get; set; }
         
         public ICommand OpenTimelineDialogCommand { get; set; }
         public ICommand InsertNewTimelineCommand { get; set; }
@@ -1181,7 +1181,7 @@ namespace Core.ViewModels.Application
         public ResultStatus ResultReady2D { get; set; }
 
         public ICommand SimulateCommand { get; set; }
-
+        
         public ICommand SwitchMtmCommand { get; private set; }
         public ICommand SwitchAlpsCommand { get; private set; }
 
