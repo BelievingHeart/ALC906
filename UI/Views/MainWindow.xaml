@@ -12,6 +12,7 @@
         xmlns:loggers="clr-namespace:Core.IoC.Loggers;assembly=Core"
         xmlns:popup="clr-namespace:UI.Views.Popup"
         xmlns:heartBeat="clr-namespace:UI.Views.HeartBeat"
+        xmlns:codeScan="clr-namespace:UI.CodeScan"
         mc:Ignorable="d"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
@@ -121,6 +122,24 @@
                         </StackPanel>
                     </Button>
 
+                    <!-- Code states -->
+                    <StackPanel HorizontalAlignment="Center" Height="40" Margin="100 0" Orientation="Horizontal">
+                        <TextBlock FontSize="30" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Text="扫码状态："/>
+                        
+                        <ItemsControl ItemsSource="{Binding Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Path=CodesWaiting.CodeItems}" HorizontalAlignment="Center">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <codeScan:CodeStateView Margin="10 0"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
                 </ToolBar>
             </ToolBarTray>
             <Button Grid.Row="0" HorizontalAlignment="Right" Background="Transparent" BorderBrush="Transparent"

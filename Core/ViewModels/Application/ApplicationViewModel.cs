@@ -22,6 +22,7 @@ using Core.Helpers;
 using Core.ImageProcessing._2D;
 using Core.IoC.Loggers;
 using Core.IoC.PlcErrorParser;
+using Core.ViewModels.CodeScan;
 using Core.ViewModels.Database.FaiCollection;
 using Core.ViewModels.Fai;
 using Core.ViewModels.Fai.FaiYieldCollection;
@@ -72,13 +73,7 @@ namespace Core.ViewModels.Application
             [CavityType.Cavity2] = null
         };
 
-        /// <summary>
-        /// buffer for QR codes of which have not enter the machine
-        /// </summary>
-        private readonly IDictionary<CavityType, string> _qrCodesWaiting = new Dictionary<CavityType, string>(){
-            [CavityType.Cavity1] = null,
-            [CavityType.Cavity2] = null
-        };
+    
 
         /// <summary>
         /// Key=ControllerName, Value=CurrentIndexOfSocket
@@ -367,10 +362,10 @@ namespace Core.ViewModels.Application
 
         private void OnPlcRequestToEnterNewRun()
         {
-            var readyToEnterNextRun = QrCodesInputFinished() || IgnoreQrCodes;
+            var readyToEnterNextRun = CodesWaiting.AllCodesReady || IgnoreQrCodes;
             if (readyToEnterNextRun)
             {
-                TransferQrCodeFromWaitingToEntered(IgnoreQrCodes);
+                CodesWaiting.TransferCodes(_qrCodesEntered);
             }
 
 
@@ -392,19 +387,7 @@ namespace Core.ViewModels.Application
             CurrentArrivedSocket2D = CavityType.Cavity2;
         }
 
-        private void TransferQrCodeFromWaitingToEntered(bool ignoreCode)
-        {
-            foreach (var key in _qrCodesWaiting.Keys)
-            {
-                _qrCodesEntered[key] = ignoreCode? "" :  _qrCodesWaiting[key];
-                _qrCodesWaiting[key] = null;
-            }
-        }
-
-        private bool QrCodesInputFinished()
-        {
-            return _qrCodesWaiting.Values.All(code => code != null);
-        }
+        
 
         /// <summary>
         /// When starting a new round
@@ -491,10 +474,7 @@ namespace Core.ViewModels.Application
                 controller.ClearBuffer();
             }
 
-            foreach (var key in _qrCodesWaiting.Keys)
-            {
-                _qrCodesWaiting[key] = null;
-            }
+            CodesWaiting.ClearCodes();
         }
 
         private void PlcCustomCommandHandler(int commandId)
@@ -1105,6 +1085,10 @@ namespace Core.ViewModels.Application
 
 
         #region props
+        /// <summary>
+        /// buffer for QR codes of which have not enter the machine
+        /// </summary>
+        public CodeListViewModel CodesWaiting { get; set; } = new CodeListViewModel();
 
         public bool IgnoreQrCodes { get; set; } = false;
 
@@ -1328,6 +1312,16 @@ namespace Core.ViewModels.Application
                 default:
                     throw new KeyNotFoundException($"Can not find such StringMatrixType {dataType}");
             }
+        }
+
+        #endregion
+
+        #region tests
+
+        private void TestCodeStateView()
+        {
+            CodesWaiting[CavityType.Cavity1].Code =
+                string.IsNullOrEmpty(CodesWaiting[CavityType.Cavity1].Code) ? "Test" : string.Empty;
         }
 
         #endregion

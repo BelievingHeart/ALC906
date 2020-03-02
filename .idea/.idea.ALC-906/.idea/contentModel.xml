@@ -46,6 +46,7 @@
         </e>
         <e p="Helpers" t="Include">
           <e p="DateTimeHelper.cs" t="Include" />
+          <e p="EnumHelper.cs" t="Include" />
           <e p="ExcelHelper.cs" t="Include" />
           <e p="FaiCollectionHelper.cs" t="Include" />
           <e p="FaiItemsHelper.cs" t="Include" />
@@ -95,6 +96,10 @@
           </e>
           <e p="CameraHost" t="Include">
             <e p="CameraHostViewModel.cs" t="Include" />
+          </e>
+          <e p="CodeScan" t="Include">
+            <e p="CodeItemViewModel.cs" t="Include" />
+            <e p="CodeListViewModel.cs" t="Include" />
           </e>
           <e p="Database" t="Include">
             <e p="DatabaseBufferViewModel.cs" t="Include" />
@@ -254,6 +259,10 @@
           <e p="ListBoxBehavior.cs" t="Include" />
         </e>
         <e p="bin" t="ExcludeRecursive" />
+        <e p="CodeScan" t="Include">
+          <e p="CodeStateView.xaml" t="Include" />
+          <e p="CodeStateView.xaml.cs" t="Include" />
+        </e>
         <e p="Converters" t="Include">
           <e p="BooleanToLoginStateConverter.cs" t="Include" />
           <e p="BooleanToPopupButtonTypeConverter.cs" t="Include" />
