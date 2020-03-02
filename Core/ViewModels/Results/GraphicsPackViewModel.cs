@@ -15,8 +15,8 @@ namespace Core.ViewModels.Results
         public Dictionary<string, double> FaiResults { get; set; }
 
         public bool ItemExists { get; set; }
-        
-        
+
+        public string Code { get; set; }
      
     }
     

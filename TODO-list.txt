@@ -1,7 +1,3 @@
-1. Separate region of loop-related variables
-4. Start not allow on startup
-6. L4 popup during resetting上料x轴使能报错
-8. new client socket when connected
-9. fai item yield on home page
-10. Log error timespan
-11. detect product type mixing
+1. Add code input logic
+2. Add code-relating prompts to ui
+3. Refactor DatabaseQuery

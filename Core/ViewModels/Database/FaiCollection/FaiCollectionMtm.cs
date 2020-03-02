@@ -74,5 +74,6 @@ namespace Core.ViewModels.Database.FaiCollection
         public DateTime InspectionTime { get; set; }
         public int Cavity { get; set; }
         public string Result { get; set; }
+        public string Code { get; set; }
     }
 }

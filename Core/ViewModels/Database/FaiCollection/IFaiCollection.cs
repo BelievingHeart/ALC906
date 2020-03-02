@@ -9,5 +9,7 @@
          int Cavity { get; set; }
          
          string Result { get; set; }
+         
+         string Code { get; set; }
     }
 }

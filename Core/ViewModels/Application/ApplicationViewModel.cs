@@ -62,7 +62,23 @@ namespace Core.ViewModels.Application
 
         private readonly Object _lockerOfLaserImageBuffers = new Object();
 
-        private bool _readyToEnterNextRun = true;
+        /// <summary>
+        /// Buffer for QR codes of which just entered the machine
+        /// and soon will pair with 2D results
+        /// </summary>
+        private readonly IDictionary<CavityType, string> _qrCodesEntered = new Dictionary<CavityType, string>()
+        {
+            [CavityType.Cavity1] = null,
+            [CavityType.Cavity2] = null
+        };
+
+        /// <summary>
+        /// buffer for QR codes of which have not enter the machine
+        /// </summary>
+        private readonly IDictionary<CavityType, string> _qrCodesWaiting = new Dictionary<CavityType, string>(){
+            [CavityType.Cavity1] = null,
+            [CavityType.Cavity2] = null
+        };
 
         /// <summary>
         /// Key=ControllerName, Value=CurrentIndexOfSocket
@@ -78,15 +94,6 @@ namespace Core.ViewModels.Application
 
 
         private HTuple _shapeModel2D, _shapeModel3D;
-
-        private CsvSerializer.CsvSerializer _serializerAll;
-
-        private CsvSerializer.CsvSerializer _serializerLeft =
-            new CsvSerializer.CsvSerializer(Path.Combine(DirectoryConstants.CsvOutputDir, "Cavity1"));
-
-
-        private CsvSerializer.CsvSerializer _serializerRight =
-            new CsvSerializer.CsvSerializer(Path.Combine(DirectoryConstants.CsvOutputDir, "Cavity2"));
 
         private IMeasurementProcedure3D _procedure3D;
 
@@ -113,7 +120,7 @@ namespace Core.ViewModels.Application
 
             InitCommands();
 
-            
+
             // Summary and time line
             TimeLineManager = new TimeLineManagerViewModel(DirectoryConstants.TimeLineSerializationDir);
             Summary = new SummaryViewModel() {StartTime = DateTime.Now};
@@ -152,9 +159,9 @@ namespace Core.ViewModels.Application
 
             Backup3DConfigsCommand = new RelayCommand(Backup3DConfigs);
             Recover3DConfigsCommand = new RelayCommand(Recover3DConfigs);
-            
-            OpenTimelineDialogCommand = new RelayCommand(()=>TimeLineManager.ShouldDialogOpen = true);
-            
+
+            OpenTimelineDialogCommand = new RelayCommand(() => TimeLineManager.ShouldDialogOpen = true);
+
             InsertNewTimelineCommand = new ParameterizedCommand(obj =>
             {
                 var comment = (string) obj;
@@ -195,7 +202,7 @@ namespace Core.ViewModels.Application
                 Directory.CreateDirectory(closestDir);
                 File.Copy(oldPath, dstPath, true);
             }
-            
+
             ApplicationConfigs.LastBackupDate3D = DateTime.Now;
             Logger.LogStateChanged("备份成功");
         }
@@ -360,28 +367,43 @@ namespace Core.ViewModels.Application
 
         private void OnPlcRequestToEnterNewRun()
         {
+            var readyToEnterNextRun = QrCodesInputFinished() || IgnoreQrCodes;
+            if (readyToEnterNextRun)
+            {
+                TransferQrCodeFromWaitingToEntered(IgnoreQrCodes);
+            }
+
+
             Logger.LogPlcMessage("新一轮开始");
 
             // Reply plc
             Server.SentToPlc(new PlcMessagePack()
             {
-                CommandId = 23, MsgType = PlcMessagePack.RespondIndicator, Param1 = _readyToEnterNextRun ? 0 : 1,
+                CommandId = 23, MsgType = PlcMessagePack.RespondIndicator, Param1 = readyToEnterNextRun ? 0 : 1,
                 Param2 = ShotsPerExecution2D == 2 ? 0 : 1
             });
 
-            if (!_readyToEnterNextRun)
-            {
-                Show2DAcquisitionErrorPopup();
-                return;
-            }
 
             // Clear run related states
             ClearLaserImagesForNewRound();
             Dequeue2DImagesFromPreviousRound();
 
-             _readyToEnterNextRun = false;
-             ResultReady2D = ResultStatus.Waiting;
-                 CurrentArrivedSocket2D = CavityType.Cavity2;
+            ResultReady2D = ResultStatus.Waiting;
+            CurrentArrivedSocket2D = CavityType.Cavity2;
+        }
+
+        private void TransferQrCodeFromWaitingToEntered(bool ignoreCode)
+        {
+            foreach (var key in _qrCodesWaiting.Keys)
+            {
+                _qrCodesEntered[key] = ignoreCode? "" :  _qrCodesWaiting[key];
+                _qrCodesWaiting[key] = null;
+            }
+        }
+
+        private bool QrCodesInputFinished()
+        {
+            return _qrCodesWaiting.Values.All(code => code != null);
         }
 
         /// <summary>
@@ -417,7 +439,7 @@ namespace Core.ViewModels.Application
             }
         }
 
-        private void Show2DAcquisitionErrorPopup([CallerLineNumber]int lineNumber= 0)
+        private void Show2DAcquisitionErrorPopup([CallerLineNumber] int lineNumber = 0)
         {
             var popup = new PopupViewModel
             {
@@ -469,7 +491,10 @@ namespace Core.ViewModels.Application
                 controller.ClearBuffer();
             }
 
-            _readyToEnterNextRun = true;
+            foreach (var key in _qrCodesWaiting.Keys)
+            {
+                _qrCodesWaiting[key] = null;
+            }
         }
 
         private void PlcCustomCommandHandler(int commandId)
@@ -604,7 +629,7 @@ namespace Core.ViewModels.Application
             // Save images for later serialization when 2d and 3d combine
             if (enumValue == CavityType.Cavity1) _imagesToSerialize3dCavity1 = imagesForOneSocket;
             else _imagesToSerialize3dCavity2 = imagesForOneSocket;
-            
+
             MeasurementResult3D result3D = null;
             try
             {
@@ -625,7 +650,7 @@ namespace Core.ViewModels.Application
                 Task.Run(() => { Logger.Instance.RecordErrorImages(imagesForOneSocket, e.Message, logDir); });
             }
 
-            if (OutputRawData3D && result3D.ItemExists && string.IsNullOrEmpty(result3D.ErrorMessage)) 
+            if (OutputRawData3D && result3D.ItemExists && string.IsNullOrEmpty(result3D.ErrorMessage))
             {
                 var rawFilePath = Path.Combine(DirectoryConstants.ErrorLogDir, $"{enumValue}-3D-raw.csv");
                 Task.Run(() => SerializationHelper.LogDataDict(result3D.FaiResults, rawFilePath));
@@ -688,8 +713,7 @@ namespace Core.ViewModels.Application
 
                 UiDispatcher.Invoke(UpdateSummaries);
                 Task.Run(() => SerializeImagesAndData(Graphics2DCavity1.Images, Graphics2DCavity2.Images,
-                    _imagesToSerialize3dCavity1, _imagesToSerialize3dCavity2,
-                    FaiItemsCavity1, FaiItemsCavity2));
+                    _imagesToSerialize3dCavity1, _imagesToSerialize3dCavity2));
             }
 
             // Round finished, increment round count
@@ -759,19 +783,15 @@ namespace Core.ViewModels.Application
         }
 
         private void SerializeImagesAndData(List<HImage> images2dCavity1, List<HImage> images2dCavity2,
-            List<HImage> images3dCavity1, List<HImage> images3dCavity2, List<FaiItem> faiItemsCavity1,
-            List<FaiItem> faiItemsCavity2)
+            List<HImage> images3dCavity1, List<HImage> images3dCavity2)
         {
             // Cavity 2
             if (ProductLevelCavity2 != ProductLevel.Empty)
             {
                 TimestampCavity2 = SerializationHelper.SerializeImagesWith2D3DMatched(images2dCavity2, images3dCavity2,
                     ShouldSave2DImagesRight,
-                    ShouldSave3DImagesRight, CavityType.Cavity2, SaveNgImagesOnly, ProductLevelCavity2);
-                _serializerRight.Serialize(faiItemsCavity2, TimestampCavity2.ToString(NameConstants.DateTimeFormat),
-                    ProductLevelCavity2.GetResultText());
-                _serializerAll.Serialize(faiItemsCavity2, TimestampCavity2.ToString(NameConstants.DateTimeFormat),
-                    ProductLevelCavity2.GetResultText());
+                    ShouldSave3DImagesRight, CavityType.Cavity2, SaveNgImagesOnly, ProductLevelCavity2,
+                    Graphics2DCavity2.Code);
             }
 
 
@@ -780,40 +800,38 @@ namespace Core.ViewModels.Application
             {
                 TimestampCavity1 = SerializationHelper.SerializeImagesWith2D3DMatched(images2dCavity1, images3dCavity1,
                     ShouldSave2DImagesLeft,
-                    ShouldSave3DImagesLeft, CavityType.Cavity1, SaveNgImagesOnly, ProductLevelCavity1);
-                _serializerLeft.Serialize(faiItemsCavity1, TimestampCavity1.ToString(NameConstants.DateTimeFormat),
-                    ProductLevelCavity1.GetResultText());
-                _serializerAll.Serialize(faiItemsCavity1, TimestampCavity1.ToString(NameConstants.DateTimeFormat),
-                    ProductLevelCavity1.GetResultText());
+                    ShouldSave3DImagesLeft, CavityType.Cavity1, SaveNgImagesOnly, ProductLevelCavity1,
+                    Graphics2DCavity1.Code);
             }
 
             // Assign database inputs
             var faiCollectionCavity2 = CurrentProductType == ProductType.Mtm
                 ? new FaiCollectionMtm()
-                : new FaiCollectionAlps() as IFaiCollection;
+                :
+            new FaiCollectionAlps() as IFaiCollection;
             faiCollectionCavity2.SetFaiValues(FaiItemsCavity2, TimestampCavity2, 2,
-                ProductLevelCavity2.GetResultText());
+                ProductLevelCavity2.GetResultText(), Graphics2DCavity2.Code);
 
             var faiCollectionCavity1 = CurrentProductType == ProductType.Mtm
                 ? new FaiCollectionMtm()
                 : new FaiCollectionAlps() as IFaiCollection;
             faiCollectionCavity1.SetFaiValues(FaiItemsCavity1, TimestampCavity1, 1,
-                ProductLevelCavity1.GetResultText());
+                ProductLevelCavity1.GetResultText(), Graphics2DCavity1.Code);
             // Insert into local database
             FaiCollectionHelper.Insert(NameConstants.SqlConnectionString, faiCollectionCavity2, faiCollectionCavity1);
 
 
             // Update tables
             UiDispatcher.InvokeAsync(() =>
-                UpdateTables(TimestampCavity1.ToString(NameConstants.DateTimeFormat),
-                    TimestampCavity2.ToString(NameConstants.DateTimeFormat)));
+                UpdateTables(Graphics2DCavity1.Code,
+                    Graphics2DCavity2.Code));
         }
 
         public DateTime TimestampCavity1 { get; set; }
 
         public DateTime TimestampCavity2 { get; set; }
 
-        private void UpdateTables(string timestampCavity1, string timestampCavity2)
+        private void UpdateTables(string codeCavity1, string codeCavity2)
         {
             // Init header if necessary
             if (Table == null)
@@ -830,10 +848,10 @@ namespace Core.ViewModels.Application
 
             // Add rows
             var shouldAddRowCavity2 = ProductLevelCavity2 != ProductLevel.Empty;
-            if (shouldAddRowCavity2) Table.AddRow(FaiItemsCavity2, ProductLevelCavity2, timestampCavity2);
+            if (shouldAddRowCavity2) Table.AddRow(FaiItemsCavity2, ProductLevelCavity2, codeCavity2);
 
             var shouldAddRowCavity1 = ProductLevelCavity1 != ProductLevel.Empty;
-            if (shouldAddRowCavity1) Table.AddRow(FaiItemsCavity1, ProductLevelCavity1, timestampCavity1);
+            if (shouldAddRowCavity1) Table.AddRow(FaiItemsCavity1, ProductLevelCavity1, codeCavity1);
         }
 
 
@@ -920,7 +938,7 @@ namespace Core.ViewModels.Application
             if (!Server.IsAutoRunning) return;
 
             var currentArrivedSocket2D = CurrentArrivedSocket2D;
-
+            var code = _qrCodesEntered[currentArrivedSocket2D];
             Logger.LogRoutineMessageAsync($"2D处理开始-{currentArrivedSocket2D}");
             GraphicsPackViewModel result;
 
@@ -945,13 +963,15 @@ namespace Core.ViewModels.Application
                 }
             }
 
+            result.Code = code;
+
             Logger.LogRoutineMessageAsync($"2D处理完成-{currentArrivedSocket2D}");
 
             if (currentArrivedSocket2D == CavityType.Cavity2)
             {
                 CurrentArrivedSocket2D = CavityType.Cavity1;
             }
-            
+
 
             bool all2DProcessingForThisRunIsDone;
             lock (_lockerOfResultQueues2D)
@@ -965,10 +985,9 @@ namespace Core.ViewModels.Application
             }
 
             if (!all2DProcessingForThisRunIsDone) return;
-        
+
             ResultReady2D = ResultStatus.Ready;
-            _readyToEnterNextRun = true;
-            
+
             // If results of both cavities are ready
             Logger.LogRoutineMessageAsync("本轮2D处理完成");
         }
@@ -1015,8 +1034,8 @@ namespace Core.ViewModels.Application
 
             ApplicationConfigs =
                 AutoSerializableHelper.LoadAutoSerializable<ApplicationConfigViewModel>(DirectoryHelper.ConfigDirectory,
-                    "ApplicationConfigs");            
-            
+                    "ApplicationConfigs");
+
             ApplicationConfigs.ShouldAutoSerialize = true;
         }
 
@@ -1052,7 +1071,6 @@ namespace Core.ViewModels.Application
                 ShouldSave3DImagesLeft = false,
                 ShouldSave3DImagesRight = false,
                 SaveNgImagesOnly = false,
-
             };
         }
 
@@ -1086,7 +1104,9 @@ namespace Core.ViewModels.Application
         }
 
 
-        #region prop
+        #region props
+
+        public bool IgnoreQrCodes { get; set; } = false;
 
         public bool OutputRawData3D { get; set; } = false;
 
@@ -1155,7 +1175,7 @@ namespace Core.ViewModels.Application
         public I40Check I40Check { get; set; }
 
         public ICommand OpenLogDirCommand { get; set; }
-        
+
         public ICommand OpenTimelineDialogCommand { get; set; }
         public ICommand InsertNewTimelineCommand { get; set; }
 
@@ -1176,12 +1196,12 @@ namespace Core.ViewModels.Application
             get { return System.Windows.Application.Current.Dispatcher; }
         }
 
-        public SummaryViewModel Summary { get; set; } 
+        public SummaryViewModel Summary { get; set; }
 
         public ResultStatus ResultReady2D { get; set; }
 
         public ICommand SimulateCommand { get; set; }
-        
+
         public ICommand SwitchMtmCommand { get; private set; }
         public ICommand SwitchAlpsCommand { get; private set; }
 
@@ -1232,7 +1252,6 @@ namespace Core.ViewModels.Application
             Summary.FaiYieldCollectionViewModel =
                 new FaiYieldCollectionViewModel(FaiItemsCavity1.Select(item => item.Name));
 
-            InitSerializer();
             InitTables();
         }
 
@@ -1241,17 +1260,6 @@ namespace Core.ViewModels.Application
             Table = null;
         }
 
-
-        private void InitSerializer()
-        {
-            _serializerAll = new CsvSerializer.CsvSerializer(Path.Combine(DirectoryConstants.CsvOutputDir, "All"));
-
-            _serializerLeft =
-                new CsvSerializer.CsvSerializer(Path.Combine(DirectoryConstants.CsvOutputDir, "Cavity1"));
-
-            _serializerRight =
-                new CsvSerializer.CsvSerializer(Path.Combine(DirectoryConstants.CsvOutputDir, "Cavity2"));
-        }
 
         private void SwitchProductType3D(ProductType currentProductType)
         {

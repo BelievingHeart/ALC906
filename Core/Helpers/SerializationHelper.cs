@@ -14,10 +14,10 @@ namespace Core.Helpers
 {
     public static class SerializationHelper
     {
-        public static DateTime SerializeImagesWith2D3DMatched(List<HImage> images2d, List<HImage> images3d, bool shouldSerialize2d, bool shouldSerialize3d, CavityType cavityType, bool saveNgImagesOnly, ProductLevel productLevel)
+        public static DateTime SerializeImagesWith2D3DMatched(List<HImage> images2d, List<HImage> images3d, bool shouldSerialize2d, bool shouldSerialize3d, CavityType cavityType, bool saveNgImagesOnly, ProductLevel productLevel, string code)
         {
             var currentTime = DateTime.Now;
-            var currentTimeText = currentTime.ToString(NameConstants.DateTimeFormat);
+            var commonName = currentTime.ToString(NameConstants.DateTimeFormat) + code;
             var dirName = cavityType.ToString();
             try
             {
@@ -27,14 +27,14 @@ namespace Core.Helpers
                     {
 
                         var imageDir2d = Path.Combine(DirectoryConstants.ImageDir2D, dirName);
-                        SerializeImages(images2d, imageDir2d, currentTimeText);
+                        SerializeImages(images2d, imageDir2d, commonName);
 
                     }
 
                     if (shouldSerialize3d)
                     {
                         var imageDir3d = Path.Combine(DirectoryConstants.ImageDir3D, dirName);
-                        SerializeImages(images3d, imageDir3d, currentTimeText, "tiff");
+                        SerializeImages(images3d, imageDir3d, commonName, "tiff");
                     }
                 }
             }
