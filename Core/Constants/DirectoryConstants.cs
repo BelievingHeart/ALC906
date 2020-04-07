@@ -60,14 +60,26 @@ namespace Core.Constants
             [ProductType.Alps] = ConfigDir2DAlps
         };
 
+        public static string ConfigDirectory = "D:\\ALC-Configs";
+
         private static string FaiConfigDir
         {
-            get { return Path.Combine(DirectoryHelper.ConfigDirectory, "Fai"); }
+            get { return Path.Combine(ConfigDirectory, "Fai"); }
         }
         
         private static string DatabaseLimitsDir
         {
-            get { return Path.Combine(DirectoryHelper.ConfigDirectory, "DatabaseLimits"); }
+            get { return Path.Combine(ConfigDirectory, "DatabaseLimits"); }
+        }
+        
+        public static string ShapeModelPath2D
+        {
+            get { return Path.Combine(ConfigDirectory, "ShapeModel/2D"); }
+        }
+
+        public static string ShapeModelPath3D
+        {
+            get { return Path.Combine(ConfigDirectory, "ShapeModel/3D"); }
         }
         
         

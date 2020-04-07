@@ -110,7 +110,6 @@
     <Compile Include="Constants\ColorConstants.cs" />
     <Compile Include="Constants\DirectoryConstants.cs" />
     <Compile Include="Constants\NameConstants.cs" />
-    <Compile Include="Constants\PathConstants.cs" />
     <Compile Include="Constants\PlcMessagePackConstants.cs" />
     <Compile Include="CsvSerializer\CsvSerializer.cs" />
     <Compile Include="CsvSerializer\ICsvColumnElement.cs" />

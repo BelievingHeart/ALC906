@@ -260,7 +260,7 @@ namespace Core.ViewModels.Database
         private void LoadPasswordModule(ISnackbarMessageQueue snackbarMessageQueue)
         {
             LoginViewModel =
-                AutoSerializableHelper.LoadAutoSerializable<LoginViewModel>(DirectoryHelper.ConfigDirectory, "PD");
+                AutoSerializableHelper.LoadAutoSerializable<LoginViewModel>(DirectoryConstants.ConfigDirectory, "PD");
             LoginViewModel.ShouldAutoSerialize = true;
             LoginViewModel.MessageQueue = snackbarMessageQueue;
         }

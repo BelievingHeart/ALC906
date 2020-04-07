@@ -294,7 +294,7 @@ namespace Core.ViewModels.Application
             };
 
 
-            var errorParser = new PlcErrorParser(Path.Combine(DirectoryHelper.ConfigDirectory, "ErrorSheet.csv"));
+            var errorParser = new PlcErrorParser(Path.Combine(DirectoryConstants.ConfigDirectory, "ErrorSheet.csv"));
             errorParser.WarningL1Emit += OnWarningL1Received;
             errorParser.WarningL2Emit += OnWarningL2Received;
             errorParser.WarningL3Emit += OnWarningL3Received;
@@ -847,8 +847,8 @@ namespace Core.ViewModels.Application
 
         private void LoadShapeModels()
         {
-            HOperatorSet.ReadShapeModel(PathConstants.ShapeModelPath2D, out _shapeModel2D);
-            HOperatorSet.ReadShapeModel(PathConstants.ShapeModelPath3D, out _shapeModel3D);
+            HOperatorSet.ReadShapeModel(DirectoryConstants.ShapeModelPath2D, out _shapeModel2D);
+            HOperatorSet.ReadShapeModel(DirectoryConstants.ShapeModelPath3D, out _shapeModel3D);
         }
 
 
@@ -1024,7 +1024,7 @@ namespace Core.ViewModels.Application
             LoadShapeModels();
 
             ApplicationConfigs =
-                AutoSerializableHelper.LoadAutoSerializable<ApplicationConfigViewModel>(DirectoryHelper.ConfigDirectory,
+                AutoSerializableHelper.LoadAutoSerializable<ApplicationConfigViewModel>(DirectoryConstants.ConfigDirectory,
                     "ApplicationConfigs");            
             
             ApplicationConfigs.ShouldAutoSerialize = true;
@@ -1033,7 +1033,7 @@ namespace Core.ViewModels.Application
         private void LoadPasswordModule()
         {
             LoginViewModel =
-                AutoSerializableHelper.LoadAutoSerializable<LoginViewModel>(DirectoryHelper.ConfigDirectory, "PD");
+                AutoSerializableHelper.LoadAutoSerializable<LoginViewModel>(DirectoryConstants.ConfigDirectory, "PD");
             LoginViewModel.ShouldAutoSerialize = true;
             LoginViewModel.MessageQueue = Logger.Instance.StateChangedMessageQueue;
         }
