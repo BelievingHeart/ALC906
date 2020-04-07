@@ -132,12 +132,6 @@ namespace Core.ViewModels.Application
 
         private void InitCommands()
         {
-            OpenLogDirCommand = new RelayCommand(() =>
-            {
-                Directory.CreateDirectory(DirectoryConstants.ErrorLogDir);
-                Process.Start(DirectoryConstants.ErrorLogDir);
-            });
-            OpenImageDirCommand = new RelayCommand(() => { Process.Start(DirectoryConstants.ImageBaseDir); });
 
             SimulateCommand = new RelayCommand(DoSimulation);
 
@@ -1166,12 +1160,10 @@ namespace Core.ViewModels.Application
 
         public I40Check I40Check { get; set; }
 
-        public ICommand OpenLogDirCommand { get; set; }
         
         public ICommand OpenTimelineDialogCommand { get; set; }
         public ICommand InsertNewTimelineCommand { get; set; }
 
-        public ICommand OpenImageDirCommand { get; set; }
 
         public ICommand CloseMainWindowCommand { get; set; }
 

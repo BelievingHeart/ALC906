@@ -40,7 +40,7 @@ namespace Core.Constants
 
         public static string ConfigDir2D
         {
-            get { return Path.Combine(Directory.GetCurrentDirectory(), "2DConfigs"); }
+            get { return Path.Combine(ConfigDirectory, "2DConfigs"); }
         }
 
         private static string ConfigDir2DMtm

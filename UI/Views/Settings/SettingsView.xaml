@@ -31,9 +31,23 @@
                         <CheckBox Content="3D Cavity1" IsChecked="{Binding ShouldSave3DImagesLeft}" />
                         <CheckBox Content="3D Cavity2" IsChecked="{Binding ShouldSave3DImagesRight}" />
                     </StackPanel>
-                    <Button HorizontalAlignment="Left" Content="打开图片文件夹"
-                            FontFamily="{x:Static SystemFonts.CaptionFontFamily}"
-                            Command="{Binding OpenImageDirCommand}" />
+
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel.DataContext>
+                            <application:OpenDirectoryViewModel />
+                        </StackPanel.DataContext>
+                        <Button HorizontalAlignment="Left" Content="打开图片文件夹" MinWidth="120" Margin="5"
+                                FontFamily="{x:Static SystemFonts.CaptionFontFamily}"
+                                Command="{Binding OpenImageDirCommand}" />
+                        <Button HorizontalAlignment="Left" Content="打开日志文件夹" MinWidth="120" Margin="5"
+                                FontFamily="{x:Static SystemFonts.CaptionFontFamily}"
+                                Command="{Binding OpenLogDirCommand}" />
+                        <Button HorizontalAlignment="Left" Content="打开2D配置文件夹" MinWidth="120" Margin="5"
+                                FontFamily="{x:Static SystemFonts.CaptionFontFamily}"
+                                Command="{Binding OpenConfigDir2DCommand}" />
+
+
+                    </StackPanel>
                 </StackPanel>
                 <StackPanel DockPanel.Dock="Right" VerticalAlignment="Top" HorizontalAlignment="Right">
                     <CheckBox
@@ -59,7 +73,6 @@
             <StackPanel HorizontalAlignment="Left">
                 <CheckBox Content="保存3D原始数据" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"
                           IsChecked="{Binding OutputRawData3D}" />
-                <Button Content="打开LOG文件夹" FontFamily="{x:Static SystemFonts.CaptionFontFamily}" Command="{Binding OpenLogDirCommand}"/>
             </StackPanel>
         </GroupBox>
 
