@@ -26,7 +26,6 @@ using Core.ViewModels.Database.FaiCollection;
 using Core.ViewModels.Fai;
 using Core.ViewModels.Fai.FaiYieldCollection;
 using Core.ViewModels.Login;
-using Core.ViewModels.Message;
 using Core.ViewModels.Popup;
 using Core.ViewModels.Results;
 using Core.ViewModels.Summary;
@@ -41,6 +40,7 @@ using PLCCommunication.Core.Enums;
 using PLCCommunication.Core.ViewModels;
 using WPFCommon.Commands;
 using WPFCommon.Helpers;
+using WPFCommon.Logger.Message;
 using WPFCommon.ViewModels.Base;
 
 namespace Core.ViewModels.Application
@@ -105,6 +105,9 @@ namespace Core.ViewModels.Application
 
         protected ApplicationViewModel()
         {
+            // Init logger
+            Logger.Init();
+            
             CurrentApplicationPage = ApplicationPageType.Home;
             Server = new AlcServerViewModel();
 
@@ -207,7 +210,7 @@ namespace Core.ViewModels.Application
                 OkCommand = new CloseDialogAttachedCommand(o => true, CloseMainWindow),
                 CancelCommand = new CloseDialogAttachedCommand(o => true, () => { }),
                 IsSpecialPopup = true,
-                MessageItem = LoggingMessageItem.CreateMessage("是否退出ALC?"),
+                MessageItem = new LoggingMessageItem("是否退出ALC?"),
                 OkButtonText = "是",
                 CancelButtonText = "否"
             };
@@ -606,23 +609,26 @@ namespace Core.ViewModels.Application
             else _imagesToSerialize3dCavity2 = imagesForOneSocket;
             
             MeasurementResult3D result3D = null;
-            try
+            lock (_lockerOf3DProc)
             {
-                result3D = _procedure3D.Execute(imagesForOneSocket, _shapeModel3D,
-                    enumValue == CavityType.Cavity1 ? 1 : 2);
-            }
-            catch (Exception e)
-            {
-                result3D = new MeasurementResult3D()
+                try
                 {
-                    FaiResults = GenErrorFaiResults(_procedure3D.FaiNames),
-                    CompositeImage = imagesForOneSocket,
-                    ErrorMessage = e.Message
-                };
-                // Log error images
-                var logDir = Path.Combine(DirectoryConstants.ImageDir3D,
-                    "Error/" + DateTime.Now.ToString(NameConstants.DateTimeFormat));
-                Task.Run(() => { Logger.Instance.RecordErrorImages(imagesForOneSocket, e.Message, logDir); });
+                    result3D = _procedure3D.Execute(imagesForOneSocket, _shapeModel3D,
+                        enumValue == CavityType.Cavity1 ? 1 : 2);
+                }
+                catch (Exception e)
+                {
+                    result3D = new MeasurementResult3D()
+                    {
+                        FaiResults = GenErrorFaiResults(_procedure3D.FaiNames),
+                        CompositeImage = imagesForOneSocket,
+                        ErrorMessage = e.Message
+                    };
+                    // Log error images
+                    var logDir = Path.Combine(DirectoryConstants.ImageDir3D,
+                        "Error/" + DateTime.Now.ToString(NameConstants.DateTimeFormat));
+                    Task.Run(() => { Logger.Instance.RecordErrorImages(imagesForOneSocket, e.Message, logDir); });
+                }
             }
 
             if (OutputRawData3D && result3D.ItemExists && string.IsNullOrEmpty(result3D.ErrorMessage)) 
@@ -663,6 +669,8 @@ namespace Core.ViewModels.Application
         private Dictionary<string, double> _faiResultDictCavity1;
         private Dictionary<string, double> _faiResultDictCavity2;
         private int _shotsPerExecution2D;
+        private readonly object _lockerOf2DProc = new object();
+        private readonly object _lockerOf3DProc = new object();
 
         /// <summary>
         /// Left socket finishing scanning indicates
@@ -921,31 +929,33 @@ namespace Core.ViewModels.Application
 
             var currentArrivedSocket2D = CurrentArrivedSocket2D;
 
-            Logger.LogRoutineMessageAsync($"2D处理开始-{currentArrivedSocket2D}");
             GraphicsPackViewModel result;
 
-            try
+            lock (_lockerOf2DProc)
             {
-                result = I40Check.Execute(currentArrivedSocket2D.ToChusIndex(), images);
-            }
-            catch (Exception e)
-            {
-                result = new GraphicsPackViewModel
+                try
                 {
-                    Images = images, FaiResults = I40Check.GetFaiDict(currentArrivedSocket2D.ToChusIndex()),
-                    ErrorMessage = e.Message
-                };
-                Logger.LogRoutineMessageAsync($"2D处理错误-{currentArrivedSocket2D}");
-                // If error is unexpected
-                if (!e.Message.Contains("[2D Vision]"))
+                    result = I40Check.Execute(currentArrivedSocket2D.ToChusIndex(), images);
+                    Logger.LogRoutineMessageAsync($"2D处理完成-{currentArrivedSocket2D}");
+                }
+                catch (Exception e)
                 {
-                    var logDir = Path.Combine(DirectoryConstants.ImageDir2D,
-                        "Error/" + DateTime.Now.ToString(NameConstants.DateTimeFormat));
-                    Task.Run(() => { Logger.Instance.RecordErrorImages(images, e.Message, logDir); });
+                    result = new GraphicsPackViewModel
+                    {
+                        Images = images, FaiResults = I40Check.GetFaiDict(currentArrivedSocket2D.ToChusIndex()),
+                        ErrorMessage = e.Message
+                    };
+                    Logger.LogRoutineMessageAsync($"2D处理错误-{currentArrivedSocket2D}");
+                    // If error is unexpected
+                    if (!e.Message.Contains("[2D Vision]"))
+                    {
+                        var logDir = Path.Combine(DirectoryConstants.ImageDir2D,
+                            "Error/" + DateTime.Now.ToString(NameConstants.DateTimeFormat));
+                        Task.Run(() => { Logger.Instance.RecordErrorImages(images, e.Message, logDir); });
+                    }
                 }
             }
 
-            Logger.LogRoutineMessageAsync($"2D处理完成-{currentArrivedSocket2D}");
 
             if (currentArrivedSocket2D == CavityType.Cavity2)
             {
@@ -1077,6 +1087,8 @@ namespace Core.ViewModels.Application
             {
                 controller.IsConnectedHighSpeed = false;
             }
+            
+            Logger.CleanUp();
 
             // Remove outdated files if any
             SerializationHelper.RemoveOutdatedFiles(DirectoryConstants.ErrorLogDir, 1);

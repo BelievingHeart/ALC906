@@ -5,7 +5,6 @@ using Core.Commands;
 using Core.Enums;
 using Core.IoC.Loggers;
 using Core.ViewModels.Application;
-using Core.ViewModels.Message;
 using Core.ViewModels.Popup;
 using WPFCommon.Commands;
 using WPFCommon.Helpers;

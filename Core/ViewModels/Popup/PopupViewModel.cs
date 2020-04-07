@@ -1,6 +1,6 @@
 ﻿using System.Windows.Input;
 using Core.Commands;
-using Core.ViewModels.Message;
+using WPFCommon.Logger.Message;
 using WPFCommon.ViewModels.Base;
 
 namespace Core.ViewModels.Popup

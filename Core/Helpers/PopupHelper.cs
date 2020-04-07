@@ -2,11 +2,11 @@
 using System.Windows.Input;
 using Core.Commands;
 using Core.Constants;
-using Core.ViewModels.Message;
 using Core.ViewModels.Popup;
 using PLCCommunication.Core;
 using PLCCommunication.Core.Enums;
 using PLCCommunication.Core.ViewModels;
+using WPFCommon.Logger.Message;
 
 namespace Core.Helpers
 {
@@ -20,7 +20,7 @@ namespace Core.Helpers
                 CancelButtonText = "取消",
                 OkCommand = new CloseDialogAttachedCommand(o => true, () => {}),
                 CancelCommand = new CloseDialogAttachedCommand(o => true, () => {}),
-                MessageItem = LoggingMessageItem.CreateMessage(message),
+                MessageItem = new LoggingMessageItem(message),
                 IsSpecialPopup = false
             };
         }
@@ -46,7 +46,7 @@ namespace Core.Helpers
                     alcServer.SentToPlc(quitMessagePack, PlcMessageType.Request);
                     alcServer.IsAutoRunning = false;
                 }),
-                MessageItem = LoggingMessageItem.CreateMessage(message),
+                MessageItem = new LoggingMessageItem(message),
                 Content = content,
                 IsSpecialPopup = true
             };
@@ -74,7 +74,7 @@ namespace Core.Helpers
                     alcServer.SentToPlc(quitMessagePack, PlcMessageType.Request);
                     alcServer.IsAutoRunning = false;
                 }),
-                MessageItem = LoggingMessageItem.CreateMessage(message),
+                MessageItem = new LoggingMessageItem(message),
                 Content = content,
                 IsSpecialPopup = true
             };        }

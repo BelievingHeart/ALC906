@@ -114,6 +114,9 @@
     <Compile Include="Views\ProductLevelView.xaml.cs">
       <DependentUpon>ProductLevelView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Server\LogItemView.xaml.cs">
+      <DependentUpon>LogItemView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Summary\BinItemView.xaml.cs">
       <DependentUpon>BinItemView.xaml</DependentUpon>
     </Compile>
@@ -168,9 +171,6 @@
     <Compile Include="Views\Settings\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SideLogger\SideLoggerView.xaml.cs">
-      <DependentUpon>SideLoggerView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\StringMatrix\StringMatrixView.xaml.cs">
       <DependentUpon>StringMatrixView.xaml</DependentUpon>
     </Compile>
@@ -201,9 +201,6 @@
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Views\Server\AutoScrollMessageBox.xaml.cs">
-      <DependentUpon>AutoScrollMessageBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UserControlBase.cs" />
   </ItemGroup>
@@ -292,6 +289,7 @@
     <Page Include="Views\HeartBeat\HeartBeatIconView.xaml" />
     <Page Include="Views\HeartBeat\HeartBeatView.xaml" />
     <Page Include="Views\ProductLevelView.xaml" />
+    <Page Include="Views\Server\LogItemView.xaml" />
     <Page Include="Views\Summary\BinItemView.xaml" />
     <Page Include="Views\Summary\SummaryView.xaml" />
     <Page Include="Views\Database\DatabaseHostView.xaml" />
@@ -310,7 +308,6 @@
     <Page Include="Views\Popup\PopupView.xaml" />
     <Page Include="Views\Server\ServerView.xaml" />
     <Page Include="Views\Settings\SettingsView.xaml" />
-    <Page Include="Views\SideLogger\SideLoggerView.xaml" />
     <Page Include="Views\StringMatrix\StringMatrixView.xaml" />
     <Page Include="Views\TimeLine\InsertTimeLineView.xaml" />
     <Page Include="Views\TimeLine\SummaryDialogHostView.xaml" />
@@ -324,7 +321,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Server\AutoScrollMessageBox.xaml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\PLCCommunication\PLCCommunication.Core\PLCCommunication.Core.csproj">

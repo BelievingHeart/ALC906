@@ -21,14 +21,16 @@
             <StackPanel Orientation="Horizontal" Grid.Column="0" Margin="20 0">
                 <!-- Connect button -->
                 <Button Width="100" Margin="10 0"
-                    Command="{Binding Path=Server.ConnectCommand}" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"
-                    Content="连接" Style="{StaticResource MaterialDesignRaisedLightButton}" Height="50"
-                    materialDesign:ButtonAssist.CornerRadius="5" />
+                        Command="{Binding Path=Server.ConnectCommand}"
+                        FontFamily="{x:Static SystemFonts.CaptionFontFamily}"
+                        Content="连接" Style="{StaticResource MaterialDesignRaisedLightButton}" Height="50"
+                        materialDesign:ButtonAssist.CornerRadius="5" />
                 <!-- Disconnect button -->
                 <Button Width="100"
-                    Command="{Binding Path=Server.DisconnectCommand}" FontFamily="{x:Static SystemFonts.CaptionFontFamily}"
-                    Content="断开连接" Style="{StaticResource MaterialDesignRaisedLightButton}" Height="50"
-                    materialDesign:ButtonAssist.CornerRadius="5" />
+                        Command="{Binding Path=Server.DisconnectCommand}"
+                        FontFamily="{x:Static SystemFonts.CaptionFontFamily}"
+                        Content="断开连接" Style="{StaticResource MaterialDesignRaisedLightButton}" Height="50"
+                        materialDesign:ButtonAssist.CornerRadius="5" />
 
                 <TextBlock Text="2D results: " Margin="20 0 0 0" VerticalAlignment="Center" />
                 <TextBlock Text="{Binding ResultReady2D}" VerticalAlignment="Center" />
@@ -42,13 +44,39 @@
 
         </Grid>
         <!-- Plc message box -->
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <server:AutoScrollMessageBox Grid.Column="0" MessageList="{Binding Source={x:Static loggers:Logger.Instance}, Path=PlcMessageList}" Header="Plc messages" />
-            <server:AutoScrollMessageBox Grid.Column="1" MessageList="{Binding Source={x:Static loggers:Logger.Instance}, Path=UnhandledPlcMessageList}" Header="Unhandled plc messages"/>
-            </Grid>
+        <UniformGrid Grid.Row="0" Columns="3" DataContext="{Binding Source={x:Static loggers:Logger.Instance}}">
+            <!-- General messages -->
+            <GroupBox Header="通用" FontFamily="{x:Static SystemFonts.CaptionFontFamily}">
+                <ListBox ItemsSource="{Binding GeneralMessageQueue.DisplayItems}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <server:LogItemView />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </GroupBox>
+
+            <!-- plc messages -->
+            <GroupBox Header="Plc">
+                <ListBox ItemsSource="{Binding PlcMessageQueue.DisplayItems}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <server:LogItemView />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </GroupBox>
+
+            <!-- Load messages -->
+            <GroupBox Header="上料" FontFamily="{x:Static SystemFonts.CaptionFontFamily}">
+                <ListBox ItemsSource="{Binding UnhandledPlcMessageQueue.DisplayItems}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <server:LogItemView />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </GroupBox>
+        </UniformGrid>
     </Grid>
 </UserControl>

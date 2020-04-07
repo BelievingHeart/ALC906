@@ -172,7 +172,6 @@
     <Compile Include="ViewModels\Fai\FaiYieldCollection\FaiYieldItemViewModel.cs" />
     <Compile Include="ViewModels\Login\LoginViewModel.cs" />
     <Compile Include="ViewModels\LotRecord\LotRecordItemViewModel.cs" />
-    <Compile Include="ViewModels\Message\FixedSizeMessageList.cs" />
     <Compile Include="ViewModels\Popup\PopupQueue.cs" />
     <Compile Include="ViewModels\Popup\PopupViewModel.cs" />
     <Compile Include="ViewModels\Results\GraphicsPackViewModel.cs" />
@@ -180,7 +179,6 @@
     <Compile Include="ViewModels\CameraHost\CameraHostViewModel.cs" />
     <Compile Include="ViewModels\Fai\FaiItem.cs" />
     <Compile Include="ViewModels\Fai\FaiItemUILogic.cs" />
-    <Compile Include="ViewModels\Message\LoggingMessageItem.cs" />
     <Compile Include="ViewModels\TimeLine\TimeLineItemViewModel.cs" />
     <Compile Include="ViewModels\TimeLine\TimeLineManagerViewModel.cs" />
     <Compile Include="ViewModels\Vision2D\Vision2DViewModel.cs" />

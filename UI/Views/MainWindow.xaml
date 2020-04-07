@@ -8,7 +8,6 @@
         xmlns:converters="clr-namespace:UI.Converters"
         xmlns:mainWindow="clr-namespace:Core.ViewModels.MainWindow;assembly=Core"
         xmlns:applicationViewModel="clr-namespace:Core.ViewModels.Application;assembly=Core"
-        xmlns:sideLogger="clr-namespace:UI.Views.SideLogger"
         xmlns:loggers="clr-namespace:Core.IoC.Loggers;assembly=Core"
         xmlns:popup="clr-namespace:UI.Views.Popup"
         xmlns:heartBeat="clr-namespace:UI.Views.HeartBeat"
@@ -38,7 +37,8 @@
                     <TextBlock Text="Assembly Line Controller" Margin="20 0" FontSize="24" />
                     <ContentControl Margin="20 0 0 0" VerticalAlignment="Center"
                                     Content="{Binding Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Path=LoginViewModel.Authorized, Converter={converters:BooleanToLoginStateConverter}}" />
-                    <heartBeat:HeartBeatIconView Margin="20 0 0 0" DataContext="{Binding Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Path=Server}"/>
+                    <heartBeat:HeartBeatIconView Margin="20 0 0 0"
+                                                 DataContext="{Binding Source={x:Static applicationViewModel:ApplicationViewModel.Instance}, Path=Server}" />
                 </StackPanel>
 
                 <!-- System buttons -->
@@ -68,12 +68,11 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <sideLogger:SideLoggerView HorizontalAlignment="Left" Grid.Row="0" Grid.RowSpan="2" Panel.ZIndex="3"
-                                       MessageList="{Binding Source={x:Static loggers:Logger.Instance}, Path=RoutineMessageList}" />
+
             <!-- ToolBar -->
             <ToolBarTray Grid.Row="0" Orientation="Horizontal" VerticalAlignment="Top">
                 <ToolBar>
-           
+
                     <Button Command="{Binding SwitchLoginViewCommand}" Margin="10 0">
                         <StackPanel Orientation="Horizontal">
                             <Image Source="{StaticResource Login}" Height="30" />

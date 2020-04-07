@@ -5,10 +5,11 @@ using System.Linq;
 using System.Windows.Documents;
 using Core.Constants;
 using Core.Helpers;
-using Core.ViewModels.Message;
 using Core.ViewModels.Popup;
 using HalconDotNet;
 using MaterialDesignThemes.Wpf;
+using WPFCommon.Logger.Message;
+using WPFCommon.Logger.RollingFileAppender;
 using WPFCommon.ViewModels.Base;
 
 namespace Core.IoC.Loggers
@@ -22,13 +23,7 @@ namespace Core.IoC.Loggers
         private int _errorCount;
         private PopupViewModel _popupViewModel;
         private bool _shouldMessageBoxPopup;
-
-        private static Logger _instance = new Logger
-        {
-            PlcMessageList = new FixedSizeMessageList(DirectoryConstants.ErrorLogDir, "PLC.txt"),
-            UnhandledPlcMessageList = new FixedSizeMessageList(DirectoryConstants.ErrorLogDir, "PLC-Unhandled.txt"),
-            RoutineMessageList = new FixedSizeMessageList(DirectoryConstants.ErrorLogDir, "Routine.txt"),
-        };
+        
 
         #endregion
 
@@ -79,15 +74,12 @@ namespace Core.IoC.Loggers
         
      
 
-        public static Logger Instance
-        {
-            get { return _instance; }
-        }
+        public static Logger Instance { get; private set; }
 
-        public FixedSizeMessageList PlcMessageList { get; set; }
-        public FixedSizeMessageList UnhandledPlcMessageList { get; set; }
+        public MessageQueueViewModel PlcMessageQueue { get; set; }
+        public MessageQueueViewModel UnhandledPlcMessageQueue { get; set; }
     
-        public FixedSizeMessageList RoutineMessageList { get; set; }
+        public MessageQueueViewModel GeneralMessageQueue { get; set; }
         
         #endregion
 
@@ -125,15 +117,15 @@ namespace Core.IoC.Loggers
         
         public static void LogPlcMessage(string message)
         {
-            Instance?.PlcMessageList?.LogAsync(message);
+            Instance?.PlcMessageQueue?.EnqueueMessage(message);
         }
         public static void LogUnhandledPlcMessage(string message)
         {
-            Instance?.UnhandledPlcMessageList?.LogAsync(message);
+            Instance?.UnhandledPlcMessageQueue?.EnqueueMessage(message);
         }
         public static void LogRoutineMessageAsync(string message)
         {
-            Instance?.RoutineMessageList?.LogAsync(message);
+            Instance?.GeneralMessageQueue?.EnqueueMessage(message);
         }
 
         /// <summary>
@@ -184,7 +176,36 @@ namespace Core.IoC.Loggers
         {
             Instance.StateChangedMessageQueue.Enqueue(message);
         }
-        
+
+        public static void Init()
+        {
+            // Setup file appenders
+            var generalLoggerName = "General";
+            var plcLoggerName = "Plc";
+            var unhandledPlc = "UnhandledPlc";
+            var loggerNames = new string[]
+            {
+                generalLoggerName, plcLoggerName, unhandledPlc
+            };
+            var appenderParams = loggerNames.Select(n => new AppenderParam(n)).ToArray();
+            var appenders = RollingFileAppenderManager.Config(appenderParams, DirectoryConstants.ErrorLogDir);
+            
+
+            Instance = new Logger()
+            {
+                PlcMessageQueue = new MessageQueueViewModel(appenders[plcLoggerName]),
+                GeneralMessageQueue = new MessageQueueViewModel(appenders[generalLoggerName]),
+                UnhandledPlcMessageQueue = new MessageQueueViewModel(appenders[unhandledPlc]),
+            };
+        }
+
+
+        public static void CleanUp()
+        {
+            Instance.PlcMessageQueue.FlushAll();
+            Instance.GeneralMessageQueue.FlushAll();
+            Instance.UnhandledPlcMessageQueue.FlushAll();
+        }
 
         #endregion
 
